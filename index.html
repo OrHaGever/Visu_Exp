@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>דשבורד הוצאות ורווח — גרסה 5</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">₪</div>
+        <div class="brand-text">
+          <h1>דשבורד הוצאות ורווח</h1>
+          <p>ויזואלי. פשוט. יציב.</p>
+        </div>
+      </div>
+      <nav class="tabs" role="tablist" aria-label="ניווט ראשי">
+        <button class="tab active" data-tab="dashboard" role="tab" aria-selected="true">דשבורד</button>
+        <button class="tab" data-tab="invoices" role="tab">חשבוניות</button>
+        <button class="tab" data-tab="suppliers" role="tab">ספקים</button>
+        <button class="tab" data-tab="reports" role="tab">רווח</button>
+        <button class="tab" data-tab="settings" role="tab" title="ייבוא/ייצוא וערכות צבע">הגדרות</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container stack">
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="view visible stack-lg" aria-labelledby="tab-dashboard">
+      <div class="onboarding card row">
+        <div class="ob-icon" aria-hidden="true">✨</div>
+        <div class="ob-text">
+          <div class="ob-title">ברוך הבא</div>
+          <div class="ob-sub">הוסף חשבונית ראשונה או טען נתוני דוגמה דרך "הגדרות".</div>
+        </div>
+        <div class="ob-actions">
+          <button class="primary small" data-goto="invoices">הוספת חשבונית</button>
+          <button class="ghost small" data-goto="settings">הגדרות</button>
+        </div>
+      </div>
+
+      <div class="toolbar row wrap">
+        <div class="filters row wrap">
+          <label>מתאריך
+            <input type="date" id="filterFrom" aria-label="תאריך התחלה לסינון">
+          </label>
+          <label>עד תאריך
+            <input type="date" id="filterTo" aria-label="תאריך סיום לסינון">
+          </label>
+          <label>ספק
+            <select id="filterSupplier" aria-label="סינון לפי ספק">
+              <option value="">הכל</option>
+            </select>
+          </label>
+          <label>סוג
+            <select id="filterType" aria-label="סינון לפי סוג">
+              <option value="">הכל</option>
+              <option value="recurring">קבוע</option>
+              <option value="oneoff">חד-פעמי</option>
+            </select>
+          </label>
+          <button id="clearFilters" class="ghost">נקה</button>
+        </div>
+      </div>
+
+      <div id="kpis" class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-title">סה״כ הוצאות</div>
+          <div class="kpi-value" id="kpiTotal">₪0</div>
+          <div class="kpi-sub" id="kpiCount">0 רשומות</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">קבוע</div>
+          <div class="kpi-value badge badge-rec" id="kpiRecurring">₪0</div>
+          <div class="kpi-sub" id="kpiRecurringCount">0 חשבוניות</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">חד-פעמי</div>
+          <div class="kpi-value badge badge-one" id="kpiOneoff">₪0</div>
+          <div class="kpi-sub" id="kpiOneoffCount">0 חשבוניות</div>
+        </div>
+        <div class="kpi-card accent">
+          <div class="kpi-title">ממוצע לחשבונית</div>
+          <div class="kpi-value" id="kpiAvg">₪0</div>
+          <div class="kpi-sub">מבוסס על הסינון הנוכחי</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="panel stack">
+        <h2>גרפיקה</h2>
+        <div class="charts auto-grid min-2">
+          <div class="chart-card">
+            <div class="chart-title">קבוע מול חד-פעמי</div>
+            <div class="donut" id="donut" style="--p1:0; --p2:0;" aria-label="תרשים עוגה של הוצאות קבועות מול חד-פעמיות">
+              <div class="donut-hole">
+                <div class="donut-total" id="donutTotal">₪0</div>
+                <div class="donut-sub">סה״כ</div>
+              </div>
+            </div>
+            <div class="legend">
+              <span class="legend-item rec"><i></i><b>קבוע</b> <em id="legRecPct">0%</em></span>
+              <span class="legend-item one"><i></i><b>חד-פעמי</b> <em id="legOnePct">0%</em></span>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-title">Top ספקים</div>
+            <div class="bars" id="bars"></div>
+            <div class="bars-hints">גובה העמודה יחסי לספק המוביל.</div>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="section-title">הוצאות לפי ספק</h2>
+      <div id="supplierCards" class="auto-grid"></div>
+    </section>
+
+    <!-- INVOICES -->
+    <section id="invoices" class="view stack-lg" aria-labelledby="tab-invoices">
+      <div class="split">
+        <form id="invoiceForm" class="panel stack">
+          <h2>הוספת חשבונית</h2>
+          <p class="help">מינימום: תאריך, ספק, סכום.</p>
+          <div class="grid-2">
+            <label>תאריך
+              <input type="date" id="invDate" required />
+              <span class="input-hint">למשל 2025-11-02</span>
+            </label>
+            <label>ספק
+              <input type="text" id="invSupplier" list="supplierList" placeholder="הקלד או בחר" required />
+              <datalist id="supplierList"></datalist>
+              <span class="input-hint">מזהה לסיכומים</span>
+            </label>
+            <label>מס׳ חשבונית
+              <input type="text" id="invNumber" placeholder="87434" />
+            </label>
+            <label>סכום (₪)
+              <input type="number" id="invAmount" min="0" step="0.01" required />
+            </label>
+            <label>סוג תשלום
+              <select id="invType" required>
+                <option value="recurring">קבוע</option>
+                <option value="oneoff">חד-פעמי</option>
+              </select>
+            </label>
+            <label>שולם?
+              <input type="checkbox" id="invPaid" />
+            </label>
+            <label class="span-2">תיאור
+              <input type="text" id="invDesc" placeholder="אופציונלי: פירוט מה נקנה" />
+            </label>
+          </div>
+          <div class="actions row">
+            <button type="submit" class="primary">שמור חשבונית</button>
+            <button type="reset" class="ghost" id="resetInvoice">ניקוי</button>
+          </div>
+        </form>
+
+        <div class="panel stack">
+          <div class="panel-head row">
+            <h2>רשימת חשבוניות</h2>
+            <button id="fabAdd" class="fab" title="הוספת חשבונית" aria-label="הוספת חשבונית">＋</button>
+          </div>
+          <div class="table-responsive">
+            <table id="invoicesTable" class="data-table">
+              <thead>
+                <tr>
+                  <th>תאריך</th>
+                  <th>ספק</th>
+                  <th>מס׳</th>
+                  <th>סכום</th>
+                  <th>סוג</th>
+                  <th>שולם</th>
+                  <th>פעולות</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3" class="muted">סה״כ בטבלה</td>
+                  <td id="tblTotal">₪0</td>
+                  <td colspan="3"></td>
+                </tr>
+              </tfoot>
+            </table>
+            <div id="invoicesEmpty" class="empty">
+              <div class="empty-icon" aria-hidden="true">🧾</div>
+              <div class="empty-text">אין חשבוניות. הוסף באמצעות ＋ או הטופס.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUPPLIERS -->
+    <section id="suppliers" class="view stack-lg" aria-labelledby="tab-suppliers">
+      <div class="split">
+        <form id="supplierForm" class="panel stack">
+          <h2>הוספת ספק</h2>
+          <p class="help">הוספת ספק מייעלת בחירה וסיכומים.</p>
+          <div class="grid-2">
+            <label>שם ספק
+              <input type="text" id="supName" required />
+            </label>
+            <label>קטגוריה
+              <input type="text" id="supCategory" placeholder="משקאות / קינוחים / ניקיון" />
+            </label>
+            <label class="span-2">הערות
+              <input type="text" id="supNotes" placeholder="שעות אספקה, איש קשר, תנאי תשלום" />
+            </label>
+          </div>
+          <div class="actions row">
+            <button type="submit" class="primary">שמור ספק</button>
+            <button type="reset" class="ghost" id="resetSupplier">ניקוי</button>
+          </div>
+        </form>
+
+        <div class="panel stack">
+          <h2>ספקים</h2>
+          <div id="suppliersList" class="list"></div>
+          <div id="suppliersEmpty" class="empty">
+            <div class="empty-icon" aria-hidden="true">🏷️</div>
+            <div class="empty-text">אין ספקים עדיין. הוסף מימין.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REPORTS / PROFIT -->
+    <section id="reports" class="view stack-lg" aria-labelledby="tab-reports">
+      <div class="panel stack">
+        <h2>רווח לפי חודש</h2>
+        <p class="help">בחר חודש, הזן מחזור, קבל רווח נקי. סנן לפי סוג/ספק במידת הצורך.</p>
+        <div class="grid-2">
+          <label>חודש
+            <input type="month" id="revMonth" />
+          </label>
+          <label>מחזור מכירות בחודש (₪)
+            <input type="number" id="revAmount" min="0" step="0.01" placeholder="הכנס מחזור מכירות" />
+          </label>
+          <label>מסנני דוח
+            <div class="row">
+              <select id="reportType">
+                <option value="">הכל</option>
+                <option value="recurring">קבוע</option>
+                <option value="oneoff">חד-פעמי</option>
+              </select>
+              <select id="reportSupplier">
+                <option value="">כל הספקים</option>
+              </select>
+            </div>
+          </label>
+        </div>
+        <div class="report-cards auto-grid min-2">
+          <div class="kpi-card">
+            <div class="kpi-title">הוצאות בחודש</div>
+            <div class="kpi-value" id="repExpenses">₪0</div>
+            <div class="kpi-sub" id="repBreakdown">קבוע: ₪0 • חד-פעמי: ₪0</div>
+          </div>
+          <div class="kpi-card accent">
+            <div class="kpi-title">רווח נקי (לפני מס)</div>
+            <div class="kpi-value" id="repNet">₪0</div>
+            <div class="kpi-sub">מחזור פחות הוצאות</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel stack">
+        <h2>פירוט לפי ספק בחודש</h2>
+        <div id="reportSuppliers" class="auto-grid"></div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="settings" class="view stack-lg" aria-labelledby="tab-settings">
+      <div class="panel stack">
+        <h2>ייבוא/ייצוא נתונים</h2>
+        <div class="grid-2">
+          <div class="stack">
+            <button id="exportJson" class="primary">ייצוא JSON</button>
+            <p class="help">הורדת גיבוי לקובץ.</p>
+          </div>
+          <div class="stack">
+            <label class="file">
+              <input type="file" id="importJson" accept="application/json" />
+              <span>ייבוא JSON</span>
+            </label>
+            <p class="help">טעינת גיבוי מקובץ JSON.</p>
+          </div>
+          <div class="stack">
+            <button id="sampleData" class="ghost">טעינת נתוני דוגמה</button>
+          </div>
+          <div class="stack">
+            <button id="clearAll" class="danger">איפוס מוחלט</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel stack">
+        <h2>ערכות צבע</h2>
+        <div class="themes row">
+          <button class="chip" data-theme="light">בהירה</button>
+          <button class="chip" data-theme="dark">כהה</button>
+          <button class="chip" data-theme="sepia">ספיה</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <div class="container">
+      <small>שמירה אוטומטית בדפדפן. אין שרת. הכל נשאר אצלך.</small>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
