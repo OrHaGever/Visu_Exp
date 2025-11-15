@@ -244,15 +244,31 @@
     <section id="suppliers">
       <form onsubmit="addSupplier(event)">
         <h3>ספקים קבועים</h3>
-        <p class="help">רשימת ספקים שמשמשת כל החודש.</p>
+        <p class="help">רשימת ספקים שמשמשת כל החודש. לכל ספק יש גם קטגוריה.</p>
 
         <label>שם ספק</label>
-        <input type="text" id="supplierName" placeholder="הוסף ספק חדש">
+        <input type="text" id="supplierName" placeholder="למשל: סוקליק / החברה המרכזית">
+
+        <label>קטגוריה</label>
+        <input type="text" id="supplierCategory" placeholder="למשל: ירקות, אלכוהול, שירותים, פרסום">
+
         <button class="primary" type="submit">הוסף ספק</button>
       </form>
 
+      <div class="card" style="margin-bottom:.8rem;">
+        <div class="row wrap space-between">
+          <h3 style="margin:0;font-size:1.0rem;">רשימת ספקים</h3>
+          <div class="row wrap" style="gap:.3rem;">
+            <label for="supplierFilter" style="margin:0;font-size:.85rem;color:#475569;">סינון לפי קטגוריה</label>
+            <select id="supplierFilter" onchange="onSupplierFilterChange(this.value)" style="min-width:140px;">
+              <option value="">הכל</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <table id="suppliersTable">
-        <thead><tr><th>#</th><th>שם ספק</th></tr></thead>
+        <thead><tr><th>#</th><th>שם ספק</th><th>קטגוריה</th></tr></thead>
         <tbody></tbody>
       </table>
     </section>
@@ -321,57 +337,57 @@
        ====================== */
 
     const suppliers = [
-      'חשבוניות',
-      'מדחסקור אוניברסל',
-      'ג׳אקו שירות למטבחים',
-      'יוסי סימן טוב',
-      'י.שבי',
-      'צ.י.שיווק',
-      'קנקון',
-      'לוילן סחר ומוצרים חקלאיים בע״מ',
-      'עואודה לשיווק בע״מ',
-      'מדג סי פרוט בע״מ',
-      'אהרון שיווק',
-      'שיווק שלי א.א בע״מ',
-      'אקיפ החברה לציוד מלונאי בע״מ',
-      'דאלאס מוצרי נייר בע״מ',
-      'חברת חשמל',
-      'א.א.ר שירותי ביוב',
-      'תמי 4',
-      'בזק',
-      'היכל היין',
-      'החברה המרכזית',
-      'סוקליק',
-      'ביסקוטי',
-      'אייס דרים',
-      'ג.מ טעם הארץ בע״מ',
-      'יזמקו חברה בע״מ',
-      'אסטרטג טכנולוגיות בע״מ',
-      'אביב אש מערכות בע״מ',
-      'מניב ראשון',
-      'אודי בכור שיווק דגים בע״מ',
-      'לירי כוח אדם בע״מ',
-      'מש-נט בע״מ',
-      'זאפ גרופ בע״מ',
-      'שיא ״10״ בע״מ',
-      'קורקידי יעקב שיווק והפצה בסיטונאות',
-      'מקס עסקים',
-      'וינטר מכשירי גז בעמ',
-      'מפעל הפרסום',
-      'וולט',
-      'אלירן פרחים',
-      'פרסום תבור בעצ',
-      'אינפיניה מחזור',
-      'ייצוגית פלוס תעשיות בעמ',
-      'משלוחה',
-      'ביימי טכנולוגיות',
-      'ישראכרט',
-      'סוגת',
-      'אייפרקטיקום',
-      'אמישרגז',
-      'מאירוביץ שלי',
-      'לה פסטה דלה קזה בעמ',
-      'ארנונה ראשון לציון'
+      { name: 'חשבוניות', category: 'כללי' },
+      { name: 'מדחסקור אוניברסל', category: 'כללי' },
+      { name: 'ג׳אקו שירות למטבחים', category: 'כללי' },
+      { name: 'יוסי סימן טוב', category: 'כללי' },
+      { name: 'י.שבי', category: 'כללי' },
+      { name: 'צ.י.שיווק', category: 'כללי' },
+      { name: 'קנקון', category: 'כללי' },
+      { name: 'לוילן סחר ומוצרים חקלאיים בע״מ', category: 'כללי' },
+      { name: 'עואודה לשיווק בע״מ', category: 'כללי' },
+      { name: 'מדג סי פרוט בע״מ', category: 'כללי' },
+      { name: 'אהרון שיווק', category: 'כללי' },
+      { name: 'שיווק שלי א.א בע״מ', category: 'כללי' },
+      { name: 'אקיפ החברה לציוד מלונאי בע״מ', category: 'כללי' },
+      { name: 'דאלאס מוצרי נייר בע״מ', category: 'כללי' },
+      { name: 'חברת חשמל', category: 'כללי' },
+      { name: 'א.א.ר שירותי ביוב', category: 'כללי' },
+      { name: 'תמי 4', category: 'כללי' },
+      { name: 'בזק', category: 'כללי' },
+      { name: 'היכל היין', category: 'כללי' },
+      { name: 'החברה המרכזית', category: 'כללי' },
+      { name: 'סוקליק', category: 'כללי' },
+      { name: 'ביסקוטי', category: 'כללי' },
+      { name: 'אייס דרים', category: 'כללי' },
+      { name: 'ג.מ טעם הארץ בע״מ', category: 'כללי' },
+      { name: 'יזמקו חברה בע״מ', category: 'כללי' },
+      { name: 'אסטרטג טכנולוגיות בע״מ', category: 'כללי' },
+      { name: 'אביב אש מערכות בע״מ', category: 'כללי' },
+      { name: 'מניב ראשון', category: 'כללי' },
+      { name: 'אודי בכור שיווק דגים בע״מ', category: 'כללי' },
+      { name: 'לירי כוח אדם בע״מ', category: 'כללי' },
+      { name: 'מש-נט בע״מ', category: 'כללי' },
+      { name: 'זאפ גרופ בע״מ', category: 'כללי' },
+      { name: 'שיא ״10״ בע״מ', category: 'כללי' },
+      { name: 'קורקידי יעקב שיווק והפצה בסיטונאות', category: 'כללי' },
+      { name: 'מקס עסקים', category: 'כללי' },
+      { name: 'וינטר מכשירי גז בעמ', category: 'כללי' },
+      { name: 'מפעל הפרסום', category: 'כללי' },
+      { name: 'וולט', category: 'כללי' },
+      { name: 'אלירן פרחים', category: 'כללי' },
+      { name: 'פרסום תבור בעצ', category: 'כללי' },
+      { name: 'אינפיניה מחזור', category: 'כללי' },
+      { name: 'ייצוגית פלוס תעשיות בעמ', category: 'כללי' },
+      { name: 'משלוחה', category: 'כללי' },
+      { name: 'ביימי טכנולוגיות', category: 'כללי' },
+      { name: 'ישראכרט', category: 'כללי' },
+      { name: 'סוגת', category: 'כללי' },
+      { name: 'אייפרקטיקום', category: 'כללי' },
+      { name: 'אמישרגז', category: 'כללי' },
+      { name: 'מאירוביץ שלי', category: 'כללי' },
+      { name: 'לה פסטה דלה קזה בעמ', category: 'כללי' },
+      { name: 'ארנונה ראשון לציון', category: 'כללי' }
     ]
 
     const invoices = []   // { supplier, number, amount, type }
@@ -437,19 +453,52 @@
        SUPPLIERS
        ====================== */
 
+    function getUniqueCategories() {
+      const set = new Set()
+      suppliers.forEach(s => {
+        if (s.category && s.category.trim()) set.add(s.category.trim())
+      })
+      return Array.from(set).sort()
+    }
+
+    function updateSupplierFilterOptions() {
+      const select = document.getElementById("supplierFilter")
+      if (!select) return
+      const cats = getUniqueCategories()
+      select.innerHTML = '<option value=\"\">הכל</option>'
+      cats.forEach(cat => {
+        const opt = document.createElement("option")
+        opt.value = cat
+        opt.textContent = cat
+        select.appendChild(opt)
+      })
+    }
+
+    function onSupplierFilterChange() {
+      updateSupplierTable()
+    }
+
     function updateSupplierTable() {
       const tbody = document.querySelector("#suppliersTable tbody")
       if (!tbody) return
 
-      if (!suppliers.length) {
-        tbody.innerHTML = '<tr><td colspan="2" class="empty">אין ספקים.</td></tr>'
+      const filter = document.getElementById("supplierFilter")
+      const selectedCat = filter ? (filter.value || "") : ""
+
+      let list = suppliers
+      if (selectedCat) {
+        list = suppliers.filter(s => (s.category || "").trim() === selectedCat)
+      }
+
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="3" class="empty">אין ספקים להצגה.</td></tr>'
         return
       }
 
       tbody.innerHTML = ""
-      suppliers.forEach((name, i) => {
+      list.forEach((s, i) => {
         const tr = document.createElement("tr")
-        tr.innerHTML = `<td>${i + 1}</td><td>${name}</td>`
+        tr.innerHTML = `<td>${i + 1}</td><td>${s.name}</td><td>${s.category || ''}</td>`
         tbody.appendChild(tr)
       })
     }
@@ -459,25 +508,35 @@
       if (!select) return
 
       select.innerHTML = ""
-      suppliers.forEach(name => {
+      suppliers.forEach(s => {
         const opt = document.createElement("option")
-        opt.value = name
-        opt.textContent = name
+        opt.value = s.name
+        opt.textContent = s.name
         select.appendChild(opt)
       })
     }
 
     function addSupplier(e) {
       e.preventDefault()
-      const input = document.getElementById("supplierName")
-      const name = (input.value || "").trim()
-      if (!name) return
+      const nameInput = document.getElementById("supplierName")
+      const catInput = document.getElementById("supplierCategory")
+      const name = (nameInput.value || "").trim()
+      let category = (catInput.value || "").trim()
 
-      if (!suppliers.includes(name)) {
-        suppliers.push(name)
+      if (!name) return
+      if (!category) category = "כללי"
+
+      const existingIndex = suppliers.findIndex(s => s.name === name)
+      if (existingIndex >= 0) {
+        suppliers[existingIndex].category = category
+      } else {
+        suppliers.push({ name, category })
       }
 
-      input.value = ""
+      nameInput.value = ""
+      catInput.value = ""
+
+      updateSupplierFilterOptions()
       updateSupplierTable()
       updateSupplierSelect()
     }
@@ -588,7 +647,7 @@
       const data = {
         month: currentMonth,
         income,
-        suppliers: suppliers.slice(),
+        suppliers: suppliers.slice(),   // עכשיו: [{name, category}, ...]
         invoices: invoices.slice()
       }
 
@@ -609,6 +668,7 @@
        ====================== */
 
     function initApp() {
+      updateSupplierFilterOptions()
       updateSupplierTable()
       updateSupplierSelect()
       initMonthAndIncome()
