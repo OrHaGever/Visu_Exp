@@ -122,6 +122,25 @@
       box-shadow:none;
     }
 
+    .btn-ghost {
+      border:none;
+      background:none;
+      color:#2563eb;
+      cursor:pointer;
+      font-size:.8rem;
+      padding:.2rem .4rem;
+      text-decoration:underline;
+    }
+    .badge-excluded {
+      display:inline-flex;
+      align-items:center;
+      padding:.1rem .5rem;
+      border-radius:999px;
+      font-size:.75rem;
+      background:#fee2e2;
+      color:#b91c1c;
+    }
+
     /* Table */
     table {
       width:100%;
@@ -167,14 +186,14 @@
 
   <header>
     דשבורד חודשי – הוצאות, ספקים ורווח
-    <small>קובץ אחד לכל חודש • ייצוא JSON לגיבוי מלא</small>
+    <small>קובץ אחד לכל חודש • ייצוא/ייבוא JSON + שמירה אוטומטית</small>
   </header>
 
   <nav>
     <button class="active" onclick="switchTab('dashboard', this)">דשבורד</button>
     <button onclick="switchTab('suppliers', this)">ספקים</button>
     <button onclick="switchTab('invoices', this)">חשבוניות</button>
-    <button onclick="switchTab('summary', this)">סיכום לפי ספק</button>
+    <button onclick="switchTab('summary', this)">סיכומים</button>
   </nav>
 
   <main>
@@ -199,8 +218,9 @@
           </div>
 
           <div class="row wrap" style="gap:.5rem;">
-            <button class="primary small outline" type="button" onclick="recalcDashboard()">רענן</button>
+            <button class="primary small outline" type="button" onclick="triggerImportJson()">ייבוא JSON</button>
             <button class="primary small" type="button" onclick="exportJson()">ייצוא JSON</button>
+            <input type="file" id="jsonImportInput" accept="application/json" style="display:none" onchange="importJsonFile(event)">
           </div>
 
         </div>
@@ -208,8 +228,9 @@
 
       <div class="grid-3">
         <div class="card">
-          <div class="kpi-label">סה״כ הוצאות</div>
+          <div class="kpi-label">סה״כ הוצאות (לחישוב רווח)</div>
           <div class="kpi-value" id="dashTotalExpenses">0.00 ₪</div>
+          <div class="kpi-sub">לא כולל ספקים שסומנו כ״לא לחשב ברווח״</div>
         </div>
 
         <div class="card">
@@ -243,8 +264,8 @@
     <!-- SUPPLIERS -->
     <section id="suppliers">
       <form onsubmit="addSupplier(event)">
-        <h3>ספקים קבועים</h3>
-        <p class="help">רשימת ספקים שמשמשת כל החודש. לכל ספק יש גם קטגוריה.</p>
+        <h3 id="supplierFormTitle">ספקים קבועים</h3>
+        <p class="help" id="supplierFormHelp">רשימת ספקים שמשמשת כל החודש. לכל ספק יש קטגוריה ואפשרות לסמן כלא מחושב ברווח.</p>
 
         <label>שם ספק</label>
         <input type="text" id="supplierName" placeholder="למשל: סוקליק / החברה המרכזית">
@@ -252,15 +273,23 @@
         <label>קטגוריה</label>
         <input type="text" id="supplierCategory" placeholder="למשל: ירקות, אלכוהול, שירותים, פרסום">
 
-        <button class="primary" type="submit">הוסף ספק</button>
+        <label style="display:flex;align-items:center;gap:.4rem;margin-top:.6rem;">
+          <input type="checkbox" id="supplierExclude">
+          <span style="font-size:.85rem;">לא לכלול הוצאות מספק זה בחישוב רווח</span>
+        </label>
+
+        <div class="row wrap" style="gap:.5rem;">
+          <button class="primary" type="submit" id="supplierSubmitBtn">הוסף ספק</button>
+          <button class="primary small outline" type="button" id="supplierCancelEditBtn" onclick="cancelEditSupplier()" style="display:none;">בטל עריכה</button>
+        </div>
       </form>
 
       <div class="card" style="margin-bottom:.8rem;">
         <div class="row wrap space-between">
           <h3 style="margin:0;font-size:1.0rem;">רשימת ספקים</h3>
-          <div class="row wrap" style="gap:.3rem;">
+          <div class="row wrap" style="gap:.3rem;align-items:center;">
             <label for="supplierFilter" style="margin:0;font-size:.85rem;color:#475569;">סינון לפי קטגוריה</label>
-            <select id="supplierFilter" onchange="onSupplierFilterChange(this.value)" style="min-width:140px;">
+            <select id="supplierFilter" onchange="onSupplierFilterChange()" style="min-width:140px;">
               <option value="">הכל</option>
             </select>
           </div>
@@ -268,7 +297,7 @@
       </div>
 
       <table id="suppliersTable">
-        <thead><tr><th>#</th><th>שם ספק</th><th>קטגוריה</th></tr></thead>
+        <thead><tr><th>#</th><th>שם ספק</th><th>קטגוריה</th><th>פעולות</th></tr></thead>
         <tbody></tbody>
       </table>
     </section>
@@ -326,88 +355,165 @@
           <tr><td colspan="3" class="empty">אין נתונים עדיין.</td></tr>
         </tbody>
       </table>
+
+      <h3 style="margin-top:1.4rem;font-size:1.05rem;">סיכום לפי קטגוריה</h3>
+      <table id="categorySummaryTable">
+        <thead><tr><th>#</th><th>קטגוריה</th><th>סה״כ</th></tr></thead>
+        <tbody>
+          <tr><td colspan="3" class="empty">אין נתונים לפי קטגוריות.</td></tr>
+        </tbody>
+      </table>
     </section>
 
   </main>
 
   <!-- JAVASCRIPT LOGIC -->
   <script>
+    const STORAGE_KEY = "finance_dashboard_state_v3";
+
     /* ======================
        STATE
        ====================== */
 
     const suppliers = [
-      { name: 'חשבוניות', category: 'כללי' },
-      { name: 'מדחסקור אוניברסל', category: 'כללי' },
-      { name: 'ג׳אקו שירות למטבחים', category: 'כללי' },
-      { name: 'יוסי סימן טוב', category: 'כללי' },
-      { name: 'י.שבי', category: 'כללי' },
-      { name: 'צ.י.שיווק', category: 'כללי' },
-      { name: 'קנקון', category: 'כללי' },
-      { name: 'לוילן סחר ומוצרים חקלאיים בע״מ', category: 'כללי' },
-      { name: 'עואודה לשיווק בע״מ', category: 'כללי' },
-      { name: 'מדג סי פרוט בע״מ', category: 'כללי' },
-      { name: 'אהרון שיווק', category: 'כללי' },
-      { name: 'שיווק שלי א.א בע״מ', category: 'כללי' },
-      { name: 'אקיפ החברה לציוד מלונאי בע״מ', category: 'כללי' },
-      { name: 'דאלאס מוצרי נייר בע״מ', category: 'כללי' },
-      { name: 'חברת חשמל', category: 'כללי' },
-      { name: 'א.א.ר שירותי ביוב', category: 'כללי' },
-      { name: 'תמי 4', category: 'כללי' },
-      { name: 'בזק', category: 'כללי' },
-      { name: 'היכל היין', category: 'כללי' },
-      { name: 'החברה המרכזית', category: 'כללי' },
-      { name: 'סוקליק', category: 'כללי' },
-      { name: 'ביסקוטי', category: 'כללי' },
-      { name: 'אייס דרים', category: 'כללי' },
-      { name: 'ג.מ טעם הארץ בע״מ', category: 'כללי' },
-      { name: 'יזמקו חברה בע״מ', category: 'כללי' },
-      { name: 'אסטרטג טכנולוגיות בע״מ', category: 'כללי' },
-      { name: 'אביב אש מערכות בע״מ', category: 'כללי' },
-      { name: 'מניב ראשון', category: 'כללי' },
-      { name: 'אודי בכור שיווק דגים בע״מ', category: 'כללי' },
-      { name: 'לירי כוח אדם בע״מ', category: 'כללי' },
-      { name: 'מש-נט בע״מ', category: 'כללי' },
-      { name: 'זאפ גרופ בע״מ', category: 'כללי' },
-      { name: 'שיא ״10״ בע״מ', category: 'כללי' },
-      { name: 'קורקידי יעקב שיווק והפצה בסיטונאות', category: 'כללי' },
-      { name: 'מקס עסקים', category: 'כללי' },
-      { name: 'וינטר מכשירי גז בעמ', category: 'כללי' },
-      { name: 'מפעל הפרסום', category: 'כללי' },
-      { name: 'וולט', category: 'כללי' },
-      { name: 'אלירן פרחים', category: 'כללי' },
-      { name: 'פרסום תבור בעצ', category: 'כללי' },
-      { name: 'אינפיניה מחזור', category: 'כללי' },
-      { name: 'ייצוגית פלוס תעשיות בעמ', category: 'כללי' },
-      { name: 'משלוחה', category: 'כללי' },
-      { name: 'ביימי טכנולוגיות', category: 'כללי' },
-      { name: 'ישראכרט', category: 'כללי' },
-      { name: 'סוגת', category: 'כללי' },
-      { name: 'אייפרקטיקום', category: 'כללי' },
-      { name: 'אמישרגז', category: 'כללי' },
-      { name: 'מאירוביץ שלי', category: 'כללי' },
-      { name: 'לה פסטה דלה קזה בעמ', category: 'כללי' },
-      { name: 'ארנונה ראשון לציון', category: 'כללי' }
-    ]
+      { name: 'חשבוניות', category: 'כללי', excludeFromProfit: false },
+      { name: 'מדחסקור אוניברסל', category: 'כללי', excludeFromProfit: false },
+      { name: 'ג׳אקו שירות למטבחים', category: 'כללי', excludeFromProfit: false },
+      { name: 'יוסי סימן טוב', category: 'כללי', excludeFromProfit: false },
+      { name: 'י.שבי', category: 'כללי', excludeFromProfit: false },
+      { name: 'צ.י.שיווק', category: 'כללי', excludeFromProfit: false },
+      { name: 'קנקון', category: 'כללי', excludeFromProfit: false },
+      { name: 'לוילן סחר ומוצרים חקלאיים בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'עואודה לשיווק בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'מדג סי פרוט בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'אהרון שיווק', category: 'כללי', excludeFromProfit: false },
+      { name: 'שיווק שלי א.א בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'אקיפ החברה לציוד מלונאי בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'דאלאס מוצרי נייר בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'חברת חשמל', category: 'כללי', excludeFromProfit: false },
+      { name: 'א.א.ר שירותי ביוב', category: 'כללי', excludeFromProfit: false },
+      { name: 'תמי 4', category: 'כללי', excludeFromProfit: false },
+      { name: 'בזק', category: 'כללי', excludeFromProfit: false },
+      { name: 'היכל היין', category: 'כללי', excludeFromProfit: false },
+      { name: 'החברה המרכזית', category: 'כללי', excludeFromProfit: false },
+      { name: 'סוקליק', category: 'כללי', excludeFromProfit: false },
+      { name: 'ביסקוטי', category: 'כללי', excludeFromProfit: false },
+      { name: 'אייס דרים', category: 'כללי', excludeFromProfit: false },
+      { name: 'ג.מ טעם הארץ בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'יזמקו חברה בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'אסטרטג טכנולוגיות בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'אביב אש מערכות בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'מניב ראשון', category: 'כללי', excludeFromProfit: false },
+      { name: 'אודי בכור שיווק דגים בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'לירי כוח אדם בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'מש-נט בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'זאפ גרופ בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'שיא ״10״ בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'קורקידי יעקב שיווק והפצה בסיטונאות', category: 'כללי', excludeFromProfit: false },
+      { name: 'מקס עסקים', category: 'כללי', excludeFromProfit: false },
+      { name: 'וינטר מכשירי גז בעמ', category: 'כללי', excludeFromProfit: false },
+      { name: 'מפעל הפרסום', category: 'כללי', excludeFromProfit: false },
+      { name: 'וולט', category: 'כללי', excludeFromProfit: false },
+      { name: 'אלירן פרחים', category: 'כללי', excludeFromProfit: false },
+      { name: 'פרסום תבור בעצ', category: 'כללי', excludeFromProfit: false },
+      { name: 'אינפיניה מחזור', category: 'כללי', excludeFromProfit: false },
+      { name: 'ייצוגית פלוס תעשיות בעמ', category: 'כללי', excludeFromProfit: false },
+      { name: 'משלוחה', category: 'כללי', excludeFromProfit: false },
+      { name: 'ביימי טכנולוגיות', category: 'כללי', excludeFromProfit: false },
+      { name: 'ישראכרט', category: 'כללי', excludeFromProfit: false },
+      { name: 'סוגת', category: 'כללי', excludeFromProfit: false },
+      { name: 'אייפרקטיקום', category: 'כללי', excludeFromProfit: false },
+      { name: 'אמישרגז', category: 'כללי', excludeFromProfit: false },
+      { name: 'מאירוביץ שלי', category: 'כללי', excludeFromProfit: false },
+      { name: 'לה פסטה דלה קזה בעמ', category: 'כללי', excludeFromProfit: false },
+      { name: 'ארנונה ראשון לציון', category: 'כללי', excludeFromProfit: false }
+    ];
 
-    const invoices = []   // { supplier, number, amount, type }
+    const invoices = [];   // { supplier, number, amount, type }
 
-    let currentMonth = ""
-    let income = 0
+    let currentMonth = "";
+    let income = 0;
+    let editingSupplierIndex = null;
 
     /* ======================
        NAVIGATION
        ====================== */
 
     function switchTab(id, btn) {
-      document.querySelectorAll("section").forEach(s => s.classList.remove("active"))
-      document.getElementById(id).classList.add("active")
+      document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
 
-      document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"))
-      if (btn) btn.classList.add("active")
+      document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+      if (btn) btn.classList.add("active");
 
-      if (id === "summary") updateSummary()
-      if (id === "dashboard") recalcDashboard()
+      if (id === "summary") updateSummary();
+      if (id === "dashboard") recalcDashboard();
+    }
+
+    /* ======================
+       HELPERS: STATE SAVE/LOAD
+       ====================== */
+
+    function saveStateToLocalStorage() {
+      try {
+        const data = {
+          month: currentMonth,
+          income,
+          suppliers,
+          invoices
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (e) {
+        console.error("saveStateToLocalStorage error", e);
+      }
+    }
+
+    function applyStateFromObject(data) {
+      // suppliers
+      if (Array.isArray(data.suppliers)) {
+        suppliers.length = 0;
+        data.suppliers.forEach(s => {
+          if (typeof s === "string") {
+            suppliers.push({ name: s, category: "כללי", excludeFromProfit: false });
+          } else if (s && typeof s.name === "string") {
+            suppliers.push({
+              name: s.name,
+              category: s.category || "כללי",
+              excludeFromProfit: !!s.excludeFromProfit
+            });
+          }
+        });
+      }
+      // invoices
+      invoices.length = 0;
+      if (Array.isArray(data.invoices)) {
+        data.invoices.forEach(inv => {
+          if (inv && typeof inv.supplier === "string" && typeof inv.amount === "number") {
+            invoices.push({
+              supplier: inv.supplier,
+              number: inv.number || "",
+              amount: inv.amount,
+              type: inv.type || "קבוע"
+            });
+          }
+        });
+      }
+      if (data.month) currentMonth = data.month;
+      if (typeof data.income === "number") income = data.income;
+    }
+
+    function loadStateFromLocalStorage() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return false;
+        const data = JSON.parse(raw);
+        if (!data || typeof data !== "object") return false;
+        applyStateFromObject(data);
+        return true;
+      } catch (e) {
+        console.error("loadStateFromLocalStorage error", e);
+        return false;
+      }
     }
 
     /* ======================
@@ -415,38 +521,57 @@
        ====================== */
 
     function initMonthAndIncome() {
-      const m = document.getElementById("dashMonth")
-      const now = new Date()
-      const mm = String(now.getMonth() + 1).padStart(2, "0")
-      const ym = `${now.getFullYear()}-${mm}`
+      const m = document.getElementById("dashMonth");
+      const now = new Date();
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const ym = `${now.getFullYear()}-${mm}`;
 
-      currentMonth = ym
-      if (m && !m.value) m.value = ym
-      recalcDashboard()
+      currentMonth = ym;
+      if (m && !m.value) m.value = ym;
+      recalcDashboard();
+    }
+
+    function syncMonthAndIncomeToInputs() {
+      const m = document.getElementById("dashMonth");
+      const inc = document.getElementById("dashIncomeInput");
+      if (m) m.value = currentMonth || "";
+      if (inc) inc.value = income || "";
+      recalcDashboard();
     }
 
     function onMonthChange(value) {
-      currentMonth = value || ""
+      currentMonth = value || "";
+      saveStateToLocalStorage();
     }
 
     function onIncomeChange(value) {
-      income = parseFloat(value) || 0
-      recalcDashboard()
+      income = parseFloat(value) || 0;
+      recalcDashboard();
+      saveStateToLocalStorage();
+    }
+
+    function isSupplierExcludedFromProfit(name) {
+      const s = suppliers.find(x => x.name === name);
+      return s ? !!s.excludeFromProfit : false;
     }
 
     function recalcDashboard() {
-      const total = invoices.reduce((sum, inv) => sum + inv.amount, 0)
+      const totalAll = invoices.reduce((sum, inv) => sum + inv.amount, 0);
+      const totalForProfit = invoices.reduce(
+        (sum, inv) => (isSupplierExcludedFromProfit(inv.supplier) ? sum : sum + inv.amount),
+        0
+      );
 
       document.getElementById("dashTotalExpenses").textContent =
-        total.toFixed(2) + " ₪"
+        totalForProfit.toFixed(2) + " ₪";
 
       document.getElementById("dashIncomeDisplay").textContent =
-        income.toFixed(2) + " ₪"
+        income.toFixed(2) + " ₪";
 
       document.getElementById("dashNet").textContent =
-        (income - total).toFixed(2) + " ₪"
+        (income - totalForProfit).toFixed(2) + " ₪";
 
-      renderSummaryTable("dashSuppliersTable")
+      renderSummaryTable("dashSuppliersTable");
     }
 
     /* ======================
@@ -454,91 +579,180 @@
        ====================== */
 
     function getUniqueCategories() {
-      const set = new Set()
+      const set = new Set();
       suppliers.forEach(s => {
-        if (s.category && s.category.trim()) set.add(s.category.trim())
-      })
-      return Array.from(set).sort()
+        if (s.category && s.category.trim()) set.add(s.category.trim());
+      });
+      return Array.from(set).sort();
     }
 
     function updateSupplierFilterOptions() {
-      const select = document.getElementById("supplierFilter")
-      if (!select) return
-      const cats = getUniqueCategories()
-      select.innerHTML = '<option value=\"\">הכל</option>'
+      const select = document.getElementById("supplierFilter");
+      if (!select) return;
+      const cats = getUniqueCategories();
+      select.innerHTML = '<option value="">הכל</option>';
       cats.forEach(cat => {
-        const opt = document.createElement("option")
-        opt.value = cat
-        opt.textContent = cat
-        select.appendChild(opt)
-      })
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        select.appendChild(opt);
+      });
     }
 
     function onSupplierFilterChange() {
-      updateSupplierTable()
+      updateSupplierTable();
     }
 
     function updateSupplierTable() {
-      const tbody = document.querySelector("#suppliersTable tbody")
-      if (!tbody) return
+      const tbody = document.querySelector("#suppliersTable tbody");
+      if (!tbody) return;
 
-      const filter = document.getElementById("supplierFilter")
-      const selectedCat = filter ? (filter.value || "") : ""
+      const filter = document.getElementById("supplierFilter");
+      const selectedCat = filter ? (filter.value || "") : "";
 
-      let list = suppliers
+      const baseList = suppliers.map((s, index) => ({ s, index }));
+      let list = baseList;
       if (selectedCat) {
-        list = suppliers.filter(s => (s.category || "").trim() === selectedCat)
+        list = baseList.filter(item => (item.s.category || "").trim() === selectedCat);
       }
 
       if (!list.length) {
-        tbody.innerHTML = '<tr><td colspan="3" class="empty">אין ספקים להצגה.</td></tr>'
-        return
+        tbody.innerHTML = '<tr><td colspan="4" class="empty">אין ספקים להצגה.</td></tr>';
+        return;
       }
 
-      tbody.innerHTML = ""
-      list.forEach((s, i) => {
-        const tr = document.createElement("tr")
-        tr.innerHTML = `<td>${i + 1}</td><td>${s.name}</td><td>${s.category || ''}</td>`
-        tbody.appendChild(tr)
-      })
+      tbody.innerHTML = "";
+      list.forEach((item, i) => {
+        const s = item.s;
+        const idx = item.index;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${i + 1}</td>
+          <td>${s.name}</td>
+          <td>${s.category || ""}</td>
+          <td>
+            ${s.excludeFromProfit ? '<span class="badge-excluded">לא מחושב ברווח</span><br>' : ''}
+            <button type="button" class="btn-ghost" onclick="startEditSupplier(${idx})">ערוך</button>
+            <button type="button" class="btn-ghost" onclick="removeSupplier(${idx})">מחק</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
     }
 
     function updateSupplierSelect() {
-      const select = document.getElementById("invoiceSupplier")
-      if (!select) return
+      const select = document.getElementById("invoiceSupplier");
+      if (!select) return;
 
-      select.innerHTML = ""
+      select.innerHTML = "";
       suppliers.forEach(s => {
-        const opt = document.createElement("option")
-        opt.value = s.name
-        opt.textContent = s.name
-        select.appendChild(opt)
-      })
+        const opt = document.createElement("option");
+        opt.value = s.name;
+        opt.textContent = s.name;
+        select.appendChild(opt);
+      });
     }
 
     function addSupplier(e) {
-      e.preventDefault()
-      const nameInput = document.getElementById("supplierName")
-      const catInput = document.getElementById("supplierCategory")
-      const name = (nameInput.value || "").trim()
-      let category = (catInput.value || "").trim()
+      e.preventDefault();
+      const nameInput = document.getElementById("supplierName");
+      const catInput = document.getElementById("supplierCategory");
+      const excludeInput = document.getElementById("supplierExclude");
 
-      if (!name) return
-      if (!category) category = "כללי"
+      const name = (nameInput.value || "").trim();
+      let category = (catInput.value || "").trim();
+      const excludeFromProfit = !!excludeInput.checked;
 
-      const existingIndex = suppliers.findIndex(s => s.name === name)
-      if (existingIndex >= 0) {
-        suppliers[existingIndex].category = category
+      if (!name) return;
+      if (!category) category = "כללי";
+
+      if (editingSupplierIndex === null) {
+        // ספק חדש
+        suppliers.push({ name, category, excludeFromProfit });
       } else {
-        suppliers.push({ name, category })
+        // עדכון ספק קיים
+        suppliers[editingSupplierIndex].name = name;
+        suppliers[editingSupplierIndex].category = category;
+        suppliers[editingSupplierIndex].excludeFromProfit = excludeFromProfit;
       }
 
-      nameInput.value = ""
-      catInput.value = ""
+      nameInput.value = "";
+      catInput.value = "";
+      excludeInput.checked = false;
 
-      updateSupplierFilterOptions()
-      updateSupplierTable()
-      updateSupplierSelect()
+      editingSupplierIndex = null;
+      resetSupplierFormUI();
+
+      updateSupplierFilterOptions();
+      updateSupplierTable();
+      updateSupplierSelect();
+      recalcDashboard();
+      saveStateToLocalStorage();
+    }
+
+    function startEditSupplier(index) {
+      const s = suppliers[index];
+      if (!s) return;
+      editingSupplierIndex = index;
+
+      const nameInput = document.getElementById("supplierName");
+      const catInput = document.getElementById("supplierCategory");
+      const excludeInput = document.getElementById("supplierExclude");
+      const title = document.getElementById("supplierFormTitle");
+      const help = document.getElementById("supplierFormHelp");
+      const btn = document.getElementById("supplierSubmitBtn");
+      const cancelBtn = document.getElementById("supplierCancelEditBtn");
+
+      nameInput.value = s.name;
+      catInput.value = s.category || "";
+      excludeInput.checked = !!s.excludeFromProfit;
+
+      title.textContent = "עריכת ספק";
+      help.textContent = "אתה במצב עריכה. לאחר עדכון לחץ על \"עדכן ספק\" או \"בטל עריכה\".";
+      btn.textContent = "עדכן ספק";
+      cancelBtn.style.display = "inline-flex";
+    }
+
+    function cancelEditSupplier() {
+      editingSupplierIndex = null;
+      const nameInput = document.getElementById("supplierName");
+      const catInput = document.getElementById("supplierCategory");
+      const excludeInput = document.getElementById("supplierExclude");
+
+      nameInput.value = "";
+      catInput.value = "";
+      excludeInput.checked = false;
+
+      resetSupplierFormUI();
+    }
+
+    function resetSupplierFormUI() {
+      const title = document.getElementById("supplierFormTitle");
+      const help = document.getElementById("supplierFormHelp");
+      const btn = document.getElementById("supplierSubmitBtn");
+      const cancelBtn = document.getElementById("supplierCancelEditBtn");
+
+      title.textContent = "ספקים קבועים";
+      help.textContent = "רשימת ספקים שמשמשת כל החודש. לכל ספק יש קטגוריה ואפשרות לסמן כלא מחושב ברווח.";
+      btn.textContent = "הוסף ספק";
+      cancelBtn.style.display = "none";
+    }
+
+    function removeSupplier(index) {
+      if (!confirm("למחוק את הספק הזה מהרשימה? הפעולה לא מוחקת חשבוניות קיימות.")) return;
+
+      suppliers.splice(index, 1);
+      if (editingSupplierIndex === index) {
+        cancelEditSupplier();
+      } else if (editingSupplierIndex !== null && editingSupplierIndex > index) {
+        editingSupplierIndex -= 1;
+      }
+
+      updateSupplierFilterOptions();
+      updateSupplierTable();
+      updateSupplierSelect();
+      recalcDashboard();
+      saveStateToLocalStorage();
     }
 
     /* ======================
@@ -546,46 +760,47 @@
        ====================== */
 
     function addInvoice(e) {
-      e.preventDefault()
+      e.preventDefault();
 
-      const supplier = document.getElementById("invoiceSupplier").value
-      const number = document.getElementById("invoiceNumber").value.trim()
-      const amount = parseFloat(document.getElementById("invoiceAmount").value)
-      const type = document.getElementById("invoiceType").value
+      const supplier = document.getElementById("invoiceSupplier").value;
+      const number = document.getElementById("invoiceNumber").value.trim();
+      const amount = parseFloat(document.getElementById("invoiceAmount").value);
+      const type = document.getElementById("invoiceType").value;
 
-      if (!supplier || !number || isNaN(amount)) return
+      if (!supplier || !number || isNaN(amount)) return;
 
-      invoices.push({ supplier, number, amount, type })
+      invoices.push({ supplier, number, amount, type });
 
-      document.getElementById("invoiceNumber").value = ""
-      document.getElementById("invoiceAmount").value = ""
+      document.getElementById("invoiceNumber").value = "";
+      document.getElementById("invoiceAmount").value = "";
 
-      updateInvoicesTable()
-      recalcDashboard()
+      updateInvoicesTable();
+      recalcDashboard();
+      saveStateToLocalStorage();
     }
 
     function updateInvoicesTable() {
-      const tbody = document.querySelector("#invoicesTable tbody")
-      if (!tbody) return
+      const tbody = document.querySelector("#invoicesTable tbody");
+      if (!tbody) return;
 
       if (!invoices.length) {
         tbody.innerHTML =
-          '<tr><td colspan="5" class="empty">אין חשבוניות.</td></tr>'
-        return
+          '<tr><td colspan="5" class="empty">אין חשבוניות.</td></tr>';
+        return;
       }
 
-      tbody.innerHTML = ""
+      tbody.innerHTML = "";
       invoices.forEach((inv, i) => {
-        const tr = document.createElement("tr")
+        const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${i + 1}</td>
           <td>${inv.supplier}</td>
           <td>${inv.number}</td>
           <td>${inv.amount.toFixed(2)} ₪</td>
           <td>${inv.type}</td>
-        `
-        tbody.appendChild(tr)
-      })
+        `;
+        tbody.appendChild(tr);
+      });
     }
 
     /* ======================
@@ -593,74 +808,148 @@
        ====================== */
 
     function calculateSummary() {
-      const summary = {}
+      const summary = {};
       invoices.forEach(({ supplier, amount }) => {
-        if (!summary[supplier]) summary[supplier] = 0
-        summary[supplier] += amount
-      })
-      return summary
+        if (!summary[supplier]) summary[supplier] = 0;
+        summary[supplier] += amount;
+      });
+      return summary;
     }
 
     function renderSummaryTable(tableId) {
-      const table = document.getElementById(tableId)
-      if (!table) return
+      const table = document.getElementById(tableId);
+      if (!table) return;
 
-      const tbody = table.querySelector("tbody")
-      const summary = calculateSummary()
-      const entries = Object.entries(summary)
+      const tbody = table.querySelector("tbody");
+      const summary = calculateSummary();
+      const entries = Object.entries(summary);
 
       if (!entries.length) {
-        const cols = table.querySelectorAll("thead th").length
+        const cols = table.querySelectorAll("thead th").length;
         tbody.innerHTML =
-          `<tr><td colspan="${cols}" class="empty">אין נתונים.</td></tr>`
-        return
+          `<tr><td colspan="${cols}" class="empty">אין נתונים.</td></tr>`;
+        return;
       }
 
-      tbody.innerHTML = ""
+      tbody.innerHTML = "";
       entries
         .sort((a, b) => b[1] - a[1])
         .forEach(([name, total], idx) => {
-          const tr = document.createElement("tr")
+          const tr = document.createElement("tr");
           tr.innerHTML = `
             <td>${idx + 1}</td>
             <td>${name}</td>
             <td>${total.toFixed(2)} ₪</td>
-          `
-          tbody.appendChild(tr)
-        })
+          `;
+          tbody.appendChild(tr);
+        });
+    }
+
+    function calculateCategorySummary() {
+      const catSummary = {};
+      invoices.forEach(inv => {
+        const s = suppliers.find(x => x.name === inv.supplier);
+        const cat = s && s.category ? s.category : "לא מקוטלג";
+        if (!catSummary[cat]) catSummary[cat] = 0;
+        catSummary[cat] += inv.amount;
+      });
+      return catSummary;
+    }
+
+    function renderCategorySummaryTable() {
+      const table = document.getElementById("categorySummaryTable");
+      if (!table) return;
+
+      const tbody = table.querySelector("tbody");
+      const summary = calculateCategorySummary();
+      const entries = Object.entries(summary);
+
+      if (!entries.length) {
+        tbody.innerHTML =
+          '<tr><td colspan="3" class="empty">אין נתונים לפי קטגוריות.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = "";
+      entries
+        .sort((a, b) => b[1] - a[1])
+        .forEach(([cat, total], idx) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${idx + 1}</td>
+            <td>${cat}</td>
+            <td>${total.toFixed(2)} ₪</td>
+          `;
+          tbody.appendChild(tr);
+        });
     }
 
     function updateSummary() {
-      renderSummaryTable("summaryTable")
+      renderSummaryTable("summaryTable");
+      renderCategorySummaryTable();
     }
 
     /* ======================
-       EXPORT JSON (MONTHLY FILE)
+       EXPORT / IMPORT JSON
        ====================== */
 
     function exportJson() {
       if (!currentMonth) {
-        alert("בחר חודש לפני ייצוא.")
-        return
+        alert("בחר חודש לפני ייצוא.");
+        return;
       }
 
       const data = {
         month: currentMonth,
         income,
-        suppliers: suppliers.slice(),   // עכשיו: [{name, category}, ...]
-        invoices: invoices.slice()
-      }
+        suppliers: suppliers,
+        invoices: invoices
+      };
 
-      const jsonStr = JSON.stringify(data, null, 2)
-      const blob = new Blob([jsonStr], { type: "application/json" })
+      const jsonStr = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonStr], { type: "application/json" });
 
-      const safeMonth = currentMonth.replace(/[^0-9-]/g, "") || "month"
-      const a = document.createElement("a")
-      a.href = URL.createObjectURL(blob)
-      a.download = `finance_${safeMonth}.json`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
+      const safeMonth = currentMonth.replace(/[^0-9-]/g, "") || "month";
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `finance_${safeMonth}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function triggerImportJson() {
+      const input = document.getElementById("jsonImportInput");
+      if (input) input.value = "";
+      if (input) input.click();
+    }
+
+    function importJsonFile(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (!data || typeof data !== "object") {
+            alert("קובץ JSON לא תקין.");
+            return;
+          }
+          applyStateFromObject(data);
+          syncMonthAndIncomeToInputs();
+          updateSupplierFilterOptions();
+          updateSupplierTable();
+          updateSupplierSelect();
+          updateInvoicesTable();
+          updateSummary();
+          saveStateToLocalStorage();
+        } catch (err) {
+          console.error(err);
+          alert("שגיאה בקריאת קובץ JSON.");
+        }
+      };
+      reader.readAsText(file, "utf-8");
     }
 
     /* ======================
@@ -668,15 +957,20 @@
        ====================== */
 
     function initApp() {
-      updateSupplierFilterOptions()
-      updateSupplierTable()
-      updateSupplierSelect()
-      initMonthAndIncome()
-      updateInvoicesTable()
-      updateSummary()
+      const hadState = loadStateFromLocalStorage();
+      updateSupplierFilterOptions();
+      updateSupplierTable();
+      updateSupplierSelect();
+      updateInvoicesTable();
+      if (hadState) {
+        syncMonthAndIncomeToInputs();
+      } else {
+        initMonthAndIncome();
+      }
+      updateSummary();
     }
 
-    initApp()
+    initApp();
   </script>
 
 </body>
