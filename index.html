@@ -469,7 +469,6 @@
     }
 
     function applyStateFromObject(data) {
-      // suppliers
       if (Array.isArray(data.suppliers)) {
         suppliers.length = 0;
         data.suppliers.forEach(s => {
@@ -484,7 +483,7 @@
           }
         });
       }
-      // invoices
+
       invoices.length = 0;
       if (Array.isArray(data.invoices)) {
         data.invoices.forEach(inv => {
@@ -556,7 +555,6 @@
     }
 
     function recalcDashboard() {
-      const totalAll = invoices.reduce((sum, inv) => sum + inv.amount, 0);
       const totalForProfit = invoices.reduce(
         (sum, inv) => (isSupplierExcludedFromProfit(inv.supplier) ? sum : sum + inv.amount),
         0
@@ -632,8 +630,8 @@
           <td>${s.category || ""}</td>
           <td>
             ${s.excludeFromProfit ? '<span class="badge-excluded">לא מחושב ברווח</span><br>' : ''}
-            <button type="button" class="btn-ghost" onclick="startEditSupplier(${idx})">ערוך</button>
-            <button type="button" class="btn-ghost" onclick="removeSupplier(${idx})">מחק</button>
+            <button type="button" class="btn-ghost" data-action="edit" data-index="${idx}">ערוך</button>
+            <button type="button" class="btn-ghost" data-action="delete" data-index="${idx}">מחק</button>
           </td>
         `;
         tbody.appendChild(tr);
@@ -667,10 +665,8 @@
       if (!category) category = "כללי";
 
       if (editingSupplierIndex === null) {
-        // ספק חדש
         suppliers.push({ name, category, excludeFromProfit });
       } else {
-        // עדכון ספק קיים
         suppliers[editingSupplierIndex].name = name;
         suppliers[editingSupplierIndex].category = category;
         suppliers[editingSupplierIndex].excludeFromProfit = excludeFromProfit;
@@ -968,6 +964,22 @@
         initMonthAndIncome();
       }
       updateSummary();
+
+      // האזנה לכפתורי ערוך/מחק בטבלת ספקים (event delegation)
+      const suppliersTableEl = document.getElementById("suppliersTable");
+      if (suppliersTableEl) {
+        suppliersTableEl.addEventListener("click", (e) => {
+          const btn = e.target.closest("button[data-action]");
+          if (!btn) return;
+          const index = Number(btn.dataset.index);
+          if (Number.isNaN(index)) return;
+          if (btn.dataset.action === "edit") {
+            startEditSupplier(index);
+          } else if (btn.dataset.action === "delete") {
+            removeSupplier(index);
+          }
+        });
+      }
     }
 
     initApp();
