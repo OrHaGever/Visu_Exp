@@ -1,324 +1,267 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>דשבורד הוצאות ורווח — גרסה 5</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ניהול הוצאות עסק</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Assistant', sans-serif;
+      direction: rtl;
+    }
+    body {
+      margin: 0;
+      background: #f4f6f9;
+      color: #333;
+    }
+    header {
+      background: #007acc;
+      color: white;
+      padding: 1rem 2rem;
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      background: #e3e8ef;
+      padding: 0.5rem;
+    }
+    nav button {
+      margin: 0 1rem;
+      padding: 0.5rem 1rem;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    nav button:hover {
+      background: #d2e7fa;
+    }
+    section {
+      display: none;
+      padding: 2rem;
+    }
+    section.active {
+      display: block;
+    }
+    form {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    form h3 {
+      margin-top: 0;
+      color: #007acc;
+    }
+    form label {
+      display: block;
+      margin: 1rem 0 0.3rem;
+      font-weight: 600;
+    }
+    form input, form select {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    form button {
+      margin-top: 1rem;
+      padding: 0.7rem 1.2rem;
+      background: #007acc;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 0.75rem;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background: #007acc;
+      color: white;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+  </style>
 </head>
 <body>
-  <header class="app-header">
-    <div class="container header-inner">
-      <div class="brand">
-        <div class="logo" aria-hidden="true">₪</div>
-        <div class="brand-text">
-          <h1>דשבורד הוצאות ורווח</h1>
-          <p>ויזואלי. פשוט. יציב.</p>
-        </div>
-      </div>
-      <nav class="tabs" role="tablist" aria-label="ניווט ראשי">
-        <button class="tab active" data-tab="dashboard" role="tab" aria-selected="true">דשבורד</button>
-        <button class="tab" data-tab="invoices" role="tab">חשבוניות</button>
-        <button class="tab" data-tab="suppliers" role="tab">ספקים</button>
-        <button class="tab" data-tab="reports" role="tab">רווח</button>
-        <button class="tab" data-tab="settings" role="tab" title="ייבוא/ייצוא וערכות צבע">הגדרות</button>
-      </nav>
+  <header>ניהול הוצאות עסק</header>
+  <nav>
+    <button onclick="switchTab('suppliers')">ספקים</button>
+    <button onclick="switchTab('invoices')">חשבוניות</button>
+    <button onclick="switchTab('summary')">סיכום</button>
+  </nav>
+
+  <section id="suppliers" class="active">
+    <form onsubmit="addSupplier(event)">
+      <h3>הוספת ספק</h3>
+      <label>שם ספק</label>
+      <input type="text" id="supplierName" required>
+      <button>הוסף ספק</button>
+    </form>
+    <table id="suppliersTable">
+      <thead><tr><th>#</th><th>שם ספק</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section id="invoices">
+    <form onsubmit="addInvoice(event)">
+      <h3>הוספת חשבונית</h3>
+      <label>שם ספק</label>
+      <select id="invoiceSupplier" required></select>
+      <label>מספר חשבונית</label>
+      <input type="text" id="invoiceNumber" required>
+      <label>סכום</label>
+      <input type="number" id="invoiceAmount" required>
+      <label>תשלום</label>
+      <select id="invoiceType">
+        <option value="קבוע">קבוע</option>
+        <option value="חד פעמי">חד פעמי</option>
+      </select>
+      <button>הוסף חשבונית</button>
+    </form>
+    <table id="invoicesTable">
+      <thead><tr><th>ספק</th><th># חשבונית</th><th>סכום</th><th>תשלום</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section id="summary">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
+      <h3>סיכום לפי ספק</h3>
+      <button type="button" onclick="exportData()">ייצוא נתונים (CSV)</button>
     </div>
-  </header>
+    <table id="summaryTable">
+      <thead><tr><th>ספק</th><th>סה"כ</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
 
-  <main class="container stack">
-    <!-- DASHBOARD -->
-    <section id="dashboard" class="view visible stack-lg" aria-labelledby="tab-dashboard">
-      <div class="onboarding card row">
-        <div class="ob-icon" aria-hidden="true">✨</div>
-        <div class="ob-text">
-          <div class="ob-title">ברוך הבא</div>
-          <div class="ob-sub">הוסף חשבונית ראשונה או טען נתוני דוגמה דרך "הגדרות".</div>
-        </div>
-        <div class="ob-actions">
-          <button class="primary small" data-goto="invoices">הוספת חשבונית</button>
-          <button class="ghost small" data-goto="settings">הגדרות</button>
-        </div>
-      </div>
+  <script>
+    const suppliers = ["סוקוליק","החברה המרכזית","ביסקוטי","ניקיון חודשי","חלב וגלידות","ירקות ופירות"]
+    const invoices = []
 
-      <div class="toolbar row wrap">
-        <div class="filters row wrap">
-          <label>מתאריך
-            <input type="date" id="filterFrom" aria-label="תאריך התחלה לסינון">
-          </label>
-          <label>עד תאריך
-            <input type="date" id="filterTo" aria-label="תאריך סיום לסינון">
-          </label>
-          <label>ספק
-            <select id="filterSupplier" aria-label="סינון לפי ספק">
-              <option value="">הכל</option>
-            </select>
-          </label>
-          <label>סוג
-            <select id="filterType" aria-label="סינון לפי סוג">
-              <option value="">הכל</option>
-              <option value="recurring">קבוע</option>
-              <option value="oneoff">חד-פעמי</option>
-            </select>
-          </label>
-          <button id="clearFilters" class="ghost">נקה</button>
-        </div>
-      </div>
+    // מילוי טבלת ספקים ותיבת הבחירה כבר בטעינה
+    updateSupplierTable()
+    updateSupplierSelect()
 
-      <div id="kpis" class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-title">סה״כ הוצאות</div>
-          <div class="kpi-value" id="kpiTotal">₪0</div>
-          <div class="kpi-sub" id="kpiCount">0 רשומות</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-title">קבוע</div>
-          <div class="kpi-value badge badge-rec" id="kpiRecurring">₪0</div>
-          <div class="kpi-sub" id="kpiRecurringCount">0 חשבוניות</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-title">חד-פעמי</div>
-          <div class="kpi-value badge badge-one" id="kpiOneoff">₪0</div>
-          <div class="kpi-sub" id="kpiOneoffCount">0 חשבוניות</div>
-        </div>
-        <div class="kpi-card accent">
-          <div class="kpi-title">ממוצע לחשבונית</div>
-          <div class="kpi-value" id="kpiAvg">₪0</div>
-          <div class="kpi-sub">מבוסס על הסינון הנוכחי</div>
-        </div>
-      </div>
+    function switchTab(tabId) {
+      document.querySelectorAll("section").forEach(s => s.classList.remove("active"))
+      document.getElementById(tabId).classList.add("active")
+      if (tabId === 'summary') updateSummary()
+    }
 
-      <!-- Charts -->
-      <div class="panel stack">
-        <h2>גרפיקה</h2>
-        <div class="charts auto-grid min-2">
-          <div class="chart-card">
-            <div class="chart-title">קבוע מול חד-פעמי</div>
-            <div class="donut" id="donut" style="--p1:0; --p2:0;" aria-label="תרשים עוגה של הוצאות קבועות מול חד-פעמיות">
-              <div class="donut-hole">
-                <div class="donut-total" id="donutTotal">₪0</div>
-                <div class="donut-sub">סה״כ</div>
-              </div>
-            </div>
-            <div class="legend">
-              <span class="legend-item rec"><i></i><b>קבוע</b> <em id="legRecPct">0%</em></span>
-              <span class="legend-item one"><i></i><b>חד-פעמי</b> <em id="legOnePct">0%</em></span>
-            </div>
-          </div>
+    function addSupplier(e) {
+      e.preventDefault()
+      const name = document.getElementById("supplierName").value.trim()
+      if (!name) return
+      suppliers.push(name)
+      document.getElementById("supplierName").value = ""
+      updateSupplierTable()
+      updateSupplierSelect()
+    }
 
-          <div class="chart-card">
-            <div class="chart-title">Top ספקים</div>
-            <div class="bars" id="bars"></div>
-            <div class="bars-hints">גובה העמודה יחסי לספק המוביל.</div>
-          </div>
-        </div>
-      </div>
+    function updateSupplierTable() {
+      const tbody = document.querySelector("#suppliersTable tbody")
+      tbody.innerHTML = ""
+      suppliers.forEach((name, i) => {
+        const tr = document.createElement("tr")
+        tr.innerHTML = `<td>${i + 1}</td><td>${name}</td>`
+        tbody.appendChild(tr)
+      })
+    }
 
-      <h2 class="section-title">הוצאות לפי ספק</h2>
-      <div id="supplierCards" class="auto-grid"></div>
-    </section>
+    function updateSupplierSelect() {
+      const select = document.getElementById("invoiceSupplier")
+      select.innerHTML = ""
+      suppliers.forEach(name => {
+        const opt = document.createElement("option")
+        opt.value = name
+        opt.textContent = name
+        select.appendChild(opt)
+      })
+    }
 
-    <!-- INVOICES -->
-    <section id="invoices" class="view stack-lg" aria-labelledby="tab-invoices">
-      <div class="split">
-        <form id="invoiceForm" class="panel stack">
-          <h2>הוספת חשבונית</h2>
-          <p class="help">מינימום: תאריך, ספק, סכום.</p>
-          <div class="grid-2">
-            <label>תאריך
-              <input type="date" id="invDate" required />
-              <span class="input-hint">למשל 2025-11-02</span>
-            </label>
-            <label>ספק
-              <input type="text" id="invSupplier" list="supplierList" placeholder="הקלד או בחר" required />
-              <datalist id="supplierList"></datalist>
-              <span class="input-hint">מזהה לסיכומים</span>
-            </label>
-            <label>מס׳ חשבונית
-              <input type="text" id="invNumber" placeholder="87434" />
-            </label>
-            <label>סכום (₪)
-              <input type="number" id="invAmount" min="0" step="0.01" required />
-            </label>
-            <label>סוג תשלום
-              <select id="invType" required>
-                <option value="recurring">קבוע</option>
-                <option value="oneoff">חד-פעמי</option>
-              </select>
-            </label>
-            <label>שולם?
-              <input type="checkbox" id="invPaid" />
-            </label>
-            <label class="span-2">תיאור
-              <input type="text" id="invDesc" placeholder="אופציונלי: פירוט מה נקנה" />
-            </label>
-          </div>
-          <div class="actions row">
-            <button type="submit" class="primary">שמור חשבונית</button>
-            <button type="reset" class="ghost" id="resetInvoice">ניקוי</button>
-          </div>
-        </form>
+    function addInvoice(e) {
+      e.preventDefault()
+      const supplier = document.getElementById("invoiceSupplier").value
+      const number = document.getElementById("invoiceNumber").value.trim()
+      const amount = parseFloat(document.getElementById("invoiceAmount").value)
+      const type = document.getElementById("invoiceType").value
+      if (!supplier || !number || isNaN(amount)) return
+      invoices.push({ supplier, number, amount, type })
+      document.getElementById("invoiceNumber").value = ""
+      document.getElementById("invoiceAmount").value = ""
+      updateInvoiceTable()
+    }
 
-        <div class="panel stack">
-          <div class="panel-head row">
-            <h2>רשימת חשבוניות</h2>
-            <button id="fabAdd" class="fab" title="הוספת חשבונית" aria-label="הוספת חשבונית">＋</button>
-          </div>
-          <div class="table-responsive">
-            <table id="invoicesTable" class="data-table">
-              <thead>
-                <tr>
-                  <th>תאריך</th>
-                  <th>ספק</th>
-                  <th>מס׳</th>
-                  <th>סכום</th>
-                  <th>סוג</th>
-                  <th>שולם</th>
-                  <th>פעולות</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-              <tfoot>
-                <tr>
-                  <td colspan="3" class="muted">סה״כ בטבלה</td>
-                  <td id="tblTotal">₪0</td>
-                  <td colspan="3"></td>
-                </tr>
-              </tfoot>
-            </table>
-            <div id="invoicesEmpty" class="empty">
-              <div class="empty-icon" aria-hidden="true">🧾</div>
-              <div class="empty-text">אין חשבוניות. הוסף באמצעות ＋ או הטופס.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    function updateInvoiceTable() {
+      const tbody = document.querySelector("#invoicesTable tbody")
+      tbody.innerHTML = ""
+      invoices.forEach(inv => {
+        const tr = document.createElement("tr")
+        tr.innerHTML = `<td>${inv.supplier}</td><td>${inv.number}</td><td>${inv.amount.toFixed(2)}</td><td>${inv.type}</td>`
+        tbody.appendChild(tr)
+      })
+    }
 
-    <!-- SUPPLIERS -->
-    <section id="suppliers" class="view stack-lg" aria-labelledby="tab-suppliers">
-      <div class="split">
-        <form id="supplierForm" class="panel stack">
-          <h2>הוספת ספק</h2>
-          <p class="help">הוספת ספק מייעלת בחירה וסיכומים.</p>
-          <div class="grid-2">
-            <label>שם ספק
-              <input type="text" id="supName" required />
-            </label>
-            <label>קטגוריה
-              <input type="text" id="supCategory" placeholder="משקאות / קינוחים / ניקיון" />
-            </label>
-            <label class="span-2">הערות
-              <input type="text" id="supNotes" placeholder="שעות אספקה, איש קשר, תנאי תשלום" />
-            </label>
-          </div>
-          <div class="actions row">
-            <button type="submit" class="primary">שמור ספק</button>
-            <button type="reset" class="ghost" id="resetSupplier">ניקוי</button>
-          </div>
-        </form>
+    function updateSummary() {
+      const summary = {}
+      invoices.forEach(({ supplier, amount }) => {
+        if (!summary[supplier]) summary[supplier] = 0
+        summary[supplier] += amount
+      })
+      const tbody = document.querySelector("#summaryTable tbody")
+      tbody.innerHTML = ""
+      Object.entries(summary).forEach(([name, total]) => {
+        const tr = document.createElement("tr")
+        tr.innerHTML = `<td>${name}</td><td>${total.toFixed(2)}</td>`
+        tbody.appendChild(tr)
+      })
+    }
+      function exportData() {
+      if (!suppliers.length && !invoices.length) {
+        alert("אין נתונים לייצוא")
+        return
+      }
 
-        <div class="panel stack">
-          <h2>ספקים</h2>
-          <div id="suppliersList" class="list"></div>
-          <div id="suppliersEmpty" class="empty">
-            <div class="empty-icon" aria-hidden="true">🏷️</div>
-            <div class="empty-text">אין ספקים עדיין. הוסף מימין.</div>
-          </div>
-        </div>
-      </div>
-    </section>
+      let csv = "ספק,מספר חשבונית,סכום,סוג תשלום\n"
+      invoices.forEach(inv => {
+        csv += `"${inv.supplier}","${inv.number}",${inv.amount},"${inv.type}"\n`
+      })
 
-    <!-- REPORTS / PROFIT -->
-    <section id="reports" class="view stack-lg" aria-labelledby="tab-reports">
-      <div class="panel stack">
-        <h2>רווח לפי חודש</h2>
-        <p class="help">בחר חודש, הזן מחזור, קבל רווח נקי. סנן לפי סוג/ספק במידת הצורך.</p>
-        <div class="grid-2">
-          <label>חודש
-            <input type="month" id="revMonth" />
-          </label>
-          <label>מחזור מכירות בחודש (₪)
-            <input type="number" id="revAmount" min="0" step="0.01" placeholder="הכנס מחזור מכירות" />
-          </label>
-          <label>מסנני דוח
-            <div class="row">
-              <select id="reportType">
-                <option value="">הכל</option>
-                <option value="recurring">קבוע</option>
-                <option value="oneoff">חד-פעמי</option>
-              </select>
-              <select id="reportSupplier">
-                <option value="">כל הספקים</option>
-              </select>
-            </div>
-          </label>
-        </div>
-        <div class="report-cards auto-grid min-2">
-          <div class="kpi-card">
-            <div class="kpi-title">הוצאות בחודש</div>
-            <div class="kpi-value" id="repExpenses">₪0</div>
-            <div class="kpi-sub" id="repBreakdown">קבוע: ₪0 • חד-פעמי: ₪0</div>
-          </div>
-          <div class="kpi-card accent">
-            <div class="kpi-title">רווח נקי (לפני מס)</div>
-            <div class="kpi-value" id="repNet">₪0</div>
-            <div class="kpi-sub">מחזור פחות הוצאות</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel stack">
-        <h2>פירוט לפי ספק בחודש</h2>
-        <div id="reportSuppliers" class="auto-grid"></div>
-      </div>
-    </section>
-
-    <!-- SETTINGS -->
-    <section id="settings" class="view stack-lg" aria-labelledby="tab-settings">
-      <div class="panel stack">
-        <h2>ייבוא/ייצוא נתונים</h2>
-        <div class="grid-2">
-          <div class="stack">
-            <button id="exportJson" class="primary">ייצוא JSON</button>
-            <p class="help">הורדת גיבוי לקובץ.</p>
-          </div>
-          <div class="stack">
-            <label class="file">
-              <input type="file" id="importJson" accept="application/json" />
-              <span>ייבוא JSON</span>
-            </label>
-            <p class="help">טעינת גיבוי מקובץ JSON.</p>
-          </div>
-          <div class="stack">
-            <button id="sampleData" class="ghost">טעינת נתוני דוגמה</button>
-          </div>
-          <div class="stack">
-            <button id="clearAll" class="danger">איפוס מוחלט</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel stack">
-        <h2>ערכות צבע</h2>
-        <div class="themes row">
-          <button class="chip" data-theme="light">בהירה</button>
-          <button class="chip" data-theme="dark">כהה</button>
-          <button class="chip" data-theme="sepia">ספיה</button>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="app-footer">
-    <div class="container">
-      <small>שמירה אוטומטית בדפדפן. אין שרת. הכל נשאר אצלך.</small>
-    </div>
-  </footer>
-
-  <script src="app.js"></script>
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = "expenses.csv"
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    }
+  </script>
 </body>
 </html>
