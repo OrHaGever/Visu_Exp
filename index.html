@@ -1,190 +1,410 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="he" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ניהול הוצאות עסק</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>דשבורד חודשי – הוצאות וספקים</title>
+
+  <!-- Google Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;600;700&display=swap" rel="stylesheet">
+
   <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'Assistant', sans-serif;
-      direction: rtl;
-    }
-    body {
-      margin: 0;
-      background: #f4f6f9;
-      color: #333;
-    }
+    * { box-sizing: border-box; font-family: 'Assistant', system-ui, -apple-system, Segoe UI, sans-serif; }
+    body { margin: 0; background: #f4f6fb; color: #222; }
+
+    /* Header */
     header {
-      background: #007acc;
-      color: white;
-      padding: 1rem 2rem;
+      background: linear-gradient(135deg, #2563eb, #10b981);
+      color: #fff;
+      padding: 1.4rem 2rem;
       text-align: center;
-      font-size: 1.8rem;
-      font-weight: 600;
+      font-size: 1.7rem;
+      font-weight: 700;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, .25);
     }
+    header small { display:block; font-size: .9rem; opacity: .9; margin-top: .25rem; }
+
+    /* Navigation Tabs */
     nav {
-      display: flex;
-      justify-content: center;
-      background: #e3e8ef;
-      padding: 0.5rem;
+      display:flex;
+      justify-content:center;
+      gap:.5rem;
+      background:#e5edf7;
+      padding:.6rem 1rem;
+      position:sticky;
+      top:0;
+      z-index:5;
     }
     nav button {
-      margin: 0 1rem;
-      padding: 0.5rem 1rem;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: background 0.2s;
+      border-radius:999px;
+      border:1px solid #cbd5f1;
+      background:#fff;
+      padding:.45rem 1.2rem;
+      font-weight:600;
+      cursor:pointer;
+      font-size:.95rem;
+      color:#1f2933;
+      transition:background .15s, box-shadow .15s, transform .1s;
     }
-    nav button:hover {
-      background: #d2e7fa;
+    nav button.active {
+      background:#2563eb;
+      color:#fff;
+      border-color:#2563eb;
+      box-shadow:0 2px 8px rgba(37,99,235,.35);
+      transform:translateY(-1px);
     }
-    section {
-      display: none;
-      padding: 2rem;
+
+    main { max-width: 1100px; margin: 1.5rem auto 2.5rem; padding: 0 1.5rem; }
+    section { display:none; }
+    section.active { display:block; }
+
+    /* Layout + Cards */
+    .grid-3 {
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap:1rem;
+      margin-bottom:1.5rem;
     }
-    section.active {
-      display: block;
+    .card {
+      background:#fff;
+      border-radius:12px;
+      padding:1.1rem 1.2rem;
+      box-shadow:0 2px 10px rgba(15, 23, 42, .08);
+      border:1px solid #e2e8f0;
     }
+
+    /* KPI */
+    .kpi-label { font-size:.85rem; color:#64748b; margin-bottom:.3rem; }
+    .kpi-value { font-size:1.5rem; font-weight:700; }
+    .kpi-sub { font-size:.8rem; color:#94a3b8; margin-top:.25rem; }
+
+    /* Form */
     form {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      margin-bottom: 2rem;
+      background:#fff;
+      border-radius:12px;
+      padding:1.2rem 1.4rem;
+      box-shadow:0 2px 10px rgba(15, 23, 42, .08);
+      border:1px solid #e2e8f0;
+      margin-bottom:1.5rem;
     }
-    form h3 {
-      margin-top: 0;
-      color: #007acc;
+    form h3 { margin:0 0 .6rem; color:#1e293b; font-size:1.15rem; }
+    form p.help { margin:0 0 .8rem; font-size:.85rem; color:#64748b; }
+    label { display:block; font-size:.85rem; color:#475569; margin-top:.6rem; margin-bottom:.15rem; }
+
+    input, select {
+      width:100%;
+      padding:.45rem .55rem;
+      border-radius:8px;
+      border:1px solid #cbd5e1;
+      font-size:.95rem;
     }
-    form label {
-      display: block;
-      margin: 1rem 0 0.3rem;
-      font-weight: 600;
+    input:focus, select:focus { outline:2px solid #2563eb; outline-offset:1px; border-color:#2563eb; }
+
+    button.primary {
+      margin-top:.9rem;
+      padding:.55rem 1.1rem;
+      border-radius:999px;
+      border:none;
+      background:#2563eb;
+      color:#fff;
+      font-weight:600;
+      cursor:pointer;
+      font-size:.95rem;
+      box-shadow:0 2px 8px rgba(37,99,235,.35);
     }
-    form input, form select {
-      width: 100%;
-      padding: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+    button.primary.small { padding:.35rem .85rem; font-size:.85rem; box-shadow:none; }
+    button.primary.outline {
+      background:#fff;
+      color:#2563eb;
+      border:1px solid #2563eb;
+      box-shadow:none;
     }
-    form button {
-      margin-top: 1rem;
-      padding: 0.7rem 1.2rem;
-      background: #007acc;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+
+    /* Table */
     table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      border-radius: 10px;
-      overflow: hidden;
+      width:100%;
+      border-collapse:collapse;
+      background:#fff;
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow:0 2px 10px rgba(15, 23, 42, .08);
+      border:1px solid #e2e8f0;
+      font-size:.9rem;
     }
-    th, td {
-      padding: 0.75rem;
-      border-bottom: 1px solid #ddd;
-      text-align: center;
+    th, td { padding:.6rem .5rem; border-bottom:1px solid #e2e8f0; text-align:center; }
+    th { background:#f1f5f9; font-weight:600; color:#475569; }
+    tr:last-child td { border-bottom:none; }
+    .empty {
+      font-size:.9rem;
+      color:#94a3b8;
+      padding:.8rem;
+      text-align:center;
     }
-    th {
-      background: #007acc;
-      color: white;
+
+    .row { display:flex; align-items:center; gap:.5rem; }
+    .row.wrap { flex-wrap:wrap; }
+    .space-between { justify-content:space-between; }
+    .pill {
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      padding:.2rem .7rem;
+      border-radius:999px;
+      font-size:.8rem;
+      background:#e0f2fe;
+      color:#0369a1;
     }
-    tr:last-child td {
-      border-bottom: none;
+
+    @media (max-width:900px){
+      .grid-3 { grid-template-columns:1fr; }
+      nav { flex-wrap:wrap; }
     }
   </style>
 </head>
 <body>
-  <header>ניהול הוצאות עסק</header>
+
+  <header>
+    דשבורד חודשי – הוצאות, ספקים ורווח
+    <small>קובץ אחד לכל חודש • ייצוא JSON לגיבוי מלא</small>
+  </header>
+
   <nav>
-    <button onclick="switchTab('suppliers')">ספקים</button>
-    <button onclick="switchTab('invoices')">חשבוניות</button>
-    <button onclick="switchTab('summary')">סיכום</button>
+    <button class="active" onclick="switchTab('dashboard', this)">דשבורד</button>
+    <button onclick="switchTab('suppliers', this)">ספקים</button>
+    <button onclick="switchTab('invoices', this)">חשבוניות</button>
+    <button onclick="switchTab('summary', this)">סיכום לפי ספק</button>
   </nav>
 
-  <section id="suppliers" class="active">
-    <form onsubmit="addSupplier(event)">
-      <h3>הוספת ספק</h3>
-      <label>שם ספק</label>
-      <input type="text" id="supplierName" required>
-      <button>הוסף ספק</button>
-    </form>
-    <table id="suppliersTable">
-      <thead><tr><th>#</th><th>שם ספק</th></tr></thead>
-      <tbody></tbody>
-    </table>
-  </section>
+  <main>
 
-  <section id="invoices">
-    <form onsubmit="addInvoice(event)">
-      <h3>הוספת חשבונית</h3>
-      <label>שם ספק</label>
-      <select id="invoiceSupplier" required></select>
-      <label>מספר חשבונית</label>
-      <input type="text" id="invoiceNumber" required>
-      <label>סכום</label>
-      <input type="number" id="invoiceAmount" required>
-      <label>תשלום</label>
-      <select id="invoiceType">
-        <option value="קבוע">קבוע</option>
-        <option value="חד פעמי">חד פעמי</option>
-      </select>
-      <button>הוסף חשבונית</button>
-    </form>
-    <table id="invoicesTable">
-      <thead><tr><th>ספק</th><th># חשבונית</th><th>סכום</th><th>תשלום</th></tr></thead>
-      <tbody></tbody>
-    </table>
-  </section>
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="active">
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="row wrap space-between">
 
-  <section id="summary">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
-      <h3>סיכום לפי ספק</h3>
-      <button type="button" onclick="exportData()">ייצוא נתונים (CSV)</button>
-    </div>
-    <table id="summaryTable">
-      <thead><tr><th>ספק</th><th>סה"כ</th></tr></thead>
-      <tbody></tbody>
-    </table>
-  </section>
+          <div class="row wrap" style="gap:1.2rem;">
+            <div>
+              <div class="kpi-label">חודש</div>
+              <input type="month" id="dashMonth" onchange="onMonthChange(this.value)" style="max-width:160px;">
+            </div>
 
+            <div>
+              <div class="kpi-label">מחזור (הכנסות)</div>
+              <input type="number" id="dashIncomeInput" step="0.01" min="0"
+                     oninput="onIncomeChange(this.value)" placeholder="לדוגמה: 180000"
+                     style="max-width:200px;">
+            </div>
+          </div>
+
+          <div class="row wrap" style="gap:.5rem;">
+            <button class="primary small outline" type="button" onclick="recalcDashboard()">רענן</button>
+            <button class="primary small" type="button" onclick="exportJson()">ייצוא JSON</button>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="kpi-label">סה״כ הוצאות</div>
+          <div class="kpi-value" id="dashTotalExpenses">0.00 ₪</div>
+        </div>
+
+        <div class="card">
+          <div class="kpi-label">מחזור (הכנסות)</div>
+          <div class="kpi-value" id="dashIncomeDisplay">0.00 ₪</div>
+        </div>
+
+        <div class="card">
+          <div class="kpi-label">רווח נקי</div>
+          <div class="kpi-value" id="dashNet">0.00 ₪</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row space-between" style="margin-bottom:.6rem;">
+          <h3 style="margin:0;font-size:1.05rem;">הוצאות לפי ספק</h3>
+          <span class="pill">לפי החשבוניות שהוזנו</span>
+        </div>
+
+        <table id="dashSuppliersTable">
+          <thead>
+            <tr><th>#</th><th>ספק</th><th>סה״כ</th></tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="3" class="empty">אין חשבוניות עדיין.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SUPPLIERS -->
+    <section id="suppliers">
+      <form onsubmit="addSupplier(event)">
+        <h3>ספקים קבועים</h3>
+        <p class="help">רשימת ספקים שמשמשת כל החודש.</p>
+
+        <label>שם ספק</label>
+        <input type="text" id="supplierName" placeholder="למשל: סוקוליק / החברה המרכזית">
+        <button class="primary" type="submit">הוסף ספק</button>
+      </form>
+
+      <table id="suppliersTable">
+        <thead><tr><th>#</th><th>שם ספק</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- INVOICES -->
+    <section id="invoices">
+      <form onsubmit="addInvoice(event)">
+        <h3>הוספת חשבונית</h3>
+        <p class="help">כל החשבוניות שייכות לחודש של הדשבורד.</p>
+
+        <label>ספק</label>
+        <select id="invoiceSupplier"></select>
+
+        <label>מספר חשבונית</label>
+        <input type="text" id="invoiceNumber" required placeholder="87434">
+
+        <label>סכום (ש״ח)</label>
+        <input type="number" id="invoiceAmount" required step="0.01" min="0">
+
+        <label>סוג</label>
+        <select id="invoiceType">
+          <option value="קבוע">קבוע</option>
+          <option value="חד פעמי">חד פעמי</option>
+        </select>
+
+        <button class="primary" type="submit">הוסף חשבונית</button>
+      </form>
+
+      <table id="invoicesTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>ספק</th>
+            <th># חשבונית</th>
+            <th>סכום</th>
+            <th>סוג</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="5" class="empty">אין חשבוניות עדיין.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SUMMARY -->
+    <section id="summary">
+      <div class="row space-between" style="margin-bottom:.8rem;">
+        <h3 style="margin:0;font-size:1.1rem;">סיכום לפי ספק</h3>
+        <span class="pill">אותם נתונים כמו בדשבורד</span>
+      </div>
+
+      <table id="summaryTable">
+        <thead><tr><th>#</th><th>ספק</th><th>סה״כ</th></tr></thead>
+        <tbody>
+          <tr><td colspan="3" class="empty">אין נתונים עדיין.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT LOGIC -->
   <script>
-    const suppliers = ["סוקוליק","החברה המרכזית","ביסקוטי","ניקיון חודשי","חלב וגלידות","ירקות ופירות"]
-    const invoices = []
 
-    // מילוי טבלת ספקים ותיבת הבחירה כבר בטעינה
-    updateSupplierTable()
-    updateSupplierSelect()
+    /* ======================
+       STATE
+       ====================== */
 
-    function switchTab(tabId) {
+    const suppliers = [
+      "סוקוליק",
+      "החברה המרכזית",
+      "ביסקוטי",
+      "ניקיון חודשי",
+      "חלב וגלידות",
+      "ירקות ופירות"
+    ]
+
+    const invoices = []   // { supplier, number, amount, type }
+
+    let currentMonth = ""
+    let income = 0
+
+
+    /* ======================
+       NAVIGATION
+       ====================== */
+
+    function switchTab(id, btn) {
       document.querySelectorAll("section").forEach(s => s.classList.remove("active"))
-      document.getElementById(tabId).classList.add("active")
-      if (tabId === 'summary') updateSummary()
+      document.getElementById(id).classList.add("active")
+
+      document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"))
+      if (btn) btn.classList.add("active")
+
+      if (id === "summary") updateSummary()
+      if (id === "dashboard") recalcDashboard()
     }
 
-    function addSupplier(e) {
-      e.preventDefault()
-      const name = document.getElementById("supplierName").value.trim()
-      if (!name) return
-      suppliers.push(name)
-      document.getElementById("supplierName").value = ""
-      updateSupplierTable()
-      updateSupplierSelect()
+
+    /* ======================
+       DASHBOARD
+       ====================== */
+
+    function initMonthAndIncome() {
+      const m = document.getElementById("dashMonth")
+      const now = new Date()
+      const mm = String(now.getMonth() + 1).padStart(2, "0")
+      const ym = `${now.getFullYear()}-${mm}`
+
+      currentMonth = ym
+      if (m && !m.value) m.value = ym
+      recalcDashboard()
     }
+
+    function onMonthChange(value) {
+      currentMonth = value || ""
+    }
+
+    function onIncomeChange(value) {
+      income = parseFloat(value) || 0
+      recalcDashboard()
+    }
+
+    function recalcDashboard() {
+      const total = invoices.reduce((sum, inv) => sum + inv.amount, 0)
+
+      document.getElementById("dashTotalExpenses").textContent =
+        total.toFixed(2) + " ₪"
+
+      document.getElementById("dashIncomeDisplay").textContent =
+        income.toFixed(2) + " ₪"
+
+      document.getElementById("dashNet").textContent =
+        (income - total).toFixed(2) + " ₪"
+
+      renderSummaryTable("dashSuppliersTable")
+    }
+
+
+    /* ======================
+       SUPPLIERS
+       ====================== */
 
     function updateSupplierTable() {
       const tbody = document.querySelector("#suppliersTable tbody")
+      if (!tbody) return
+
+      if (!suppliers.length) {
+        tbody.innerHTML = '<tr><td colspan="2" class="empty">אין ספקים.</td></tr>'
+        return
+      }
+
       tbody.innerHTML = ""
       suppliers.forEach((name, i) => {
         const tr = document.createElement("tr")
@@ -195,6 +415,8 @@
 
     function updateSupplierSelect() {
       const select = document.getElementById("invoiceSupplier")
+      if (!select) return
+
       select.innerHTML = ""
       suppliers.forEach(name => {
         const opt = document.createElement("option")
@@ -204,64 +426,162 @@
       })
     }
 
+    function addSupplier(e) {
+      e.preventDefault()
+      const input = document.getElementById("supplierName")
+      const name = (input.value || "").trim()
+      if (!name) return
+
+      if (!suppliers.includes(name)) {
+        suppliers.push(name)
+      }
+
+      input.value = ""
+      updateSupplierTable()
+      updateSupplierSelect()
+    }
+
+
+    /* ======================
+       INVOICES
+       ====================== */
+
     function addInvoice(e) {
       e.preventDefault()
+
       const supplier = document.getElementById("invoiceSupplier").value
       const number = document.getElementById("invoiceNumber").value.trim()
       const amount = parseFloat(document.getElementById("invoiceAmount").value)
       const type = document.getElementById("invoiceType").value
+
       if (!supplier || !number || isNaN(amount)) return
+
       invoices.push({ supplier, number, amount, type })
+
       document.getElementById("invoiceNumber").value = ""
       document.getElementById("invoiceAmount").value = ""
-      updateInvoiceTable()
+
+      updateInvoicesTable()
+      recalcDashboard()
     }
 
-    function updateInvoiceTable() {
+    function updateInvoicesTable() {
       const tbody = document.querySelector("#invoicesTable tbody")
+      if (!tbody) return
+
+      if (!invoices.length) {
+        tbody.innerHTML =
+          '<tr><td colspan="5" class="empty">אין חשבוניות.</td></tr>'
+        return
+      }
+
       tbody.innerHTML = ""
-      invoices.forEach(inv => {
+      invoices.forEach((inv, i) => {
         const tr = document.createElement("tr")
-        tr.innerHTML = `<td>${inv.supplier}</td><td>${inv.number}</td><td>${inv.amount.toFixed(2)}</td><td>${inv.type}</td>`
+        tr.innerHTML = `
+          <td>${i + 1}</td>
+          <td>${inv.supplier}</td>
+          <td>${inv.number}</td>
+          <td>${inv.amount.toFixed(2)} ₪</td>
+          <td>${inv.type}</td>
+        `
         tbody.appendChild(tr)
       })
     }
 
-    function updateSummary() {
+
+    /* ======================
+       SUMMARY
+       ====================== */
+
+    function calculateSummary() {
       const summary = {}
       invoices.forEach(({ supplier, amount }) => {
         if (!summary[supplier]) summary[supplier] = 0
         summary[supplier] += amount
       })
-      const tbody = document.querySelector("#summaryTable tbody")
-      tbody.innerHTML = ""
-      Object.entries(summary).forEach(([name, total]) => {
-        const tr = document.createElement("tr")
-        tr.innerHTML = `<td>${name}</td><td>${total.toFixed(2)}</td>`
-        tbody.appendChild(tr)
-      })
+      return summary
     }
-      function exportData() {
-      if (!suppliers.length && !invoices.length) {
-        alert("אין נתונים לייצוא")
+
+    function renderSummaryTable(tableId) {
+      const table = document.getElementById(tableId)
+      if (!table) return
+
+      const tbody = table.querySelector("tbody")
+      const summary = calculateSummary()
+      const entries = Object.entries(summary)
+
+      if (!entries.length) {
+        const cols = table.querySelectorAll("thead th").length
+        tbody.innerHTML =
+          `<tr><td colspan="${cols}" class="empty">אין נתונים.</td></tr>`
         return
       }
 
-      let csv = "ספק,מספר חשבונית,סכום,סוג תשלום\n"
-      invoices.forEach(inv => {
-        csv += `"${inv.supplier}","${inv.number}",${inv.amount},"${inv.type}"\n`
-      })
+      tbody.innerHTML = ""
+      entries
+        .sort((a, b) => b[1] - a[1])
+        .forEach(([name, total], idx) => {
+          const tr = document.createElement("tr")
+          tr.innerHTML = `
+            <td>${idx + 1}</td>
+            <td>${name}</td>
+            <td>${total.toFixed(2)} ₪</td>
+          `
+          tbody.appendChild(tr)
+        })
+    }
 
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
-      const url = URL.createObjectURL(blob)
+    function updateSummary() {
+      renderSummaryTable("summaryTable")
+    }
+
+
+    /* ======================
+       EXPORT JSON (MONTHLY FILE)
+       ====================== */
+
+    function exportJson() {
+      if (!currentMonth) {
+        alert("בחר חודש לפני ייצוא.")
+        return
+      }
+
+      const data = {
+        month: currentMonth,
+        income,
+        suppliers: suppliers.slice(),
+        invoices: invoices.slice()
+      }
+
+      const jsonStr = JSON.stringify(data, null, 2)
+      const blob = new Blob([jsonStr], { type: "application/json" })
+
+      const safeMonth = currentMonth.replace(/[^0-9-]/g, "") || "month"
       const a = document.createElement("a")
-      a.href = url
-      a.download = "expenses.csv"
+      a.href = URL.createObjectURL(blob)
+      a.download = `finance_${safeMonth}.json`
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
-      URL.revokeObjectURL(url)
     }
+
+
+    /* ======================
+       INIT
+       ====================== */
+
+    function initApp() {
+      updateSupplierTable()
+      updateSupplierSelect()
+      initMonthAndIncome()
+      updateInvoicesTable()
+      updateSummary()
+    }
+
+    initApp()
+
   </script>
+
 </body>
 </html>
