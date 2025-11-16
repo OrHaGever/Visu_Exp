@@ -86,7 +86,7 @@
 
 <header>
   דשבורד חודשי – מסעדה
-  <small>הכנסות, הוצאות, ספקים וחשבוניות • שמירת נתונים בדפדפן</small>
+  <small>הכנסות, הוצאות, ספקים וחשבוניות </small>
 </header>
 
 <nav>
@@ -150,37 +150,45 @@
 
   <!-- SUPPLIERS -->
   <section id="suppliers">
-    <div class="card">
-      <form onsubmit="addSupplier(event)">
-        <h3 style="margin:0 0 .3rem;font-size:1rem;">הוספת ספק</h3>
+    <div class="card"><form onsubmit="addSupplier(event)">
+  <h3 style="margin:0 0 .3rem;font-size:1rem;">הוספת ספק</h3>
 
-        <label>שם ספק</label>
-        <input type="text" id="supplierName" placeholder="למשל: החברה המרכזית">
+  <label>שם ספק</label>
+  <input type="text" id="supplierName" placeholder="למשל: החברה המרכזית">
 
-        <label>קטגוריה</label>
-        <input type="text" id="supplierCategory" placeholder="למשל: אלכוהול, ירקות, שירותים">
+  <label>קטגוריה</label>
+  <input type="text" id="supplierCategory" placeholder="למשל: אלכוהול, ירקות, שירותים">
 
-        <label style="margin-top:.4rem;">
-          <input type="checkbox" id="supplierExclude">
-          <span style="font-size:.8rem;">לא לכלול ספק זה בחישוב רווח</span>
-        </label>
+  <label>טלפון</label>
+  <input type="text" id="supplierPhone" placeholder="לדוגמה 050-1234567">
 
-        <button class="primary" type="submit">הוסף ספק</button>
-      </form>
+  <label>אימייל</label>
+  <input type="email" id="supplierEmail" placeholder="supplier@example.com">
+
+  <label style="margin-top:.4rem;">
+    <input type="checkbox" id="supplierExclude">
+    <span style="font-size:.8rem;">לא לכלול ספק זה בחישוב רווח</span>
+  </label>
+
+  <button class="primary" type="submit">הוסף ספק</button>
+</form>
+
     </div>
 
     <div class="card">
       <strong>רשימת ספקים</strong>
-      <table id="suppliersTable" style="margin-top:.4rem;">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>שם</th>
-            <th>קטגוריה</th>
-            <th>רווח</th>
-            <th>מחיקה</th>
-          </tr>
-        </thead>
+      <table id="suppliersTable" style="margin-top:.4rem;"><thead>
+  <tr>
+    <th>#</th>
+    <th>שם</th>
+    <th>קטגוריה</th>
+    <th>רווח</th>
+    <th>טלפון</th>
+    <th>אימייל</th>
+    <th>מחיקה</th>
+  </tr>
+</thead>
+
         <tbody></tbody>
       </table>
     </div>
@@ -415,26 +423,41 @@
     }
   }
 
-  // ספקים
-  function renderSuppliersTable() {
-    var tbody = document.querySelector("#suppliersTable tbody");
-    if (suppliers.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" class="empty">אין ספקים.</td></tr>';
-      return;
-    }
-    tbody.innerHTML = "";
-    for (var i=0; i<suppliers.length; i++) {
-      var s = suppliers[i];
-      var tr = document.createElement("tr");
-      tr.innerHTML =
-        '<td>'+(i+1)+'</td>'+
-        '<td>'+s.name+'</td>'+
-        '<td>'+(s.category || "")+'</td>'+
-        '<td>'+(s.excludeFromProfit ? '<span class="badge-excluded">מחוץ לרווח</span>' : '')+'</td>'+
-        '<td><button class="btn-ghost" type="button" onclick="deleteSupplier('+i+')">מחק</button></td>';
-      tbody.appendChild(tr);
-    }
+  // ספקיםfunction renderSuppliersTable() {
+  var tbody = document.querySelector("#suppliersTable tbody");
+  if (suppliers.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">אין ספקים.</td></tr>';
+    return;
   }
+  tbody.innerHTML = "";
+  for (var i=0; i<suppliers.length; i++) {
+    var s = suppliers[i];
+    var tr = document.createElement("tr");
+    tr.innerHTML =
+      '<td>'+(i+1)+'</td>'+
+      '<td>'+s.name+'</td>'+
+      '<td>'+(s.category || "")+'</td>'+
+      '<td>'+(s.excludeFromProfit ? '<span class="badge-excluded">מחוץ לרווח</span>' : '')+'</td>'+
+      '<td><input type="text" value="'+(s.phone || "")+'" '+
+          'oninput="updateSupplierPhone('+i+', this.value)" '+
+          'style="width:100%;font-size:.75rem;"></td>'+
+      '<td><input type="text" value="'+(s.email || "")+'" '+
+          'oninput="updateSupplierEmail('+i+', this.value)" '+
+          'style="width:100%;font-size:.75rem;"></td>'+
+      '<td><button class="btn-ghost" type="button" onclick="deleteSupplier('+i+')">מחק</button></td>';
+    tbody.appendChild(tr);
+  }
+}
+
+function updateSupplierPhone(index, value) {
+  if (!suppliers[index]) return;
+  suppliers[index].phone = value;
+}
+
+function updateSupplierEmail(index, value) {
+  if (!suppliers[index]) return;
+  suppliers[index].email = value;
+}
 
   function renderSuppliersSelect() {
     var sel = document.getElementById("invoiceSupplier");
@@ -446,27 +469,37 @@
       sel.appendChild(opt);
     }
   }
+function addSupplier(e) {
+  e.preventDefault();
+  var name = document.getElementById("supplierName").value.trim();
+  var category = document.getElementById("supplierCategory").value.trim();
+  var phone = document.getElementById("supplierPhone").value.trim();
+  var email = document.getElementById("supplierEmail").value.trim();
+  var exclude = document.getElementById("supplierExclude").checked;
 
-  function addSupplier(e) {
-    e.preventDefault();
-    var name = document.getElementById("supplierName").value.trim();
-    var category = document.getElementById("supplierCategory").value.trim();
-    var exclude = document.getElementById("supplierExclude").checked;
+  if (!name) return;
+  if (!category) category = "כללי";
 
-    if (!name) return;
-    if (!category) category = "כללי";
+  suppliers.push({
+    name: name,
+    category: category,
+    excludeFromProfit: exclude,
+    phone: phone,
+    email: email
+  });
 
-    suppliers.push({ name:name, category:category, excludeFromProfit:exclude });
+  document.getElementById("supplierName").value = "";
+  document.getElementById("supplierCategory").value = "";
+  document.getElementById("supplierPhone").value = "";
+  document.getElementById("supplierEmail").value = "";
+  document.getElementById("supplierExclude").checked = false;
 
-    document.getElementById("supplierName").value = "";
-    document.getElementById("supplierCategory").value = "";
-    document.getElementById("supplierExclude").checked = false;
-
-    renderSuppliersTable();
-    renderSuppliersSelect();
-    updateDashboard();
-    renderSummaries();
-  }
+  renderSuppliersTable();
+  renderSuppliersSelect();
+  updateDashboard();
+  renderSummaries();
+}
+  
 
   function deleteSupplier(index) {
     suppliers.splice(index, 1);   // מחיקה בפועל מהמערך
