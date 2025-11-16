@@ -86,7 +86,7 @@
 
 <header>
   דשבורד חודשי – מסעדה
-  <small>הכנסות, הוצאות, ספקים וחשבוניות </small>
+  <small>הכנסות, הוצאות, ספקים וחשבוניות • נתונים בדפדפן</small>
 </header>
 
 <nav>
@@ -150,45 +150,45 @@
 
   <!-- SUPPLIERS -->
   <section id="suppliers">
-    <div class="card"><form onsubmit="addSupplier(event)">
-  <h3 style="margin:0 0 .3rem;font-size:1rem;">הוספת ספק</h3>
+    <div class="card">
+      <form onsubmit="addSupplier(event)">
+        <h3 style="margin:0 0 .3rem;font-size:1rem;">הוספת ספק</h3>
 
-  <label>שם ספק</label>
-  <input type="text" id="supplierName" placeholder="למשל: החברה המרכזית">
+        <label>שם ספק</label>
+        <input type="text" id="supplierName" placeholder="למשל: החברה המרכזית">
 
-  <label>קטגוריה</label>
-  <input type="text" id="supplierCategory" placeholder="למשל: אלכוהול, ירקות, שירותים">
+        <label>קטגוריה</label>
+        <input type="text" id="supplierCategory" placeholder="למשל: אלכוהול, ירקות, שירותים">
 
-  <label>טלפון</label>
-  <input type="text" id="supplierPhone" placeholder="לדוגמה 050-1234567">
+        <label>טלפון</label>
+        <input type="text" id="supplierPhone" placeholder="לדוגמה 050-1234567">
 
-  <label>אימייל</label>
-  <input type="email" id="supplierEmail" placeholder="supplier@example.com">
+        <label>אימייל</label>
+        <input type="email" id="supplierEmail" placeholder="supplier@example.com">
 
-  <label style="margin-top:.4rem;">
-    <input type="checkbox" id="supplierExclude">
-    <span style="font-size:.8rem;">לא לכלול ספק זה בחישוב רווח</span>
-  </label>
+        <label style="margin-top:.4rem;">
+          <input type="checkbox" id="supplierExclude">
+          <span style="font-size:.8rem;">לא לכלול ספק זה בחישוב רווח</span>
+        </label>
 
-  <button class="primary" type="submit">הוסף ספק</button>
-</form>
-
+        <button class="primary" type="submit">הוסף ספק</button>
+      </form>
     </div>
 
     <div class="card">
       <strong>רשימת ספקים</strong>
-      <table id="suppliersTable" style="margin-top:.4rem;"><thead>
-  <tr>
-    <th>#</th>
-    <th>שם</th>
-    <th>קטגוריה</th>
-    <th>רווח</th>
-    <th>טלפון</th>
-    <th>אימייל</th>
-    <th>מחיקה</th>
-  </tr>
-</thead>
-
+      <table id="suppliersTable" style="margin-top:.4rem;">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>שם</th>
+            <th>קטגוריה</th>
+            <th>רווח</th>
+            <th>טלפון</th>
+            <th>אימייל</th>
+            <th>מחיקה</th>
+          </tr>
+        </thead>
         <tbody></tbody>
       </table>
     </div>
@@ -275,7 +275,7 @@
 </main>
 
 <script>
-  // מצב כללי – שים לב: אין פה שום const על המערכים, רק let
+  // ===== מצב כללי =====
   var suppliers = [
     { name: 'חשבוניות', category: 'כללי', excludeFromProfit: false },
     { name: 'מדחסקור אוניברסל', category: 'כללי', excludeFromProfit: false },
@@ -333,7 +333,7 @@
   var currentMonth = "";
   var income = 0;
 
-  // ניווט בין לשוניות
+  // ===== ניווט בין לשוניות =====
   function switchTab(id, btn) {
     var sections = document.querySelectorAll("section");
     for (var i=0; i<sections.length; i++) {
@@ -351,7 +351,7 @@
     if (id === "summary") renderSummaries();
   }
 
-  // דשבורד
+  // ===== דשבורד =====
   function onMonthChange(v) {
     currentMonth = v || "";
   }
@@ -386,7 +386,7 @@
     renderSupplierTotalsTable("dashboardSuppliersTable");
   }
 
-  // טבלת סכומים לפי ספק (משותף לדשבורד ולסיכום)
+  // ===== טבלת סכומים לפי ספק (דשבורד + סיכומים) =====
   function renderSupplierTotalsTable(tableId) {
     var table = document.getElementById(tableId);
     var tbody = table.querySelector("tbody");
@@ -408,8 +408,7 @@
       return;
     }
 
-    // למיין מהגדול לקטן
-    keys.sort(function(a,b){ return totals[b]-totals[a]; });
+    keys.sort(function(a,b){ return totals[b] - totals[a]; });
 
     tbody.innerHTML = "";
     for (i=0; i<keys.length; i++) {
@@ -423,41 +422,34 @@
     }
   }
 
-  // ספקיםfunction renderSuppliersTable() {
-  var tbody = document.querySelector("#suppliersTable tbody");
-  if (suppliers.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" class="empty">אין ספקים.</td></tr>';
-    return;
+  // ===== ספקים =====
+  function renderSuppliersTable() {
+    var tbody = document.querySelector("#suppliersTable tbody");
+    if (suppliers.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" class="empty">אין ספקים.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = "";
+    for (var i=0; i<suppliers.length; i++) {
+      var s = suppliers[i];
+      var phone = s.phone || "";
+      var email = s.email || "";
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td>'+(i+1)+'</td>'+
+        '<td>'+s.name+'</td>'+
+        '<td>'+(s.category || "")+'</td>'+
+        '<td>'+(s.excludeFromProfit ? '<span class="badge-excluded">מחוץ לרווח</span>' : '')+'</td>'+
+        '<td><input type="text" value="'+phone+'" '+
+            'oninput="updateSupplierPhone('+i+', this.value)" '+
+            'style="width:100%;font-size:.75rem;"></td>'+
+        '<td><input type="text" value="'+email+'" '+
+            'oninput="updateSupplierEmail('+i+', this.value)" '+
+            'style="width:100%;font-size:.75rem;"></td>'+
+        '<td><button class="btn-ghost" type="button" onclick="deleteSupplier('+i+')">מחק</button></td>';
+      tbody.appendChild(tr);
+    }
   }
-  tbody.innerHTML = "";
-  for (var i=0; i<suppliers.length; i++) {
-    var s = suppliers[i];
-    var tr = document.createElement("tr");
-    tr.innerHTML =
-      '<td>'+(i+1)+'</td>'+
-      '<td>'+s.name+'</td>'+
-      '<td>'+(s.category || "")+'</td>'+
-      '<td>'+(s.excludeFromProfit ? '<span class="badge-excluded">מחוץ לרווח</span>' : '')+'</td>'+
-      '<td><input type="text" value="'+(s.phone || "")+'" '+
-          'oninput="updateSupplierPhone('+i+', this.value)" '+
-          'style="width:100%;font-size:.75rem;"></td>'+
-      '<td><input type="text" value="'+(s.email || "")+'" '+
-          'oninput="updateSupplierEmail('+i+', this.value)" '+
-          'style="width:100%;font-size:.75rem;"></td>'+
-      '<td><button class="btn-ghost" type="button" onclick="deleteSupplier('+i+')">מחק</button></td>';
-    tbody.appendChild(tr);
-  }
-}
-
-function updateSupplierPhone(index, value) {
-  if (!suppliers[index]) return;
-  suppliers[index].phone = value;
-}
-
-function updateSupplierEmail(index, value) {
-  if (!suppliers[index]) return;
-  suppliers[index].email = value;
-}
 
   function renderSuppliersSelect() {
     var sel = document.getElementById("invoiceSupplier");
@@ -469,47 +461,57 @@ function updateSupplierEmail(index, value) {
       sel.appendChild(opt);
     }
   }
-function addSupplier(e) {
-  e.preventDefault();
-  var name = document.getElementById("supplierName").value.trim();
-  var category = document.getElementById("supplierCategory").value.trim();
-  var phone = document.getElementById("supplierPhone").value.trim();
-  var email = document.getElementById("supplierEmail").value.trim();
-  var exclude = document.getElementById("supplierExclude").checked;
 
-  if (!name) return;
-  if (!category) category = "כללי";
+  function addSupplier(e) {
+    e.preventDefault();
+    var name = document.getElementById("supplierName").value.trim();
+    var category = document.getElementById("supplierCategory").value.trim();
+    var phone = document.getElementById("supplierPhone").value.trim();
+    var email = document.getElementById("supplierEmail").value.trim();
+    var exclude = document.getElementById("supplierExclude").checked;
 
-  suppliers.push({
-    name: name,
-    category: category,
-    excludeFromProfit: exclude,
-    phone: phone,
-    email: email
-  });
+    if (!name) return;
+    if (!category) category = "כללי";
 
-  document.getElementById("supplierName").value = "";
-  document.getElementById("supplierCategory").value = "";
-  document.getElementById("supplierPhone").value = "";
-  document.getElementById("supplierEmail").value = "";
-  document.getElementById("supplierExclude").checked = false;
+    suppliers.push({
+      name: name,
+      category: category,
+      excludeFromProfit: exclude,
+      phone: phone,
+      email: email
+    });
 
-  renderSuppliersTable();
-  renderSuppliersSelect();
-  updateDashboard();
-  renderSummaries();
-}
-  
+    document.getElementById("supplierName").value = "";
+    document.getElementById("supplierCategory").value = "";
+    document.getElementById("supplierPhone").value = "";
+    document.getElementById("supplierEmail").value = "";
+    document.getElementById("supplierExclude").checked = false;
 
-  function deleteSupplier(index) {
-    suppliers.splice(index, 1);   // מחיקה בפועל מהמערך
-    renderSuppliersTable();       // רענון טבלה
-    renderSuppliersSelect();      // רענון רשימת ספקים בחשבוניות
-    updateDashboard();            // רענון דשבורד
-    renderSummaries();            // רענון סיכומים
+    renderSuppliersTable();
+    renderSuppliersSelect();
+    updateDashboard();
+    renderSummaries();
   }
 
-  // חשבוניות
+  function updateSupplierPhone(index, value) {
+    if (!suppliers[index]) return;
+    suppliers[index].phone = value;
+  }
+
+  function updateSupplierEmail(index, value) {
+    if (!suppliers[index]) return;
+    suppliers[index].email = value;
+  }
+
+  function deleteSupplier(index) {
+    suppliers.splice(index, 1);
+    renderSuppliersTable();
+    renderSuppliersSelect();
+    updateDashboard();
+    renderSummaries();
+  }
+
+  // ===== חשבוניות =====
   function renderInvoicesTable() {
     var tbody = document.querySelector("#invoicesTable tbody");
     if (invoices.length === 0) {
@@ -557,7 +559,7 @@ function addSupplier(e) {
     renderSummaries();
   }
 
-  // סיכומים
+  // ===== סיכומים =====
   function renderSummaries() {
     // לפי ספק
     renderSupplierTotalsTable("summarySuppliersTable");
@@ -584,7 +586,7 @@ function addSupplier(e) {
       return;
     }
 
-    keys.sort(function(a,b){ return catTotals[b]-catTotals[a]; });
+    keys.sort(function(a,b){ return catTotals[b] - catTotals[a]; });
 
     tbody.innerHTML = "";
     for (i=0; i<keys.length; i++) {
@@ -598,11 +600,12 @@ function addSupplier(e) {
     }
   }
 
-  // INIT
+  // ===== INIT =====
   function init() {
     // חודש ברירת מחדל
     var now = new Date();
-    var mm = String(now.getMonth()+1); if (mm.length<2) mm = "0"+mm;
+    var mm = String(now.getMonth()+1);
+    if (mm.length < 2) mm = "0"+mm;
     currentMonth = now.getFullYear()+"-"+mm;
     var m = document.getElementById("monthInput");
     if (m) m.value = currentMonth;
