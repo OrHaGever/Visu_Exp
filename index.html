@@ -86,7 +86,7 @@
 
 <header>
   דשבורד חודשי – מסעדה
-  <small>הכנסות, הוצאות, ספקים וחשבוניות • נתונים בדפדפן</small>
+  <small>הכנסות, הוצאות, ספקים וחשבוניות • נשמר בזיכרון הדפדפן</small>
 </header>
 
 <nav>
@@ -152,7 +152,7 @@
   <section id="suppliers">
     <div class="card">
       <form onsubmit="addSupplier(event)">
-        <h3 style="margin:0 0 .3rem;font-size:1rem;">הוספת ספק</h3>
+        <h3 style="margin:0 0 .3rem;font-size:1rem;">ספק</h3>
 
         <label>שם ספק</label>
         <input type="text" id="supplierName" placeholder="למשל: החברה המרכזית">
@@ -171,7 +171,14 @@
           <span style="font-size:.8rem;">לא לכלול ספק זה בחישוב רווח</span>
         </label>
 
-        <button class="primary" type="submit">הוסף ספק</button>
+        <div class="row wrap" style="gap:.4rem;">
+          <button class="primary" type="submit" id="supplierSubmitBtn">הוסף ספק</button>
+          <button class="primary small outline" type="button" id="supplierCancelBtn"
+                  onclick="cancelEditSupplier()" style="display:none;">בטל עריכה</button>
+        </div>
+        <div id="supplierFormMode" style="font-size:.78rem;color:#6b7280;margin-top:.2rem;">
+          מצב: הוספה
+        </div>
       </form>
     </div>
 
@@ -186,7 +193,7 @@
             <th>רווח</th>
             <th>טלפון</th>
             <th>אימייל</th>
-            <th>מחיקה</th>
+            <th>פעולות</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -275,63 +282,102 @@
 </main>
 
 <script>
-  // ===== מצב כללי =====
-  var suppliers = [
-    { name: 'חשבוניות', category: 'כללי', excludeFromProfit: false },
-    { name: 'מדחסקור אוניברסל', category: 'כללי', excludeFromProfit: false },
-    { name: 'ג׳אקו שירות למטבחים', category: 'כללי', excludeFromProfit: false },
-    { name: 'יוסי סימן טוב', category: 'כללי', excludeFromProfit: false },
-    { name: 'י.שבי', category: 'כללי', excludeFromProfit: false },
-    { name: 'צ.י.שיווק', category: 'כללי', excludeFromProfit: false },
-    { name: 'קנקון', category: 'כללי', excludeFromProfit: false },
-    { name: 'לוילן סחר ומוצרים חקלאיים בע״מ', category: 'כללי', excludeFromProfit: false },
-    { name: 'עואודה לשיווק בע״מ', category: 'כללי', excludeFromProfit: false },
-    { name: 'מדג סי פרוט בע״מ', category: 'כללי', excludeFromProfit: false },
-    { name: 'אהרון שיווק', category: 'כללי', excludeFromProfit: false },
-    { name: 'שיווק שלי א.א בע״מ', category: 'כללי', excludeFromProfit: false },
-    { name: 'אקיפ החברה לציוד מלונאי בע״מ', category: 'כללי', excludeFromProfit: false },
-    { name: 'דאלאס מוצרי נייר בע״מ', category: 'כללי', excludeFromProfit: false },
-    { name: 'חברת חשמל', category: 'כללי', excludeFromProfit: false },
-    { name: 'א.א.ר שירותי ביוב', category: 'כללי', excludeFromProfit: false },
-    { name: 'תמי 4', category: 'כללי', excludeFromProfit: false },
-    { name: 'בזק', category: 'כללי', excludeFromProfit: false },
-    { name: 'היכל היין', category: 'כללי', excludeFromProfit: false },
-    { name: 'החברה המרכזית', category: 'כללי', excludeFromProfit: false },
-    { name: 'סוקליק', category: 'כללי', excludeFromProfit: false },
-    { name: 'ביסקוטי', category: 'כללי', excludeFromProfit: false },
-    { name: 'אייס דרים', category: 'כללי', excludeFromProfit: false },
-    { name: 'ג.מ טעם הארץ בע״מ', category: 'כללי', excludeFromProfit: false },
-    { name: 'יזמקו חברה בע״מ', category: 'כללי', excludeFromProfit: false },
-    { name: 'אסטרטג טכנולוגיות בע״מ', category: 'כללי', excludeFromProfit: false },
-    { name: 'אביב אש מערכות בע״מ', category: 'כללי', excludeFromProfit: false },
-    { name: 'מניב ראשון', category: 'כללי', excludeFromProfit: false },
-    { name: 'אודי בכור שיווק דגים בע״מ', category: 'כללי', excludeFromProfit: false },
-    { name: 'לירי כוח אדם בע״מ', category: 'כללי', excludeFromProfit: false },
-    { name: 'מש-נט בע״מ', category: 'כללי', excludeFromProfit: false },
-    { name: 'זאפ גרופ בע״מ', category: 'כללי', excludeFromProfit: false },
-    { name: 'שיא ״10״ בע״מ', category: 'כללי', excludeFromProfit: false },
-    { name: 'קורקידי יעקב שיווק והפצה בסיטונאות', category: 'כללי', excludeFromProfit: false },
-    { name: 'מקס עסקים', category: 'כללי', excludeFromProfit: false },
-    { name: 'וינטר מכשירי גז בעמ', category: 'כללי', excludeFromProfit: false },
-    { name: 'מפעל הפרסום', category: 'כללי', excludeFromProfit: false },
-    { name: 'וולט', category: 'כללי', excludeFromProfit: false },
-    { name: 'אלירן פרחים', category: 'כללי', excludeFromProfit: false },
-    { name: 'פרסום תבור בעצ', category: 'כללי', excludeFromProfit: false },
-    { name: 'אינפיניה מחזור', category: 'כללי', excludeFromProfit: false },
-    { name: 'ייצוגית פלוס תעשיות בעמ', category: 'כללי', excludeFromProfit: false },
-    { name: 'משלוחה', category: 'כללי', excludeFromProfit: false },
-    { name: 'ביימי טכנולוגיות', category: 'כללי', excludeFromProfit: false },
-    { name: 'ישראכרט', category: 'כללי', excludeFromProfit: false },
-    { name: 'סוגת', category: 'כללי', excludeFromProfit: false },
-    { name: 'אייפרקטיקום', category: 'כללי', excludeFromProfit: false },
-    { name: 'אמישרגז', category: 'כללי', excludeFromProfit: false },
-    { name: 'מאירוביץ שלי', category: 'כללי', excludeFromProfit: false },
-    { name: 'לה פסטה דלה קזה בעמ', category: 'כללי', excludeFromProfit: false },
-    { name: 'ארנונה ראשון לציון', category: 'כללי', excludeFromProfit: false }
-  ];
+  // ===== שמירה בזיכרון =====
+  var STORAGE_KEY = "finance_dashboard_v1";
+
+  var suppliers = [];
   var invoices = []; // {supplier, number, amount, type}
   var currentMonth = "";
   var income = 0;
+  var editingSupplierIndex = null;
+
+  function getDefaultSuppliers() {
+    return [
+      { name: 'חשבוניות', category: 'כללי', excludeFromProfit: false },
+      { name: 'מדחסקור אוניברסל', category: 'כללי', excludeFromProfit: false },
+      { name: 'ג׳אקו שירות למטבחים', category: 'כללי', excludeFromProfit: false },
+      { name: 'יוסי סימן טוב', category: 'כללי', excludeFromProfit: false },
+      { name: 'י.שבי', category: 'כללי', excludeFromProfit: false },
+      { name: 'צ.י.שיווק', category: 'כללי', excludeFromProfit: false },
+      { name: 'קנקון', category: 'כללי', excludeFromProfit: false },
+      { name: 'לוילן סחר ומוצרים חקלאיים בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'עואודה לשיווק בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'מדג סי פרוט בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'אהרון שיווק', category: 'כללי', excludeFromProfit: false },
+      { name: 'שיווק שלי א.א בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'אקיפ החברה לציוד מלונאי בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'דאלאס מוצרי נייר בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'חברת חשמל', category: 'כללי', excludeFromProfit: false },
+      { name: 'א.א.ר שירותי ביוב', category: 'כללי', excludeFromProfit: false },
+      { name: 'תמי 4', category: 'כללי', excludeFromProfit: false },
+      { name: 'בזק', category: 'כללי', excludeFromProfit: false },
+      { name: 'היכל היין', category: 'כללי', excludeFromProfit: false },
+      { name: 'החברה המרכזית', category: 'כללי', excludeFromProfit: false },
+      { name: 'סוקליק', category: 'כללי', excludeFromProfit: false },
+      { name: 'ביסקוטי', category: 'כללי', excludeFromProfit: false },
+      { name: 'אייס דרים', category: 'כללי', excludeFromProfit: false },
+      { name: 'ג.מ טעם הארץ בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'יזמקו חברה בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'אסטרטג טכנולוגיות בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'אביב אש מערכות בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'מניב ראשון', category: 'כללי', excludeFromProfit: false },
+      { name: 'אודי בכור שיווק דגים בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'לירי כוח אדם בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'מש-נט בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'זאפ גרופ בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'שיא ״10״ בע״מ', category: 'כללי', excludeFromProfit: false },
+      { name: 'קורקידי יעקב שיווק והפצה בסיטונאות', category: 'כללי', excludeFromProfit: false },
+      { name: 'מקס עסקים', category: 'כללי', excludeFromProfit: false },
+      { name: 'וינטר מכשירי גז בעמ', category: 'כללי', excludeFromProfit: false },
+      { name: 'מפעל הפרסום', category: 'כללי', excludeFromProfit: false },
+      { name: 'וולט', category: 'כללי', excludeFromProfit: false },
+      { name: 'אלירן פרחים', category: 'כללי', excludeFromProfit: false },
+      { name: 'פרסום תבור בעצ', category: 'כללי', excludeFromProfit: false },
+      { name: 'אינפיניה מחזור', category: 'כללי', excludeFromProfit: false },
+      { name: 'ייצוגית פלוס תעשיות בעמ', category: 'כללי', excludeFromProfit: false },
+      { name: 'משלוחה', category: 'כללי', excludeFromProfit: false },
+      { name: 'ביימי טכנולוגיות', category: 'כללי', excludeFromProfit: false },
+      { name: 'ישראכרט', category: 'כללי', excludeFromProfit: false },
+      { name: 'סוגת', category: 'כללי', excludeFromProfit: false },
+      { name: 'אייפרקטיקום', category: 'כללי', excludeFromProfit: false },
+      { name: 'אמישרגז', category: 'כללי', excludeFromProfit: false },
+      { name: 'מאירוביץ שלי', category: 'כללי', excludeFromProfit: false },
+      { name: 'לה פסטה דלה קזה בעמ', category: 'כללי', excludeFromProfit: false },
+      { name: 'ארנונה ראשון לציון', category: 'כללי', excludeFromProfit: false }
+    ];
+  }
+
+  function saveState() {
+    try {
+      var data = {
+        suppliers: suppliers,
+        invoices: invoices,
+        currentMonth: currentMonth,
+        income: income
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return false;
+      var data = JSON.parse(raw);
+      if (!data || typeof data !== "object") return false;
+
+      if (data.suppliers && data.suppliers.length) suppliers = data.suppliers;
+      if (data.invoices) invoices = data.invoices;
+      if (typeof data.currentMonth === "string") currentMonth = data.currentMonth;
+      if (typeof data.income === "number") income = data.income;
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  }
 
   // ===== ניווט בין לשוניות =====
   function switchTab(id, btn) {
@@ -354,10 +400,13 @@
   // ===== דשבורד =====
   function onMonthChange(v) {
     currentMonth = v || "";
+    saveState();
   }
+
   function onIncomeChange(v) {
     income = parseFloat(v) || 0;
     updateDashboard();
+    saveState();
   }
 
   function getSupplierByName(name) {
@@ -440,13 +489,12 @@
         '<td>'+s.name+'</td>'+
         '<td>'+(s.category || "")+'</td>'+
         '<td>'+(s.excludeFromProfit ? '<span class="badge-excluded">מחוץ לרווח</span>' : '')+'</td>'+
-        '<td><input type="text" value="'+phone+'" '+
-            'oninput="updateSupplierPhone('+i+', this.value)" '+
-            'style="width:100%;font-size:.75rem;"></td>'+
-        '<td><input type="text" value="'+email+'" '+
-            'oninput="updateSupplierEmail('+i+', this.value)" '+
-            'style="width:100%;font-size:.75rem;"></td>'+
-        '<td><button class="btn-ghost" type="button" onclick="deleteSupplier('+i+')">מחק</button></td>';
+        '<td>'+phone+'</td>'+
+        '<td>'+email+'</td>'+
+        '<td>'+
+          '<button class="btn-ghost" type="button" onclick="startEditSupplier('+i+')">ערוך</button>'+
+          '<button class="btn-ghost" type="button" onclick="deleteSupplier('+i+')">מחק</button>'+
+        '</td>';
       tbody.appendChild(tr);
     }
   }
@@ -462,6 +510,17 @@
     }
   }
 
+  function resetSupplierForm() {
+    document.getElementById("supplierName").value = "";
+    document.getElementById("supplierCategory").value = "";
+    document.getElementById("supplierPhone").value = "";
+    document.getElementById("supplierEmail").value = "";
+    document.getElementById("supplierExclude").checked = false;
+    document.getElementById("supplierSubmitBtn").textContent = "הוסף ספק";
+    document.getElementById("supplierCancelBtn").style.display = "none";
+    document.getElementById("supplierFormMode").textContent = "מצב: הוספה";
+  }
+
   function addSupplier(e) {
     e.preventDefault();
     var name = document.getElementById("supplierName").value.trim();
@@ -473,42 +532,62 @@
     if (!name) return;
     if (!category) category = "כללי";
 
-    suppliers.push({
+    var supplierData = {
       name: name,
       category: category,
       excludeFromProfit: exclude,
       phone: phone,
       email: email
-    });
+    };
 
-    document.getElementById("supplierName").value = "";
-    document.getElementById("supplierCategory").value = "";
-    document.getElementById("supplierPhone").value = "";
-    document.getElementById("supplierEmail").value = "";
-    document.getElementById("supplierExclude").checked = false;
+    if (editingSupplierIndex === null) {
+      suppliers.push(supplierData);
+    } else {
+      suppliers[editingSupplierIndex] = supplierData;
+    }
 
+    editingSupplierIndex = null;
+    resetSupplierForm();
     renderSuppliersTable();
     renderSuppliersSelect();
     updateDashboard();
     renderSummaries();
+    saveState();
   }
 
-  function updateSupplierPhone(index, value) {
-    if (!suppliers[index]) return;
-    suppliers[index].phone = value;
+  function startEditSupplier(index) {
+    var s = suppliers[index];
+    if (!s) return;
+    editingSupplierIndex = index;
+
+    document.getElementById("supplierName").value = s.name || "";
+    document.getElementById("supplierCategory").value = s.category || "";
+    document.getElementById("supplierPhone").value = s.phone || "";
+    document.getElementById("supplierEmail").value = s.email || "";
+    document.getElementById("supplierExclude").checked = !!s.excludeFromProfit;
+
+    document.getElementById("supplierSubmitBtn").textContent = "עדכן ספק";
+    document.getElementById("supplierCancelBtn").style.display = "inline-flex";
+    document.getElementById("supplierFormMode").textContent = "מצב: עריכה";
   }
 
-  function updateSupplierEmail(index, value) {
-    if (!suppliers[index]) return;
-    suppliers[index].email = value;
+  function cancelEditSupplier() {
+    editingSupplierIndex = null;
+    resetSupplierForm();
   }
 
   function deleteSupplier(index) {
     suppliers.splice(index, 1);
+    if (editingSupplierIndex === index) {
+      cancelEditSupplier();
+    } else if (editingSupplierIndex !== null && editingSupplierIndex > index) {
+      editingSupplierIndex -= 1;
+    }
     renderSuppliersTable();
     renderSuppliersSelect();
     updateDashboard();
     renderSummaries();
+    saveState();
   }
 
   // ===== חשבוניות =====
@@ -550,6 +629,7 @@
     renderInvoicesTable();
     updateDashboard();
     renderSummaries();
+    saveState();
   }
 
   function deleteInvoice(index) {
@@ -557,6 +637,7 @@
     renderInvoicesTable();
     updateDashboard();
     renderSummaries();
+    saveState();
   }
 
   // ===== סיכומים =====
@@ -602,13 +683,24 @@
 
   // ===== INIT =====
   function init() {
-    // חודש ברירת מחדל
-    var now = new Date();
-    var mm = String(now.getMonth()+1);
-    if (mm.length < 2) mm = "0"+mm;
-    currentMonth = now.getFullYear()+"-"+mm;
+    var hadState = loadState();
+
+    if (!hadState) {
+      suppliers = getDefaultSuppliers();
+      var now = new Date();
+      var mm = String(now.getMonth()+1);
+      if (mm.length < 2) mm = "0"+mm;
+      currentMonth = now.getFullYear() + "-" + mm;
+      income = 0;
+      saveState();
+    } else {
+      if (!suppliers || !suppliers.length) suppliers = getDefaultSuppliers();
+    }
+
     var m = document.getElementById("monthInput");
-    if (m) m.value = currentMonth;
+    if (m && currentMonth) m.value = currentMonth;
+    var incInput = document.getElementById("incomeInput");
+    if (incInput && income) incInput.value = income;
 
     renderSuppliersTable();
     renderSuppliersSelect();
