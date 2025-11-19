@@ -52,6 +52,14 @@
     }
     input:focus, select:focus { outline:2px solid #2563eb; outline-offset:1px; border-color:#2563eb; }
 
+    textarea {
+      width:100%; padding:.38rem .5rem; border-radius:6px;
+      border:1px solid #cbd5e1; font-size:.85rem; resize:vertical;
+    }
+    textarea:focus {
+      outline:2px solid #2563eb; outline-offset:1px; border-color:#2563eb;
+    }
+
     button.primary {
       margin-top:.5rem; padding:.4rem .9rem; border-radius:999px;
       border:none; background:#2563eb; color:#fff; font-size:.85rem;
@@ -132,13 +140,13 @@
     </div>
 
     <div class="card">
-      <div style="margin-bottom:.3rem;font-weight:600;">הוצאות לפי ספק</div>
+      <div style="margin-bottom:.3rem;font-weight:600;">הוצאות לפי ספק (נטו, כולל זיכויים כשליליים)</div>
       <table id="dashboardSuppliersTable">
         <thead>
           <tr>
             <th>#</th>
             <th>ספק</th>
-            <th>סה״כ</th>
+            <th>סה״כ נטו</th>
           </tr>
         </thead>
         <tbody>
@@ -183,7 +191,7 @@
     </div>
 
     <div class="card">
-      <strong>רשימת ספקים</strong>
+      <strong>רשימת ספקים (ממוינת א׳–ת׳)</strong>
       <table id="suppliersTable" style="margin-top:.4rem;">
         <thead>
           <tr>
@@ -208,10 +216,14 @@
         <h3 style="margin:0 0 .3rem;font-size:1rem;">הוספת חשבונית</h3>
 
         <label>ספק</label>
-        <select id="invoiceSupplier"></select>
+        <input list="supplierOptions" id="invoiceSupplierInput" placeholder="התחל להקליד שם ספק">
+        <datalist id="supplierOptions"></datalist>
 
         <label>מספר חשבונית</label>
         <input type="text" id="invoiceNumber" placeholder="12345">
+
+        <label>תאריך חשבונית</label>
+        <input type="date" id="invoiceDate">
 
         <label>סכום (ש״ח)</label>
         <input type="number" id="invoiceAmount" step="0.01" min="0" placeholder="לדוגמה 1500">
@@ -221,6 +233,14 @@
           <option value="קבוע">קבוע</option>
           <option value="חד פעמי">חד פעמי</option>
         </select>
+
+        <label>הערות</label>
+        <textarea id="invoiceNotes" rows="2" placeholder="הערות על החשבונית (אופציונלי)"></textarea>
+
+        <label style="margin-top:.4rem;">
+          <input type="checkbox" id="invoiceCredit">
+          <span style="font-size:.8rem;">זיכוי (יחושב כהוצאה שלילית)</span>
+        </label>
 
         <button class="primary" type="submit">הוסף חשבונית</button>
       </form>
@@ -234,8 +254,11 @@
             <th>#</th>
             <th>ספק</th>
             <th>מס׳</th>
+            <th>תאריך</th>
             <th>סכום</th>
             <th>סוג</th>
+            <th>זיכוי</th>
+            <th>הערות</th>
             <th>מחיקה</th>
           </tr>
         </thead>
@@ -253,11 +276,13 @@
           <tr>
             <th>#</th>
             <th>ספק</th>
-            <th>סה״כ</th>
+            <th>חיובים</th>
+            <th>זיכויים</th>
+            <th>נטו</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td colspan="3" class="empty">אין נתונים.</td></tr>
+          <tr><td colspan="5" class="empty">אין נתונים.</td></tr>
         </tbody>
       </table>
     </div>
@@ -269,11 +294,13 @@
           <tr>
             <th>#</th>
             <th>קטגוריה</th>
-            <th>סה״כ</th>
+            <th>חיובים</th>
+            <th>זיכויים</th>
+            <th>נטו</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td colspan="3" class="empty">אין נתונים.</td></tr>
+          <tr><td colspan="5" class="empty">אין נתונים.</td></tr>
         </tbody>
       </table>
     </div>
@@ -286,7 +313,7 @@
   var STORAGE_KEY = "finance_dashboard_v1";
 
   var suppliers = [];
-  var invoices = []; // {supplier, number, amount, type}
+  var invoices = []; // {supplier, number, amount, type, date, notes, isCredit}
   var currentMonth = "";
   var income = 0;
   var editingSupplierIndex = null;
@@ -368,8 +395,8 @@
       var data = JSON.parse(raw);
       if (!data || typeof data !== "object") return false;
 
-      if (data.suppliers && data.suppliers.length) suppliers = data.suppliers;
-      if (data.invoices) invoices = data.invoices;
+      if (Array.isArray(data.suppliers)) suppliers = data.suppliers;
+      if (Array.isArray(data.invoices)) invoices = data.invoices;
       if (typeof data.currentMonth === "string") currentMonth = data.currentMonth;
       if (typeof data.income === "number") income = data.income;
       return true;
@@ -377,6 +404,14 @@
       console.error(e);
       return false;
     }
+  }
+
+  function sortSuppliers() {
+    suppliers.sort(function(a, b) {
+      var an = (a.name || "").toString();
+      var bn = (b.name || "").toString();
+      return an.localeCompare(bn, 'he');
+    });
   }
 
   // ===== ניווט בין לשוניות =====
@@ -410,6 +445,7 @@
   }
 
   function getSupplierByName(name) {
+    if (!name) return null;
     for (var i=0; i<suppliers.length; i++) {
       if (suppliers[i].name === name) return suppliers[i];
     }
@@ -422,7 +458,8 @@
       var inv = invoices[i];
       var s = getSupplierByName(inv.supplier);
       if (s && s.excludeFromProfit) continue;
-      totalForProfit += inv.amount;
+      var net = inv.isCredit ? -inv.amount : inv.amount;
+      totalForProfit += net;
     }
 
     document.getElementById("totalExpensesDisplay").textContent =
@@ -435,38 +472,40 @@
     renderSupplierTotalsTable("dashboardSuppliersTable");
   }
 
-  // ===== טבלת סכומים לפי ספק (דשבורד + סיכומים) =====
+  // ===== טבלת סכומים לפי ספק (דשבורד) =====
   function renderSupplierTotalsTable(tableId) {
     var table = document.getElementById(tableId);
+    if (!table) return;
     var tbody = table.querySelector("tbody");
     var totals = {};
-    var i, name;
+    var i;
 
     for (i=0; i<invoices.length; i++) {
-      name = invoices[i].supplier;
+      var inv = invoices[i];
+      var s = getSupplierByName(inv.supplier);
+      if (s && s.excludeFromProfit) continue;
+      var name = inv.supplier || "ללא ספק";
+      var netAmount = inv.isCredit ? -inv.amount : inv.amount;
       if (!totals[name]) totals[name] = 0;
-      totals[name] += invoices[i].amount;
+      totals[name] += netAmount;
     }
 
-    var keys = [];
-    for (name in totals) {
-      if (totals.hasOwnProperty(name)) keys.push(name);
-    }
-    if (keys.length === 0) {
+    var names = Object.keys(totals);
+    if (names.length === 0) {
       tbody.innerHTML = '<tr><td colspan="3" class="empty">אין חשבוניות.</td></tr>';
       return;
     }
 
-    keys.sort(function(a,b){ return totals[b] - totals[a]; });
+    names.sort(function(a, b) { return totals[b] - totals[a]; });
 
     tbody.innerHTML = "";
-    for (i=0; i<keys.length; i++) {
-      name = keys[i];
+    for (i=0; i<names.length; i++) {
+      var n = names[i];
       var tr = document.createElement("tr");
       tr.innerHTML =
         '<td>'+(i+1)+'</td>'+
-        '<td>'+name+'</td>'+
-        '<td>'+totals[name].toFixed(2)+' ₪</td>';
+        '<td>'+n+'</td>'+
+        '<td>'+totals[n].toFixed(2)+' ₪</td>';
       tbody.appendChild(tr);
     }
   }
@@ -500,13 +539,13 @@
   }
 
   function renderSuppliersSelect() {
-    var sel = document.getElementById("invoiceSupplier");
-    sel.innerHTML = "";
+    var dl = document.getElementById("supplierOptions");
+    if (!dl) return;
+    dl.innerHTML = "";
     for (var i=0; i<suppliers.length; i++) {
       var opt = document.createElement("option");
       opt.value = suppliers[i].name;
-      opt.textContent = suppliers[i].name;
-      sel.appendChild(opt);
+      dl.appendChild(opt);
     }
   }
 
@@ -547,6 +586,7 @@
     }
 
     editingSupplierIndex = null;
+    sortSuppliers();
     resetSupplierForm();
     renderSuppliersTable();
     renderSuppliersSelect();
@@ -583,6 +623,7 @@
     } else if (editingSupplierIndex !== null && editingSupplierIndex > index) {
       editingSupplierIndex -= 1;
     }
+    sortSuppliers();
     renderSuppliersTable();
     renderSuppliersSelect();
     updateDashboard();
@@ -594,7 +635,7 @@
   function renderInvoicesTable() {
     var tbody = document.querySelector("#invoicesTable tbody");
     if (invoices.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" class="empty">אין חשבוניות.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="9" class="empty">אין חשבוניות.</td></tr>';
       return;
     }
     tbody.innerHTML = "";
@@ -603,10 +644,13 @@
       var tr = document.createElement("tr");
       tr.innerHTML =
         '<td>'+(i+1)+'</td>'+
-        '<td>'+inv.supplier+'</td>'+
-        '<td>'+inv.number+'</td>'+
+        '<td>'+(inv.supplier || "")+'</td>'+
+        '<td>'+(inv.number || "")+'</td>'+
+        '<td>'+(inv.date || "")+'</td>'+
         '<td>'+inv.amount.toFixed(2)+' ₪</td>'+
-        '<td>'+inv.type+'</td>'+
+        '<td>'+(inv.type || "")+'</td>'+
+        '<td>'+(inv.isCredit ? "זיכוי" : "")+'</td>'+
+        '<td>'+(inv.notes || "")+'</td>'+
         '<td><button class="btn-ghost" type="button" onclick="deleteInvoice('+i+')">מחק</button></td>';
       tbody.appendChild(tr);
     }
@@ -614,17 +658,32 @@
 
   function addInvoice(e) {
     e.preventDefault();
-    var supplier = document.getElementById("invoiceSupplier").value;
+    var supplier = document.getElementById("invoiceSupplierInput").value.trim();
     var number = document.getElementById("invoiceNumber").value.trim();
+    var date = document.getElementById("invoiceDate").value;
     var amount = parseFloat(document.getElementById("invoiceAmount").value);
     var type = document.getElementById("invoiceType").value;
+    var notes = document.getElementById("invoiceNotes").value.trim();
+    var isCredit = document.getElementById("invoiceCredit").checked;
 
     if (!supplier || !number || isNaN(amount)) return;
 
-    invoices.push({ supplier:supplier, number:number, amount:amount, type:type });
+    invoices.push({
+      supplier: supplier,
+      number: number,
+      amount: amount,
+      type: type,
+      date: date || "",
+      notes: notes,
+      isCredit: isCredit
+    });
 
+    document.getElementById("invoiceSupplierInput").value = "";
     document.getElementById("invoiceNumber").value = "";
+    document.getElementById("invoiceDate").value = "";
     document.getElementById("invoiceAmount").value = "";
+    document.getElementById("invoiceNotes").value = "";
+    document.getElementById("invoiceCredit").checked = false;
 
     renderInvoicesTable();
     updateDashboard();
@@ -641,44 +700,98 @@
   }
 
   // ===== סיכומים =====
-  function renderSummaries() {
-    // לפי ספק
-    renderSupplierTotalsTable("summarySuppliersTable");
-
-    // לפי קטגוריה
-    var tbody = document.querySelector("#summaryCategoriesTable tbody");
-    var catTotals = {};
-    var i, inv, s, cat;
+  function renderSummaryBySuppliers() {
+    var tbody = document.querySelector("#summarySuppliersTable tbody");
+    var map = {};
+    var i;
 
     for (i=0; i<invoices.length; i++) {
-      inv = invoices[i];
-      s = getSupplierByName(inv.supplier);
-      cat = (s && s.category) ? s.category : "לא מקוטלג";
-      if (!catTotals[cat]) catTotals[cat] = 0;
-      catTotals[cat] += inv.amount;
+      var inv = invoices[i];
+      var name = inv.supplier || "ללא ספק";
+      if (!map[name]) map[name] = { charge:0, credit:0 };
+      if (inv.isCredit) {
+        map[name].credit += inv.amount;
+      } else {
+        map[name].charge += inv.amount;
+      }
     }
 
-    var keys = [];
-    for (cat in catTotals) {
-      if (catTotals.hasOwnProperty(cat)) keys.push(cat);
-    }
-    if (keys.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="3" class="empty">אין נתונים.</td></tr>';
+    var names = Object.keys(map);
+    if (names.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty">אין נתונים.</td></tr>';
       return;
     }
 
-    keys.sort(function(a,b){ return catTotals[b] - catTotals[a]; });
+    names.sort(function(a, b) {
+      var na = map[a].charge - map[a].credit;
+      var nb = map[b].charge - map[b].credit;
+      return nb - na;
+    });
 
     tbody.innerHTML = "";
-    for (i=0; i<keys.length; i++) {
-      cat = keys[i];
+    for (i=0; i<names.length; i++) {
+      var n = names[i];
+      var m = map[n];
+      var net = m.charge - m.credit;
       var tr = document.createElement("tr");
       tr.innerHTML =
         '<td>'+(i+1)+'</td>'+
-        '<td>'+cat+'</td>'+
-        '<td>'+catTotals[cat].toFixed(2)+' ₪</td>';
+        '<td>'+n+'</td>'+
+        '<td>'+m.charge.toFixed(2)+' ₪</td>'+
+        '<td>'+m.credit.toFixed(2)+' ₪</td>'+
+        '<td>'+net.toFixed(2)+' ₪</td>';
       tbody.appendChild(tr);
     }
+  }
+
+  function renderSummaryByCategories() {
+    var tbody = document.querySelector("#summaryCategoriesTable tbody");
+    var catTotals = {};
+    var i;
+
+    for (i=0; i<invoices.length; i++) {
+      var inv = invoices[i];
+      var s = getSupplierByName(inv.supplier);
+      var cat = (s && s.category) ? s.category : "לא מקוטלג";
+      if (!catTotals[cat]) catTotals[cat] = { charge:0, credit:0 };
+      if (inv.isCredit) {
+        catTotals[cat].credit += inv.amount;
+      } else {
+        catTotals[cat].charge += inv.amount;
+      }
+    }
+
+    var cats = Object.keys(catTotals);
+    if (cats.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty">אין נתונים.</td></tr>';
+      return;
+    }
+
+    cats.sort(function(a, b) {
+      var na = catTotals[a].charge - catTotals[a].credit;
+      var nb = catTotals[b].charge - catTotals[b].credit;
+      return nb - na;
+    });
+
+    tbody.innerHTML = "";
+    for (i=0; i<cats.length; i++) {
+      var c = cats[i];
+      var m = catTotals[c];
+      var net = m.charge - m.credit;
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td>'+(i+1)+'</td>'+
+        '<td>'+c+'</td>'+
+        '<td>'+m.charge.toFixed(2)+' ₪</td>'+
+        '<td>'+m.credit.toFixed(2)+' ₪</td>'+
+        '<td>'+net.toFixed(2)+' ₪</td>';
+      tbody.appendChild(tr);
+    }
+  }
+
+  function renderSummaries() {
+    renderSummaryBySuppliers();
+    renderSummaryByCategories();
   }
 
   // ===== INIT =====
@@ -696,6 +809,8 @@
     } else {
       if (!suppliers || !suppliers.length) suppliers = getDefaultSuppliers();
     }
+
+    sortSuppliers();
 
     var m = document.getElementById("monthInput");
     if (m && currentMonth) m.value = currentMonth;
