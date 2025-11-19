@@ -2,99 +2,303 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>דשבורד חודשי – מסעדה</title>
+  <title>דשבורד הוצאות ספקים - הצדף</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <!-- פונט Inter בסגנון Apple-Style -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    * { box-sizing:border-box; font-family:system-ui,-apple-system,"Segoe UI",sans-serif; }
-    body { margin:0; background:#f4f6fb; color:#111827; }
+    :root {
+      --bg: #f5f5f7;
+      --card-bg: #ffffff;
+      --border-subtle: #e0e0e5;
+      --border-strong: #c7c7d1;
+      --primary: #0a84ff;
+      --primary-soft: #e5f1ff;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --shadow-soft: 0 16px 30px rgba(15,23,42,0.08);
+      --shadow-subtle: 0 8px 18px rgba(15,23,42,0.04);
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text-main);
+    }
 
     header {
-      background:linear-gradient(135deg,#2563eb,#10b981);
-      color:#fff; padding:1.2rem 1.4rem; text-align:center;
-      font-weight:700; font-size:1.35rem;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 1.1rem 1.4rem;
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.25rem;
+      position: sticky;
+      top: 0;
+      z-index: 20;
     }
-    header small { display:block; font-size:.8rem; opacity:.9; margin-top:.25rem; }
 
     nav {
-      display:flex; justify-content:center; gap:.5rem;
-      background:#e5edf7; padding:.45rem .75rem; position:sticky; top:0; z-index:10;
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.6rem 0.75rem 0.4rem;
+      backdrop-filter: blur(18px);
+      position: sticky;
+      top: 3.2rem;
+      z-index: 19;
+      background: rgba(245,245,247,0.92);
+      border-bottom: 1px solid rgba(0,0,0,0.02);
     }
-    nav button {
-      border-radius:999px; border:1px solid #cbd5f5; background:#fff;
-      padding:.35rem .9rem; font-size:.85rem; font-weight:600; cursor:pointer;
-    }
-    nav button.active { background:#2563eb; color:#fff; border-color:#2563eb; }
 
-    main { max-width:1100px; margin:1.2rem auto 2rem; padding:0 1rem; }
-    section { display:none; }
-    section.active { display:block; }
+    nav button {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      background: transparent;
+      padding: 0.35rem 1.1rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+    }
+
+    nav button:hover {
+      background: rgba(15,23,42,0.02);
+    }
+
+    nav button.active {
+      background: #ffffff;
+      border-color: rgba(15,23,42,0.06);
+      box-shadow: 0 6px 14px rgba(15,23,42,0.12);
+      color: #111827;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 1.4rem auto 2rem;
+      padding: 0 1.2rem;
+    }
+
+    section { display: none; }
+    section.active { display: block; }
 
     .card {
-      background:#fff; border-radius:10px; padding:1rem 1.1rem;
-      border:1px solid #e2e8f0; box-shadow:0 1px 4px rgba(15,23,42,.08);
-      margin-bottom:1rem;
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.2rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow-subtle);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .card h3 {
+      margin: 0 0 0.4rem;
+      font-size: 1rem;
+      font-weight: 600;
     }
 
     .grid-3 {
-      display:grid; gap:1rem; grid-template-columns:repeat(3,1fr);
-      margin-bottom:1rem;
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-bottom: 1rem;
     }
-    @media (max-width:800px){ .grid-3 { grid-template-columns:1fr; } }
 
-    .kpi-label { font-size:.8rem; color:#64748b; }
-    .kpi-value { font-size:1.32rem; font-weight:700; }
+    @media (max-width: 800px) {
+      .grid-3 { grid-template-columns: 1fr; }
+      nav { top: 3.4rem; }
+    }
 
-    label { display:block; font-size:.8rem; margin:.45rem 0 .2rem; color:#475569; }
-    input, select {
-      width:100%; padding:.45rem .55rem; border-radius:6px;
-      border:1px solid #cbd5e1; font-size:.85rem;
+    .kpi-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
     }
-    textarea {
-      width:100%; padding:.45rem .55rem; border-radius:6px;
-      border:1px solid #cbd5e1; font-size:.85rem; resize:vertical;
+
+    .kpi-value {
+      font-size: 1.35rem;
+      font-weight: 600;
     }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+    }
+
+    .row.space-between {
+      justify-content: space-between;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      margin: 0.45rem 0 0.2rem;
+      color: var(--text-muted);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 0.45rem 0.6rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      font-size: 0.85rem;
+      background: #fafafc;
+      transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    }
+
     input:focus, textarea:focus, select:focus {
-      outline:2px solid #2563eb; outline-offset:1px; border-color:#2563eb;
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(10,132,255,0.14);
+      background: #ffffff;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 52px;
     }
 
     button.primary {
-      margin-top:.5rem; padding:.45rem .95rem; border-radius:999px;
-      border:none; background:#2563eb; color:#fff; font-size:.85rem;
-      font-weight:600; cursor:pointer;
+      margin-top: 0.55rem;
+      padding: 0.45rem 1.1rem;
+      border-radius: 999px;
+      border: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 9px 18px rgba(10,132,255,0.35);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.12s ease;
     }
-    button.primary.small { padding:.35rem .75rem; font-size:.78rem; }
+
+    button.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 11px 24px rgba(10,132,255,0.45);
+      background: #0071e3;
+    }
+
+    button.primary.small {
+      padding: 0.35rem 0.85rem;
+      font-size: 0.78rem;
+      box-shadow: 0 6px 14px rgba(15,23,42,0.18);
+      background: #ffffff;
+      color: #111827;
+      border: 1px solid rgba(148,163,184,0.6);
+    }
+
+    button.primary.small:hover {
+      background: #f9fafb;
+      transform: translateY(-0.5px);
+    }
 
     .btn-ghost {
-      border:none; background:none; color:#2563eb; cursor:pointer;
-      font-size:.75rem; text-decoration:underline; padding:0 .15rem;
+      border: none;
+      background: none;
+      color: #2563eb;
+      cursor: pointer;
+      font-size: 0.75rem;
+      text-decoration: underline;
+      padding: 0.1rem 0.2rem;
     }
 
-    table { width:100%; border-collapse:collapse; font-size:.8rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      margin-top: 0.45rem;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    thead {
+      background: #f3f4f6;
+    }
+
     th, td {
-      border-bottom:1px solid #e2e8f0; padding:.45rem .3rem; text-align:center;
+      padding: 0.45rem 0.35rem;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: center;
     }
-    th { background:#f1f5f9; font-weight:600; color:#475569; }
-    .empty { text-align:center; color:#9ca3af; padding:.7rem; }
 
-    .late { color:#dc2626; font-weight:700; }
-    .due-soon { color:#c2410c; font-weight:700; }
-    .paid { color:#16a34a; font-weight:700; }
+    th {
+      font-weight: 600;
+      color: #4b5563;
+      font-size: 0.78rem;
+    }
 
-    .badge { padding:.15rem .5rem; border-radius:999px; font-size:.7rem; }
-    .badge-excluded { background:#fee2e2; color:#b91c1c; }
+    tbody tr:nth-child(even) {
+      background: #f9fafb;
+    }
 
-    .row { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; }
-    .row.space-between { justify-content:space-between; }
+    tbody tr:hover {
+      background: #eef2ff;
+    }
 
+    .empty {
+      text-align: center;
+      color: #9ca3af;
+      padding: 0.7rem;
+    }
+
+    .badge-excluded {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.1rem 0.55rem;
+      border-radius: 999px;
+      background: #fee2e2;
+      color: #b91c1c;
+      font-size: 0.7rem;
+      font-weight: 500;
+    }
+
+    .status-paid {
+      color: #16a34a;
+      font-weight: 600;
+    }
+
+    .status-partial {
+      color: #ca8a04;
+      font-weight: 600;
+    }
+
+    .status-unpaid {
+      color: #dc2626;
+      font-weight: 600;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.18rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      background: var(--primary-soft);
+      color: #1d4ed8;
+      font-weight: 500;
+    }
   </style>
 </head>
-
 <body>
 
 <header>
-  דשבורד חודשי – מסעדה
-  <small>ספקים, חשבוניות, הכנסות, רווח נקי – הכל בחודש פעיל</small>
+  דשבורד הוצאות ספקים - הצדף
 </header>
 
 <nav>
@@ -106,212 +310,209 @@
 
 <main>
 
-<!-- ──────────────────────────── דשבורד ──────────────────────────── -->
-<section id="dashboard" class="active">
-  <div class="card">
-    <div class="row space-between">
-      <div>
-        <label>חודש פעיל</label>
-        <input type="month" id="monthInput" onchange="changeMonth(this.value)">
+  <!-- דשבורד -->
+  <section id="dashboard" class="active">
+    <div class="card">
+      <div class="row space-between">
+        <div>
+          <label>חודש פעיל</label>
+          <input type="month" id="monthInput" onchange="changeMonth(this.value)">
+        </div>
+        <div>
+          <label>מחזור (הכנסות)</label>
+          <input type="number" id="incomeInput" step="0.01" min="0"
+                 oninput="updateIncome(this.value)" placeholder="לדוגמה 180000">
+        </div>
       </div>
+    </div>
 
-      <div>
-        <label>מחזור (הכנסות)</label>
-        <input type="number" id="incomeInput" step="0.01" min="0"
-               oninput="updateIncome(this.value)" placeholder="לדוגמה 180000">
+    <div class="grid-3">
+      <div class="card">
+        <div class="kpi-label">סה״כ הוצאות נטו</div>
+        <div class="kpi-value" id="totalExpenses">0 ₪</div>
+      </div>
+      <div class="card">
+        <div class="kpi-label">הכנסות (מחזור)</div>
+        <div class="kpi-value" id="totalIncome">0 ₪</div>
+      </div>
+      <div class="card">
+        <div class="kpi-label">רווח נקי</div>
+        <div class="kpi-value" id="netProfit">0 ₪</div>
       </div>
     </div>
-  </div>
 
-  <div class="grid-3">
     <div class="card">
-      <div class="kpi-label">סה״כ הוצאות נטו</div>
-      <div class="kpi-value" id="totalExpenses">0 ₪</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <strong>הוצאות לפי ספק (נטו)</strong>
+        <span class="pill">חודש נוכחי בלבד</span>
+      </div>
+      <table id="dashboardSuppliersTable">
+        <thead>
+          <tr><th>#</th><th>ספק</th><th>נטו</th></tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="3" class="empty">אין נתונים</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ספקים -->
+  <section id="suppliers">
+    <div class="card">
+      <form onsubmit="addOrUpdateSupplier(event)">
+        <h3>ספק חדש / עריכה</h3>
+
+        <label>שם ספק</label>
+        <input type="text" id="supplierName" placeholder="למשל: החברה המרכזית">
+
+        <label>קטגוריה</label>
+        <input type="text" id="supplierCategory" placeholder="למשל: אלכוהול, דגים, שירותים">
+
+        <label>טלפון</label>
+        <input type="text" id="supplierPhone" placeholder="לדוגמה: 050-1234567">
+
+        <label>אימייל</label>
+        <input type="email" id="supplierEmail" placeholder="supplier@example.com">
+
+        <label>
+          <input type="checkbox" id="supplierExclude">
+          לא לכלול ספק זה בחישוב רווח
+        </label>
+
+        <div class="row">
+          <button class="primary" type="submit" id="supplierBtn">הוסף ספק</button>
+          <button class="primary small" type="button" id="cancelSupplierEdit"
+                  style="display:none;background:#f3f4f6;border-color:#d4d4dd;box-shadow:none;"
+                  onclick="cancelSupplierEditMode()">בטל עריכה</button>
+        </div>
+      </form>
     </div>
 
     <div class="card">
-      <div class="kpi-label">הכנסות (מחזור)</div>
-      <div class="kpi-value" id="totalIncome">0 ₪</div>
+      <strong>רשימת ספקים (ממוינים א׳–ת׳)</strong>
+      <table id="suppliersTable">
+        <thead>
+          <tr>
+            <th>#</th><th>שם</th><th>קטגוריה</th><th>רווח</th>
+            <th>טלפון</th><th>אימייל</th><th>פעולות</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- חשבוניות -->
+  <section id="invoices">
+    <div class="card">
+      <form onsubmit="addInvoice(event)">
+        <h3>הוספת חשבונית</h3>
+
+        <label>ספק</label>
+        <input list="supplierList" id="invoiceSupplier" placeholder="התחל להקליד שם ספק">
+        <datalist id="supplierList"></datalist>
+
+        <label>מספר חשבונית</label>
+        <input type="text" id="invoiceNumber">
+
+        <label>תאריך חשבונית</label>
+        <input type="date" id="invoiceDate">
+
+        <label>סכום (₪)</label>
+        <input type="number" id="invoiceAmount" step="0.01" min="0">
+
+        <label>סטטוס תשלום</label>
+        <select id="invoiceStatus">
+          <option value="לא שולם">לא שולם</option>
+          <option value="שולם">שולם</option>
+          <option value="חלקי">שולם חלקית</option>
+        </select>
+
+        <label>סוג חשבונית</label>
+        <select id="invoiceType">
+          <option value="קבוע">קבוע</option>
+          <option value="חד פעמי">חד פעמי</option>
+        </select>
+
+        <label>הערות</label>
+        <textarea id="invoiceNotes" rows="2"></textarea>
+
+        <label>
+          <input type="checkbox" id="invoiceCredit">
+          זיכוי?
+        </label>
+
+        <button class="primary" type="submit">הוסף חשבונית</button>
+      </form>
     </div>
 
     <div class="card">
-      <div class="kpi-label">רווח נקי</div>
-      <div class="kpi-value" id="netProfit">0 ₪</div>
+      <strong>כל החשבוניות בחודש</strong>
+      <table id="invoicesTable">
+        <thead>
+          <tr>
+            <th>#</th><th>ספק</th><th>מס׳</th><th>תאריך</th>
+            <th>סכום</th><th>סטטוס</th><th>זיכוי</th><th>הערות</th><th>מחיקה</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
-  </div>
 
-  <div class="card">
-    <strong>הוצאות לפי ספק (נטו)</strong>
-    <table id="dashboardSuppliersTable">
-      <thead>
-        <tr><th>#</th><th>ספק</th><th>נטו</th></tr>
-      </thead>
-      <tbody>
-        <tr><td colspan="3" class="empty">אין נתונים</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
+    <div class="card">
+      <button class="primary small" onclick="exportMonthJSON()">ייצוא JSON</button>
+      <button class="primary small" onclick="exportMonthCSV()">ייצוא CSV</button>
+      <button class="primary small" onclick="undoDelete()">בטל מחיקה אחרונה</button>
+    </div>
+  </section>
 
-<!-- ──────────────────────────── ספקים ──────────────────────────── -->
-<section id="suppliers">
-  <div class="card">
-    <form onsubmit="addOrUpdateSupplier(event)">
-      <h3 style="margin:0 0 .4rem;font-size:1rem;">ספק חדש / עריכה</h3>
+  <!-- סיכומים -->
+  <section id="summary">
+    <div class="card">
+      <strong>סיכום לפי ספק</strong>
+      <table id="summarySuppliers">
+        <thead>
+          <tr>
+            <th>#</th><th>ספק</th><th>חיובים</th><th>זיכויים</th><th>נטו</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
 
-      <label>שם ספק</label>
-      <input type="text" id="supplierName">
+    <div class="card">
+      <strong>סיכום לפי קטגוריה</strong>
+      <table id="summaryCategories">
+        <thead>
+          <tr>
+            <th>#</th><th>קטגוריה</th><th>חיובים</th><th>זיכויים</th><th>נטו</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
 
-      <label>קטגוריה</label>
-      <input type="text" id="supplierCategory" placeholder="לדוגמה: אלכוהול, דגים, שירותים">
+</main>
 
-      <label>טלפון</label>
-      <input type="text" id="supplierPhone">
-
-      <label>אימייל</label>
-      <input type="email" id="supplierEmail">
-
-      <label>
-        <input type="checkbox" id="supplierExclude">
-        לא לכלול ספק זה בחישוב רווח
-      </label>
-
-      <button class="primary" type="submit" id="supplierBtn">הוסף ספק</button>
-      <button class="primary small" type="button" id="cancelSupplierEdit"
-              style="display:none;background:#aaa;" onclick="cancelSupplierEditMode()">בטל עריכה</button>
-
-    </form>
-  </div>
-
-  <div class="card">
-    <strong>רשימת ספקים (ממוינים א׳–ת׳)</strong>
-    <table id="suppliersTable">
-      <thead>
-        <tr>
-          <th>#</th><th>שם</th><th>קטגוריה</th><th>רווח</th>
-          <th>טלפון</th><th>אימייל</th><th>פעולות</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-</section>
-
-<!-- ──────────────────────────── חשבוניות ──────────────────────────── -->
-<section id="invoices">
-
-  <div class="card">
-    <form onsubmit="addInvoice(event)">
-      <h3 style="margin:0 0 .4rem;font-size:1rem;">הוספת חשבונית</h3>
-
-      <label>ספק</label>
-      <input list="supplierList" id="invoiceSupplier" placeholder="התחל להקליד שם ספק">
-      <datalist id="supplierList"></datalist>
-
-      <label>מספר חשבונית</label>
-      <input type="text" id="invoiceNumber">
-
-      <label>תאריך חשבונית</label>
-      <input type="date" id="invoiceDate">
-
-      <label>תאריך יעד לתשלום</label>
-      <input type="date" id="invoiceDue">
-
-      <label>סכום (₪)</label>
-      <input type="number" id="invoiceAmount" step="0.01" min="0">
-
-      <label>סטטוס תשלום</label>
-      <select id="invoiceStatus">
-        <option value="לא שולם">לא שולם</option>
-        <option value="שולם">שולם</option>
-        <option value="חלקי">שולם חלקית</option>
-      </select>
-
-      <label>סוג חשבונית</label>
-      <select id="invoiceType">
-        <option value="קבוע">קבוע</option>
-        <option value="חד פעמי">חד פעמי</option>
-      </select>
-
-      <label>הערות</label>
-      <textarea id="invoiceNotes" rows="2"></textarea>
-
-      <label>
-        <input type="checkbox" id="invoiceCredit">
-        חשבונית זיכוי (נספרת כהוצאה שלילית)
-      </label>
-
-      <button class="primary" type="submit">הוסף חשבונית</button>
-
-    </form>
-  </div>
-
-  <div class="card">
-    <strong>כל החשבוניות בחודש</strong>
-    <table id="invoicesTable">
-      <thead>
-        <tr>
-          <th>#</th><th>ספק</th><th>מס׳</th><th>תאריך</th><th>יעד</th>
-          <th>סכום</th><th>סטטוס</th><th>זיכוי</th><th>הערות</th><th>מחיקה</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <div class="card">
-    <button class="primary small" onclick="exportMonthJSON()">ייצוא JSON</button>
-    <button class="primary small" onclick="exportMonthCSV()">ייצוא CSV</button>
-    <button class="primary small" onclick="undoDelete()">בטל מחיקה אחרונה</button>
-  </div>
-
-</section>
-
-<!-- ──────────────────────────── סיכומים ──────────────────────────── -->
-<section id="summary">
-
-  <div class="card">
-    <strong>סיכום לפי ספק</strong>
-    <table id="summarySuppliers">
-      <thead>
-        <tr>
-          <th>#</th><th>ספק</th><th>חיובים</th><th>זיכויים</th><th>נטו</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <div class="card">
-    <strong>סיכום לפי קטגוריה</strong>
-    <table id="summaryCategories">
-      <thead>
-        <tr>
-          <th>#</th><th>קטגוריה</th><th>חיובים</th><th>זיכויים</th><th>נטו</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-</section><script>
-/* ──────────────────────────────────────────────────────────────
+<script>
+/* ─────────────────────────────────────────
    מבנה נתונים
-────────────────────────────────────────────────────────────── */
+───────────────────────────────────────── */
 
-var STORAGE_KEY = "restaurant_dashboard_v1";
+var STORAGE_KEY = "restaurant_dashboard_v2";
 
 var state = {
-  suppliers: [],         // [{name, category, phone, email, excludeFromProfit}]
-  months: {},            // { "2025-11": { income, invoices:[...] } }
+  suppliers: [],
+  months: {},
   currentMonth: "",
-  lastDeleted: null      // לשימוש ב־Undo
+  lastDeleted: null
 };
 
-
-/* ──────────────────────────────────────────────────────────────
-   שמירה + טעינה
-────────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────
+   שמירה וטעינה
+───────────────────────────────────────── */
 
 function saveState() {
   try {
@@ -327,7 +528,6 @@ function loadState() {
     if (!raw) return false;
     var data = JSON.parse(raw);
     if (!data) return false;
-
     state = data;
     return true;
   } catch (e) {
@@ -336,36 +536,28 @@ function loadState() {
   }
 }
 
-
-/* ──────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────
    אתחול
-────────────────────────────────────────────────────────────── */
+───────────────────────────────────────── */
 
 function init() {
   var loaded = loadState();
 
-  // אם אין נתונים — צור ברירת מחדל
   if (!loaded) {
     state.suppliers = getDefaultSuppliers();
     var now = new Date();
     var mm = String(now.getMonth() + 1).padStart(2, "0");
-    var month = now.getFullYear() + "-" + mm;
+    var m = now.getFullYear() + "-" + mm;
 
-    state.currentMonth = month;
-    state.months[month] = {
-      income: 0,
-      invoices: []
-    };
-
+    state.currentMonth = m;
+    state.months[m] = { income: 0, invoices: [] };
     saveState();
   }
 
-  // מוודא שכל חודש מוגדר נכון
   if (!state.months[state.currentMonth]) {
     state.months[state.currentMonth] = { income: 0, invoices: [] };
   }
 
-  // טען UI
   document.getElementById("monthInput").value = state.currentMonth;
   document.getElementById("incomeInput").value =
     state.months[state.currentMonth].income || "";
@@ -380,10 +572,9 @@ function init() {
 
 document.addEventListener("DOMContentLoaded", init);
 
-
-/* ──────────────────────────────────────────────────────────────
-   ברירת מחדל של ספקים (הרשימה הגדולה שלך)
-────────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────
+   ברירת מחדל ספקים
+───────────────────────────────────────── */
 
 function getDefaultSuppliers() {
   let names = [
@@ -408,10 +599,9 @@ function getDefaultSuppliers() {
   }));
 }
 
-
-/* ──────────────────────────────────────────────────────────────
-   ניווט בין לשוניות
-────────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────
+   ניווט לשוניות
+───────────────────────────────────────── */
 
 function switchTab(id, btn) {
   document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
@@ -424,23 +614,20 @@ function switchTab(id, btn) {
   if (id === "summary") renderAllSummaries();
 }
 
+/* ─────────────────────────────────────────
+   חודשים
+───────────────────────────────────────── */
 
-/* ──────────────────────────────────────────────────────────────
-   ניהול חודשים
-────────────────────────────────────────────────────────────── */
+function changeMonth(val) {
+  if (!val) return;
+  state.currentMonth = val;
 
-function changeMonth(monthVal) {
-  if (!monthVal) return;
-
-  state.currentMonth = monthVal;
-
-  // צור חודש אם לא קיים
-  if (!state.months[monthVal]) {
-    state.months[monthVal] = { income: 0, invoices: [] };
+  if (!state.months[val]) {
+    state.months[val] = { income: 0, invoices: [] };
   }
 
   document.getElementById("incomeInput").value =
-    state.months[monthVal].income;
+    state.months[val].income || "";
 
   renderInvoicesTable();
   updateDashboard();
@@ -449,16 +636,15 @@ function changeMonth(monthVal) {
 }
 
 function updateIncome(val) {
-  val = parseFloat(val) || 0;
-  state.months[state.currentMonth].income = val;
+  var n = parseFloat(val) || 0;
+  state.months[state.currentMonth].income = n;
   updateDashboard();
   saveState();
 }
 
-
-/* ──────────────────────────────────────────────────────────────
-   ספקים — הוספה, עריכה, מחיקה
-────────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────
+   ספקים
+───────────────────────────────────────── */
 
 var editingSupplierIndex = null;
 
@@ -495,6 +681,8 @@ function addOrUpdateSupplier(e) {
   clearSupplierForm();
   renderSuppliersTable();
   renderSupplierSelect();
+  updateDashboard();
+  renderAllSummaries();
   saveState();
 }
 
@@ -539,10 +727,7 @@ function deleteSupplier(i) {
   saveState();
 }
 
-
-/* ──────────────────────────────────────────────────────────────
-   הצגת ספקים בטבלה + בחירה בטופס חשבונית
-────────────────────────────────────────────────────────────── */
+/* הצגת ספקים */
 
 function renderSuppliersTable() {
   var tbody = document.querySelector("#suppliersTable tbody");
@@ -583,10 +768,9 @@ function renderSupplierSelect() {
   });
 }
 
-
-/* ──────────────────────────────────────────────────────────────
-   חשבוניות — הוספה, מחיקה, טבלה
-────────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────
+   חשבוניות
+───────────────────────────────────────── */
 
 function addInvoice(e) {
   e.preventDefault();
@@ -594,13 +778,13 @@ function addInvoice(e) {
   var supplier = invoiceSupplier.value.trim();
   var number = invoiceNumber.value.trim();
   var amount = parseFloat(invoiceAmount.value);
+
   if (!supplier || !number || isNaN(amount)) return;
 
   var inv = {
     supplier: supplier,
     number: number,
     date: invoiceDate.value || "",
-    due: invoiceDue.value || "",
     amount: amount,
     status: invoiceStatus.value,
     type: invoiceType.value,
@@ -613,7 +797,6 @@ function addInvoice(e) {
   invoiceSupplier.value = "";
   invoiceNumber.value = "";
   invoiceDate.value = "";
-  invoiceDue.value = "";
   invoiceAmount.value = "";
   invoiceNotes.value = "";
   invoiceCredit.checked = false;
@@ -626,7 +809,6 @@ function addInvoice(e) {
 
 function deleteInvoice(i) {
   var list = state.months[state.currentMonth].invoices;
-
   state.lastDeleted = { type: "invoice", data: list[i], index: i };
 
   list.splice(i, 1);
@@ -636,10 +818,8 @@ function deleteInvoice(i) {
   saveState();
 }
 
-/* Undo מחיקה */
 function undoDelete() {
   if (!state.lastDeleted) return;
-
   var d = state.lastDeleted;
 
   if (d.type === "supplier") {
@@ -647,6 +827,8 @@ function undoDelete() {
     sortSuppliers();
     renderSuppliersTable();
     renderSupplierSelect();
+    updateDashboard();
+    renderAllSummaries();
   }
 
   if (d.type === "invoice") {
@@ -660,33 +842,21 @@ function undoDelete() {
   saveState();
 }
 
-
 function renderInvoicesTable() {
   var tbody = document.querySelector("#invoicesTable tbody");
   tbody.innerHTML = "";
 
   var invs = state.months[state.currentMonth].invoices;
   if (invs.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="10" class="empty">אין חשבוניות</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9" class="empty">אין חשבוניות</td></tr>`;
     return;
   }
 
   invs.forEach((inv, i) => {
     var statusClass = "";
-    if (inv.status === "שולם") statusClass = "paid";
-
-    // בדיקת איחור
-    if (inv.due) {
-      var today = new Date();
-      var dueDate = new Date(inv.due);
-      if (dueDate < today && inv.status !== "שולם")
-        statusClass = "late";
-      else {
-        var diff = (dueDate - today) / (1000*3600*24);
-        if (diff <= 3 && diff >= 0 && inv.status !== "שולם")
-          statusClass = "due-soon";
-      }
-    }
+    if (inv.status === "שולם") statusClass = "status-paid";
+    else if (inv.status === "חלקי") statusClass = "status-partial";
+    else if (inv.status === "לא שולם") statusClass = "status-unpaid";
 
     tbody.innerHTML += `
       <tr>
@@ -694,7 +864,6 @@ function renderInvoicesTable() {
         <td>${inv.supplier}</td>
         <td>${inv.number}</td>
         <td>${inv.date}</td>
-        <td>${inv.due}</td>
         <td>${inv.amount.toFixed(2)}</td>
         <td class="${statusClass}">${inv.status}</td>
         <td>${inv.isCredit ? "זיכוי" : ""}</td>
@@ -705,13 +874,12 @@ function renderInvoicesTable() {
   });
 }
 
-
-/* ──────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────
    דשבורד
-────────────────────────────────────────────────────────────── */
+───────────────────────────────────────── */
 
-function getSupplierByName(n) {
-  return state.suppliers.find(s => s.name === n);
+function getSupplierByName(name) {
+  return state.suppliers.find(s => s.name === name);
 }
 
 function updateDashboard() {
@@ -727,10 +895,12 @@ function updateDashboard() {
     totalNet += net;
   });
 
-  document.getElementById("totalExpenses").textContent = totalNet.toFixed(2) + " ₪";
-  document.getElementById("totalIncome").textContent = month.income.toFixed(2) + " ₪";
+  document.getElementById("totalExpenses").textContent =
+    totalNet.toFixed(2) + " ₪";
+  document.getElementById("totalIncome").textContent =
+    (month.income || 0).toFixed(2) + " ₪";
   document.getElementById("netProfit").textContent =
-    (month.income - totalNet).toFixed(2) + " ₪";
+    ((month.income || 0) - totalNet).toFixed(2) + " ₪";
 
   renderDashboardSuppliers();
 }
@@ -769,10 +939,9 @@ function renderDashboardSuppliers() {
   });
 }
 
-
-/* ──────────────────────────────────────────────────────────────
-   סיכומים לפי ספק + קטגוריה
-────────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────
+   סיכומים
+───────────────────────────────────────── */
 
 function renderAllSummaries() {
   renderSummarySuppliers();
@@ -799,12 +968,11 @@ function renderSummarySuppliers() {
     return;
   }
 
-  names.sort((a,b) => (map[b].charge-map[b].credit) - (map[a].charge-map[a].credit));
+  names.sort((a,b) => (map[b].charge - map[b].credit) - (map[a].charge - map[a].credit));
 
   names.forEach((name, i) => {
     var m = map[name];
     var net = m.charge - m.credit;
-
     tbody.innerHTML += `
       <tr>
         <td>${i+1}</td>
@@ -839,12 +1007,11 @@ function renderSummaryCategories() {
     return;
   }
 
-  cats.sort((a,b) => (map[b].charge-map[b].credit) - (map[a].charge-map[a].credit));
+  cats.sort((a,b) => (map[b].charge - map[b].credit) - (map[a].charge - map[a].credit));
 
   cats.forEach((cat, i) => {
     var m = map[cat];
     var net = m.charge - m.credit;
-
     tbody.innerHTML += `
       <tr>
         <td>${i+1}</td>
@@ -857,10 +1024,9 @@ function renderSummaryCategories() {
   });
 }
 
-
-/* ──────────────────────────────────────────────────────────────
-   ייצוא CSV + JSON
-────────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────
+   ייצוא
+───────────────────────────────────────── */
 
 function exportMonthJSON() {
   var data = state.months[state.currentMonth];
@@ -873,18 +1039,17 @@ function exportMonthJSON() {
 
 function exportMonthCSV() {
   var invs = state.months[state.currentMonth].invoices;
+  var csv = "supplier,number,date,amount,status,type,notes,isCredit\n";
 
-  var csv = "supplier,number,date,due,amount,status,type,notes,isCredit\n";
   invs.forEach(inv => {
     csv += [
       inv.supplier,
       inv.number,
       inv.date,
-      inv.due,
       inv.amount,
       inv.status,
       inv.type,
-      inv.notes?.replace(/,/g, ";"),
+      (inv.notes || "").replace(/,/g, ";"),
       inv.isCredit ? "yes" : "no"
     ].join(",") + "\n";
   });
@@ -896,9 +1061,7 @@ function exportMonthCSV() {
   a.click();
 }
 
-</script></main>
+</script>
 
 </body>
 </html>
-
-
