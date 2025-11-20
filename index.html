@@ -5,25 +5,27 @@
   <title>דשבורד הוצאות ספקים - הצדף</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- פונט Inter בסגנון Apple-Style -->
+  <!-- פונט Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg: #f5f5f7;
-      --card-bg: #ffffff;
-      --border-subtle: #e0e0e5;
-      --border-strong: #c7c7d1;
-      --primary: #0a84ff;
-      --primary-soft: #e5f1ff;
-      --text-main: #111827;
-      --text-muted: #6b7280;
-      --radius-lg: 14px;
+      --bg: #0f172a;               /* רקע כהה מודרני */
+      --bg-soft: #111827;
+      --card-bg: #0b1120;          /* כרטיסים כהים */
+      --card-elevated: #020617;    /* כרטיסי KPI */
+      --border-subtle: #1f2937;
+      --primary: #38bdf8;          /* תכלת מודרני */
+      --primary-soft: rgba(56,189,248,0.14);
+      --accent: #6366f1;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --radius-lg: 18px;
       --radius-md: 10px;
-      --shadow-soft: 0 16px 30px rgba(15,23,42,0.08);
-      --shadow-subtle: 0 8px 18px rgba(15,23,42,0.04);
+      --shadow-soft: 0 20px 40px rgba(15,23,42,0.7);
+      --shadow-subtle: 0 14px 30px rgba(15,23,42,0.6);
     }
 
     * {
@@ -33,61 +35,65 @@
 
     body {
       margin: 0;
-      background: var(--bg);
+      background: radial-gradient(circle at top, #1d283a 0, #020617 60%, #000 100%);
       color: var(--text-main);
     }
 
     header {
-      background: #ffffff;
-      border-bottom: 1px solid var(--border-subtle);
-      padding: 1.1rem 1.4rem;
+      background: linear-gradient(135deg, #0b1120, #020617);
+      border-bottom: 1px solid rgba(148,163,184,0.35);
+      padding: 1.2rem 1.4rem;
       text-align: center;
       font-weight: 600;
-      font-size: 1.25rem;
+      font-size: 1.3rem;
+      letter-spacing: 0.03em;
       position: sticky;
       top: 0;
       z-index: 20;
+      box-shadow: 0 12px 30px rgba(15,23,42,0.7);
     }
 
     nav {
       display: flex;
       justify-content: center;
-      gap: 0.5rem;
-      padding: 0.6rem 0.75rem 0.4rem;
+      gap: 0.65rem;
+      padding: 0.6rem 0.75rem 0.5rem;
       backdrop-filter: blur(18px);
       position: sticky;
-      top: 3.2rem;
+      top: 3.3rem;
       z-index: 19;
-      background: rgba(245,245,247,0.92);
-      border-bottom: 1px solid rgba(0,0,0,0.02);
+      background: radial-gradient(circle at top, rgba(15,23,42,0.95), rgba(15,23,42,0.7));
+      border-bottom: 1px solid rgba(31,41,55,0.8);
     }
 
     nav button {
       border-radius: 999px;
       border: 1px solid transparent;
       background: transparent;
-      padding: 0.35rem 1.1rem;
+      padding: 0.32rem 1.15rem;
       font-size: 0.85rem;
       font-weight: 500;
       cursor: pointer;
       color: var(--text-muted);
-      transition: background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+      transition: background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, transform 0.1s ease;
     }
 
     nav button:hover {
-      background: rgba(15,23,42,0.02);
+      background: rgba(15,23,42,0.5);
+      border-color: rgba(148,163,184,0.4);
     }
 
     nav button.active {
-      background: #ffffff;
-      border-color: rgba(15,23,42,0.06);
-      box-shadow: 0 6px 14px rgba(15,23,42,0.12);
-      color: #111827;
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
+      border-color: transparent;
+      box-shadow: 0 10px 20px rgba(37,99,235,0.65);
+      color: #0b1120;
+      transform: translateY(-1px);
     }
 
     main {
       max-width: 1100px;
-      margin: 1.4rem auto 2rem;
+      margin: 1.4rem auto 2.2rem;
       padding: 0 1.2rem;
     }
 
@@ -95,18 +101,19 @@
     section.active { display: block; }
 
     .card {
-      background: var(--card-bg);
+      background: radial-gradient(circle at top left, #1e293b 0, var(--card-bg) 55%, #020617 100%);
       border-radius: var(--radius-lg);
       padding: 1rem 1.2rem;
       margin-bottom: 1rem;
       box-shadow: var(--shadow-subtle);
-      border: 1px solid var(--border-subtle);
+      border: 1px solid rgba(15,23,42,0.9);
     }
 
     .card h3 {
       margin: 0 0 0.4rem;
       font-size: 1rem;
       font-weight: 600;
+      color: #e5e7eb;
     }
 
     .grid-3 {
@@ -121,15 +128,24 @@
       nav { top: 3.4rem; }
     }
 
+    .kpi-card {
+      background: linear-gradient(145deg, #0f172a, #020617);
+      border-radius: 20px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(51,65,85,0.9);
+      padding: 0.9rem 1rem;
+    }
+
     .kpi-label {
       font-size: 0.8rem;
-      color: var(--text-muted);
+      color: #9ca3af;
       margin-bottom: 0.25rem;
     }
 
     .kpi-value {
-      font-size: 1.35rem;
+      font-size: 1.4rem;
       font-weight: 600;
+      color: #e5e7eb;
     }
 
     .row {
@@ -147,7 +163,7 @@
       display: block;
       font-size: 0.8rem;
       margin: 0.45rem 0 0.2rem;
-      color: var(--text-muted);
+      color: #9ca3af;
     }
 
     input, select, textarea {
@@ -156,15 +172,21 @@
       border-radius: 10px;
       border: 1px solid var(--border-subtle);
       font-size: 0.85rem;
-      background: #fafafc;
-      transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+      background: #020617;
+      color: var(--text-main);
+      transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease, transform 0.06s ease;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: #6b7280;
     }
 
     input:focus, textarea:focus, select:focus {
       outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 0 2px rgba(10,132,255,0.14);
-      background: #ffffff;
+      box-shadow: 0 0 0 1px rgba(56,189,248,0.7);
+      background: #020617;
+      transform: translateY(-0.5px);
     }
 
     textarea {
@@ -174,46 +196,51 @@
 
     button.primary {
       margin-top: 0.55rem;
-      padding: 0.45rem 1.1rem;
+      padding: 0.45rem 1.15rem;
       border-radius: 999px;
       border: none;
       font-size: 0.85rem;
       font-weight: 500;
       cursor: pointer;
-      background: var(--primary);
-      color: #ffffff;
-      box-shadow: 0 9px 18px rgba(10,132,255,0.35);
-      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.12s ease;
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
+      color: #0b1120;
+      box-shadow: 0 14px 30px rgba(37,99,235,0.75);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.12s ease;
     }
 
     button.primary:hover {
       transform: translateY(-1px);
-      box-shadow: 0 11px 24px rgba(10,132,255,0.45);
-      background: #0071e3;
+      box-shadow: 0 18px 40px rgba(37,99,235,0.9);
+      filter: brightness(1.05);
     }
 
     button.primary.small {
-      padding: 0.35rem 0.85rem;
+      padding: 0.35rem 0.9rem;
       font-size: 0.78rem;
-      box-shadow: 0 6px 14px rgba(15,23,42,0.18);
-      background: #ffffff;
-      color: #111827;
-      border: 1px solid rgba(148,163,184,0.6);
+      box-shadow: 0 8px 18px rgba(15,23,42,0.6);
+      background: #020617;
+      color: #e5e7eb;
+      border: 1px solid rgba(148,163,184,0.7);
     }
 
     button.primary.small:hover {
-      background: #f9fafb;
       transform: translateY(-0.5px);
+      box-shadow: 0 10px 22px rgba(15,23,42,0.85);
+      background: #020617;
     }
 
     .btn-ghost {
       border: none;
       background: none;
-      color: #2563eb;
+      color: #38bdf8;
       cursor: pointer;
       font-size: 0.75rem;
       text-decoration: underline;
       padding: 0.1rem 0.2rem;
+    }
+
+    .btn-ghost:hover {
+      color: #7dd3fc;
     }
 
     table {
@@ -223,36 +250,40 @@
       margin-top: 0.45rem;
       border-radius: var(--radius-md);
       overflow: hidden;
-      background: #ffffff;
+      background: #020617;
     }
 
     thead {
-      background: #f3f4f6;
+      background: #020617;
     }
 
     th, td {
       padding: 0.45rem 0.35rem;
-      border-bottom: 1px solid #e5e7eb;
+      border-bottom: 1px solid #1f2937;
       text-align: center;
     }
 
     th {
       font-weight: 600;
-      color: #4b5563;
+      color: #9ca3af;
       font-size: 0.78rem;
     }
 
     tbody tr:nth-child(even) {
-      background: #f9fafb;
+      background: #020617;
+    }
+
+    tbody tr:nth-child(odd) {
+      background: #0b1120;
     }
 
     tbody tr:hover {
-      background: #eef2ff;
+      background: #111827;
     }
 
     .empty {
       text-align: center;
-      color: #9ca3af;
+      color: #6b7280;
       padding: 0.7rem;
     }
 
@@ -262,36 +293,53 @@
       justify-content: center;
       padding: 0.1rem 0.55rem;
       border-radius: 999px;
-      background: #fee2e2;
-      color: #b91c1c;
+      background: rgba(248,113,113,0.18);
+      color: #fecaca;
       font-size: 0.7rem;
       font-weight: 500;
-    }
-
-    .status-paid {
-      color: #16a34a;
-      font-weight: 600;
-    }
-
-    .status-partial {
-      color: #ca8a04;
-      font-weight: 600;
-    }
-
-    .status-unpaid {
-      color: #dc2626;
-      font-weight: 600;
+      border: 1px solid rgba(248,113,113,0.45);
     }
 
     .pill {
       display: inline-flex;
       align-items: center;
-      padding: 0.18rem 0.7rem;
+      padding: 0.18rem 0.75rem;
       border-radius: 999px;
       font-size: 0.72rem;
-      background: var(--primary-soft);
-      color: #1d4ed8;
+      background: rgba(37,99,235,0.18);
+      color: #bfdbfe;
       font-weight: 500;
+      border: 1px solid rgba(59,130,246,0.45);
+    }
+
+    /* סטטוסים */
+    .status-select {
+      padding: 0.25rem 0.45rem;
+      border-radius: 999px;
+      border-width: 1px;
+      font-size: 0.76rem;
+      appearance: none;
+      background-position: left 0.4rem center;
+      background-repeat: no-repeat;
+      background-size: 8px;
+    }
+
+    .status-paid {
+      background-color: rgba(22,163,74,0.18);
+      border-color: rgba(34,197,94,0.7);
+      color: #bbf7d0;
+    }
+
+    .status-partial {
+      background-color: rgba(234,179,8,0.16);
+      border-color: rgba(251,191,36,0.7);
+      color: #fef3c7;
+    }
+
+    .status-unpaid {
+      background-color: rgba(239,68,68,0.18);
+      border-color: rgba(248,113,113,0.8);
+      color: #fecaca;
     }
   </style>
 </head>
@@ -327,15 +375,15 @@
     </div>
 
     <div class="grid-3">
-      <div class="card">
+      <div class="kpi-card">
         <div class="kpi-label">סה״כ הוצאות נטו</div>
         <div class="kpi-value" id="totalExpenses">0 ₪</div>
       </div>
-      <div class="card">
+      <div class="kpi-card">
         <div class="kpi-label">הכנסות (מחזור)</div>
         <div class="kpi-value" id="totalIncome">0 ₪</div>
       </div>
-      <div class="card">
+      <div class="kpi-card">
         <div class="kpi-label">רווח נקי</div>
         <div class="kpi-value" id="netProfit">0 ₪</div>
       </div>
@@ -383,7 +431,7 @@
         <div class="row">
           <button class="primary" type="submit" id="supplierBtn">הוסף ספק</button>
           <button class="primary small" type="button" id="cancelSupplierEdit"
-                  style="display:none;background:#f3f4f6;border-color:#d4d4dd;box-shadow:none;"
+                  style="display:none;"
                   onclick="cancelSupplierEditMode()">בטל עריכה</button>
         </div>
       </form>
@@ -497,9 +545,7 @@
 </main>
 
 <script>
-/* ─────────────────────────────────────────
-   מבנה נתונים
-───────────────────────────────────────── */
+/* ───────────── מבנה נתונים ───────────── */
 
 var STORAGE_KEY = "restaurant_dashboard_v2";
 
@@ -510,16 +556,12 @@ var state = {
   lastDeleted: null
 };
 
-/* ─────────────────────────────────────────
-   שמירה וטעינה
-───────────────────────────────────────── */
+/* ───────────── שמירה / טעינה ───────────── */
 
 function saveState() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch (e) {
-    console.error("Save failed", e);
-  }
+  } catch (e) { console.error("Save failed", e); }
 }
 
 function loadState() {
@@ -536,9 +578,7 @@ function loadState() {
   }
 }
 
-/* ─────────────────────────────────────────
-   אתחול
-───────────────────────────────────────── */
+/* ───────────── אתחול ───────────── */
 
 function init() {
   var loaded = loadState();
@@ -548,7 +588,6 @@ function init() {
     var now = new Date();
     var mm = String(now.getMonth() + 1).padStart(2, "0");
     var m = now.getFullYear() + "-" + mm;
-
     state.currentMonth = m;
     state.months[m] = { income: 0, invoices: [] };
     saveState();
@@ -572,9 +611,7 @@ function init() {
 
 document.addEventListener("DOMContentLoaded", init);
 
-/* ─────────────────────────────────────────
-   ברירת מחדל ספקים
-───────────────────────────────────────── */
+/* ───────────── ספקי ברירת מחדל ───────────── */
 
 function getDefaultSuppliers() {
   let names = [
@@ -599,9 +636,7 @@ function getDefaultSuppliers() {
   }));
 }
 
-/* ─────────────────────────────────────────
-   ניווט לשוניות
-───────────────────────────────────────── */
+/* ───────────── ניווט ───────────── */
 
 function switchTab(id, btn) {
   document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
@@ -614,21 +649,16 @@ function switchTab(id, btn) {
   if (id === "summary") renderAllSummaries();
 }
 
-/* ─────────────────────────────────────────
-   חודשים
-───────────────────────────────────────── */
+/* ───────────── חודשים ───────────── */
 
 function changeMonth(val) {
   if (!val) return;
   state.currentMonth = val;
-
   if (!state.months[val]) {
     state.months[val] = { income: 0, invoices: [] };
   }
-
   document.getElementById("incomeInput").value =
     state.months[val].income || "";
-
   renderInvoicesTable();
   updateDashboard();
   renderAllSummaries();
@@ -642,9 +672,7 @@ function updateIncome(val) {
   saveState();
 }
 
-/* ─────────────────────────────────────────
-   ספקים
-───────────────────────────────────────── */
+/* ───────────── ספקים ───────────── */
 
 var editingSupplierIndex = null;
 
@@ -727,8 +755,6 @@ function deleteSupplier(i) {
   saveState();
 }
 
-/* הצגת ספקים */
-
 function renderSuppliersTable() {
   var tbody = document.querySelector("#suppliersTable tbody");
   tbody.innerHTML = "";
@@ -768,9 +794,7 @@ function renderSupplierSelect() {
   });
 }
 
-/* ─────────────────────────────────────────
-   חשבוניות
-───────────────────────────────────────── */
+/* ───────────── חשבוניות ───────────── */
 
 function addInvoice(e) {
   e.preventDefault();
@@ -818,6 +842,18 @@ function deleteInvoice(i) {
   saveState();
 }
 
+/* שינוי סטטוס לאחר הוספה */
+function changeInvoiceStatus(index, newStatus) {
+  var list = state.months[state.currentMonth].invoices;
+  if (!list[index]) return;
+  list[index].status = newStatus;
+  renderInvoicesTable();
+  updateDashboard();
+  renderAllSummaries();
+  saveState();
+}
+
+/* Undo מחיקה */
 function undoDelete() {
   if (!state.lastDeleted) return;
   var d = state.lastDeleted;
@@ -854,9 +890,9 @@ function renderInvoicesTable() {
 
   invs.forEach((inv, i) => {
     var statusClass = "";
-    if (inv.status === "שולם") statusClass = "status-paid";
-    else if (inv.status === "חלקי") statusClass = "status-partial";
-    else if (inv.status === "לא שולם") statusClass = "status-unpaid";
+    if (inv.status === "שולם") statusClass = "status-select status-paid";
+    else if (inv.status === "חלקי") statusClass = "status-select status-partial";
+    else statusClass = "status-select status-unpaid";
 
     tbody.innerHTML += `
       <tr>
@@ -865,7 +901,14 @@ function renderInvoicesTable() {
         <td>${inv.number}</td>
         <td>${inv.date}</td>
         <td>${inv.amount.toFixed(2)}</td>
-        <td class="${statusClass}">${inv.status}</td>
+        <td>
+          <select class="${statusClass}"
+                  onchange="changeInvoiceStatus(${i}, this.value)">
+            <option value="לא שולם" ${inv.status === "לא שולם" ? "selected" : ""}>לא שולם</option>
+            <option value="שולם" ${inv.status === "שולם" ? "selected" : ""}>שולם</option>
+            <option value="חלקי" ${inv.status === "חלקי" ? "selected" : ""}>שולם חלקית</option>
+          </select>
+        </td>
         <td>${inv.isCredit ? "זיכוי" : ""}</td>
         <td>${inv.notes || ""}</td>
         <td><button class="btn-ghost" onclick="deleteInvoice(${i})">מחק</button></td>
@@ -874,9 +917,7 @@ function renderInvoicesTable() {
   });
 }
 
-/* ─────────────────────────────────────────
-   דשבורד
-───────────────────────────────────────── */
+/* ───────────── דשבורד ───────────── */
 
 function getSupplierByName(name) {
   return state.suppliers.find(s => s.name === name);
@@ -939,9 +980,7 @@ function renderDashboardSuppliers() {
   });
 }
 
-/* ─────────────────────────────────────────
-   סיכומים
-───────────────────────────────────────── */
+/* ───────────── סיכומים ───────────── */
 
 function renderAllSummaries() {
   renderSummarySuppliers();
@@ -1024,9 +1063,7 @@ function renderSummaryCategories() {
   });
 }
 
-/* ─────────────────────────────────────────
-   ייצוא
-───────────────────────────────────────── */
+/* ───────────── ייצוא ───────────── */
 
 function exportMonthJSON() {
   var data = state.months[state.currentMonth];
@@ -1060,7 +1097,6 @@ function exportMonthCSV() {
   a.download = "invoices_" + state.currentMonth + ".csv";
   a.click();
 }
-
 </script>
 
 </body>
