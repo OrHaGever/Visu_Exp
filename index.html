@@ -29,10 +29,11 @@
       --shadow-subtle: 0 10px 24px rgba(15,23,42,0.06);
     }
 
+    /* מצב לילה – כהה אבל לא שחור לגמרי */
     body.dark-mode {
       --bg1: #020617;
       --bg2: #020617;
-      --card-bg: #0b1220;
+      --card-bg: #0b1120;        /* כחול-כהה רך */
       --border-subtle: #1e293b;
       --border-strong: #334155;
       --primary: #60a5fa;
@@ -61,8 +62,8 @@
 
     body.dark-mode {
       background:
-        radial-gradient(circle at top left, rgba(37,99,235,0.35) 0, transparent 55%),
-        radial-gradient(circle at bottom right, rgba(16,185,129,0.25) 0, transparent 55%),
+        radial-gradient(circle at top left, rgba(37,99,235,0.26) 0, transparent 55%),
+        radial-gradient(circle at bottom right, rgba(16,185,129,0.16) 0, transparent 55%),
         linear-gradient(to bottom, #020617, #020617);
     }
 
@@ -170,7 +171,7 @@
     }
 
     body.dark-mode nav button.active {
-      background: #1e293b;
+      background: #1f2937;
       color: #bfdbfe;
       border-color: #60a5fa;
     }
@@ -195,7 +196,7 @@
     }
 
     body.dark-mode .card {
-      background: linear-gradient(135deg, #020617, #020617);
+      background: linear-gradient(135deg, #0b1120, #020617);
       border-color: #1f2937;
     }
 
@@ -244,7 +245,7 @@
     }
 
     body.dark-mode .kpi-card {
-      background: radial-gradient(circle at top left, #0f172a, #020617);
+      background: radial-gradient(circle at top left, #020617, #020617);
       border-color: #1f2937;
     }
 
@@ -292,7 +293,7 @@
     body.dark-mode input,
     body.dark-mode select,
     body.dark-mode textarea {
-      background: #020617;
+      background: #0f172a;        /* לא שחור, כחול כהה רך */
       border-color: #1f2937;
       color: #e5e7eb;
     }
@@ -313,7 +314,7 @@
     body.dark-mode textarea:focus,
     body.dark-mode select:focus {
       background: #020617;
-      box-shadow: 0 0 0 2px rgba(96,165,250,0.4);
+      box-shadow: 0 0 0 2px rgba(96,165,250,0.35);
     }
 
     textarea {
@@ -389,7 +390,7 @@
     }
 
     body.dark-mode table {
-      background: #020617;
+      background: #0f172a;       /* טבלה כהה אבל לא שחורה */
     }
 
     thead {
@@ -397,7 +398,7 @@
     }
 
     body.dark-mode thead {
-      background: #020617;
+      background: #111827;
     }
 
     th, td {
@@ -407,7 +408,7 @@
     }
 
     body.dark-mode th, body.dark-mode td {
-      border-bottom-color: #111827;
+      border-bottom-color: #1f2937;
     }
 
     th {
@@ -428,9 +429,11 @@
       background: #ffffff;
     }
 
-    body.dark-mode tbody tr:nth-child(even),
-    body.dark-mode tbody tr:nth-child(odd) {
+    body.dark-mode tbody tr:nth-child(even) {
       background: #020617;
+    }
+    body.dark-mode tbody tr:nth-child(odd) {
+      background: #0b1120;
     }
 
     tbody tr:hover {
@@ -438,7 +441,7 @@
     }
 
     body.dark-mode tbody tr:hover {
-      background: #0f172a;
+      background: #1f2937;
     }
 
     body.compact-tables th,
@@ -495,6 +498,22 @@
       background-color: #fee2e2;
       border-color: #f97373;
       color: #b91c1c;
+    }
+
+    /* הבדל ויזואלי בין חיובים לזיכויים */
+    .amount-charge {
+      color: #b91c1c;
+      font-weight: 500;
+    }
+    .amount-credit {
+      color: #16a34a;
+      font-weight: 500;
+    }
+    body.dark-mode .amount-charge {
+      color: #fca5a5;
+    }
+    body.dark-mode .amount-credit {
+      color: #6ee7b7;
     }
 
     /* Toast */
@@ -690,6 +709,7 @@
 <nav>
   <button class="active" onclick="switchTab('dashboard', this)">דשבורד</button>
   <button onclick="switchTab('suppliers', this)">ספקים</button>
+  <button onclick="switchTab('categories', this)">קטגוריות ספקים</button>
   <button onclick="switchTab('invoices', this)">חשבוניות</button>
   <button onclick="switchTab('summary', this)">סיכומים</button>
 </nav>
@@ -717,7 +737,7 @@
     <div class="grid-3">
       <div class="kpi-card">
         <div class="kpi-label">סה״כ הוצאות נטו</div>
-        <div class="kpi-value" id="totalExpenses">0 ₪</div>
+        <div class="kpi-value" id="totalExpenses"><span class="amount-charge">0 ₪</span></div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">הכנסות (מחזור)</div>
@@ -732,11 +752,11 @@
     <div class="grid-3">
       <div class="kpi-card">
         <div class="kpi-label">חשבוניות לא משולמות</div>
-        <div class="kpi-value" id="unpaidTotal">0 ₪</div>
+        <div class="kpi-value" id="unpaidTotal"><span class="amount-charge">0 ₪</span></div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">סה״כ זיכויים</div>
-        <div class="kpi-value" id="creditsTotal">0 ₪</div>
+        <div class="kpi-value" id="creditsTotal"><span class="amount-credit">0 ₪</span></div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">סה״כ חשבוניות בחודש</div>
@@ -768,27 +788,6 @@
 
   <!-- ספקים -->
   <section id="suppliers">
-    <!-- ניהול קטגוריות -->
-    <div class="card">
-      <h3>קטגוריות ספקים</h3>
-      <form onsubmit="addCategory(event)" class="row">
-        <div style="flex:1 1 220px;">
-          <label>קטגוריה חדשה</label>
-          <input type="text" id="categoryNameInput" placeholder="למשל: מזון, תחזוקה, שיווק">
-        </div>
-        <div>
-          <button class="primary" type="submit" style="margin-top:1.55rem;">הוסף קטגוריה</button>
-        </div>
-      </form>
-      <table id="categoriesTable">
-        <thead>
-          <tr>
-            <th>#</th><th>שם קטגוריה</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
 
     <!-- טופס ספק -->
     <div class="card">
@@ -851,6 +850,40 @@
         </thead>
         <tbody></tbody>
       </table>
+    </div>
+  </section>
+
+  <!-- קטגוריות ספקים – בלשונית נפרדת -->
+  <section id="categories">
+    <div class="card">
+      <div class="row space-between" style="margin-bottom:0.4rem;">
+        <h3>קטגוריות ספקים</h3>
+        <button class="primary small" type="button" onclick="toggleCategoriesEditMode()" id="categoriesEditBtn">
+          מצב עריכה: כבוי
+        </button>
+      </div>
+
+      <form onsubmit="addCategory(event)" class="row">
+        <div style="flex:1 1 220px;">
+          <label>קטגוריה חדשה</label>
+          <input type="text" id="categoryNameInput" placeholder="למשל: מזון, תחזוקה, שיווק">
+        </div>
+        <div>
+          <button class="primary" type="submit" style="margin-top:1.55rem;">הוסף קטגוריה</button>
+        </div>
+      </form>
+
+      <table id="categoriesTable" class="responsive">
+        <thead>
+          <tr>
+            <th>#</th><th>שם קטגוריה</th><th>פעולות</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="tag-muted" style="margin-top:0.35rem;">
+        מחיקת קטגוריה תעביר את הספקים שלה לקטגוריה „לא משויך”.
+      </div>
     </div>
   </section>
 
@@ -919,11 +952,11 @@
         </div>
         <div class="kpi-card">
           <div class="kpi-label">שולם (סה״כ)</div>
-          <div class="kpi-value" id="invStatPaid">0 ₪</div>
+          <div class="kpi-value" id="invStatPaid"><span class="amount-charge">0 ₪</span></div>
         </div>
         <div class="kpi-card">
           <div class="kpi-label">לא שולם + חלקי</div>
-          <div class="kpi-value" id="invStatUnpaid">0 ₪</div>
+          <div class="kpi-value" id="invStatUnpaid"><span class="amount-charge">0 ₪</span></div>
         </div>
       </div>
 
@@ -1062,6 +1095,7 @@ var state = {
 var showAllDashboardSuppliers = true;
 var suppliersEditMode = false;
 var invoicesEditMode = false;
+var categoriesEditMode = false;
 var supplierSearchTerm = "";
 var supplierCategoryFilter = "כל";
 var invoiceSearchTerm = "";
@@ -1301,18 +1335,59 @@ function renderCategoriesTable() {
   tbody.innerHTML = "";
 
   if (!state.categories || state.categories.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="2" class="empty">אין קטגוריות</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="3" class="empty">אין קטגוריות</td></tr>`;
     return;
   }
 
   state.categories.forEach((cat, i) => {
     tbody.innerHTML += `
       <tr>
-        <td>${i+1}</td>
-        <td>${cat}</td>
+        <td data-label="#">${i+1}</td>
+        <td data-label="קטגוריה">${cat}</td>
+        <td data-label="פעולות">
+          ${categoriesEditMode
+            ? `<button class="btn-ghost" onclick="deleteCategory(${i})">מחק</button>`
+            : ``}
+        </td>
       </tr>
     `;
   });
+}
+
+function toggleCategoriesEditMode() {
+  categoriesEditMode = !categoriesEditMode;
+  document.getElementById("categoriesEditBtn").textContent =
+    "מצב עריכה: " + (categoriesEditMode ? "פועל" : "כבוי");
+  renderCategoriesTable();
+}
+
+function deleteCategory(index) {
+  if (!categoriesEditMode) return;
+  var catName = state.categories[index];
+
+  // להבטיח של״לא משויך״ קיים
+  if (!state.categories.includes("לא משויך")) {
+    state.categories.push("לא משויך");
+  }
+
+  // להעביר ספקים מקטגוריה זו ל"לא משויך"
+  state.suppliers.forEach(s => {
+    if (s.category === catName) {
+      s.category = "לא משויך";
+    }
+  });
+
+  state.categories.splice(index, 1);
+  sortCategories();
+
+  renderCategoriesTable();
+  renderSuppliersTable();
+  renderCategorySelect();
+  renderSupplierFilterCategoryOptions();
+  renderQuickSupplierCategory();
+  renderAllSummaries();
+  saveState();
+  showToast("קטגוריה נמחקה. ספקים הועברו ל„לא משויך”.", "success");
 }
 
 function renderCategorySelect() {
@@ -1706,7 +1781,9 @@ function renderInvoicesTable() {
             <option value="חלקי" ${inv.status === "חלקי" ? "selected" : ""}>שולם חלקית</option>
           </select>
         </td>
-        <td data-label="זיכוי">${inv.isCredit ? "זיכוי" : ""}</td>
+        <td data-label="זיכוי">
+          ${inv.isCredit ? '<span class="amount-credit">זיכוי</span>' : ''}
+        </td>
         <td data-label="הערות">${inv.notes || ""}</td>
         <td data-label="מחיקה">
           ${invoicesEditMode
@@ -1752,16 +1829,19 @@ function updateInvoiceStats() {
   var unpaidSum = 0;
 
   invs.forEach(inv => {
+    var net = (inv.isCredit ? -inv.amount : inv.amount);
     if (inv.status === "שולם") {
-      paidSum += (inv.isCredit ? -inv.amount : inv.amount);
+      paidSum += net;
     } else {
-      unpaidSum += (inv.isCredit ? -inv.amount : inv.amount);
+      unpaidSum += net;
     }
   });
 
   document.getElementById("invStatCount").textContent = count;
-  document.getElementById("invStatPaid").textContent = paidSum.toFixed(2) + " ₪";
-  document.getElementById("invStatUnpaid").textContent = unpaidSum.toFixed(2) + " ₪";
+  document.getElementById("invStatPaid").innerHTML =
+    `<span class="amount-charge">${paidSum.toFixed(2)} ₪</span>`;
+  document.getElementById("invStatUnpaid").innerHTML =
+    `<span class="amount-charge">${unpaidSum.toFixed(2)} ₪</span>`;
 }
 
 /* ───────────── דשבורד ───────────── */
@@ -1789,17 +1869,26 @@ function updateDashboard() {
     }
   });
 
-  document.getElementById("totalExpenses").textContent =
-    totalNet.toFixed(2) + " ₪";
+  document.getElementById("totalExpenses").innerHTML =
+    `<span class="amount-charge">${totalNet.toFixed(2)} ₪</span>`;
   document.getElementById("totalIncome").textContent =
     (month.income || 0).toFixed(2) + " ₪";
-  document.getElementById("netProfit").textContent =
-    ((month.income || 0) - totalNet).toFixed(2) + " ₪";
 
-  document.getElementById("unpaidTotal").textContent =
-    unpaidTotal.toFixed(2) + " ₪";
-  document.getElementById("creditsTotal").textContent =
-    "-" + creditsTotal.toFixed(2) + " ₪";
+  var netProfit = (month.income || 0) - totalNet;
+  var npElem = document.getElementById("netProfit");
+  npElem.innerHTML = netProfit.toFixed(2) + " ₪";
+  if (netProfit >= 0) {
+    npElem.classList.add("amount-credit");
+    npElem.classList.remove("amount-charge");
+  } else {
+    npElem.classList.add("amount-charge");
+    npElem.classList.remove("amount-credit");
+  }
+
+  document.getElementById("unpaidTotal").innerHTML =
+    `<span class="amount-charge">${unpaidTotal.toFixed(2)} ₪</span>`;
+  document.getElementById("creditsTotal").innerHTML =
+    `<span class="amount-credit">-${creditsTotal.toFixed(2)} ₪</span>`;
   document.getElementById("invoiceCount").textContent =
     invs.length;
 
@@ -1832,11 +1921,16 @@ function renderDashboardSuppliers() {
   }
 
   listToShow.forEach((name, i) => {
+    var val = totals[name];
     tbody.innerHTML += `
       <tr>
         <td data-label="#">${i+1}</td>
         <td data-label="ספק">${name}</td>
-        <td data-label="נטו">${totals[name].toFixed(2)} ₪</td>
+        <td data-label="נטו">
+          ${val >= 0
+            ? `<span class="amount-charge">${val.toFixed(2)} ₪</span>`
+            : `<span class="amount-credit">${val.toFixed(2)} ₪</span>`}
+        </td>
       </tr>
     `;
   });
@@ -1885,9 +1979,11 @@ function renderSummarySuppliers() {
       <tr>
         <td>${i+1}</td>
         <td>${name}</td>
-        <td>${m.charge.toFixed(2)}</td>
-        <td>${m.credit.toFixed(2)}</td>
-        <td>${net.toFixed(2)}</td>
+        <td class="amount-charge">${m.charge.toFixed(2)}</td>
+        <td class="amount-credit">${m.credit.toFixed(2)}</td>
+        <td ${net >= 0 ? 'class="amount-charge"' : 'class="amount-credit"'}>
+          ${net.toFixed(2)}
+        </td>
       </tr>
     `;
   });
@@ -1924,9 +2020,11 @@ function renderSummaryCategories() {
       <tr>
         <td>${i+1}</td>
         <td>${cat}</td>
-        <td>${m.charge.toFixed(2)}</td>
-        <td>${m.credit.toFixed(2)}</td>
-        <td>${net.toFixed(2)}</td>
+        <td class="amount-charge">${m.charge.toFixed(2)}</td>
+        <td class="amount-credit">${m.credit.toFixed(2)}</td>
+        <td ${net >= 0 ? 'class="amount-charge"' : 'class="amount-credit"'}>
+          ${net.toFixed(2)}
+        </td>
       </tr>
     `;
   });
@@ -2050,10 +2148,10 @@ function normalizeInvoiceFromImport(inv) {
 /* ───────────── כפתור צף – מעבר מהיר לטופס חשבונית ───────────── */
 
 function quickAddInvoice() {
-  // לעבור ללשונית חשבוניות ולגלול לטופס
+  // אחרי שהוספנו לשונית "קטגוריות", "חשבוניות" היא כפתור מספר 3 (אינדקס 3)
   var navButtons = document.querySelectorAll("nav button");
   navButtons.forEach(b => b.classList.remove("active"));
-  navButtons[2].classList.add("active"); // חשבוניות
+  navButtons[3].classList.add("active"); // חשבוניות
 
   document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
   document.getElementById("invoices").classList.add("active");
