@@ -515,9 +515,21 @@
     </div>
 
     <div class="card">
-      <button class="primary small" onclick="exportMonthJSON()">ייצוא JSON</button>
-      <button class="primary small" onclick="exportMonthCSV()">ייצוא CSV</button>
-      <button class="primary small" onclick="undoDelete()">בטל מחיקה אחרונה</button>
+      <div class="row" style="align-items:flex-end;">
+        <div>
+          <button class="primary small" type="button" onclick="exportMonthJSON()">ייצוא JSON</button>
+          <button class="primary small" type="button" onclick="exportMonthCSV()">ייצוא CSV</button>
+          <button class="primary small" type="button" onclick="undoDelete()">בטל מחיקה אחרונה</button>
+        </div>
+        <div style="flex:1 1 220px;">
+          <label style="margin-bottom:0.15rem;">ייבוא חודש מ־JSON/CSV</label>
+          <input type="file" id="importMonthFileInput" accept=".json,.csv"
+                 onchange="if(this.files[0]) importMonthFile(this.files[0]); this.value='';">
+        </div>
+      </div>
+      <small style="font-size:0.7rem;color:#6b7280;">
+        הקובץ צריך להיות קובץ שיוצא מהאפליקציה (JSON/CSV של חודש) – הנתונים יחליפו את החשבוניות של החודש הפעיל.
+      </small>
     </div>
   </section>
 
@@ -1198,6 +1210,92 @@ function exportMonthCSV() {
   a.href = URL.createObjectURL(blob);
   a.download = "invoices_" + state.currentMonth + ".csv";
   a.click();
+}
+
+/* ───────────── ייבוא חודש JSON/CSV ───────────── */
+
+function importMonthFile(file) {
+  if (!file) return;
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var text = e.target.result;
+
+    if (file.name.toLowerCase().endsWith(".json")) {
+      try {
+        var obj = JSON.parse(text);
+        if (!obj || !Array.isArray(obj.invoices)) {
+          alert("קובץ JSON לא בפורמט הצפוי (חייב לכלול שדה invoices)");
+          return;
+        }
+        // יוצא דופן: אם יש שדה income בקובץ – נעדכן גם אותו
+        var income = typeof obj.income === "number" ? obj.income : state.months[state.currentMonth].income || 0;
+        state.months[state.currentMonth] = {
+          income: income,
+          invoices: obj.invoices.map(normalizeInvoiceFromImport)
+        };
+      } catch (err) {
+        console.error(err);
+        alert("שגיאה בקריאת קובץ JSON");
+        return;
+      }
+    } else if (file.name.toLowerCase().endsWith(".csv")) {
+      var lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+      if (lines.length <= 1) {
+        alert("קובץ CSV ריק או ללא נתונים");
+        return;
+      }
+      var header = lines[0].split(",");
+      // מצפים לכותרות: supplier,number,date,amount,status,type,notes,isCredit
+      var invoices = [];
+      for (var i = 1; i < lines.length; i++) {
+        var line = lines[i];
+        if (!line.trim()) continue;
+        var cols = line.split(",");
+        // להיזהר שלא נעוף אם חסר עמודה
+        var inv = {
+          supplier: cols[0] || "",
+          number: cols[1] || "",
+          date: cols[2] || "",
+          amount: parseFloat(cols[3]) || 0,
+          status: cols[4] || "לא שולם",
+          type: cols[5] || "חד פעמי",
+          notes: cols[6] ? cols[6].replace(/;/g, ",") : "",
+          isCredit: (cols[7] || "").trim().toLowerCase() === "yes"
+        };
+        // מסננים כאלו שאין בהם ספק או מספר
+        if (inv.supplier && inv.number) {
+          invoices.push(inv);
+        }
+      }
+      state.months[state.currentMonth].invoices = invoices;
+      // income לא מיובא מ־CSV – נשאר מה שהיה
+    } else {
+      alert("סוג הקובץ לא נתמך. השתמש ב־JSON או CSV שיוצאו מהמערכת.");
+      return;
+    }
+
+    renderInvoicesTable();
+    updateDashboard();
+    renderAllSummaries();
+    saveState();
+    alert("הייבוא הסתיים בהצלחה לחודש הפעיל.");
+  };
+
+  reader.readAsText(file);
+}
+
+function normalizeInvoiceFromImport(inv) {
+  return {
+    supplier: inv.supplier || "",
+    number: inv.number || "",
+    date: inv.date || "",
+    amount: typeof inv.amount === "number" ? inv.amount : parseFloat(inv.amount) || 0,
+    status: inv.status || "לא שולם",
+    type: inv.type || "חד פעמי",
+    notes: inv.notes || "",
+    isCredit: !!inv.isCredit
+  };
 }
 </script>
 
