@@ -12,19 +12,21 @@
 
   <style>
     :root {
-      --bg: #f4f6fb;
+      --bg1: #eef2ff;
+      --bg2: #f9fafb;
+      --bg3: #e0f2fe;
       --card-bg: #ffffff;
       --border-subtle: #e2e8f0;
       --border-strong: #cbd5f5;
       --primary: #2563eb;
       --primary-soft: #e0edff;
       --accent: #10b981;
-      --text-main: #111827;
+      --text-main: #0f172a;
       --text-muted: #6b7280;
-      --radius-lg: 14px;
+      --radius-lg: 16px;
       --radius-md: 10px;
-      --shadow-soft: 0 14px 30px rgba(15,23,42,0.08);
-      --shadow-subtle: 0 6px 16px rgba(15,23,42,0.06);
+      --shadow-soft: 0 16px 36px rgba(15,23,42,0.08);
+      --shadow-subtle: 0 10px 24px rgba(15,23,42,0.06);
     }
 
     * {
@@ -34,19 +36,22 @@
 
     body {
       margin: 0;
-      background: var(--bg);
+      background:
+        radial-gradient(circle at top left, rgba(129,140,248,0.18) 0, transparent 55%),
+        radial-gradient(circle at top right, rgba(56,189,248,0.16) 0, transparent 55%),
+        linear-gradient(to bottom, var(--bg2), #edf2ff);
       color: var(--text-main);
     }
 
     header {
-      background: linear-gradient(135deg, #2563eb, #10b981);
+      background: radial-gradient(circle at top, #2563eb, #1d4ed8);
       color: #fff;
       padding: 1.1rem 1.4rem;
       text-align: center;
       font-weight: 600;
       font-size: 1.3rem;
       letter-spacing: 0.03em;
-      box-shadow: 0 10px 24px rgba(15,23,42,0.16);
+      box-shadow: 0 14px 30px rgba(15,23,42,0.35);
       position: sticky;
       top: 0;
       z-index: 20;
@@ -56,7 +61,8 @@
       display: flex;
       justify-content: center;
       gap: 0.6rem;
-      background: #e5edf7;
+      background: rgba(226,232,240,0.92);
+      backdrop-filter: blur(10px);
       padding: 0.6rem 0.9rem;
       position: sticky;
       top: 3.1rem;
@@ -67,12 +73,12 @@
     nav button {
       border-radius: 999px;
       border: 1px solid transparent;
-      background: transparent;
-      padding: 0.38rem 1.15rem;
+      background: rgba(255,255,255,0.6);
+      padding: 0.4rem 1.2rem;
       font-size: 0.86rem;
       font-weight: 500;
       cursor: pointer;
-      color: #4b5563;
+      color: #374151;
       transition: background 0.14s ease, color 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease, transform 0.08s ease;
     }
 
@@ -85,7 +91,7 @@
       background: #ffffff;
       border-color: #2563eb;
       color: #1d4ed8;
-      box-shadow: 0 6px 14px rgba(37,99,235,0.28);
+      box-shadow: 0 8px 18px rgba(37,99,235,0.35);
       transform: translateY(-1px);
     }
 
@@ -99,17 +105,35 @@
     section.active { display: block; }
 
     .card {
-      background: var(--card-bg);
+      position: relative;
+      background: linear-gradient(135deg, #ffffff, #f9fbff);
       border-radius: var(--radius-lg);
       padding: 1rem 1.2rem;
       margin-bottom: 1rem;
       box-shadow: var(--shadow-subtle);
-      border: 1px solid var(--border-subtle);
+      border: 1px solid rgba(199,210,254,0.8);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset-inline-start: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      border-radius: 16px 0 0 16px;
+      background: linear-gradient(to bottom, rgba(37,99,235,0.75), rgba(59,130,246,0.1));
+    }
+
+    [dir="rtl"] .card::before {
+      inset-inline-start: auto;
+      inset-inline-end: 0;
+      border-radius: 0 16px 16px 0;
     }
 
     .card h3 {
       margin: 0 0 0.5rem;
-      font-size: 1rem;
+      font-size: 1.0rem;
       font-weight: 600;
       color: var(--text-main);
     }
@@ -127,8 +151,8 @@
     }
 
     .kpi-card {
-      background: #ffffff;
-      border-radius: 16px;
+      background: radial-gradient(circle at top left, #e0f2fe, #eef2ff);
+      border-radius: 18px;
       box-shadow: var(--shadow-soft);
       border: 1px solid #dbe4ff;
       padding: 0.9rem 1rem;
@@ -182,7 +206,7 @@
     input:focus, textarea:focus, select:focus {
       outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 0 2px rgba(37,99,235,0.18);
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
       background: #ffffff;
       transform: translateY(-0.5px);
     }
@@ -251,7 +275,7 @@
     }
 
     thead {
-      background: #f3f4f6;
+      background: linear-gradient(135deg, #e5edff, #f3f4ff);
     }
 
     th, td {
@@ -262,7 +286,7 @@
 
     th {
       font-weight: 600;
-      color: #4b5563;
+      color: #374151;
       font-size: 0.78rem;
     }
 
@@ -275,7 +299,7 @@
     }
 
     tbody tr:hover {
-      background: #e5f0ff;
+      background: #e0f2fe;
     }
 
     .empty {
@@ -478,8 +502,8 @@
 
         <label>סטטוס תשלום</label>
         <select id="invoiceStatus">
+          <option value="שולם" selected>שולם</option>
           <option value="לא שולם">לא שולם</option>
-          <option value="שולם">שולם</option>
           <option value="חלקי">שולם חלקית</option>
         </select>
 
@@ -943,6 +967,7 @@ function addInvoice(e) {
   invoiceAmount.value = "";
   invoiceNotes.value = "";
   invoiceCredit.checked = false;
+  invoiceStatus.value = "שולם";
 
   renderInvoicesTable();
   updateDashboard();
@@ -1023,8 +1048,8 @@ function renderInvoicesTable() {
         <td>
           <select class="${cls}"
                   onchange="changeInvoiceStatus(${i}, this.value)">
-            <option value="לא שולם" ${inv.status === "לא שולם" ? "selected" : ""}>לא שולם</option>
             <option value="שולם" ${inv.status === "שולם" ? "selected" : ""}>שולם</option>
+            <option value="לא שולם" ${inv.status === "לא שולם" ? "selected" : ""}>לא שולם</option>
             <option value="חלקי" ${inv.status === "חלקי" ? "selected" : ""}>שולם חלקית</option>
           </select>
         </td>
@@ -1228,7 +1253,6 @@ function importMonthFile(file) {
           alert("קובץ JSON לא בפורמט הצפוי (חייב לכלול שדה invoices)");
           return;
         }
-        // יוצא דופן: אם יש שדה income בקובץ – נעדכן גם אותו
         var income = typeof obj.income === "number" ? obj.income : state.months[state.currentMonth].income || 0;
         state.months[state.currentMonth] = {
           income: income,
@@ -1245,31 +1269,26 @@ function importMonthFile(file) {
         alert("קובץ CSV ריק או ללא נתונים");
         return;
       }
-      var header = lines[0].split(",");
-      // מצפים לכותרות: supplier,number,date,amount,status,type,notes,isCredit
       var invoices = [];
       for (var i = 1; i < lines.length; i++) {
         var line = lines[i];
         if (!line.trim()) continue;
         var cols = line.split(",");
-        // להיזהר שלא נעוף אם חסר עמודה
         var inv = {
           supplier: cols[0] || "",
           number: cols[1] || "",
           date: cols[2] || "",
           amount: parseFloat(cols[3]) || 0,
-          status: cols[4] || "לא שולם",
+          status: cols[4] || "שולם",
           type: cols[5] || "חד פעמי",
           notes: cols[6] ? cols[6].replace(/;/g, ",") : "",
           isCredit: (cols[7] || "").trim().toLowerCase() === "yes"
         };
-        // מסננים כאלו שאין בהם ספק או מספר
         if (inv.supplier && inv.number) {
           invoices.push(inv);
         }
       }
       state.months[state.currentMonth].invoices = invoices;
-      // income לא מיובא מ־CSV – נשאר מה שהיה
     } else {
       alert("סוג הקובץ לא נתמך. השתמש ב־JSON או CSV שיוצאו מהמערכת.");
       return;
@@ -1291,7 +1310,7 @@ function normalizeInvoiceFromImport(inv) {
     number: inv.number || "",
     date: inv.date || "",
     amount: typeof inv.amount === "number" ? inv.amount : parseFloat(inv.amount) || 0,
-    status: inv.status || "לא שולם",
+    status: inv.status || "שולם",
     type: inv.type || "חד פעמי",
     notes: inv.notes || "",
     isCredit: !!inv.isCredit
