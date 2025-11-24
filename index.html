@@ -29,11 +29,10 @@
       --shadow-subtle: 0 10px 24px rgba(15,23,42,0.06);
     }
 
-    /* מצב לילה – כהה אבל לא שחור לגמרי */
     body.dark-mode {
       --bg1: #020617;
       --bg2: #020617;
-      --card-bg: #0b1120;        /* כחול-כהה רך */
+      --card-bg: #0b1120;
       --border-subtle: #1e293b;
       --border-strong: #334155;
       --primary: #60a5fa;
@@ -51,8 +50,13 @@
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    body {
+    html, body {
       margin: 0;
+      max-width: 100%;
+      overflow-x: hidden; /* שלא יהיה חיתוך רוחבי במובייל */
+    }
+
+    body {
       background:
         radial-gradient(circle at top left, rgba(129,140,248,0.18) 0, transparent 55%),
         radial-gradient(circle at top right, rgba(56,189,248,0.16) 0, transparent 55%),
@@ -77,9 +81,9 @@
     }
 
     .header-inner {
-      max-width: 1100px;
+      max-width: 1024px;
       margin: 0 auto;
-      padding: 0.8rem 1.2rem;
+      padding: 0.7rem 1rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -87,7 +91,7 @@
 
     .header-title {
       font-weight: 600;
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       letter-spacing: 0.03em;
     }
 
@@ -122,9 +126,9 @@
       gap: 0.6rem;
       background: rgba(226,232,240,0.92);
       backdrop-filter: blur(10px);
-      padding: 0.6rem 0.9rem;
+      padding: 0.55rem 0.8rem;
       position: sticky;
-      top: 3rem;
+      top: 2.6rem;
       z-index: 19;
       border-bottom: 1px solid #d1ddf5;
     }
@@ -137,9 +141,9 @@
     nav button {
       border-radius: 999px;
       border: 1px solid transparent;
-      background: rgba(255,255,255,0.6);
-      padding: 0.4rem 1.2rem;
-      font-size: 0.86rem;
+      background: rgba(255,255,255,0.7);
+      padding: 0.38rem 1.1rem;
+      font-size: 0.84rem;
       font-weight: 500;
       cursor: pointer;
       color: #374151;
@@ -177,9 +181,9 @@
     }
 
     main {
-      max-width: 1100px;
-      margin: 1.3rem auto 2.4rem;
-      padding: 0 1.2rem;
+      max-width: 1024px;
+      margin: 1.2rem auto 4.5rem; /* מרווח גדול יותר למטה שלא יחתך מאחורי ה־FAB */
+      padding: 0 0.9rem;
     }
 
     section { display: none; }
@@ -189,8 +193,8 @@
       position: relative;
       background: linear-gradient(135deg, var(--card-bg), #f9fbff);
       border-radius: var(--radius-lg);
-      padding: 1rem 1.2rem;
-      margin-bottom: 1rem;
+      padding: 0.9rem 1.1rem;
+      margin-bottom: 0.9rem;
       box-shadow: var(--shadow-subtle);
       border: 1px solid rgba(199,210,254,0.8);
     }
@@ -219,21 +223,21 @@
 
     .card h3 {
       margin: 0 0 0.5rem;
-      font-size: 1.0rem;
+      font-size: 1rem;
       font-weight: 600;
       color: var(--text-main);
     }
 
     .grid-3 {
       display: grid;
-      gap: 1rem;
+      gap: 0.8rem;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      margin-bottom: 1rem;
+      margin-bottom: 0.8rem;
     }
 
     @media (max-width: 800px) {
       .grid-3 { grid-template-columns: 1fr; }
-      nav { top: 3.1rem; }
+      nav { top: 2.9rem; }
     }
 
     .kpi-card {
@@ -241,7 +245,7 @@
       border-radius: 18px;
       box-shadow: var(--shadow-soft);
       border: 1px solid #dbe4ff;
-      padding: 0.9rem 1rem;
+      padding: 0.8rem 0.9rem;
     }
 
     body.dark-mode .kpi-card {
@@ -256,7 +260,7 @@
     }
 
     .kpi-value {
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       font-weight: 600;
       color: var(--text-main);
     }
@@ -281,7 +285,7 @@
 
     input, select, textarea {
       width: 100%;
-      padding: 0.5rem 0.65rem;
+      padding: 0.48rem 0.6rem;
       border-radius: 10px;
       border: 1px solid var(--border-subtle);
       font-size: 0.87rem;
@@ -293,7 +297,7 @@
     body.dark-mode input,
     body.dark-mode select,
     body.dark-mode textarea {
-      background: #0f172a;        /* לא שחור, כחול כהה רך */
+      background: #0f172a;
       border-color: #1f2937;
       color: #e5e7eb;
     }
@@ -390,7 +394,7 @@
     }
 
     body.dark-mode table {
-      background: #0f172a;       /* טבלה כהה אבל לא שחורה */
+      background: #0f172a;
     }
 
     thead {
@@ -473,7 +477,6 @@
       border-color: #1f2937;
     }
 
-    /* סטטוס בטבלה (select צבעוני) */
     .status-select {
       padding: 0.22rem 0.55rem;
       border-radius: 999px;
@@ -481,26 +484,22 @@
       font-size: 0.76rem;
       min-width: 95px;
     }
-
     .status-paid {
       background-color: #dcfce7;
       border-color: #4ade80;
       color: #166534;
     }
-
     .status-partial {
       background-color: #fef9c3;
       border-color: #facc15;
       color: #854d0e;
     }
-
     .status-unpaid {
       background-color: #fee2e2;
       border-color: #f97373;
       color: #b91c1c;
     }
 
-    /* הבדל ויזואלי בין חיובים לזיכויים */
     .amount-charge {
       color: #b91c1c;
       font-weight: 500;
@@ -516,7 +515,6 @@
       color: #6ee7b7;
     }
 
-    /* Toast */
     #toast {
       position: fixed;
       inset-inline-start: 50%;
@@ -546,18 +544,12 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    #toast.success {
-      background: #16a34a;
-    }
+    #toast.success { background: #16a34a; }
+    #toast.error { background: #b91c1c; }
 
-    #toast.error {
-      background: #b91c1c;
-    }
-
-    /* FAB – כפתור צף להוספת חשבונית */
     .fab {
       position: fixed;
-      inset-inline-start: 1.2rem;
+      inset-inline-end: 1.2rem;  /* בצד ימין – פחות סיכוי להיחתך */
       bottom: 1.6rem;
       width: 52px;
       height: 52px;
@@ -586,7 +578,7 @@
 
     @media (max-width: 600px) {
       .fab {
-        inset-inline-start: 0.8rem;
+        inset-inline-end: 0.8rem;
         bottom: 1.2rem;
         width: 46px;
         height: 46px;
@@ -594,16 +586,25 @@
       }
     }
 
-    /* טבלה רספונסיבית – בעיקר לחשבוניות + ספקים */
+    /* טבלה → כרטיסים במובייל (שילוב 2+3) */
     @media (max-width: 750px) {
+      table.responsive {
+        border-radius: 0;
+        background: transparent;
+      }
       table.responsive thead {
         display: none;
       }
+      table.responsive tbody {
+        display: block;
+      }
       table.responsive tbody tr {
         display: block;
-        margin-bottom: 0.7rem;
-        border-radius: 12px;
+        margin-bottom: 0.8rem;
+        border-radius: 14px;
+        background: var(--card-bg);
         box-shadow: var(--shadow-subtle);
+        overflow: hidden;
       }
       body.dark-mode table.responsive tbody tr {
         box-shadow: 0 10px 24px rgba(15,23,42,0.9);
@@ -618,16 +619,18 @@
       body.dark-mode table.responsive tbody td {
         border-bottom-color: #1f2937;
       }
+      table.responsive tbody td:last-child {
+        border-bottom: none;
+      }
       table.responsive tbody td::before {
         content: attr(data-label);
         font-weight: 600;
         color: #6b7280;
-        margin-left: 0.5rem;
         font-size: 0.75rem;
+        margin-left: 0.5rem;
       }
     }
 
-    /* Modal קטן להוספת ספק מהירה */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -788,8 +791,6 @@
 
   <!-- ספקים -->
   <section id="suppliers">
-
-    <!-- טופס ספק -->
     <div class="card">
       <form onsubmit="addOrUpdateSupplier(event)">
         <h3>ספק חדש / עריכה</h3>
@@ -812,13 +813,11 @@
         <div class="row">
           <button class="primary" type="submit" id="supplierBtn">הוסף ספק</button>
           <button class="primary small" type="button" id="cancelSupplierEdit"
-                  style="display:none;"
-                  onclick="cancelSupplierEditMode()">בטל עריכה</button>
+                  style="display:none;" onclick="cancelSupplierEditMode()">בטל עריכה</button>
         </div>
       </form>
     </div>
 
-    <!-- רשימת ספקים -->
     <div class="card">
       <div class="row space-between" style="margin-bottom:0.2rem;">
         <strong>רשימת ספקים (ממוינים א׳–ת׳)</strong>
@@ -853,7 +852,7 @@
     </div>
   </section>
 
-  <!-- קטגוריות ספקים – בלשונית נפרדת -->
+  <!-- קטגוריות ספקים -->
   <section id="categories">
     <div class="card">
       <div class="row space-between" style="margin-bottom:0.4rem;">
@@ -944,7 +943,6 @@
         </button>
       </div>
 
-      <!-- סיכום מהיר לחשבוניות -->
       <div class="grid-3" style="margin-bottom:0.4rem;">
         <div class="kpi-card">
           <div class="kpi-label">סה״כ חשבוניות</div>
@@ -968,7 +966,7 @@
                  oninput="setInvoiceSearch(this.value)">
         </div>
         <div>
-          <label>סינון סטטוס</label>
+          <label>סטטוס</label>
           <select id="invoiceStatusFilter" onchange="setInvoiceStatusFilter(this.value)">
             <option value="הכל">הכל</option>
             <option value="שולם">שולם</option>
@@ -977,7 +975,7 @@
           </select>
         </div>
         <div>
-          <label>סינון סוג</label>
+          <label>סוג</label>
           <select id="invoiceTypeFilter" onchange="setInvoiceTypeFilter(this.value)">
             <option value="הכל">הכל</option>
             <option value="קבוע">קבוע</option>
@@ -985,11 +983,17 @@
           </select>
         </div>
         <div>
-          <label>זיכויים בלבד</label>
+          <label>זיכוי</label>
           <select id="invoiceCreditFilter" onchange="setInvoiceCreditFilter(this.value)">
             <option value="הכל">הכל</option>
             <option value="זיכוי">רק זיכויים</option>
             <option value="לא_זיכוי">ללא זיכויים</option>
+          </select>
+        </div>
+        <div>
+          <label>קטגוריה (לפי ספק)</label>
+          <select id="invoiceCategoryFilter" onchange="setInvoiceCategoryFilter(this.value)">
+            <option value="הכל">הכל</option>
           </select>
         </div>
       </div>
@@ -997,7 +1001,7 @@
       <table id="invoicesTable" class="responsive">
         <thead>
           <tr>
-            <th>#</th><th>ספק</th><th>מס׳</th><th>תאריך</th>
+            <th>#</th><th>ספק</th><th>קטגוריה</th><th>מס׳</th><th>תאריך</th>
             <th>סכום</th><th>סטטוס</th><th>זיכוי</th><th>הערות</th><th>מחיקה</th>
           </tr>
         </thead>
@@ -1091,19 +1095,22 @@ var state = {
   lastDeleted: null
 };
 
-/* מצבי מסך */
+/* מצבי מסך / סינונים */
 var showAllDashboardSuppliers = true;
 var suppliersEditMode = false;
 var invoicesEditMode = false;
 var categoriesEditMode = false;
+
 var supplierSearchTerm = "";
 var supplierCategoryFilter = "כל";
+
 var invoiceSearchTerm = "";
 var invoiceStatusFilter = "הכל";
 var invoiceTypeFilter = "הכל";
 var invoiceCreditFilter = "הכל";
+var invoiceCategoryFilter = "הכל";
 
-/* ───────────── הודעות Toast ───────────── */
+/* ───────────── Toast ───────────── */
 
 var toastTimeout = null;
 function showToast(msg, type) {
@@ -1123,7 +1130,9 @@ function showToast(msg, type) {
 function saveState() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch (e) { console.error("Save failed", e); }
+  } catch (e) {
+    console.error("Save failed", e);
+  }
 }
 
 function loadState() {
@@ -1140,7 +1149,7 @@ function loadState() {
   }
 }
 
-/* ───────────── קטגוריות ברירת מחדל ───────────── */
+/* ───────────── נתוני ברירת מחדל ───────────── */
 
 function getDefaultCategories() {
   return [
@@ -1162,8 +1171,6 @@ function getDefaultCategories() {
     "לא משויך"
   ];
 }
-
-/* ───────────── ספקי ברירת מחדל ───────────── */
 
 function getDefaultSuppliers() {
   let names = [
@@ -1202,7 +1209,8 @@ function setTodayAsDefaultInvoiceDate() {
   var d = new Date();
   var mm = String(d.getMonth() + 1).padStart(2, "0");
   var dd = String(d.getDate()).padStart(2, "0");
-  invoiceDate.value = d.getFullYear() + "-" + mm + "-" + dd;
+  var el = document.getElementById("invoiceDate");
+  if (el) el.value = d.getFullYear() + "-" + mm + "-" + dd;
 }
 
 function init() {
@@ -1255,6 +1263,7 @@ function init() {
   setTodayAsDefaultInvoiceDate();
   renderSupplierFilterCategoryOptions();
   renderQuickSupplierCategory();
+  renderInvoiceCategoryFilterOptions();
 }
 
 document.addEventListener("DOMContentLoaded", init);
@@ -1327,6 +1336,7 @@ function addCategory(e) {
   renderCategorySelect();
   renderSupplierFilterCategoryOptions();
   renderQuickSupplierCategory();
+  renderInvoiceCategoryFilterOptions();
   saveState();
 }
 
@@ -1365,16 +1375,12 @@ function deleteCategory(index) {
   if (!categoriesEditMode) return;
   var catName = state.categories[index];
 
-  // להבטיח של״לא משויך״ קיים
   if (!state.categories.includes("לא משויך")) {
     state.categories.push("לא משויך");
   }
 
-  // להעביר ספקים מקטגוריה זו ל"לא משויך"
   state.suppliers.forEach(s => {
-    if (s.category === catName) {
-      s.category = "לא משויך";
-    }
+    if (s.category === catName) s.category = "לא משויך";
   });
 
   state.categories.splice(index, 1);
@@ -1385,6 +1391,7 @@ function deleteCategory(index) {
   renderCategorySelect();
   renderSupplierFilterCategoryOptions();
   renderQuickSupplierCategory();
+  renderInvoiceCategoryFilterOptions();
   renderAllSummaries();
   saveState();
   showToast("קטגוריה נמחקה. ספקים הועברו ל„לא משויך”.", "success");
@@ -1403,7 +1410,6 @@ function renderCategorySelect() {
   });
 }
 
-/* filter select for suppliers */
 function renderSupplierFilterCategoryOptions() {
   var sel = document.getElementById("supplierFilterCategory");
   if (!sel) return;
@@ -1454,6 +1460,7 @@ function addOrUpdateSupplier(e) {
   clearSupplierForm();
   renderSuppliersTable();
   renderSupplierSelect();
+  renderInvoiceCategoryFilterOptions();
   updateDashboard();
   renderAllSummaries();
   saveState();
@@ -1502,6 +1509,7 @@ function deleteSupplier(i) {
   sortSuppliers();
   renderSuppliersTable();
   renderSupplierSelect();
+  renderInvoiceCategoryFilterOptions();
   updateDashboard();
   renderAllSummaries();
   saveState();
@@ -1577,7 +1585,7 @@ function toggleSuppliersEditMode() {
   renderSuppliersTable();
 }
 
-/* ───────────── הוספת ספק מהירה מתוך חשבונית ───────────── */
+/* ───────────── ספק מהיר מתוך חשבונית ───────────── */
 
 function openQuickSupplierModal() {
   document.getElementById("quickSupplierName").value = invoiceSupplier.value || "";
@@ -1619,6 +1627,7 @@ function submitQuickSupplier() {
   sortSuppliers();
   renderSuppliersTable();
   renderSupplierSelect();
+  renderInvoiceCategoryFilterOptions();
   saveState();
   invoiceSupplier.value = name;
   closeQuickSupplierModal();
@@ -1640,11 +1649,6 @@ function addInvoice(e) {
   }
 
   var list = state.months[state.currentMonth].invoices || [];
-
-  var exists = list.find(inv => inv.supplier === supplier && inv.number === number);
-  if (exists) {
-    showToast("קיימת כבר חשבונית עם אותו ספק ואותו מספר (הוספנו בכל זאת)", "error");
-  }
 
   var inv = {
     supplier: supplier,
@@ -1687,7 +1691,6 @@ function deleteInvoice(i) {
   showToast("חשבונית נמחקה (ניתן לבטל מחיקה)", "success");
 }
 
-/* שינוי סטטוס לאחר הוספה */
 function changeInvoiceStatus(index, newStatus) {
   var list = state.months[state.currentMonth].invoices;
   if (!list[index]) return;
@@ -1711,6 +1714,7 @@ function undoDelete() {
     sortSuppliers();
     renderSuppliersTable();
     renderSupplierSelect();
+    renderInvoiceCategoryFilterOptions();
     updateDashboard();
     renderAllSummaries();
   }
@@ -1727,13 +1731,47 @@ function undoDelete() {
   showToast("המחיקה האחרונה בוטלה", "success");
 }
 
+/* חיפוש / סינון חשבוניות */
+
+function setInvoiceSearch(v) {
+  invoiceSearchTerm = v || "";
+  renderInvoicesTable();
+}
+function setInvoiceStatusFilter(v) {
+  invoiceStatusFilter = v;
+  renderInvoicesTable();
+}
+function setInvoiceTypeFilter(v) {
+  invoiceTypeFilter = v;
+  renderInvoicesTable();
+}
+function setInvoiceCreditFilter(v) {
+  invoiceCreditFilter = v;
+  renderInvoicesTable();
+}
+function setInvoiceCategoryFilter(v) {
+  invoiceCategoryFilter = v;
+  renderInvoicesTable();
+}
+
+function toggleInvoicesEditMode() {
+  invoicesEditMode = !invoicesEditMode;
+  document.getElementById("invoicesEditBtn").textContent =
+    "מצב עריכה: " + (invoicesEditMode ? "פועל" : "כבוי");
+  renderInvoicesTable();
+}
+
+function getSupplierByName(name) {
+  return state.suppliers.find(s => s.name === name);
+}
+
 function renderInvoicesTable() {
   var tbody = document.querySelector("#invoicesTable tbody");
   tbody.innerHTML = "";
 
   var invs = state.months[state.currentMonth].invoices || [];
   if (invs.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="9" class="empty">אין חשבוניות</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="10" class="empty">אין חשבוניות</td></tr>`;
     updateInvoiceStats();
     return;
   }
@@ -1750,11 +1788,15 @@ function renderInvoicesTable() {
     if (invoiceCreditFilter === "זיכוי") matchCredit = !!inv.isCredit;
     if (invoiceCreditFilter === "לא_זיכוי") matchCredit = !inv.isCredit;
 
-    return matchSearch && matchStatus && matchType && matchCredit;
+    var s = getSupplierByName(inv.supplier);
+    var cat = (s && s.category) ? s.category : "לא משויך";
+    var matchCat = (invoiceCategoryFilter === "הכל") || (cat === invoiceCategoryFilter);
+
+    return matchSearch && matchStatus && matchType && matchCredit && matchCat;
   });
 
   if (filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="9" class="empty">לא נמצאו חשבוניות לפי הסינון</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="10" class="empty">לא נמצאו חשבוניות לפי הסינון</td></tr>`;
     updateInvoiceStats();
     return;
   }
@@ -1766,16 +1808,19 @@ function renderInvoicesTable() {
     else if (inv.status === "חלקי") cls += "status-partial";
     else cls += "status-unpaid";
 
+    var s = getSupplierByName(inv.supplier);
+    var cat = (s && s.category) ? s.category : "לא משויך";
+
     tbody.innerHTML += `
       <tr>
         <td data-label="#">${idx+1}</td>
         <td data-label="ספק">${inv.supplier}</td>
+        <td data-label="קטגוריה">${cat}</td>
         <td data-label="מס׳">${inv.number}</td>
         <td data-label="תאריך">${inv.date}</td>
         <td data-label="סכום">${inv.amount.toFixed(2)}</td>
         <td data-label="סטטוס">
-          <select class="${cls}"
-                  onchange="changeInvoiceStatus(${i}, this.value)">
+          <select class="${cls}" onchange="changeInvoiceStatus(${i}, this.value)">
             <option value="שולם" ${inv.status === "שולם" ? "selected" : ""}>שולם</option>
             <option value="לא שולם" ${inv.status === "לא שולם" ? "selected" : ""}>לא שולם</option>
             <option value="חלקי" ${inv.status === "חלקי" ? "selected" : ""}>שולם חלקית</option>
@@ -1797,31 +1842,8 @@ function renderInvoicesTable() {
   updateInvoiceStats();
 }
 
-/* חיפוש / סינון חשבוניות */
-function setInvoiceSearch(v) {
-  invoiceSearchTerm = v || "";
-  renderInvoicesTable();
-}
-function setInvoiceStatusFilter(v) {
-  invoiceStatusFilter = v;
-  renderInvoicesTable();
-}
-function setInvoiceTypeFilter(v) {
-  invoiceTypeFilter = v;
-  renderInvoicesTable();
-}
-function setInvoiceCreditFilter(v) {
-  invoiceCreditFilter = v;
-  renderInvoicesTable();
-}
-function toggleInvoicesEditMode() {
-  invoicesEditMode = !invoicesEditMode;
-  document.getElementById("invoicesEditBtn").textContent =
-    "מצב עריכה: " + (invoicesEditMode ? "פועל" : "כבוי");
-  renderInvoicesTable();
-}
+/* סטטיסטיקות חשבוניות */
 
-/* סטטיסטיקות חשבוניות (כרטיסים בראש עמוד חשבוניות) */
 function updateInvoiceStats() {
   var invs = state.months[state.currentMonth].invoices || [];
   var count = invs.length;
@@ -1846,10 +1868,6 @@ function updateInvoiceStats() {
 
 /* ───────────── דשבורד ───────────── */
 
-function getSupplierByName(name) {
-  return state.suppliers.find(s => s.name === name);
-}
-
 function updateDashboard() {
   var month = state.months[state.currentMonth];
   var invs = month.invoices || [];
@@ -1861,12 +1879,8 @@ function updateDashboard() {
   invs.forEach(inv => {
     var net = inv.isCredit ? -inv.amount : inv.amount;
     totalNet += net;
-    if (inv.status !== "שולם") {
-      unpaidTotal += net;
-    }
-    if (inv.isCredit) {
-      creditsTotal += inv.amount;
-    }
+    if (inv.status !== "שולם") unpaidTotal += net;
+    if (inv.isCredit) creditsTotal += inv.amount;
   });
 
   document.getElementById("totalExpenses").innerHTML =
@@ -2030,7 +2044,7 @@ function renderSummaryCategories() {
   });
 }
 
-/* ───────────── ייצוא ───────────── */
+/* ───────────── ייצוא / ייבוא ───────────── */
 
 function exportMonthJSON() {
   var data = state.months[state.currentMonth];
@@ -2064,8 +2078,6 @@ function exportMonthCSV() {
   a.download = "invoices_" + state.currentMonth + ".csv";
   a.click();
 }
-
-/* ───────────── ייבוא חודש JSON/CSV ───────────── */
 
 function importMonthFile(file) {
   if (!file) return;
@@ -2145,10 +2157,25 @@ function normalizeInvoiceFromImport(inv) {
   };
 }
 
+/* ───────────── פילטר קטגוריה לחשבוניות ───────────── */
+
+function renderInvoiceCategoryFilterOptions() {
+  var sel = document.getElementById("invoiceCategoryFilter");
+  if (!sel) return;
+  var current = sel.value;
+  sel.innerHTML = `<option value="הכל">הכל</option>`;
+  state.categories.forEach(cat => {
+    var opt = document.createElement("option");
+    opt.value = cat;
+    opt.textContent = cat;
+    sel.appendChild(opt);
+  });
+  if (state.categories.includes(current)) sel.value = current;
+}
+
 /* ───────────── כפתור צף – מעבר מהיר לטופס חשבונית ───────────── */
 
 function quickAddInvoice() {
-  // אחרי שהוספנו לשונית "קטגוריות", "חשבוניות" היא כפתור מספר 3 (אינדקס 3)
   var navButtons = document.querySelectorAll("nav button");
   navButtons.forEach(b => b.classList.remove("active"));
   navButtons[3].classList.add("active"); // חשבוניות
@@ -2157,7 +2184,7 @@ function quickAddInvoice() {
   document.getElementById("invoices").classList.add("active");
 
   document.querySelector("#invoices form").scrollIntoView({ behavior: "smooth", block: "start" });
-  invoiceSupplier.focus();
+  document.getElementById("invoiceSupplier").focus();
 }
 </script>
 
