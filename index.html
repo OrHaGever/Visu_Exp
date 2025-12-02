@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>ניהול ספקים, תעודות משלוח וחשבוניות</title>
+  <title>ניהול ספקים · תעודות משלוח וחשבוניות</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- פונט Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -58,6 +58,7 @@
       cursor:pointer;
     }
     .month-box input[type="month"]::-webkit-calendar-picker-indicator{ filter:invert(1); cursor:pointer; }
+
     nav {
       background:#e5e7eb;
       border-bottom:1px solid #d1d5db;
@@ -87,6 +88,7 @@
       color:#1d4ed8;
       box-shadow:0 8px 18px rgba(37,99,235,0.35);
     }
+
     main {
       max-width:1100px;
       margin:1rem auto 2.5rem;
@@ -94,6 +96,7 @@
     }
     section { display:none; }
     section.active { display:block; }
+
     .card {
       background:#ffffff;
       border-radius:14px;
@@ -104,6 +107,7 @@
     }
     h2 { margin:0 0 0.4rem; font-size:1rem; }
     h3 { margin:0 0 0.4rem; font-size:0.95rem; }
+
     label {
       display:block;
       font-size:0.8rem;
@@ -125,8 +129,10 @@
       background:#ffffff;
     }
     textarea { resize:vertical; min-height:50px; }
+
     .row { display:flex; gap:0.7rem; flex-wrap:wrap; }
     .row > div { flex:1 1 160px; }
+
     button.primary {
       margin-top:0.6rem;
       padding:0.45rem 1.1rem;
@@ -146,6 +152,7 @@
       box-shadow:none;
     }
     button.primary.small:hover { background:#f9fafb; }
+
     table {
       width:100%;
       border-collapse:collapse;
@@ -164,19 +171,29 @@
     tbody tr:nth-child(even){ background:#ffffff; }
     tbody tr:nth-child(odd){ background:#f9fafb; }
     .empty { text-align:center; color:#9ca3af; padding:0.5rem; }
+
     .pill {
       display:inline-block;
       padding:0.15rem 0.55rem;
       border-radius:999px;
-      background:#e0ecff;
       font-size:0.72rem;
+    }
+    .pill-delivery {
+      background:#dbeafe;
       color:#1d4ed8;
     }
+    .pill-invoice {
+      background:#dcfce7;
+      color:#166534;
+    }
+
     .amount-pos { color:#16a34a; font-weight:500; }
     .amount-neg { color:#b91c1c; font-weight:500; }
+
     .status-ok { color:#16a34a; font-weight:500; }
     .status-problem { color:#b91c1c; font-weight:500; }
     .status-warn { color:#d97706; font-weight:500; }
+
     .btn-ghost {
       border:none;
       background:none;
@@ -186,6 +203,7 @@
       cursor:pointer;
       padding:0;
     }
+
     #toast {
       position:fixed;
       top:3rem;
@@ -202,6 +220,7 @@
       z-index:50;
     }
     #toast.show { opacity:1; }
+
     @media (max-width:760px){
       header { padding:0.5rem 0.7rem; }
       nav .nav-inner { justify-content:center; }
@@ -245,8 +264,7 @@
 <nav>
   <div class="nav-inner">
     <button class="active" onclick="switchTab('dashboard',this)">דשבורד</button>
-    <button onclick="switchTab('deliveries',this)">תעודות משלוח</button>
-    <button onclick="switchTab('invoices',this)">חשבוניות</button>
+    <button onclick="switchTab('entries',this)">תנועות</button>
     <button onclick="switchTab('reconcile',this)">התאמת סוף חודש</button>
     <button onclick="switchTab('suppliers',this)">ספקים</button>
   </div>
@@ -292,75 +310,76 @@
     </div>
   </section>
 
-  <!-- תעודות משלוח -->
-  <section id="deliveries">
+  <!-- תנועות: תעודות משלוח + חשבוניות -->
+  <section id="entries">
     <div class="card">
-      <h2>תעודת משלוח חדשה</h2>
-      <form onsubmit="addDelivery(event)">
-        <label>ספק</label>
-        <input list="supplierList" id="deliverySupplier" placeholder="התחל להקליד שם ספק" />
-        <label>מספר תעודת משלוח</label>
-        <input type="text" id="deliveryNumber" />
+      <h2>תנועה חדשה</h2>
+      <form onsubmit="addEntry(event)">
+        <div class="row">
+          <div>
+            <label>סוג תנועה</label>
+            <select id="entryType">
+              <option value="delivery">תעודת משלוח</option>
+              <option value="invoice">חשבונית</option>
+            </select>
+          </div>
+          <div>
+            <label>ספק</label>
+            <input list="supplierList" id="entrySupplier" placeholder="התחל להקליד שם ספק" />
+          </div>
+        </div>
+
+        <label>מספר תעודה / חשבונית</label>
+        <input type="text" id="entryNumber" />
+
         <div class="row">
           <div>
             <label>תאריך</label>
-            <input type="date" id="deliveryDate" />
+            <input type="date" id="entryDate" />
           </div>
           <div>
             <label>סכום (₪)</label>
-            <input type="number" id="deliveryAmount" step="0.01" min="0" />
+            <input type="number" id="entryAmount" step="0.01" min="0" />
           </div>
         </div>
+
         <label>הערות</label>
-        <textarea id="deliveryNotes"></textarea>
-        <button class="primary" type="submit">הוסף תעודת משלוח</button>
+        <textarea id="entryNotes"></textarea>
+
+        <button class="primary" type="submit">הוסף תנועה</button>
       </form>
     </div>
 
     <div class="card">
-      <h3>תעודות משלוח בחודש</h3>
-      <table id="deliveriesTable">
-        <thead>
-          <tr>
-            <th>#</th><th>ספק</th><th>מס׳</th><th>תאריך</th><th>סכום</th><th>הערות</th><th>מחק</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- חשבוניות -->
-  <section id="invoices">
-    <div class="card">
-      <h2>חשבונית חדשה</h2>
-      <form onsubmit="addInvoice(event)">
-        <label>ספק</label>
-        <input list="supplierList" id="invoiceSupplier" placeholder="התחל להקליד שם ספק" />
-        <label>מספר חשבונית</label>
-        <input type="text" id="invoiceNumber" />
-        <div class="row">
-          <div>
-            <label>תאריך</label>
-            <input type="date" id="invoiceDate" />
-          </div>
-          <div>
-            <label>סכום (₪)</label>
-            <input type="number" id="invoiceAmount" step="0.01" min="0" />
-          </div>
+      <h3>תנועות בחודש</h3>
+      <div class="row">
+        <div>
+          <label>סינון לפי סוג</label>
+          <select id="filterType" onchange="renderEntries()">
+            <option value="all">הכל</option>
+            <option value="delivery">תעודות משלוח בלבד</option>
+            <option value="invoice">חשבוניות בלבד</option>
+          </select>
         </div>
-        <label>הערות</label>
-        <textarea id="invoiceNotes"></textarea>
-        <button class="primary" type="submit">הוסף חשבונית</button>
-      </form>
-    </div>
+        <div>
+          <label>סינון לפי ספק</label>
+          <select id="filterSupplier" onchange="renderEntries()">
+            <option value="">כל הספקים</option>
+          </select>
+        </div>
+      </div>
 
-    <div class="card">
-      <h3>חשבוניות בחודש</h3>
-      <table id="invoicesTable">
+      <table id="entriesTable">
         <thead>
           <tr>
-            <th>#</th><th>ספק</th><th>מס׳</th><th>תאריך</th><th>סכום</th><th>הערות</th><th>מחק</th>
+            <th>#</th>
+            <th>סוג</th>
+            <th>ספק</th>
+            <th>מס׳</th>
+            <th>תאריך</th>
+            <th>סכום</th>
+            <th>הערות</th>
+            <th>מחק</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -496,7 +515,6 @@
   function init(){
     const loaded = loadState();
     if(!loaded){
-      // התחלה נקייה
       const d = new Date();
       const m = String(d.getMonth()+1).padStart(2,"0");
       const key = d.getFullYear()+"-"+m;
@@ -516,8 +534,8 @@
 
     renderSuppliers();
     renderSupplierDatalist();
-    renderDeliveries();
-    renderInvoices();
+    renderEntries();
+    renderEntrySupplierFilter();
     renderDashboard();
     renderReconcile();
     renderReconcileSupplierSelect();
@@ -535,6 +553,10 @@
       renderReconcile();
       renderReconcileSupplierSelect();
     }
+    if(id==="entries"){
+      renderEntries();
+      renderEntrySupplierFilter();
+    }
   }
 
   function changeMonth(val){
@@ -544,8 +566,8 @@
     document.getElementById("incomeInput").value =
       state.months[val].income || "";
     document.getElementById("currentMonthLabel").value = val;
-    renderDeliveries();
-    renderInvoices();
+    renderEntries();
+    renderEntrySupplierFilter();
     renderDashboard();
     renderReconcile();
     renderReconcileSupplierSelect();
@@ -570,11 +592,11 @@
     const mm = String(d.getMonth()+1).padStart(2,"0");
     const dd = String(d.getDate()).padStart(2,"0");
     const today = `${yyyy}-${mm}-${dd}`;
-    const ddInput = document.getElementById("deliveryDate");
-    const diInput = document.getElementById("invoiceDate");
-    if(ddInput) ddInput.value = today;
-    if(diInput) diInput.value = today;
+    const ed = document.getElementById("entryDate");
+    if(ed) ed.value = today;
   }
+
+  /* ספקים */
 
   function addSupplier(e){
     e.preventDefault();
@@ -597,6 +619,7 @@
     supplierNotes.value = "";
     renderSuppliers();
     renderSupplierDatalist();
+    renderEntrySupplierFilter();
     saveState();
     showToast("ספק נוסף");
   }
@@ -627,6 +650,7 @@
     state.suppliers.splice(index,1);
     renderSuppliers();
     renderSupplierDatalist();
+    renderEntrySupplierFilter();
     saveState();
   }
 
@@ -640,133 +664,159 @@
     });
   }
 
-  function addDelivery(e){
+  /* תנועות – טופס אחד */
+
+  function addEntry(e){
     e.preventDefault();
     ensureMonthExists(state.currentMonth);
-    const sup = deliverySupplier.value.trim();
-    const num = deliveryNumber.value.trim();
-    const date = deliveryDate.value;
-    const amount = parseFloat(deliveryAmount.value);
-    if(!sup || !num || isNaN(amount)){
-      showToast("חובה למלא ספק, מספר ות مبلغ");
-      return;
-    }
-    const obj = {
-      supplier:sup,
-      number:num,
-      date:date||"",
-      amount:amount,
-      notes:deliveryNotes.value.trim()
-    };
-    state.months[state.currentMonth].deliveries.push(obj);
-    deliveryNumber.value = "";
-    deliveryAmount.value = "";
-    deliveryNotes.value = "";
-    setTodayDefaults();
-    renderDeliveries();
-    renderDashboard();
-    renderReconcile();
-    renderReconcileSupplierSelect();
-    saveState();
-    showToast("תעודת משלוח נוספה");
-  }
 
-  function renderDeliveries(){
-    const tbody = document.querySelector("#deliveriesTable tbody");
-    tbody.innerHTML = "";
-    const arr = (state.months[state.currentMonth]||{deliveries:[]}).deliveries || [];
-    if(!arr.length){
-      tbody.innerHTML = `<tr><td colspan="7" class="empty">אין תעודות משלוח</td></tr>`;
-      return;
-    }
-    arr.forEach((d,i)=>{
-      tbody.innerHTML += `
-        <tr>
-          <td data-label="#">${i+1}</td>
-          <td data-label="ספק">${d.supplier}</td>
-          <td data-label="מס׳">${d.number}</td>
-          <td data-label="תאריך">${d.date||""}</td>
-          <td data-label="סכום">${formatMoney(d.amount)}</td>
-          <td data-label="הערות">${d.notes||""}</td>
-          <td data-label="מחק">
-            <button class="btn-ghost" onclick="deleteDelivery(${i})">מחק</button>
-          </td>
-        </tr>`;
-    });
-  }
+    const type = document.getElementById("entryType").value; // delivery / invoice
+    const sup = entrySupplier.value.trim();
+    const num = entryNumber.value.trim();
+    const date = entryDate.value;
+    const amount = parseFloat(entryAmount.value);
+    const notes = entryNotes.value.trim();
 
-  function deleteDelivery(i){
-    state.months[state.currentMonth].deliveries.splice(i,1);
-    renderDeliveries();
-    renderDashboard();
-    renderReconcile();
-    renderReconcileSupplierSelect();
-    saveState();
-  }
-
-  function addInvoice(e){
-    e.preventDefault();
-    ensureMonthExists(state.currentMonth);
-    const sup = invoiceSupplier.value.trim();
-    const num = invoiceNumber.value.trim();
-    const date = invoiceDate.value;
-    const amount = parseFloat(invoiceAmount.value);
     if(!sup || !num || isNaN(amount)){
       showToast("חובה למלא ספק, מספר וסכום");
       return;
     }
-    const obj = {
-      supplier:sup,
-      number:num,
-      date:date||"",
-      amount:amount,
-      notes:invoiceNotes.value.trim()
-    };
-    state.months[state.currentMonth].invoices.push(obj);
-    invoiceNumber.value = "";
-    invoiceAmount.value = "";
-    invoiceNotes.value = "";
+
+    const obj = { supplier:sup, number:num, date:date||"", amount:amount, notes };
+
+    if(type === "delivery"){
+      state.months[state.currentMonth].deliveries.push(obj);
+    }else{
+      state.months[state.currentMonth].invoices.push(obj);
+    }
+
+    entryNumber.value = "";
+    entryAmount.value = "";
+    entryNotes.value = "";
     setTodayDefaults();
-    renderInvoices();
+
+    renderEntries();
+    renderEntrySupplierFilter();
     renderDashboard();
     renderReconcile();
     renderReconcileSupplierSelect();
     saveState();
-    showToast("חשבונית נוספה");
+
+    showToast(type==="delivery" ? "תעודת משלוח נוספה" : "חשבונית נוספה");
   }
 
-  function renderInvoices(){
-    const tbody = document.querySelector("#invoicesTable tbody");
+  function renderEntrySupplierFilter(){
+    const sel = document.getElementById("filterSupplier");
+    if(!sel) return;
+    ensureMonthExists(state.currentMonth);
+    const m = state.months[state.currentMonth];
+    const deliveries = m.deliveries||[];
+    const invoices = m.invoices||[];
+    const setSup = new Set();
+    deliveries.forEach(d=>{ if(d.supplier) setSup.add(d.supplier); });
+    invoices.forEach(f=>{ if(f.supplier) setSup.add(f.supplier); });
+
+    const names = Array.from(setSup).sort((a,b)=>a.localeCompare(b,"he"));
+    const currentVal = sel.value;
+
+    sel.innerHTML = `<option value="">כל הספקים</option>`;
+    names.forEach(n=>{
+      const opt = document.createElement("option");
+      opt.value = n;
+      opt.textContent = n;
+      sel.appendChild(opt);
+    });
+
+    if(currentVal && names.includes(currentVal)){
+      sel.value = currentVal;
+    }
+  }
+
+  function renderEntries(){
+    ensureMonthExists(state.currentMonth);
+    const m = state.months[state.currentMonth];
+    const deliveries = m.deliveries||[];
+    const invoices = m.invoices||[];
+
+    const filterType = document.getElementById("filterType").value;
+    const supplierFilter = document.getElementById("filterSupplier").value;
+
+    const combined = [];
+
+    deliveries.forEach((d,idx)=>{
+      combined.push({
+        type:"delivery",
+        sourceIndex:idx,
+        supplier:d.supplier||"",
+        number:d.number||"",
+        date:d.date||"",
+        amount:Number(d.amount)||0,
+        notes:d.notes||""
+      });
+    });
+
+    invoices.forEach((f,idx)=>{
+      combined.push({
+        type:"invoice",
+        sourceIndex:idx,
+        supplier:f.supplier||"",
+        number:f.number||"",
+        date:f.date||"",
+        amount:Number(f.amount)||0,
+        notes:f.notes||""
+      });
+    });
+
+    let filtered = combined;
+    if(filterType!=="all"){
+      filtered = filtered.filter(e=>e.type===filterType);
+    }
+    if(supplierFilter){
+      filtered = filtered.filter(e=>e.supplier===supplierFilter);
+    }
+
+    const tbody = document.querySelector("#entriesTable tbody");
     tbody.innerHTML = "";
-    const arr = (state.months[state.currentMonth]||{invoices:[]}).invoices || [];
-    if(!arr.length){
-      tbody.innerHTML = `<tr><td colspan="7" class="empty">אין חשבוניות</td></tr>`;
+    if(!filtered.length){
+      tbody.innerHTML = `<tr><td colspan="8" class="empty">אין תנועות לחודש זה</td></tr>`;
       return;
     }
-    arr.forEach((f,i)=>{
+
+    filtered.forEach((entry,i)=>{
+      const typeLabel = entry.type==="delivery" ? "תעודת משלוח" : "חשבונית";
+      const typeClass = entry.type==="delivery" ? "pill pill-delivery" : "pill pill-invoice";
       tbody.innerHTML += `
         <tr>
           <td data-label="#">${i+1}</td>
-          <td data-label="ספק">${f.supplier}</td>
-          <td data-label="מס׳">${f.number}</td>
-          <td data-label="תאריך">${f.date||""}</td>
-          <td data-label="סכום">${formatMoney(f.amount)}</td>
-          <td data-label="הערות">${f.notes||""}</td>
+          <td data-label="סוג"><span class="${typeClass}">${typeLabel}</span></td>
+          <td data-label="ספק">${entry.supplier}</td>
+          <td data-label="מס׳">${entry.number}</td>
+          <td data-label="תאריך">${entry.date}</td>
+          <td data-label="סכום">${formatMoney(entry.amount)}</td>
+          <td data-label="הערות">${entry.notes}</td>
           <td data-label="מחק">
-            <button class="btn-ghost" onclick="deleteInvoice(${i})">מחק</button>
+            <button class="btn-ghost" onclick="deleteEntry('${entry.type}',${entry.sourceIndex})">מחק</button>
           </td>
         </tr>`;
     });
   }
 
-  function deleteInvoice(i){
-    state.months[state.currentMonth].invoices.splice(i,1);
-    renderInvoices();
+  function deleteEntry(type, index){
+    ensureMonthExists(state.currentMonth);
+    if(type==="delivery"){
+      state.months[state.currentMonth].deliveries.splice(index,1);
+    }else{
+      state.months[state.currentMonth].invoices.splice(index,1);
+    }
+    renderEntries();
+    renderEntrySupplierFilter();
     renderDashboard();
     renderReconcile();
     renderReconcileSupplierSelect();
     saveState();
   }
+
+  /* דשבורד */
 
   function renderDashboard(){
     ensureMonthExists(state.currentMonth);
@@ -782,6 +832,8 @@
     diffEl.textContent = formatMoney(diff);
     diffEl.className = diff>0?"amount-pos":diff<0?"amount-neg":"";
   }
+
+  /* התאמת סוף חודש */
 
   function renderReconcile(){
     ensureMonthExists(state.currentMonth);
@@ -872,7 +924,7 @@
     const diff = sumI-sumD;
 
     html += `<div style="margin-bottom:0.4rem;">
-      <span class="pill">סיכום עבור: ${name}</span><br/>
+      <span class="pill pill-delivery">סיכום עבור: ${name}</span><br/>
       סה"כ תעודות משלוח: <strong>${formatMoney(sumD)}</strong><br/>
       סה"כ חשבוניות: <strong>${formatMoney(sumI)}</strong><br/>
       הפרש: <strong>${formatMoney(diff)}</strong>
