@@ -1,704 +1,914 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>דשבורד הוצאות ספקים - הצדף</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
+  <meta charset="UTF-8" />
+  <title>ניהול ספקים, תעודות משלוח וחשבוניות</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- פונט Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
-    :root {
-      --bg-main: #f5f5f7;
-      --bg-elevated: #ffffff;
-      --bg-soft: #f0f2ff;
-      --border-subtle: #e2e4f0;
-      --border-strong: #c7c9e0;
-      --primary: #2563eb;
-      --primary-soft: #e0edff;
-      --accent: #10b981;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --text-main: #0f172a;
-      --text-muted: #6b7280;
-      --pill-bg: #e5edff;
-      --pill-text: #1d4ed8;
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --shadow-soft: 0 18px 40px rgba(15,23,42,0.08);
-      --shadow-subtle: 0 10px 24px rgba(15,23,42,0.06);
-      --fab-size: 52px;
-    }
-
-    body.dark-mode {
-      --bg-main: #1c1c1e;
-      --bg-elevated: #2a2a2d;
-      --bg-soft: #1f2430;
-      --border-subtle: #3a3a42;
-      --border-strong: #4b4b5b;
-      --primary: #0a84ff;
-      --primary-soft: #283241;
-      --accent: #4cd964;
-      --danger: #ff453a;
-      --warning: #ffd60a;
-      --text-main: #f5f5f7;
-      --text-muted: #a1a1b5;
-      --pill-bg: #283241;
-      --pill-text: #93c5fd;
-      --shadow-soft: 0 18px 40px rgba(0,0,0,0.8);
-      --shadow-subtle: 0 12px 30px rgba(0,0,0,0.7);
-    }
-
-    * {
-      box-sizing: border-box;
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    html, body {
-      margin: 0;
-      max-width: 100%;
-      overflow-x: hidden;
-    }
-
+    * { box-sizing:border-box; font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif; }
+    html,body { margin:0; padding:0; }
     body {
-      background:
-        radial-gradient(circle at top left, rgba(129,140,248,0.16) 0, transparent 50%),
-        radial-gradient(circle at bottom right, rgba(45,212,191,0.20) 0, transparent 55%),
-        var(--bg-main);
-      color: var(--text-main);
+      background:#f5f5f7;
+      color:#111827;
+      max-width:100%;
+      overflow-x:hidden;
     }
-
-    body.dark-mode {
-      background:
-        radial-gradient(circle at top left, rgba(37,99,235,0.35) 0, transparent 55%),
-        radial-gradient(circle at bottom right, rgba(16,185,129,0.35) 0, transparent 55%),
-        #0b0b10;
-    }
-
-    /* HEADER */
-
     header {
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      color: #fff;
-      box-shadow: 0 14px 30px rgba(15,23,42,0.45);
+      background:linear-gradient(135deg,#2563eb,#1d4ed8);
+      color:#fff;
+      padding:0.5rem 1rem;
+      position:sticky;
+      top:0;
+      z-index:10;
+      box-shadow:0 8px 18px rgba(15,23,42,0.35);
     }
-
     .header-inner {
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 0.55rem 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.6rem;
-      flex-wrap: wrap;
+      max-width:1100px;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:0.5rem;
+      flex-wrap:wrap;
     }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      flex-wrap: wrap;
+    .title {
+      font-size:1.1rem;
+      font-weight:600;
+      white-space:nowrap;
     }
-
-    .header-title {
-      font-weight: 600;
-      font-size: 1.1rem;
-      letter-spacing: 0.03em;
-      white-space: nowrap;
+    .month-box {
+      display:flex;
+      align-items:center;
+      gap:0.4rem;
+      background:rgba(15,23,42,0.25);
+      padding:0.25rem 0.6rem;
+      border-radius:999px;
+      border:1px solid rgba(191,219,254,0.6);
     }
-
-    .month-nav {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      background: rgba(15,23,42,0.18);
-      padding: 0.25rem 0.55rem;
-      border-radius: 999px;
-      border: 1px solid rgba(191,219,254,0.4);
+    .month-box span { font-size:0.78rem; opacity:0.9; }
+    .month-box input[type="month"]{
+      border:none;
+      background:transparent;
+      color:#f9fafb;
+      font-size:0.78rem;
+      cursor:pointer;
     }
-
-    .month-nav button {
-      border: none;
-      background: none;
-      color: #e5e7eb;
-      font-size: 0.9rem;
-      cursor: pointer;
-      padding: 0 0.2rem;
-    }
-
-    .month-nav span {
-      font-size: 0.78rem;
-      opacity: 0.9;
-      margin-inline: 0.15rem;
-    }
-
-    .month-nav input[type="month"] {
-      border: none;
-      background: transparent;
-      color: #f9fafb;
-      font-size: 0.78rem;
-      padding: 0;
-      cursor: pointer;
-    }
-    .month-nav input[type="month"]::-webkit-calendar-picker-indicator {
-      filter: invert(1);
-      cursor: pointer;
-    }
-
-    .header-search {
-      position: relative;
-      min-width: 160px;
-      flex: 1 1 220px;
-      max-width: 360px;
-    }
-
-    .header-search input {
-      width: 100%;
-      padding: 0.35rem 2rem 0.35rem 0.6rem;
-      border-radius: 999px;
-      border: none;
-      font-size: 0.8rem;
-      background: rgba(15,23,42,0.2);
-      color: #f9fafb;
-    }
-
-    .header-search input::placeholder {
-      color: rgba(226,232,240,0.75);
-    }
-
-    .header-search-icon {
-      position: absolute;
-      inset-inline-start: 0.6rem;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 0.85rem;
-      opacity: 0.7;
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 0.4rem;
-      align-items: center;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .chip-btn {
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.3);
-      background: rgba(15,23,42,0.22);
-      padding: 0.3rem 0.8rem;
-      font-size: 0.76rem;
-      color: #e5e7eb;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      transition: background 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
-      white-space: nowrap;
-    }
-
-    .chip-btn:hover {
-      background: rgba(15,23,42,0.35);
-      transform: translateY(-0.5px);
-    }
-
-    .chip-icon {
-      font-size: 0.8rem;
-    }
-
-    /* NAV */
-
+    .month-box input[type="month"]::-webkit-calendar-picker-indicator{ filter:invert(1); cursor:pointer; }
     nav {
-      display: flex;
-      justify-content: center;
-      gap: 0.6rem;
-      background: rgba(241,245,249,0.95);
-      backdrop-filter: blur(10px);
-      padding: 0.45rem 0.8rem;
-      position: sticky;
-      top: 2.45rem;
-      z-index: 30;
-      border-bottom: 1px solid #d1ddf5;
+      background:#e5e7eb;
+      border-bottom:1px solid #d1d5db;
+      position:sticky;
+      top:2.4rem;
+      z-index:9;
     }
-
-    body.dark-mode nav {
-      background: rgba(17,24,39,0.95);
-      border-bottom-color: #1f2937;
+    nav .nav-inner {
+      max-width:1100px;
+      margin:0 auto;
+      padding:0.35rem 0.8rem;
+      display:flex;
+      gap:0.5rem;
+      flex-wrap:wrap;
     }
-
     nav button {
-      border-radius: 999px;
-      border: 1px solid transparent;
-      background: rgba(255,255,255,0.85);
-      padding: 0.35rem 1.1rem;
-      font-size: 0.82rem;
-      font-weight: 500;
-      cursor: pointer;
-      color: #374151;
-      transition: background 0.14s ease, color 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease, transform 0.08s ease;
-      white-space: nowrap;
+      border-radius:999px;
+      border:1px solid transparent;
+      background:#ffffff;
+      padding:0.35rem 0.9rem;
+      font-size:0.82rem;
+      cursor:pointer;
+      color:#374151;
     }
-
-    body.dark-mode nav button {
-      background: rgba(31,41,55,0.9);
-      color: #e5e7eb;
-      border-color: #111827;
-    }
-
-    nav button:hover {
-      background: #e0e7ff;
-      border-color: #c7d2fe;
-    }
-
-    body.dark-mode nav button:hover {
-      background: #111827;
-      border-color: #374151;
-    }
-
     nav button.active {
-      background: #ffffff;
-      border-color: #2563eb;
-      color: #1d4ed8;
-      box-shadow: 0 8px 18px rgba(37,99,235,0.35);
-      transform: translateY(-1px);
+      border-color:#2563eb;
+      color:#1d4ed8;
+      box-shadow:0 8px 18px rgba(37,99,235,0.35);
     }
-
-    body.dark-mode nav button.active {
-      background: #020617;
-      color: #bfdbfe;
-      border-color: #60a5fa;
-    }
-
-    /* MAIN LAYOUT */
-
     main {
-      max-width: 1120px;
-      margin: 1.1rem auto 4.5rem;
-      padding: 0 0.9rem;
+      max-width:1100px;
+      margin:1rem auto 2.5rem;
+      padding:0 0.8rem;
     }
-
-    section {
-      display: none;
-    }
-
-    section.active {
-      display: block;
-    }
-
-    .top-actions {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 0.7rem;
-    }
-
-    .top-actions-left,
-    .top-actions-right {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      flex-wrap: wrap;
-    }
-
-    .primary-chip {
-      border-radius: 999px;
-      border: none;
-      padding: 0.35rem 0.85rem;
-      font-size: 0.8rem;
-      cursor: pointer;
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      color: #f9fafb;
-      box-shadow: 0 10px 24px rgba(37,99,235,0.45);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-
-    .primary-chip span.icon {
-      font-size: 0.85rem;
-    }
-
-    .primary-chip:hover {
-      filter: brightness(1.05);
-      transform: translateY(-1px);
-    }
-
-    .secondary-chip {
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      background: rgba(255,255,255,0.8);
-      color: var(--text-main);
-      padding: 0.3rem 0.8rem;
-      font-size: 0.78rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-
-    body.dark-mode .secondary-chip {
-      background: #171821;
-      color: #e5e7eb;
-      border-color: #3a3a42;
-    }
-
-    /* CARDS */
-
+    section { display:none; }
+    section.active { display:block; }
     .card {
-      position: relative;
-      background: radial-gradient(circle at top left, rgba(255,255,255,0.85), var(--bg-elevated));
-      border-radius: var(--radius-lg);
-      padding: 0.9rem 1.1rem;
-      margin-bottom: 0.9rem;
-      box-shadow: var(--shadow-subtle);
-      border: 1px solid var(--border-subtle);
+      background:#ffffff;
+      border-radius:14px;
+      padding:0.9rem 1rem;
+      margin-bottom:0.9rem;
+      box-shadow:0 10px 22px rgba(15,23,42,0.08);
+      border:1px solid #e5e7eb;
     }
-
-    body.dark-mode .card {
-      background: radial-gradient(circle at top left, #363845, var(--bg-elevated));
-      border-color: var(--border-subtle);
-    }
-
-    .card h3 {
-      margin: 0 0 0.45rem;
-      font-size: 0.98rem;
-      font-weight: 600;
-    }
-
-    .card-header-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 0.45rem;
-    }
-
-    /* GRID */
-
-    .grid-3 {
-      display: grid;
-      gap: 0.8rem;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      margin-bottom: 0.8rem;
-    }
-
-    .grid-2 {
-      display: grid;
-      gap: 0.8rem;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    @media (max-width: 860px) {
-      .grid-3 {
-        grid-template-columns: 1fr;
-      }
-      .grid-2 {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* KPI */
-
-    .kpi-card {
-      background: linear-gradient(145deg, #ffffff, #eef2ff);
-      border-radius: 16px;
-      padding: 0.85rem 0.9rem;
-      box-shadow: var(--shadow-soft);
-      border: 1px solid var(--border-strong);
-    }
-
-    body.dark-mode .kpi-card {
-      background: linear-gradient(145deg, #272832, #1f212c);
-      border-color: #3a3a42;
-    }
-
-    .kpi-label {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-bottom: 0.25rem;
-    }
-
-    .kpi-value {
-      font-size: 1.35rem;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-
-    .kpi-sub {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      margin-top: 0.15rem;
-    }
-
-    /* FORM ELEMENTS */
-
-    .row {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      flex-wrap: wrap;
-    }
-
-    .row.space-between {
-      justify-content: space-between;
-    }
-
+    h2 { margin:0 0 0.4rem; font-size:1rem; }
+    h3 { margin:0 0 0.4rem; font-size:0.95rem; }
     label {
-      display: block;
-      font-size: 0.78rem;
-      margin: 0.45rem 0 0.15rem;
-      color: var(--text-muted);
+      display:block;
+      font-size:0.8rem;
+      margin:0.4rem 0 0.15rem;
+      color:#4b5563;
     }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 0.48rem 0.6rem;
-      border-radius: 10px;
-      border: 1px solid var(--border-subtle);
-      font-size: 0.85rem;
-      background: #f9fafb;
-      color: var(--text-main);
-      transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease, transform 0.06s ease;
+    input,select,textarea {
+      width:100%;
+      padding:0.45rem 0.55rem;
+      border-radius:10px;
+      border:1px solid #d1d5db;
+      font-size:0.85rem;
+      background:#f9fafb;
     }
-
-    body.dark-mode input,
-    body.dark-mode select,
-    body.dark-mode textarea {
-      background: #252732;
-      border-color: #3a3a42;
-      color: #f5f5f7;
+    input:focus,select:focus,textarea:focus {
+      outline:none;
+      border-color:#2563eb;
+      box-shadow:0 0 0 2px rgba(37,99,235,0.18);
+      background:#ffffff;
     }
-
-    input::placeholder, textarea::placeholder {
-      color: #9ca3af;
-    }
-
-    input:focus, textarea:focus, select:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 2px rgba(37,99,235,0.18);
-      background: #ffffff;
-      transform: translateY(-0.5px);
-    }
-
-    body.dark-mode input:focus,
-    body.dark-mode textarea:focus,
-    body.dark-mode select:focus {
-      background: #111827;
-      box-shadow: 0 0 0 2px rgba(10,132,255,0.35);
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 52px;
-    }
-
+    textarea { resize:vertical; min-height:50px; }
+    .row { display:flex; gap:0.7rem; flex-wrap:wrap; }
+    .row > div { flex:1 1 160px; }
     button.primary {
-      margin-top: 0.55rem;
-      padding: 0.46rem 1.15rem;
-      border-radius: 999px;
-      border: none;
-      font-size: 0.86rem;
-      font-weight: 500;
-      cursor: pointer;
-      background: linear-gradient(135deg, #2563eb, #1d9bf0);
-      color: #ffffff;
-      box-shadow: 0 10px 24px rgba(37,99,235,0.35);
-      transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.12s ease;
-      white-space: nowrap;
+      margin-top:0.6rem;
+      padding:0.45rem 1.1rem;
+      border-radius:999px;
+      border:none;
+      background:linear-gradient(135deg,#2563eb,#1d9bf0);
+      color:#ffffff;
+      cursor:pointer;
+      font-size:0.86rem;
     }
-
-    button.primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 14px 30px rgba(37,99,235,0.45);
-      filter: brightness(1.03);
-    }
-
     button.primary.small {
-      padding: 0.3rem 0.9rem;
-      font-size: 0.78rem;
-      box-shadow: 0 6px 14px rgba(15,23,42,0.14);
-      background: #ffffff;
-      color: #111827;
-      border: 1px solid var(--border-subtle);
+      padding:0.3rem 0.8rem;
+      font-size:0.78rem;
+      background:#ffffff;
+      color:#111827;
+      border:1px solid #d1d5db;
+      box-shadow:none;
     }
-
-    body.dark-mode button.primary.small {
-      background: #12131a;
-      color: #e5e7eb;
-      border-color: #3a3a42;
-    }
-
-    .btn-ghost {
-      border: none;
-      background: none;
-      color: var(--primary);
-      cursor: pointer;
-      font-size: 0.76rem;
-      text-decoration: underline;
-      padding: 0.1rem 0.2rem;
-    }
-
-    body.dark-mode .btn-ghost {
-      color: #93c5fd;
-    }
-
-    /* TABLES */
-
+    button.primary.small:hover { background:#f9fafb; }
     table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.78rem;
-      margin-top: 0.45rem;
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      background: #ffffff;
+      width:100%;
+      border-collapse:collapse;
+      margin-top:0.4rem;
+      font-size:0.78rem;
+      background:#f9fafb;
+      border-radius:10px;
+      overflow:hidden;
     }
-
-    body.dark-mode table {
-      background: #1f212c;
+    thead { background:#e5e7eb; }
+    th,td {
+      padding:0.35rem 0.4rem;
+      border-bottom:1px solid #e5e7eb;
+      text-align:center;
     }
-
-    thead {
-      background: linear-gradient(135deg, #e5edff, #f3f4ff);
-    }
-
-    body.dark-mode thead {
-      background: #2b3040;
-    }
-
-    th, td {
-      padding: 0.4rem 0.35rem;
-      border-bottom: 1px solid #e5e7eb;
-      text-align: center;
-    }
-
-    body.dark-mode th,
-    body.dark-mode td {
-      border-bottom-color: #3a3a42;
-    }
-
-    th {
-      font-weight: 600;
-      color: #374151;
-      font-size: 0.76rem;
-    }
-
-    body.dark-mode th {
-      color: #e5e7eb;
-    }
-
-    tbody tr:nth-child(even) {
-      background: #f9fafb;
-    }
-
-    tbody tr:nth-child(odd) {
-      background: #ffffff;
-    }
-
-    body.dark-mode tbody tr:nth-child(even) {
-      background: #171821;
-    }
-    body.dark-mode tbody tr:nth-child(odd) {
-      background: #1f212c;
-    }
-
-    tbody tr:hover {
-      background: #e0f2fe;
-      cursor: pointer;
-    }
-
-    body.dark-mode tbody tr:hover {
-      background: #2b3040;
-    }
-
-    body.compact-tables th,
-    body.compact-tables td {
-      padding: 0.25rem 0.25rem;
-    }
-
-    .empty {
-      text-align: center;
-      color: #9ca3af;
-      padding: 0.7rem;
-    }
-
-    /* STATUS & AMOUNTS */
-
+    tbody tr:nth-child(even){ background:#ffffff; }
+    tbody tr:nth-child(odd){ background:#f9fafb; }
+    .empty { text-align:center; color:#9ca3af; padding:0.5rem; }
     .pill {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.18rem 0.7rem;
-      border-radius: 999px;
-      font-size: 0.72rem;
-      background: var(--pill-bg);
-      color: var(--pill-text);
-      font-weight: 500;
-      border: 1px solid rgba(191,219,254,0.8);
+      display:inline-block;
+      padding:0.15rem 0.55rem;
+      border-radius:999px;
+      background:#e0ecff;
+      font-size:0.72rem;
+      color:#1d4ed8;
+    }
+    .amount-pos { color:#16a34a; font-weight:500; }
+    .amount-neg { color:#b91c1c; font-weight:500; }
+    .status-ok { color:#16a34a; font-weight:500; }
+    .status-problem { color:#b91c1c; font-weight:500; }
+    .status-warn { color:#d97706; font-weight:500; }
+    .btn-ghost {
+      border:none;
+      background:none;
+      color:#2563eb;
+      font-size:0.75rem;
+      text-decoration:underline;
+      cursor:pointer;
+      padding:0;
+    }
+    #toast {
+      position:fixed;
+      top:3rem;
+      left:50%;
+      transform:translateX(-50%);
+      background:#111827;
+      color:#f9fafb;
+      padding:0.4rem 0.9rem;
+      border-radius:999px;
+      font-size:0.8rem;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 0.2s ease;
+      z-index:50;
+    }
+    #toast.show { opacity:1; }
+    @media (max-width:760px){
+      header { padding:0.5rem 0.7rem; }
+      nav .nav-inner { justify-content:center; }
+      table { background:none; }
+      thead { display:none; }
+      tbody { display:block; }
+      tbody tr {
+        display:block;
+        margin-bottom:0.7rem;
+        background:#ffffff;
+        border-radius:10px;
+      }
+      td {
+        display:flex;
+        justify-content:space-between;
+        gap:0.5rem;
+        border-bottom:1px solid #e5e7eb;
+        padding:0.3rem 0.6rem;
+      }
+      td:last-child { border-bottom:none; }
+      td::before {
+        content:attr(data-label);
+        font-weight:600;
+        color:#6b7280;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="title">ניהול ספקים · תעודות משלוח וחשבוניות</div>
+    <div class="month-box">
+      <span>חודש:</span>
+      <input type="month" id="monthInput" />
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-inner">
+    <button class="active" onclick="switchTab('dashboard',this)">דשבורד</button>
+    <button onclick="switchTab('deliveries',this)">תעודות משלוח</button>
+    <button onclick="switchTab('invoices',this)">חשבוניות</button>
+    <button onclick="switchTab('reconcile',this)">התאמת סוף חודש</button>
+    <button onclick="switchTab('suppliers',this)">ספקים</button>
+  </div>
+</nav>
+
+<div id="toast"></div>
+
+<main>
+  <!-- דשבורד -->
+  <section id="dashboard" class="active">
+    <div class="card">
+      <h2>דשבורד חודשי</h2>
+      <div class="row">
+        <div>
+          <label>מחזור (הכנסות)</label>
+          <input type="number" id="incomeInput" step="0.01" min="0" oninput="updateIncome(this.value)" />
+        </div>
+        <div>
+          <label>חודש פעיל</label>
+          <input type="text" id="currentMonthLabel" readonly />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>סיכום כספי</h3>
+      <table>
+        <tbody>
+          <tr>
+            <td>סה"כ תעודות משלוח</td>
+            <td id="sumDeliveries">0 ₪</td>
+          </tr>
+          <tr>
+            <td>סה"כ חשבוניות</td>
+            <td id="sumInvoices">0 ₪</td>
+          </tr>
+          <tr>
+            <td>הפרש (חשבוניות - משלוח)</td>
+            <td id="diffAll">0 ₪</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- תעודות משלוח -->
+  <section id="deliveries">
+    <div class="card">
+      <h2>תעודת משלוח חדשה</h2>
+      <form onsubmit="addDelivery(event)">
+        <label>ספק</label>
+        <input list="supplierList" id="deliverySupplier" placeholder="התחל להקליד שם ספק" />
+        <label>מספר תעודת משלוח</label>
+        <input type="text" id="deliveryNumber" />
+        <div class="row">
+          <div>
+            <label>תאריך</label>
+            <input type="date" id="deliveryDate" />
+          </div>
+          <div>
+            <label>סכום (₪)</label>
+            <input type="number" id="deliveryAmount" step="0.01" min="0" />
+          </div>
+        </div>
+        <label>הערות</label>
+        <textarea id="deliveryNotes"></textarea>
+        <button class="primary" type="submit">הוסף תעודת משלוח</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3>תעודות משלוח בחודש</h3>
+      <table id="deliveriesTable">
+        <thead>
+          <tr>
+            <th>#</th><th>ספק</th><th>מס׳</th><th>תאריך</th><th>סכום</th><th>הערות</th><th>מחק</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- חשבוניות -->
+  <section id="invoices">
+    <div class="card">
+      <h2>חשבונית חדשה</h2>
+      <form onsubmit="addInvoice(event)">
+        <label>ספק</label>
+        <input list="supplierList" id="invoiceSupplier" placeholder="התחל להקליד שם ספק" />
+        <label>מספר חשבונית</label>
+        <input type="text" id="invoiceNumber" />
+        <div class="row">
+          <div>
+            <label>תאריך</label>
+            <input type="date" id="invoiceDate" />
+          </div>
+          <div>
+            <label>סכום (₪)</label>
+            <input type="number" id="invoiceAmount" step="0.01" min="0" />
+          </div>
+        </div>
+        <label>הערות</label>
+        <textarea id="invoiceNotes"></textarea>
+        <button class="primary" type="submit">הוסף חשבונית</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3>חשבוניות בחודש</h3>
+      <table id="invoicesTable">
+        <thead>
+          <tr>
+            <th>#</th><th>ספק</th><th>מס׳</th><th>תאריך</th><th>סכום</th><th>הערות</th><th>מחק</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- התאמת סוף חודש -->
+  <section id="reconcile">
+    <div class="card">
+      <h2>התאמת סוף חודש · תעודות משלוח מול חשבוניות</h2>
+      <p style="font-size:0.82rem;color:#4b5563;">
+        לכל ספק: השוואה בין סכום כל תעודות המשלוח לבין סכום החשבוניות שהופקו עבורו באותו חודש.
+      </p>
+      <table id="reconcileTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>ספק</th>
+            <th>סה"כ משלוחים</th>
+            <th>סה"כ חשבוניות</th>
+            <th>הפרש</th>
+            <th>סטטוס</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>פירוט לפי ספק</h3>
+      <label>בחר ספק</label>
+      <select id="reconcileSupplierSelect" onchange="renderReconcileDetails(this.value)"></select>
+      <div id="reconcileDetails" style="margin-top:0.6rem;font-size:0.8rem;"></div>
+    </div>
+  </section>
+
+  <!-- ספקים -->
+  <section id="suppliers">
+    <div class="card">
+      <h2>ספק חדש</h2>
+      <form onsubmit="addSupplier(event)">
+        <label>שם ספק</label>
+        <input type="text" id="supplierName" />
+        <label>טלפון</label>
+        <input type="text" id="supplierPhone" />
+        <label>אימייל</label>
+        <input type="email" id="supplierEmail" />
+        <label>הערות</label>
+        <textarea id="supplierNotes"></textarea>
+        <button class="primary" type="submit">הוסף ספק</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3>רשימת ספקים</h3>
+      <table id="suppliersTable">
+        <thead>
+          <tr>
+            <th>#</th><th>שם</th><th>טלפון</th><th>אימייל</th><th>הערות</th><th>מחק</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <datalist id="supplierList"></datalist>
+</main>
+
+<script>
+  const STORAGE_KEY = "supplier_delivery_invoice_v1";
+
+  let state = {
+    suppliers: [],
+    months: {}, // key: "YYYY-MM" => { income:number, deliveries:[], invoices:[] }
+    currentMonth: ""
+  };
+
+  function showToast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"),2000);
+  }
+
+  function formatMoney(n){
+    n = Number(n)||0;
+    return n.toLocaleString("he-IL",{minimumFractionDigits:2,maximumFractionDigits:2})+" ₪";
+  }
+
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return false;
+      const obj = JSON.parse(raw);
+      if(!obj || !obj.months) return false;
+      state = obj;
+      return true;
+    }catch(e){
+      console.error(e);
+      return false;
+    }
+  }
+
+  function saveState(){
+    try{
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+    }catch(e){
+      console.error(e);
+    }
+  }
+
+  function ensureMonthExists(key){
+    if(!state.months[key]){
+      state.months[key] = { income:0, deliveries:[], invoices:[] };
+    }
+  }
+
+  function initDefaultsIfNeeded(){
+    if(!state.suppliers || !Array.isArray(state.suppliers)){
+      state.suppliers = [];
+    }
+    if(!state.currentMonth){
+      const d = new Date();
+      const m = String(d.getMonth()+1).padStart(2,"0");
+      const key = d.getFullYear()+"-"+m;
+      state.currentMonth = key;
+    }
+    ensureMonthExists(state.currentMonth);
+  }
+
+  function init(){
+    const loaded = loadState();
+    if(!loaded){
+      // התחלה נקייה
+      const d = new Date();
+      const m = String(d.getMonth()+1).padStart(2,"0");
+      const key = d.getFullYear()+"-"+m;
+      state.currentMonth = key;
+      state.suppliers = [];
+      state.months = {};
+      ensureMonthExists(key);
+      saveState();
+    }else{
+      initDefaultsIfNeeded();
     }
 
-    .status-select {
-      padding: 0.18rem 0.55rem;
-      border-radius: 999px;
-      border-width: 1px;
-      font-size: 0.72rem;
-      min-width: 95px;
-    }
+    document.getElementById("monthInput").value = state.currentMonth;
+    document.getElementById("incomeInput").value =
+      state.months[state.currentMonth].income || "";
+    document.getElementById("currentMonthLabel").value = state.currentMonth;
 
-    .status-paid {
-      background-color: #dcfce7;
-      border-color: #4ade80;
-      color: #166534;
-    }
-    .status-partial {
-      background-color: #fef9c3;
-      border-color: #facc15;
-      color: #854d0e;
-    }
-    .status-unpaid {
-      background-color: #fee2e2;
-      border-color: #f97373;
-      color: #b91c1c;
-    }
+    renderSuppliers();
+    renderSupplierDatalist();
+    renderDeliveries();
+    renderInvoices();
+    renderDashboard();
+    renderReconcile();
+    renderReconcileSupplierSelect();
+    setTodayDefaults();
+  }
 
-    .amount-charge {
-      color: #b91c1c;
-      font-weight: 500;
-    }
-    .amount-credit {
-      color: #16a34a;
-      font-weight: 500;
-    }
-    body.dark-mode .amount-charge {
-      color: #ff7676;
-    }
-    body.dark-mode .amount-credit {
-      color: #4cd964;
-    }
+  document.addEventListener("DOMContentLoaded",init);
 
-    .badge-anomaly {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.2rem;
-      padding: 0.1rem 0.5rem;
-      border-radius: 999px;
-      font-size: 0.7rem;
-      background: rgba(245,158,11,0.1);
-      border: 1px solid rgba(245,158,11,0.7);
-      color: #92400e;
+  function switchTab(id,btn){
+    document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    if(id==="reconcile"){
+      renderReconcile();
+      renderReconcileSupplierSelect();
     }
+  }
 
-    body.dark-mode .badge-anomaly {
-      background: rgba(255,214,10,0.18);
-      border-color: rgba(255,214,10,0.9
+  function changeMonth(val){
+    if(!val) return;
+    state.currentMonth = val;
+    ensureMonthExists(val);
+    document.getElementById("incomeInput").value =
+      state.months[val].income || "";
+    document.getElementById("currentMonthLabel").value = val;
+    renderDeliveries();
+    renderInvoices();
+    renderDashboard();
+    renderReconcile();
+    renderReconcileSupplierSelect();
+    saveState();
+  }
+
+  document.getElementById("monthInput").addEventListener("change",function(){
+    changeMonth(this.value);
+  });
+
+  function updateIncome(val){
+    const n = parseFloat(val)||0;
+    ensureMonthExists(state.currentMonth);
+    state.months[state.currentMonth].income = n;
+    renderDashboard();
+    saveState();
+  }
+
+  function setTodayDefaults(){
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth()+1).padStart(2,"0");
+    const dd = String(d.getDate()).padStart(2,"0");
+    const today = `${yyyy}-${mm}-${dd}`;
+    const ddInput = document.getElementById("deliveryDate");
+    const diInput = document.getElementById("invoiceDate");
+    if(ddInput) ddInput.value = today;
+    if(diInput) diInput.value = today;
+  }
+
+  function addSupplier(e){
+    e.preventDefault();
+    const name = supplierName.value.trim();
+    if(!name){
+      showToast("חובה למלא שם ספק");
+      return;
+    }
+    const supplier = {
+      name,
+      phone:supplierPhone.value.trim(),
+      email:supplierEmail.value.trim(),
+      notes:supplierNotes.value.trim()
+    };
+    state.suppliers.push(supplier);
+    state.suppliers.sort((a,b)=>a.name.localeCompare(b.name,"he"));
+    supplierName.value = "";
+    supplierPhone.value = "";
+    supplierEmail.value = "";
+    supplierNotes.value = "";
+    renderSuppliers();
+    renderSupplierDatalist();
+    saveState();
+    showToast("ספק נוסף");
+  }
+
+  function renderSuppliers(){
+    const tbody = document.querySelector("#suppliersTable tbody");
+    tbody.innerHTML = "";
+    if(!state.suppliers.length){
+      tbody.innerHTML = `<tr><td colspan="6" class="empty">אין ספקים</td></tr>`;
+      return;
+    }
+    state.suppliers.forEach((s,i)=>{
+      tbody.innerHTML += `
+        <tr>
+          <td data-label="#">${i+1}</td>
+          <td data-label="שם">${s.name}</td>
+          <td data-label="טלפון">${s.phone||""}</td>
+          <td data-label="אימייל">${s.email||""}</td>
+          <td data-label="הערות">${s.notes||""}</td>
+          <td data-label="מחק">
+            <button class="btn-ghost" onclick="deleteSupplier(${i})">מחק</button>
+          </td>
+        </tr>`;
+    });
+  }
+
+  function deleteSupplier(index){
+    state.suppliers.splice(index,1);
+    renderSuppliers();
+    renderSupplierDatalist();
+    saveState();
+  }
+
+  function renderSupplierDatalist(){
+    const dl = document.getElementById("supplierList");
+    dl.innerHTML = "";
+    state.suppliers.forEach(s=>{
+      const opt = document.createElement("option");
+      opt.value = s.name;
+      dl.appendChild(opt);
+    });
+  }
+
+  function addDelivery(e){
+    e.preventDefault();
+    ensureMonthExists(state.currentMonth);
+    const sup = deliverySupplier.value.trim();
+    const num = deliveryNumber.value.trim();
+    const date = deliveryDate.value;
+    const amount = parseFloat(deliveryAmount.value);
+    if(!sup || !num || isNaN(amount)){
+      showToast("חובה למלא ספק, מספר ות مبلغ");
+      return;
+    }
+    const obj = {
+      supplier:sup,
+      number:num,
+      date:date||"",
+      amount:amount,
+      notes:deliveryNotes.value.trim()
+    };
+    state.months[state.currentMonth].deliveries.push(obj);
+    deliveryNumber.value = "";
+    deliveryAmount.value = "";
+    deliveryNotes.value = "";
+    setTodayDefaults();
+    renderDeliveries();
+    renderDashboard();
+    renderReconcile();
+    renderReconcileSupplierSelect();
+    saveState();
+    showToast("תעודת משלוח נוספה");
+  }
+
+  function renderDeliveries(){
+    const tbody = document.querySelector("#deliveriesTable tbody");
+    tbody.innerHTML = "";
+    const arr = (state.months[state.currentMonth]||{deliveries:[]}).deliveries || [];
+    if(!arr.length){
+      tbody.innerHTML = `<tr><td colspan="7" class="empty">אין תעודות משלוח</td></tr>`;
+      return;
+    }
+    arr.forEach((d,i)=>{
+      tbody.innerHTML += `
+        <tr>
+          <td data-label="#">${i+1}</td>
+          <td data-label="ספק">${d.supplier}</td>
+          <td data-label="מס׳">${d.number}</td>
+          <td data-label="תאריך">${d.date||""}</td>
+          <td data-label="סכום">${formatMoney(d.amount)}</td>
+          <td data-label="הערות">${d.notes||""}</td>
+          <td data-label="מחק">
+            <button class="btn-ghost" onclick="deleteDelivery(${i})">מחק</button>
+          </td>
+        </tr>`;
+    });
+  }
+
+  function deleteDelivery(i){
+    state.months[state.currentMonth].deliveries.splice(i,1);
+    renderDeliveries();
+    renderDashboard();
+    renderReconcile();
+    renderReconcileSupplierSelect();
+    saveState();
+  }
+
+  function addInvoice(e){
+    e.preventDefault();
+    ensureMonthExists(state.currentMonth);
+    const sup = invoiceSupplier.value.trim();
+    const num = invoiceNumber.value.trim();
+    const date = invoiceDate.value;
+    const amount = parseFloat(invoiceAmount.value);
+    if(!sup || !num || isNaN(amount)){
+      showToast("חובה למלא ספק, מספר וסכום");
+      return;
+    }
+    const obj = {
+      supplier:sup,
+      number:num,
+      date:date||"",
+      amount:amount,
+      notes:invoiceNotes.value.trim()
+    };
+    state.months[state.currentMonth].invoices.push(obj);
+    invoiceNumber.value = "";
+    invoiceAmount.value = "";
+    invoiceNotes.value = "";
+    setTodayDefaults();
+    renderInvoices();
+    renderDashboard();
+    renderReconcile();
+    renderReconcileSupplierSelect();
+    saveState();
+    showToast("חשבונית נוספה");
+  }
+
+  function renderInvoices(){
+    const tbody = document.querySelector("#invoicesTable tbody");
+    tbody.innerHTML = "";
+    const arr = (state.months[state.currentMonth]||{invoices:[]}).invoices || [];
+    if(!arr.length){
+      tbody.innerHTML = `<tr><td colspan="7" class="empty">אין חשבוניות</td></tr>`;
+      return;
+    }
+    arr.forEach((f,i)=>{
+      tbody.innerHTML += `
+        <tr>
+          <td data-label="#">${i+1}</td>
+          <td data-label="ספק">${f.supplier}</td>
+          <td data-label="מס׳">${f.number}</td>
+          <td data-label="תאריך">${f.date||""}</td>
+          <td data-label="סכום">${formatMoney(f.amount)}</td>
+          <td data-label="הערות">${f.notes||""}</td>
+          <td data-label="מחק">
+            <button class="btn-ghost" onclick="deleteInvoice(${i})">מחק</button>
+          </td>
+        </tr>`;
+    });
+  }
+
+  function deleteInvoice(i){
+    state.months[state.currentMonth].invoices.splice(i,1);
+    renderInvoices();
+    renderDashboard();
+    renderReconcile();
+    renderReconcileSupplierSelect();
+    saveState();
+  }
+
+  function renderDashboard(){
+    ensureMonthExists(state.currentMonth);
+    const m = state.months[state.currentMonth];
+    const deliveries = m.deliveries||[];
+    const invoices = m.invoices||[];
+    const sumD = deliveries.reduce((acc,d)=>acc+(Number(d.amount)||0),0);
+    const sumI = invoices.reduce((acc,f)=>acc+(Number(f.amount)||0),0);
+    const diff = sumI - sumD;
+    document.getElementById("sumDeliveries").textContent = formatMoney(sumD);
+    document.getElementById("sumInvoices").textContent = formatMoney(sumI);
+    const diffEl = document.getElementById("diffAll");
+    diffEl.textContent = formatMoney(diff);
+    diffEl.className = diff>0?"amount-pos":diff<0?"amount-neg":"";
+  }
+
+  function renderReconcile(){
+    ensureMonthExists(state.currentMonth);
+    const m = state.months[state.currentMonth];
+    const deliveries = m.deliveries||[];
+    const invoices = m.invoices||[];
+
+    const bySupplierD = {};
+    const bySupplierI = {};
+
+    deliveries.forEach(d=>{
+      const k = d.supplier||"לא משויך";
+      bySupplierD[k] = (bySupplierD[k]||0)+(Number(d.amount)||0);
+    });
+    invoices.forEach(f=>{
+      const k = f.supplier||"לא משויך";
+      bySupplierI[k] = (bySupplierI[k]||0)+(Number(f.amount)||0);
+    });
+
+    const allSuppliers = new Set([...Object.keys(bySupplierD),...Object.keys(bySupplierI)]);
+    const tbody = document.querySelector("#reconcileTable tbody");
+    tbody.innerHTML = "";
+    if(allSuppliers.size===0){
+      tbody.innerHTML = `<tr><td colspan="6" class="empty">אין נתונים לחודש זה</td></tr>`;
+      return;
+    }
+    let idx=1;
+    allSuppliers.forEach(name=>{
+      const sumD = bySupplierD[name]||0;
+      const sumI = bySupplierI[name]||0;
+      const diff = sumI-sumD;
+      let statusClass = "status-ok";
+      let statusText = "תואם";
+      const absDiff = Math.abs(diff);
+      if(absDiff>0.01 && absDiff<=5){
+        statusClass = "status-warn";
+        statusText = "סטייה קטנה";
+      }else if(absDiff>5){
+        statusClass = "status-problem";
+        statusText = "לא תואם";
+      }
+      tbody.innerHTML += `
+        <tr>
+          <td data-label="#">${idx++}</td>
+          <td data-label="ספק">${name}</td>
+          <td data-label="סה\"כ משלוחים">${formatMoney(sumD)}</td>
+          <td data-label="סה\"כ חשבוניות">${formatMoney(sumI)}</td>
+          <td data-label="הפרש">${formatMoney(diff)}</td>
+          <td data-label="סטטוס"><span class="${statusClass}">${statusText}</span></td>
+        </tr>`;
+    });
+  }
+
+  function renderReconcileSupplierSelect(){
+    const sel = document.getElementById("reconcileSupplierSelect");
+    ensureMonthExists(state.currentMonth);
+    const m = state.months[state.currentMonth];
+    const deliveries = m.deliveries||[];
+    const invoices = m.invoices||[];
+    const setSup = new Set();
+    deliveries.forEach(d=>setSup.add(d.supplier||"לא משויך"));
+    invoices.forEach(f=>setSup.add(f.supplier||"לא משויך"));
+    const names = Array.from(setSup);
+    sel.innerHTML = `<option value="">בחר ספק...</option>`;
+    names.sort((a,b)=>a.localeCompare(b,"he")).forEach(n=>{
+      const opt = document.createElement("option");
+      opt.value = n;
+      opt.textContent = n;
+      sel.appendChild(opt);
+    });
+    document.getElementById("reconcileDetails").innerHTML = "";
+  }
+
+  function renderReconcileDetails(name){
+    const container = document.getElementById("reconcileDetails");
+    container.innerHTML = "";
+    if(!name){
+      return;
+    }
+    ensureMonthExists(state.currentMonth);
+    const m = state.months[state.currentMonth];
+    const deliveries = (m.deliveries||[]).filter(d=> (d.supplier||"לא משויך")===name);
+    const invoices = (m.invoices||[]).filter(f=> (f.supplier||"לא משויך")===name);
+
+    let html = "";
+    const sumD = deliveries.reduce((acc,d)=>acc+(Number(d.amount)||0),0);
+    const sumI = invoices.reduce((acc,f)=>acc+(Number(f.amount)||0),0);
+    const diff = sumI-sumD;
+
+    html += `<div style="margin-bottom:0.4rem;">
+      <span class="pill">סיכום עבור: ${name}</span><br/>
+      סה"כ תעודות משלוח: <strong>${formatMoney(sumD)}</strong><br/>
+      סה"כ חשבוניות: <strong>${formatMoney(sumI)}</strong><br/>
+      הפרש: <strong>${formatMoney(diff)}</strong>
+    </div>`;
+
+    html += `<div class="row"><div style="flex:1 1 300px;"><h4 style="margin:0.3rem 0;">תעודות משלוח</h4>`;
+    if(!deliveries.length){
+      html += `<div>אין תעודות משלוח לספק זה בחודש.</div>`;
+    }else{
+      html += `<table><thead><tr><th>מס׳</th><th>תאריך</th><th>סכום</th></tr></thead><tbody>`;
+      deliveries.forEach(d=>{
+        html += `<tr>
+          <td>${d.number}</td>
+          <td>${d.date||""}</td>
+          <td>${formatMoney(d.amount)}</td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+    }
+    html += `</div><div style="flex:1 1 300px;"><h4 style="margin:0.3rem 0;">חשבוניות</h4>`;
+    if(!invoices.length){
+      html += `<div>אין חשבוניות לספק זה בחודש.</div>`;
+    }else{
+      html += `<table><thead><tr><th>מס׳</th><th>תאריך</th><th>סכום</th></tr></thead><tbody>`;
+      invoices.forEach(f=>{
+        html += `<tr>
+          <td>${f.number}</td>
+          <td>${f.date||""}</td>
+          <td>${formatMoney(f.amount)}</td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+    }
+    html += `</div></div>`;
+    container.innerHTML = html;
+  }
+</script>
+</body>
+</html>
