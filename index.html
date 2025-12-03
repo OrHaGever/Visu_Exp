@@ -516,10 +516,30 @@
 
     <div class="card">
       <h3>רשימת ספקים</h3>
+      <div class="row">
+        <div>
+          <label>חיפוש לפי שם</label>
+          <input type="text" id="supplierSearch" placeholder="הקלד שם ספק..." oninput="renderSuppliers()" />
+        </div>
+        <div>
+          <label>סינון לפי קטגוריה</label>
+          <select id="supplierFilterCategory" onchange="renderSuppliers()">
+            <option value="">כל הקטגוריות</option>
+          </select>
+        </div>
+      </div>
       <table id="suppliersTable">
         <thead>
           <tr>
-            <th>#</th><th>שם</th><th>קטגוריה</th><th>תבנית עבודה</th><th>טלפון</th><th>אימייל</th><th>הערות</th><th>עריכה</th><th>מחק</th>
+            <th>#</th>
+            <th>שם</th>
+            <th>קטגוריה</th>
+            <th>תבנית עבודה</th>
+            <th>טלפון</th>
+            <th>אימייל</th>
+            <th>הערות</th>
+            <th>עריכה</th>
+            <th>מחק</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -617,6 +637,7 @@
   };
 
   let editingSupplierIndex = null;
+  let inlineSupplierIndex = null;
 
   function showToast(msg){
     const t = document.getElementById("toast");
@@ -628,6 +649,15 @@
   function formatMoney(n){
     n = Number(n)||0;
     return n.toLocaleString("he-IL",{minimumFractionDigits:2,maximumFractionDigits:2})+" ₪";
+  }
+
+  function escapeHtml(str){
+    return String(str||"")
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;")
+      .replace(/'/g,"&#39;");
   }
 
   function loadState(){
@@ -821,10 +851,10 @@
     let html="";
     cats.forEach(cat=>{
       html += `<div style="margin-bottom:0.4rem;">
-        <strong>${cat}</strong>
+        <strong>${escapeHtml(cat)}</strong>
         <ul style="margin:0.2rem 0 0.4rem 0.8rem;padding:0;">`;
       byCat[cat].sort((a,b)=>a.name.localeCompare(b.name,"he")).forEach(s=>{
-        html += `<li style="list-style:disc;margin-inline-start:1rem;">${s.name}</li>`;
+        html += `<li style="list-style:disc;margin-inline-start:1rem;">${escapeHtml(s.name)}</li>`;
       });
       html += `</ul></div>`;
     });
@@ -843,7 +873,7 @@
       tbody.innerHTML += `
         <tr>
           <td data-label="#">${i+1}</td>
-          <td data-label="שם">${c.name}</td>
+          <td data-label="שם">${escapeHtml(c.name)}</td>
           <td data-label="עריכה">
             <button class="btn-ghost" onclick="editCategory(${i})">ערוך</button>
           </td>
@@ -866,7 +896,6 @@
     }
     const oldName = state.categories[index].name;
     state.categories[index].name = trimmed;
-    // עדכון ספקים שמשתמשים בקטגוריה זו
     state.suppliers.forEach(s=>{
       if(s.category===oldName) s.category = trimmed;
     });
@@ -902,6 +931,22 @@
         opt.textContent = c.name;
         sel.appendChild(opt);
       });
+
+    const filterCatSel = document.getElementById("supplierFilterCategory");
+    if(filterCatSel){
+      const prev = filterCatSel.value;
+      filterCatSel.innerHTML = `<option value="">כל הקטגוריות</option>`;
+      state.categories
+        .slice()
+        .sort((a,b)=>a.name.localeCompare(b.name,"he"))
+        .forEach(c=>{
+          const opt = document.createElement("option");
+          opt.value = c.name;
+          opt.textContent = c.name;
+          filterCatSel.appendChild(opt);
+        });
+      if(prev) filterCatSel.value = prev;
+    }
   }
 
   /* ספקים */
@@ -942,45 +987,13 @@
     supplierPhone.value = "";
     supplierEmail.value = "";
     supplierNotes.value = "";
+    inlineSupplierIndex = null;
 
     renderSuppliers();
     renderSupplierDatalist();
     renderEntrySupplierFilter();
     renderCategorySuppliers();
     saveState();
-  }
-
-  function renderSuppliers(){
-    const tbody = document.querySelector("#suppliersTable tbody");
-    tbody.innerHTML = "";
-    if(!state.suppliers.length){
-      tbody.innerHTML = `<tr><td colspan="9" class="empty">אין ספקים</td></tr>`;
-      return;
-    }
-    state.suppliers.forEach((s,i)=>{
-      let templateLabel = "";
-      if(s.template==="instant_invoice") templateLabel = "חשבונית על המקום";
-      else if(s.template==="deliveries_monthly_invoice") templateLabel = "משלוחים + חשבונית מרוכזת";
-      else if(s.template==="fixed_monthly") templateLabel = "חיוב חודשי קבוע";
-      tbody.innerHTML += `
-        <tr>
-          <td data-label="#">${i+1}</td>
-          <td data-label="שם">${s.name}</td>
-          <td data-label="קטגוריה">${s.category||"לא משויך"}</td>
-          <td data-label="תבנית">
-            ${templateLabel ? `<span class="pill pill-template">${templateLabel}</span>` : ""}
-          </td>
-          <td data-label="טלפון">${s.phone||""}</td>
-          <td data-label="אימייל">${s.email||""}</td>
-          <td data-label="הערות">${s.notes||""}</td>
-          <td data-label="עריכה">
-            <button class="btn-ghost" onclick="startEditSupplier(${i})">ערוך</button>
-          </td>
-          <td data-label="מחק">
-            <button class="btn-ghost" onclick="deleteSupplier(${i})">מחק</button>
-          </td>
-        </tr>`;
-    });
   }
 
   function startEditSupplier(index){
@@ -992,6 +1005,7 @@
     supplierEmail.value = s.email || "";
     supplierNotes.value = s.notes || "";
     editingSupplierIndex = index;
+    inlineSupplierIndex = null;
     document.getElementById("supplierSubmitBtn").textContent = "עדכן ספק";
     const suppliersBtn = document.querySelector('nav .nav-inner button:last-child');
     if(suppliersBtn){
@@ -1003,6 +1017,163 @@
     window.scrollTo({top:0,behavior:"smooth"});
   }
 
+  function startInlineEditSupplier(index){
+    inlineSupplierIndex = index;
+    editingSupplierIndex = null;
+    renderSuppliers();
+  }
+
+  function saveInlineSupplierRow(index){
+    const nameEl = document.getElementById(`sup-name-${index}`);
+    const catEl  = document.getElementById(`sup-cat-${index}`);
+    const tmpEl  = document.getElementById(`sup-tmpl-${index}`);
+    const phEl   = document.getElementById(`sup-phone-${index}`);
+    const emEl   = document.getElementById(`sup-email-${index}`);
+    const ntEl   = document.getElementById(`sup-notes-${index}`);
+    if(!nameEl) return;
+
+    const name = nameEl.value.trim();
+    if(!name){
+      showToast("חובה למלא שם ספק");
+      return;
+    }
+
+    state.suppliers[index] = {
+      name,
+      category: catEl ? catEl.value : "",
+      template: tmpEl ? tmpEl.value : "",
+      phone: phEl ? phEl.value.trim() : "",
+      email: emEl ? emEl.value.trim() : "",
+      notes: ntEl ? ntEl.value.trim() : ""
+    };
+
+    state.suppliers.sort((a,b)=>a.name.localeCompare(b.name,"he"));
+    inlineSupplierIndex = null;
+    renderSuppliers();
+    renderSupplierDatalist();
+    renderEntrySupplierFilter();
+    renderCategorySuppliers();
+    saveState();
+    showToast("ספק עודכן");
+  }
+
+  function cancelInlineSupplierRow(){
+    inlineSupplierIndex = null;
+    renderSuppliers();
+  }
+
+  function renderSuppliers(){
+    const tbody = document.querySelector("#suppliersTable tbody");
+    tbody.innerHTML = "";
+    const searchInput = document.getElementById("supplierSearch");
+    const filterCatSel = document.getElementById("supplierFilterCategory");
+    const search = searchInput ? searchInput.value.trim().toLowerCase() : "";
+    const filterCat = filterCatSel ? filterCatSel.value : "";
+
+    if(!state.suppliers.length){
+      tbody.innerHTML = `<tr><td colspan="9" class="empty">אין ספקים</td></tr>`;
+      return;
+    }
+
+    const withIndex = state.suppliers.map((s,i)=>({s,index:i}));
+    withIndex.sort((a,b)=>a.s.name.localeCompare(b.s.name,"he"));
+    const filtered = withIndex.filter(obj=>{
+      const s = obj.s;
+      if(search && !s.name.toLowerCase().includes(search)) return false;
+      if(filterCat && s.category!==filterCat) return false;
+      return true;
+    });
+
+    if(!filtered.length){
+      tbody.innerHTML = `<tr><td colspan="9" class="empty">אין ספקים תואמים לסינון</td></tr>`;
+      return;
+    }
+
+    filtered.forEach((obj, rowPos)=>{
+      const s = obj.s;
+      const i = obj.index;
+      const isInline = (inlineSupplierIndex === i);
+
+      let templateLabel = "";
+      if(s.template==="instant_invoice") templateLabel = "חשבונית על המקום";
+      else if(s.template==="deliveries_monthly_invoice") templateLabel = "משלוחים + חשבונית מרוכזת";
+      else if(s.template==="fixed_monthly") templateLabel = "חיוב חודשי קבוע";
+
+      if(isInline){
+        // שורה במצב עריכה inline
+        let catOptions = `<option value="">ללא</option>`;
+        state.categories
+          .slice()
+          .sort((a,b)=>a.name.localeCompare(b.name,"he"))
+          .forEach(c=>{
+            const selected = c.name === s.category ? "selected" : "";
+            catOptions += `<option value="${escapeHtml(c.name)}" ${selected}>${escapeHtml(c.name)}</option>`;
+          });
+
+        const tmplOptions = `
+          <option value="" ${!s.template?"selected":""}>ללא</option>
+          <option value="instant_invoice" ${s.template==="instant_invoice"?"selected":""}>חשבונית על המקום</option>
+          <option value="deliveries_monthly_invoice" ${s.template==="deliveries_monthly_invoice"?"selected":""}>תעודות משלוח + חשבונית מרוכזת</option>
+          <option value="fixed_monthly" ${s.template==="fixed_monthly"?"selected":""}>חיוב קבוע חודשי</option>
+        `;
+
+        tbody.innerHTML += `
+          <tr>
+            <td data-label="#">${rowPos+1}</td>
+            <td data-label="שם">
+              <input id="sup-name-${i}" value="${escapeHtml(s.name)}" />
+            </td>
+            <td data-label="קטגוריה">
+              <select id="sup-cat-${i}">
+                ${catOptions}
+              </select>
+            </td>
+            <td data-label="תבנית">
+              <select id="sup-tmpl-${i}">
+                ${tmplOptions}
+              </select>
+            </td>
+            <td data-label="טלפון">
+              <input id="sup-phone-${i}" value="${escapeHtml(s.phone||"")}" />
+            </td>
+            <td data-label="אימייל">
+              <input id="sup-email-${i}" value="${escapeHtml(s.email||"")}" />
+            </td>
+            <td data-label="הערות">
+              <input id="sup-notes-${i}" value="${escapeHtml(s.notes||"")}" />
+            </td>
+            <td data-label="עריכה">
+              <button class="btn-ghost" onclick="saveInlineSupplierRow(${i})">שמור</button>
+              <button class="btn-ghost" onclick="cancelInlineSupplierRow()">ביטול</button>
+            </td>
+            <td data-label="מחק">
+              <button class="btn-ghost" onclick="deleteSupplier(${i})">מחק</button>
+            </td>
+          </tr>`;
+      }else{
+        tbody.innerHTML += `
+          <tr>
+            <td data-label="#">${rowPos+1}</td>
+            <td data-label="שם">${escapeHtml(s.name)}</td>
+            <td data-label="קטגוריה">${escapeHtml(s.category||"לא משויך")}</td>
+            <td data-label="תבנית">
+              ${templateLabel ? `<span class="pill pill-template">${escapeHtml(templateLabel)}</span>` : ""}
+            </td>
+            <td data-label="טלפון">${escapeHtml(s.phone||"")}</td>
+            <td data-label="אימייל">${escapeHtml(s.email||"")}</td>
+            <td data-label="הערות">${escapeHtml(s.notes||"")}</td>
+            <td data-label="עריכה">
+              <button class="btn-ghost" onclick="startEditSupplier(${i})">לטופס</button>
+              <button class="btn-ghost" onclick="startInlineEditSupplier(${i})">Inline</button>
+            </td>
+            <td data-label="מחק">
+              <button class="btn-ghost" onclick="deleteSupplier(${i})">מחק</button>
+            </td>
+          </tr>`;
+      }
+    });
+  }
+
   function deleteSupplier(index){
     const name = state.suppliers[index].name;
     if(!confirm(`למחוק את הספק "${name}"?`)) return;
@@ -1012,6 +1183,11 @@
       document.getElementById("supplierSubmitBtn").textContent = "הוסף ספק";
     }else if(editingSupplierIndex !== null && index < editingSupplierIndex){
       editingSupplierIndex -= 1;
+    }
+    if(inlineSupplierIndex === index){
+      inlineSupplierIndex = null;
+    }else if(inlineSupplierIndex !== null && index < inlineSupplierIndex){
+      inlineSupplierIndex -= 1;
     }
     renderSuppliers();
     renderSupplierDatalist();
@@ -1039,7 +1215,7 @@
     e.preventDefault();
     ensureMonthExists(state.currentMonth);
 
-    const type = document.getElementById("entryType").value; // delivery / invoice
+    const type = document.getElementById("entryType").value;
     const sup = entrySupplier.value.trim();
     const num = entryNumber.value.trim();
     const date = entryDate.value;
@@ -1217,7 +1393,7 @@
         tbody.innerHTML += `
           <tr class="group-row">
             <td colspan="9" data-label="">
-              ${groupBy==="supplier" ? "ספק: " : "תאריך: "} <strong>${groupKey}</strong>
+              ${groupBy==="supplier" ? "ספק: " : "תאריך: "} <strong>${escapeHtml(groupKey)}</strong>
             </td>
           </tr>`;
       }
@@ -1233,9 +1409,9 @@
         <tr class="${rowClass}">
           <td data-label="#">${i+1}</td>
           <td data-label="סוג"><span class="${typeClass}">${typeLabel}</span></td>
-          <td data-label="ספק">${entry.supplier}</td>
-          <td data-label="מס׳">${entry.number}</td>
-          <td data-label="תאריך">${entry.date}</td>
+          <td data-label="ספק">${escapeHtml(entry.supplier)}</td>
+          <td data-label="מס׳">${escapeHtml(entry.number)}</td>
+          <td data-label="תאריך">${escapeHtml(entry.date)}</td>
           <td data-label="סכום">${formatMoney(entry.amount)}</td>
           <td data-label="סטטוס">
             <select onchange="updateEntryStatus('${entry.type}',${entry.sourceIndex},this.value)">
@@ -1245,7 +1421,7 @@
             </select>
           </td>
           <td data-label="הערות">
-            ${entry.notes || ""}${isOutlier ? " · ⚠ חריג ביחס לממוצע לספק" : ""}
+            ${escapeHtml(entry.notes || "")}${isOutlier ? " · ⚠ חריג ביחס לממוצע לספק" : ""}
           </td>
           <td data-label="מחק">
             <button class="btn-ghost" onclick="deleteEntry('${entry.type}',${entry.sourceIndex})">מחק</button>
@@ -1351,7 +1527,7 @@
       tbody.innerHTML += `
         <tr>
           <td data-label="#">${idx++}</td>
-          <td data-label="ספק">${name}</td>
+          <td data-label="ספק">${escapeHtml(name)}</td>
           <td data-label="סה\"כ משלוחים">${formatMoney(sumD)}</td>
           <td data-label="סה\"כ חשבוניות">${formatMoney(sumI)}</td>
           <td data-label="הפרש">${formatMoney(diff)}</td>
@@ -1399,7 +1575,7 @@
 
     let html = "";
     html += `<div style="margin-bottom:0.4rem;">
-      <span class="pill pill-delivery">סיכום עבור: ${name}</span><br/>
+      <span class="pill pill-delivery">סיכום עבור: ${escapeHtml(name)}</span><br/>
       סה"כ תעודות משלוח: <strong>${formatMoney(sumD)}</strong><br/>
       סה"כ חשבוניות: <strong>${formatMoney(sumI)}</strong><br/>
       הפרש: <strong>${formatMoney(diff)}</strong><br/>
@@ -1421,8 +1597,8 @@
           <td data-label="בחר">
             <input type="checkbox" data-type="delivery" data-index="${d.index}" ${d.reconciled?"disabled":" "} />
           </td>
-          <td data-label="מס׳">${d.number}</td>
-          <td data-label="תאריך">${d.date||""}</td>
+          <td data-label="מס׳">${escapeHtml(d.number)}</td>
+          <td data-label="תאריך">${escapeHtml(d.date||"")}</td>
           <td data-label="סכום">${formatMoney(d.amount)}</td>
           <td data-label="סטטוס">${checkedLabel}</td>
         </tr>`;
@@ -1444,8 +1620,8 @@
           <td data-label="בחר">
             <input type="checkbox" data-type="invoice" data-index="${f.index}" ${f.reconciled?"disabled":" "} />
           </td>
-          <td data-label="מס׳">${f.number}</td>
-          <td data-label="תאריך">${f.date||""}</td>
+          <td data-label="מס׳">${escapeHtml(f.number)}</td>
+          <td data-label="תאריך">${escapeHtml(f.date||"")}</td>
           <td data-label="סכום">${formatMoney(f.amount)}</td>
           <td data-label="סטטוס">${checkedLabel}</td>
         </tr>`;
@@ -1454,7 +1630,7 @@
     }
     html += `</div></div>`;
 
-    html += `<button class="primary small" style="margin-top:0.6rem;" onclick="markReconciled('${name}')">
+    html += `<button class="primary small" style="margin-top:0.6rem;" onclick="markReconciled('${name.replace(/'/g,"\\'")}')">
       סמן את הבחירה כמותאמת
     </button>`;
 
