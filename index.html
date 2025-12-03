@@ -481,12 +481,17 @@
         <tbody></tbody>
       </table>
     </div>
+
+    <div class="card">
+      <h3>ספקים לפי קטגוריה</h3>
+      <div id="categorySuppliersList" style="font-size:0.82rem;"></div>
+    </div>
   </section>
 
   <!-- ספקים -->
   <section id="suppliers">
     <div class="card">
-      <h2>ספק חדש</h2>
+      <h2>ספק חדש / עריכה</h2>
       <form onsubmit="addSupplier(event)">
         <label>שם ספק</label>
         <input type="text" id="supplierName" />
@@ -505,7 +510,7 @@
         <input type="email" id="supplierEmail" />
         <label>הערות</label>
         <textarea id="supplierNotes"></textarea>
-        <button class="primary" type="submit">הוסף ספק</button>
+        <button class="primary" type="submit" id="supplierSubmitBtn">הוסף ספק</button>
       </form>
     </div>
 
@@ -514,7 +519,7 @@
       <table id="suppliersTable">
         <thead>
           <tr>
-            <th>#</th><th>שם</th><th>קטגוריה</th><th>תבנית עבודה</th><th>טלפון</th><th>אימייל</th><th>הערות</th><th>מחק</th>
+            <th>#</th><th>שם</th><th>קטגוריה</th><th>תבנית עבודה</th><th>טלפון</th><th>אימייל</th><th>הערות</th><th>עריכה</th><th>מחק</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -610,6 +615,8 @@
     months: {},
     currentMonth: ""
   };
+
+  let editingSupplierIndex = null;
 
   function showToast(msg){
     const t = document.getElementById("toast");
@@ -731,6 +738,7 @@
     }
     if(id==="suppliers"){
       renderCategorySelectForSuppliers();
+      renderSuppliers();
     }
     if(id==="categories"){
       renderCategories();
@@ -796,11 +804,39 @@
     showToast("קטגוריה נוספה");
   }
 
+  function renderCategorySuppliers(){
+    const container = document.getElementById("categorySuppliersList");
+    if(!container) return;
+    if(!state.suppliers.length){
+      container.innerHTML = "אין ספקים עדיין.";
+      return;
+    }
+    const byCat = {};
+    state.suppliers.forEach(s=>{
+      const cat = s.category || "לא משויך";
+      if(!byCat[cat]) byCat[cat] = [];
+      byCat[cat].push(s);
+    });
+    const cats = Object.keys(byCat).sort((a,b)=>a.localeCompare(b,"he"));
+    let html="";
+    cats.forEach(cat=>{
+      html += `<div style="margin-bottom:0.4rem;">
+        <strong>${cat}</strong>
+        <ul style="margin:0.2rem 0 0.4rem 0.8rem;padding:0;">`;
+      byCat[cat].sort((a,b)=>a.name.localeCompare(b.name,"he")).forEach(s=>{
+        html += `<li style="list-style:disc;margin-inline-start:1rem;">${s.name}</li>`;
+      });
+      html += `</ul></div>`;
+    });
+    container.innerHTML = html;
+  }
+
   function renderCategories(){
     const tbody = document.querySelector("#categoriesTable tbody");
     tbody.innerHTML = "";
     if(!state.categories.length){
       tbody.innerHTML = `<tr><td colspan="4" class="empty">אין קטגוריות</td></tr>`;
+      renderCategorySuppliers();
       return;
     }
     state.categories.forEach((c,i)=>{
@@ -816,6 +852,7 @@
           </td>
         </tr>`;
     });
+    renderCategorySuppliers();
   }
 
   function editCategory(index){
@@ -886,26 +923,38 @@
       email:supplierEmail.value.trim(),
       notes:supplierNotes.value.trim()
     };
-    state.suppliers.push(supplier);
-    state.suppliers.sort((a,b)=>a.name.localeCompare(b.name,"he"));
+
+    if(editingSupplierIndex !== null){
+      state.suppliers[editingSupplierIndex] = supplier;
+      state.suppliers.sort((a,b)=>a.name.localeCompare(b.name,"he"));
+      editingSupplierIndex = null;
+      document.getElementById("supplierSubmitBtn").textContent = "הוסף ספק";
+      showToast("ספק עודכן");
+    }else{
+      state.suppliers.push(supplier);
+      state.suppliers.sort((a,b)=>a.name.localeCompare(b.name,"he"));
+      showToast("ספק נוסף");
+    }
+
     supplierName.value = "";
     supplierCategory.value = "";
     supplierTemplate.value = "";
     supplierPhone.value = "";
     supplierEmail.value = "";
     supplierNotes.value = "";
+
     renderSuppliers();
     renderSupplierDatalist();
     renderEntrySupplierFilter();
+    renderCategorySuppliers();
     saveState();
-    showToast("ספק נוסף");
   }
 
   function renderSuppliers(){
     const tbody = document.querySelector("#suppliersTable tbody");
     tbody.innerHTML = "";
     if(!state.suppliers.length){
-      tbody.innerHTML = `<tr><td colspan="8" class="empty">אין ספקים</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="9" class="empty">אין ספקים</td></tr>`;
       return;
     }
     state.suppliers.forEach((s,i)=>{
@@ -924,6 +973,9 @@
           <td data-label="טלפון">${s.phone||""}</td>
           <td data-label="אימייל">${s.email||""}</td>
           <td data-label="הערות">${s.notes||""}</td>
+          <td data-label="עריכה">
+            <button class="btn-ghost" onclick="startEditSupplier(${i})">ערוך</button>
+          </td>
           <td data-label="מחק">
             <button class="btn-ghost" onclick="deleteSupplier(${i})">מחק</button>
           </td>
@@ -931,13 +983,40 @@
     });
   }
 
+  function startEditSupplier(index){
+    const s = state.suppliers[index];
+    supplierName.value = s.name;
+    supplierCategory.value = s.category || "";
+    supplierTemplate.value = s.template || "";
+    supplierPhone.value = s.phone || "";
+    supplierEmail.value = s.email || "";
+    supplierNotes.value = s.notes || "";
+    editingSupplierIndex = index;
+    document.getElementById("supplierSubmitBtn").textContent = "עדכן ספק";
+    const suppliersBtn = document.querySelector('nav .nav-inner button:last-child');
+    if(suppliersBtn){
+      switchTab('suppliers', suppliersBtn);
+    }else{
+      document.querySelectorAll("section").forEach(sec=>sec.classList.remove("active"));
+      document.getElementById("suppliers").classList.add("active");
+    }
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
   function deleteSupplier(index){
     const name = state.suppliers[index].name;
     if(!confirm(`למחוק את הספק "${name}"?`)) return;
     state.suppliers.splice(index,1);
+    if(editingSupplierIndex === index){
+      editingSupplierIndex = null;
+      document.getElementById("supplierSubmitBtn").textContent = "הוסף ספק";
+    }else if(editingSupplierIndex !== null && index < editingSupplierIndex){
+      editingSupplierIndex -= 1;
+    }
     renderSuppliers();
     renderSupplierDatalist();
     renderEntrySupplierFilter();
+    renderCategorySuppliers();
     saveState();
   }
 
@@ -978,8 +1057,8 @@
       date:date||"",
       amount:amount,
       notes,
-      status:"unchecked",    // לא נבדק
-      reconciled:false       // למעקב התאמה
+      status:"unchecked",
+      reconciled:false
     };
 
     if(type === "delivery"){
@@ -1071,7 +1150,6 @@
       });
     });
 
-    // חישוב ממוצעים לפי ספק לזיהוי חריגים
     const totalsBySupplier = {};
     const countsBySupplier = {};
     combined.forEach(e=>{
@@ -1095,7 +1173,6 @@
       filtered = filtered.filter(e=>e.status===statusFilter);
     }
 
-    // מיון בסיסי לפני קיבוץ
     filtered.sort((a,b)=>{
       if(groupBy==="supplier"){
         const s = a.supplier.localeCompare(b.supplier,"he");
@@ -1103,7 +1180,6 @@
       }else if(groupBy==="date"){
         if(a.date!==b.date) return (a.date||"").localeCompare(b.date||"");
       }
-      // ברירת מחדל: לפי תאריך ואז סוג
       if(a.date!==b.date) return (a.date||"").localeCompare(b.date||"");
       return a.type.localeCompare(b.type);
     });
@@ -1115,7 +1191,6 @@
       return;
     }
 
-    // סיכומי מסך
     let sumDel = 0;
     let sumInv = 0;
 
@@ -1130,14 +1205,12 @@
       const typeLabel = entry.type==="delivery" ? "תעודת משלוח" : "חשבונית";
       const typeClass = entry.type==="delivery" ? "pill pill-delivery" : "pill pill-invoice";
 
-      // חישוב חריגה
       const avg = avgBySupplier[entry.supplier] || 0;
       const isOutlier = avg>0 && entry.amount > avg*1.4;
 
       if(entry.type==="delivery") sumDel += entry.amount;
       else sumInv += entry.amount;
 
-      // שורת קבוצה
       const groupKey = makeGroupKey(entry);
       if(groupKey && groupKey!==lastGroupKey){
         lastGroupKey = groupKey;
