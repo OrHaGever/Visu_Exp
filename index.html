@@ -53,7 +53,7 @@
     html, body {
       margin: 0;
       max-width: 100%;
-      overflow-x: hidden; /* שלא יהיה חיתוך רוחבי במובייל */
+      overflow-x: hidden;
     }
 
     body {
@@ -182,7 +182,7 @@
 
     main {
       max-width: 1024px;
-      margin: 1.2rem auto 4.5rem; /* מרווח גדול יותר למטה שלא יחתך מאחורי ה־FAB */
+      margin: 1.2rem auto 4.5rem;
       padding: 0 0.9rem;
     }
 
@@ -549,7 +549,7 @@
 
     .fab {
       position: fixed;
-      inset-inline-end: 1.2rem;  /* בצד ימין – פחות סיכוי להיחתך */
+      inset-inline-end: 1.2rem;
       bottom: 1.6rem;
       width: 52px;
       height: 52px;
@@ -586,7 +586,6 @@
       }
     }
 
-    /* טבלה → כרטיסים במובייל (שילוב 2+3) */
     @media (max-width: 750px) {
       table.responsive {
         border-radius: 0;
@@ -796,7 +795,12 @@
         <h3>ספק חדש / עריכה</h3>
 
         <label>שם ספק</label>
-        <input type="text" id="supplierName" placeholder="למשל: החברה המרכזית">
+        <input
+          type="text"
+          id="supplierName"
+          placeholder="למשל: החברה המרכזית"
+          list="supplierNameList">
+        <datalist id="supplierNameList"></datalist>
 
         <label>קטגוריה</label>
         <select id="supplierCategorySelect"></select>
@@ -1125,6 +1129,16 @@ function showToast(msg, type) {
   }, 2600);
 }
 
+/* ───────────── פורמט מספרים עם פסיקים ───────────── */
+
+function formatCurrency(num) {
+  var n = Number(num) || 0;
+  return n.toLocaleString('he-IL', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }) + " ₪";
+}
+
 /* ───────────── שמירה / טעינה ───────────── */
 
 function saveState() {
@@ -1257,6 +1271,7 @@ function init() {
   renderCategorySelect();
   renderSuppliersTable();
   renderSupplierSelect();
+  renderSupplierNameDatalist();
   renderInvoicesTable();
   updateDashboard();
   renderAllSummaries();
@@ -1460,6 +1475,7 @@ function addOrUpdateSupplier(e) {
   clearSupplierForm();
   renderSuppliersTable();
   renderSupplierSelect();
+  renderSupplierNameDatalist();
   renderInvoiceCategoryFilterOptions();
   updateDashboard();
   renderAllSummaries();
@@ -1509,6 +1525,7 @@ function deleteSupplier(i) {
   sortSuppliers();
   renderSuppliersTable();
   renderSupplierSelect();
+  renderSupplierNameDatalist();
   renderInvoiceCategoryFilterOptions();
   updateDashboard();
   renderAllSummaries();
@@ -1564,6 +1581,17 @@ function renderSupplierSelect() {
   dl.innerHTML = "";
   state.suppliers.forEach(s => {
     dl.innerHTML += `<option value="${s.name}">`;
+  });
+}
+
+function renderSupplierNameDatalist() {
+  var dl = document.getElementById("supplierNameList");
+  if (!dl) return;
+  dl.innerHTML = "";
+  state.suppliers.forEach(s => {
+    var opt = document.createElement("option");
+    opt.value = s.name;
+    dl.appendChild(opt);
   });
 }
 
@@ -1627,6 +1655,7 @@ function submitQuickSupplier() {
   sortSuppliers();
   renderSuppliersTable();
   renderSupplierSelect();
+  renderSupplierNameDatalist();
   renderInvoiceCategoryFilterOptions();
   saveState();
   invoiceSupplier.value = name;
@@ -1714,6 +1743,7 @@ function undoDelete() {
     sortSuppliers();
     renderSuppliersTable();
     renderSupplierSelect();
+    renderSupplierNameDatalist();
     renderInvoiceCategoryFilterOptions();
     updateDashboard();
     renderAllSummaries();
@@ -1818,7 +1848,7 @@ function renderInvoicesTable() {
         <td data-label="קטגוריה">${cat}</td>
         <td data-label="מס׳">${inv.number}</td>
         <td data-label="תאריך">${inv.date}</td>
-        <td data-label="סכום">${inv.amount.toFixed(2)}</td>
+        <td data-label="סכום">${formatCurrency(inv.amount)}</td>
         <td data-label="סטטוס">
           <select class="${cls}" onchange="changeInvoiceStatus(${i}, this.value)">
             <option value="שולם" ${inv.status === "שולם" ? "selected" : ""}>שולם</option>
@@ -1861,9 +1891,9 @@ function updateInvoiceStats() {
 
   document.getElementById("invStatCount").textContent = count;
   document.getElementById("invStatPaid").innerHTML =
-    `<span class="amount-charge">${paidSum.toFixed(2)} ₪</span>`;
+    `<span class="amount-charge">${formatCurrency(paidSum)}</span>`;
   document.getElementById("invStatUnpaid").innerHTML =
-    `<span class="amount-charge">${unpaidSum.toFixed(2)} ₪</span>`;
+    `<span class="amount-charge">${formatCurrency(unpaidSum)}</span>`;
 }
 
 /* ───────────── דשבורד ───────────── */
@@ -1884,13 +1914,13 @@ function updateDashboard() {
   });
 
   document.getElementById("totalExpenses").innerHTML =
-    `<span class="amount-charge">${totalNet.toFixed(2)} ₪</span>`;
+    `<span class="amount-charge">${formatCurrency(totalNet)}</span>`;
   document.getElementById("totalIncome").textContent =
-    (month.income || 0).toFixed(2) + " ₪";
+    formatCurrency(month.income || 0);
 
   var netProfit = (month.income || 0) - totalNet;
   var npElem = document.getElementById("netProfit");
-  npElem.innerHTML = netProfit.toFixed(2) + " ₪";
+  npElem.innerHTML = formatCurrency(netProfit);
   if (netProfit >= 0) {
     npElem.classList.add("amount-credit");
     npElem.classList.remove("amount-charge");
@@ -1900,9 +1930,9 @@ function updateDashboard() {
   }
 
   document.getElementById("unpaidTotal").innerHTML =
-    `<span class="amount-charge">${unpaidTotal.toFixed(2)} ₪</span>`;
+    `<span class="amount-charge">${formatCurrency(unpaidTotal)}</span>`;
   document.getElementById("creditsTotal").innerHTML =
-    `<span class="amount-credit">-${creditsTotal.toFixed(2)} ₪</span>`;
+    `<span class="amount-credit">${formatCurrency(-creditsTotal)}</span>`;
   document.getElementById("invoiceCount").textContent =
     invs.length;
 
@@ -1942,8 +1972,8 @@ function renderDashboardSuppliers() {
         <td data-label="ספק">${name}</td>
         <td data-label="נטו">
           ${val >= 0
-            ? `<span class="amount-charge">${val.toFixed(2)} ₪</span>`
-            : `<span class="amount-credit">${val.toFixed(2)} ₪</span>`}
+            ? `<span class="amount-charge">${formatCurrency(val)}</span>`
+            : `<span class="amount-credit">${formatCurrency(val)}</span>`}
         </td>
       </tr>
     `;
@@ -1993,10 +2023,10 @@ function renderSummarySuppliers() {
       <tr>
         <td>${i+1}</td>
         <td>${name}</td>
-        <td class="amount-charge">${m.charge.toFixed(2)}</td>
-        <td class="amount-credit">${m.credit.toFixed(2)}</td>
+        <td class="amount-charge">${formatCurrency(m.charge)}</td>
+        <td class="amount-credit">${formatCurrency(m.credit)}</td>
         <td ${net >= 0 ? 'class="amount-charge"' : 'class="amount-credit"'}>
-          ${net.toFixed(2)}
+          ${formatCurrency(net)}
         </td>
       </tr>
     `;
@@ -2034,10 +2064,10 @@ function renderSummaryCategories() {
       <tr>
         <td>${i+1}</td>
         <td>${cat}</td>
-        <td class="amount-charge">${m.charge.toFixed(2)}</td>
-        <td class="amount-credit">${m.credit.toFixed(2)}</td>
+        <td class="amount-charge">${formatCurrency(m.charge)}</td>
+        <td class="amount-credit">${formatCurrency(m.credit)}</td>
         <td ${net >= 0 ? 'class="amount-charge"' : 'class="amount-credit"'}>
-          ${net.toFixed(2)}
+          ${formatCurrency(net)}
         </td>
       </tr>
     `;
@@ -2178,7 +2208,7 @@ function renderInvoiceCategoryFilterOptions() {
 function quickAddInvoice() {
   var navButtons = document.querySelectorAll("nav button");
   navButtons.forEach(b => b.classList.remove("active"));
-  navButtons[3].classList.add("active"); // חשבוניות
+  navButtons[3].classList.add("active");
 
   document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
   document.getElementById("invoices").classList.add("active");
