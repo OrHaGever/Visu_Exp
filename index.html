@@ -207,6 +207,15 @@
       cursor:pointer;
       padding:0;
     }
+    .btn-link {
+      border:none;
+      background:none;
+      color:#2563eb;
+      font-size:0.8rem;
+      cursor:pointer;
+      padding:0;
+      text-decoration:underline;
+    }
 
     #toast {
       position:fixed;
@@ -240,6 +249,117 @@
       background:#fef2f2 !important;
     }
 
+    /* כרטיסי תרשימים */
+    .charts-row {
+      align-items:flex-start;
+    }
+    .chart-block {
+      flex:1 1 260px;
+      text-align:center;
+    }
+    .chart-block canvas {
+      max-width:100%;
+      height:auto;
+    }
+    .chart-legend {
+      margin-top:0.4rem;
+      text-align:right;
+      font-size:0.8rem;
+    }
+    .chart-legend-item {
+      display:flex;
+      align-items:center;
+      gap:0.4rem;
+      margin-bottom:0.2rem;
+    }
+    .chart-legend-color {
+      width:10px;
+      height:10px;
+      border-radius:2px;
+      flex-shrink:0;
+    }
+
+    /* Modal פרופיל ספק */
+    .modal {
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:60;
+    }
+    .modal.show { display:flex; }
+    .modal-backdrop {
+      position:absolute;
+      inset:0;
+      background:rgba(15,23,42,0.5);
+    }
+    .modal-content {
+      position:relative;
+      background:#ffffff;
+      border-radius:16px;
+      padding:1rem 1rem 0.8rem;
+      max-width:420px;
+      width:90%;
+      box-shadow:0 20px 40px rgba(15,23,42,0.3);
+      z-index:61;
+      max-height:90vh;
+      overflow-y:auto;
+    }
+    .modal-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:0.5rem;
+    }
+    .modal-header h3 {
+      margin:0;
+      font-size:1rem;
+    }
+    .modal-close {
+      border:none;
+      background:none;
+      font-size:1.2rem;
+      cursor:pointer;
+      color:#6b7280;
+    }
+    .modal-section-title {
+      font-size:0.85rem;
+      font-weight:600;
+      margin-top:0.5rem;
+      margin-bottom:0.2rem;
+      color:#4b5563;
+    }
+    .modal-list {
+      font-size:0.8rem;
+      margin:0;
+      padding:0;
+      list-style:none;
+    }
+    .modal-list li {
+      margin-bottom:0.25rem;
+    }
+
+    /* כפתור צף במובייל */
+    #fabAddEntry {
+      position:fixed;
+      bottom:1rem;
+      right:1rem;
+      width:3rem;
+      height:3rem;
+      border-radius:999px;
+      border:none;
+      background:linear-gradient(135deg,#2563eb,#1d9bf0);
+      color:#ffffff;
+      font-size:1.6rem;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 10px 25px rgba(15,23,42,0.35);
+      z-index:40;
+      cursor:pointer;
+    }
+
     @media (max-width:760px){
       header { padding:0.5rem 0.7rem; }
       nav .nav-inner { justify-content:center; }
@@ -269,6 +389,9 @@
       .group-row td { justify-content:flex-start; }
       .summary-row td::before { content:""; }
       .summary-row td { justify-content:space-between; }
+
+      #fabAddEntry { display:flex; }
+      .charts-row { flex-direction:column; }
     }
   </style>
 </head>
@@ -332,11 +455,27 @@
         </tbody>
       </table>
     </div>
+
+    <div class="card">
+      <h3>לאן הכסף הולך</h3>
+      <div class="row charts-row">
+        <div class="chart-block">
+          <div style="font-size:0.82rem;margin-bottom:0.3rem;">לפי ספקים</div>
+          <canvas id="chartSuppliers" width="260" height="260"></canvas>
+          <div class="chart-legend" id="legendSuppliers"></div>
+        </div>
+        <div class="chart-block">
+          <div style="font-size:0.82rem;margin-bottom:0.3rem;">לפי קטגוריות</div>
+          <canvas id="chartCategories" width="260" height="260"></canvas>
+          <div class="chart-legend" id="legendCategories"></div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- תנועות -->
   <section id="entries">
-    <div class="card">
+    <div class="card" id="addEntryCard">
       <h2>תנועה חדשה</h2>
       <form onsubmit="addEntry(event)">
         <div class="row">
@@ -452,6 +591,11 @@
     </div>
 
     <div class="card">
+      <h3>תעודות משלוח שלא הותאמו לחשבוניות</h3>
+      <div id="unreconciledDeliveries" style="font-size:0.8rem;"></div>
+    </div>
+
+    <div class="card">
       <h3>עוזר התאמה לפי ספק</h3>
       <label>בחר ספק</label>
       <select id="reconcileSupplierSelect" onchange="renderReconcileDetails(this.value)"></select>
@@ -550,6 +694,39 @@
   <datalist id="supplierList"></datalist>
 </main>
 
+<!-- כפתור צף לתנועה חדשה במובייל -->
+<button id="fabAddEntry" onclick="scrollToAddEntry()">+</button>
+
+<!-- Modal פרופיל ספק -->
+<div id="supplierModal" class="modal">
+  <div class="modal-backdrop" onclick="closeSupplierModal()"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="supplierModalName">ספק</h3>
+      <button class="modal-close" onclick="closeSupplierModal()">×</button>
+    </div>
+    <div style="font-size:0.8rem;color:#4b5563;" id="supplierModalCategoryLine"></div>
+
+    <div class="modal-section-title">פרטי קשר</div>
+    <ul class="modal-list" id="supplierModalContact"></ul>
+
+    <div class="modal-section-title">סיכום לחודש <span id="supplierModalMonth"></span></div>
+    <ul class="modal-list">
+      <li>סה"כ תעודות משלוח: <span id="supplierModalDeliveriesTotal">0 ₪</span></li>
+      <li>סה"כ חשבוניות: <span id="supplierModalInvoicesTotal">0 ₪</span></li>
+      <li>הפרש: <span id="supplierModalDiff">0 ₪</span></li>
+      <li>מס׳ תנועות: <span id="supplierModalCount">0</span></li>
+    </ul>
+
+    <div class="modal-section-title">תנועות אחרונות</div>
+    <ul class="modal-list" id="supplierModalEntries"></ul>
+
+    <button class="primary small" style="margin-top:0.6rem;" onclick="filterEntriesForSupplierFromModal()">
+      הצג תנועות ספק זה
+    </button>
+  </div>
+</div>
+
 <script>
   const STORAGE_KEY = "supplier_delivery_invoice_v1";
   const RECON_TOLERANCE = 5; // ₪
@@ -638,6 +815,7 @@
 
   let editingSupplierIndex = null;
   let inlineSupplierIndex = null;
+  let supplierModalCurrentName = "";
 
   function showToast(msg){
     const t = document.getElementById("toast");
@@ -747,7 +925,14 @@
     renderDashboard();
     renderReconcile();
     renderReconcileSupplierSelect();
+    renderDashboardCharts();
     setTodayDefaults();
+    // FAB הצגה ראשונית
+    const fab = document.getElementById("fabAddEntry");
+    if(fab){
+      const isMobile = window.matchMedia && window.matchMedia("(max-width: 760px)").matches;
+      fab.style.display = isMobile ? "flex" : "none";
+    }
   }
 
   document.addEventListener("DOMContentLoaded",init);
@@ -773,6 +958,16 @@
     if(id==="categories"){
       renderCategories();
     }
+    if(id==="dashboard"){
+      renderDashboard();
+      renderDashboardCharts();
+    }
+
+    const fab = document.getElementById("fabAddEntry");
+    if(fab){
+      const isMobile = window.matchMedia && window.matchMedia("(max-width: 760px)").matches;
+      fab.style.display = (id==="entries" && isMobile) ? "flex" : "none";
+    }
   }
 
   function changeMonth(val){
@@ -787,6 +982,7 @@
     renderDashboard();
     renderReconcile();
     renderReconcileSupplierSelect();
+    renderDashboardCharts();
     saveState();
   }
 
@@ -812,6 +1008,22 @@
     if(ed) ed.value = today;
   }
 
+  function scrollToAddEntry(){
+    const entriesBtn = document.querySelector('nav .nav-inner button:nth-child(2)');
+    if(entriesBtn){
+      switchTab("entries", entriesBtn);
+    }else{
+      document.querySelectorAll("section").forEach(sec=>sec.classList.remove("active"));
+      document.getElementById("entries").classList.add("active");
+    }
+    const card = document.getElementById("addEntryCard");
+    if(card){
+      const rect = card.getBoundingClientRect();
+      const offset = rect.top + window.scrollY - 60;
+      window.scrollTo({top:offset, behavior:"smooth"});
+    }
+  }
+
   /* קטגוריות */
 
   function addCategory(e){
@@ -830,6 +1042,7 @@
     categoryName.value = "";
     renderCategories();
     renderCategorySelectForSuppliers();
+    renderDashboardCharts();
     saveState();
     showToast("קטגוריה נוספה");
   }
@@ -902,6 +1115,7 @@
     renderCategories();
     renderSuppliers();
     renderCategorySelectForSuppliers();
+    renderDashboardCharts();
     saveState();
   }
 
@@ -915,6 +1129,7 @@
     renderCategories();
     renderSuppliers();
     renderCategorySelectForSuppliers();
+    renderDashboardCharts();
     saveState();
   }
 
@@ -993,6 +1208,7 @@
     renderSupplierDatalist();
     renderEntrySupplierFilter();
     renderCategorySuppliers();
+    renderDashboardCharts();
     saveState();
   }
 
@@ -1053,6 +1269,7 @@
     renderSupplierDatalist();
     renderEntrySupplierFilter();
     renderCategorySuppliers();
+    renderDashboardCharts();
     saveState();
     showToast("ספק עודכן");
   }
@@ -1100,7 +1317,6 @@
       else if(s.template==="fixed_monthly") templateLabel = "חיוב חודשי קבוע";
 
       if(isInline){
-        // שורה במצב עריכה inline
         let catOptions = `<option value="">ללא</option>`;
         state.categories
           .slice()
@@ -1151,10 +1367,15 @@
             </td>
           </tr>`;
       }else{
+        const jsName = s.name.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
         tbody.innerHTML += `
           <tr>
             <td data-label="#">${rowPos+1}</td>
-            <td data-label="שם">${escapeHtml(s.name)}</td>
+            <td data-label="שם">
+              <button type="button" class="btn-link" onclick="openSupplierProfile('${jsName}')">
+                ${escapeHtml(s.name)}
+              </button>
+            </td>
             <td data-label="קטגוריה">${escapeHtml(s.category||"לא משויך")}</td>
             <td data-label="תבנית">
               ${templateLabel ? `<span class="pill pill-template">${escapeHtml(templateLabel)}</span>` : ""}
@@ -1193,6 +1414,7 @@
     renderSupplierDatalist();
     renderEntrySupplierFilter();
     renderCategorySuppliers();
+    renderDashboardCharts();
     saveState();
   }
 
@@ -1253,6 +1475,7 @@
     renderDashboard();
     renderReconcile();
     renderReconcileSupplierSelect();
+    renderDashboardCharts();
     saveState();
 
     showToast(type==="delivery" ? "תעודת משלוח נוספה" : "חשבונית נוספה");
@@ -1404,12 +1627,17 @@
       else if(status==="exception") statusText = "חריג / בבדיקה";
 
       const rowClass = isOutlier ? "outlier-row" : "";
+      const jsName = entry.supplier.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
 
       tbody.innerHTML += `
         <tr class="${rowClass}">
           <td data-label="#">${i+1}</td>
           <td data-label="סוג"><span class="${typeClass}">${typeLabel}</span></td>
-          <td data-label="ספק">${escapeHtml(entry.supplier)}</td>
+          <td data-label="ספק">
+            ${entry.supplier
+              ? `<button type="button" class="btn-link" onclick="openSupplierProfile('${jsName}')">${escapeHtml(entry.supplier)}</button>`
+              : ""}
+          </td>
           <td data-label="מס׳">${escapeHtml(entry.number)}</td>
           <td data-label="תאריך">${escapeHtml(entry.date)}</td>
           <td data-label="סכום">${formatMoney(entry.amount)}</td>
@@ -1462,6 +1690,7 @@
     renderDashboard();
     renderReconcile();
     renderReconcileSupplierSelect();
+    renderDashboardCharts();
     saveState();
   }
 
@@ -1480,6 +1709,96 @@
     const diffEl = document.getElementById("diffAll");
     diffEl.textContent = formatMoney(diff);
     diffEl.className = diff>0?"amount-pos":diff<0?"amount-neg":"";
+  }
+
+  function computeSpendingData(){
+    ensureMonthExists(state.currentMonth);
+    const m = state.months[state.currentMonth];
+    const deliveries = m.deliveries||[];
+    const invoices = m.invoices||[];
+    const all = deliveries.concat(invoices);
+    const suppliersTotals = {};
+    const categoriesTotals = {};
+
+    all.forEach(e=>{
+      const amount = Number(e.amount)||0;
+      if(!amount) return;
+      const sup = e.supplier || "לא משויך";
+      suppliersTotals[sup] = (suppliersTotals[sup]||0) + amount;
+
+      let cat = "לא משויך";
+      const supObj = state.suppliers.find(s=>s.name===sup);
+      if(supObj && supObj.category){
+        cat = supObj.category;
+      }
+      categoriesTotals[cat] = (categoriesTotals[cat]||0) + amount;
+    });
+
+    return {suppliers:suppliersTotals, categories:categoriesTotals};
+  }
+
+  function drawPie(canvas, dataObj, emptyMessage, legendEl){
+    if(!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if(!ctx) return;
+    const entries = Object.entries(dataObj).filter(([k,v])=>v>0);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    if(legendEl){
+      legendEl.innerHTML = "";
+    }
+
+    if(!entries.length){
+      ctx.fillStyle = "#6b7280";
+      ctx.font = "12px Inter";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(emptyMessage, canvas.width/2, canvas.height/2);
+      return;
+    }
+
+    const total = entries.reduce((acc, [,v])=>acc+v,0);
+    const colors = [
+      "#2563eb","#f97316","#22c55e","#ec4899","#facc15",
+      "#06b6d4","#a855f7","#ef4444","#14b8a6","#4b5563",
+      "#0ea5e9","#6366f1","#e11d48","#16a34a"
+    ];
+
+    let startAngle = -Math.PI/2;
+    entries.forEach(([label,value],idx)=>{
+      const sliceAngle = (value/total)*Math.PI*2;
+      const color = colors[idx % colors.length];
+      // Slice
+      ctx.beginPath();
+      ctx.moveTo(canvas.width/2, canvas.height/2);
+      ctx.arc(canvas.width/2, canvas.height/2, Math.min(canvas.width,canvas.height)/2 - 10, startAngle, startAngle+sliceAngle);
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.fill();
+
+      startAngle += sliceAngle;
+
+      if(legendEl){
+        const percent = (value/total*100).toFixed(1);
+        const item = document.createElement("div");
+        item.className = "chart-legend-item";
+        item.innerHTML = `
+          <div class="chart-legend-color" style="background:${color};"></div>
+          <div>${escapeHtml(label)} – ${percent}% (${formatMoney(value)})</div>
+        `;
+        legendEl.appendChild(item);
+      }
+    });
+  }
+
+  function renderDashboardCharts(){
+    const {suppliers, categories} = computeSpendingData();
+    const canvasSup = document.getElementById("chartSuppliers");
+    const canvasCat = document.getElementById("chartCategories");
+    const legendSup = document.getElementById("legendSuppliers");
+    const legendCat = document.getElementById("legendCategories");
+    drawPie(canvasSup, suppliers, "אין נתונים לספקים", legendSup);
+    drawPie(canvasCat, categories, "אין נתונים לקטגוריות", legendCat);
   }
 
   /* התאמת סוף חודש */
@@ -1507,33 +1826,67 @@
     tbody.innerHTML = "";
     if(allSuppliers.size===0){
       tbody.innerHTML = `<tr><td colspan="6" class="empty">אין נתונים לחודש זה</td></tr>`;
-      return;
+    }else{
+      let idx=1;
+      allSuppliers.forEach(name=>{
+        const sumD = bySupplierD[name]||0;
+        const sumI = bySupplierI[name]||0;
+        const diff = sumI-sumD;
+        let statusClass = "status-ok";
+        let statusText = "תואם";
+        const absDiff = Math.abs(diff);
+        if(absDiff>0.01 && absDiff<=RECON_TOLERANCE){
+          statusClass = "status-warn";
+          statusText = "סטייה קטנה";
+        }else if(absDiff>RECON_TOLERANCE){
+          statusClass = "status-problem";
+          statusText = "לא תואם";
+        }
+        const jsName = name.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+        tbody.innerHTML += `
+          <tr>
+            <td data-label="#">${idx++}</td>
+            <td data-label="ספק">
+              <button type="button" class="btn-link" onclick="openSupplierProfile('${jsName}')">
+                ${escapeHtml(name)}
+              </button>
+            </td>
+            <td data-label="סה\"כ משלוחים">${formatMoney(sumD)}</td>
+            <td data-label="סה\"כ חשבוניות">${formatMoney(sumI)}</td>
+            <td data-label="הפרש">${formatMoney(diff)}</td>
+            <td data-label="סטטוס"><span class="${statusClass}">${statusText}</span></td>
+          </tr>`;
+      });
     }
-    let idx=1;
-    allSuppliers.forEach(name=>{
-      const sumD = bySupplierD[name]||0;
-      const sumI = bySupplierI[name]||0;
-      const diff = sumI-sumD;
-      let statusClass = "status-ok";
-      let statusText = "תואם";
-      const absDiff = Math.abs(diff);
-      if(absDiff>0.01 && absDiff<=RECON_TOLERANCE){
-        statusClass = "status-warn";
-        statusText = "סטייה קטנה";
-      }else if(absDiff>RECON_TOLERANCE){
-        statusClass = "status-problem";
-        statusText = "לא תואם";
-      }
-      tbody.innerHTML += `
-        <tr>
-          <td data-label="#">${idx++}</td>
-          <td data-label="ספק">${escapeHtml(name)}</td>
-          <td data-label="סה\"כ משלוחים">${formatMoney(sumD)}</td>
-          <td data-label="סה\"כ חשבוניות">${formatMoney(sumI)}</td>
-          <td data-label="הפרש">${formatMoney(diff)}</td>
-          <td data-label="סטטוס"><span class="${statusClass}">${statusText}</span></td>
-        </tr>`;
-    });
+
+    // רשימת תעודות משלוח שלא הותאמו
+    const unreconciledContainer = document.getElementById("unreconciledDeliveries");
+    const unreconciled = deliveries.filter(d=>!d.reconciled);
+    if(!unreconciled.length){
+      unreconciledContainer.innerHTML = "כל תעודות המשלוח סומנו כמותאמות או אין תעודות משלוח פתוחות.";
+    }else{
+      const bySup = {};
+      unreconciled.forEach(d=>{
+        const k = d.supplier||"לא משויך";
+        if(!bySup[k]) bySup[k] = [];
+        bySup[k].push(d);
+      });
+      let html = "";
+      Object.keys(bySup).sort((a,b)=>a.localeCompare(b,"he")).forEach(name=>{
+        const list = bySup[name];
+        const total = list.reduce((acc,d)=>acc+(Number(d.amount)||0),0);
+        const jsName = name.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+        html += `<div style="margin-bottom:0.3rem;">
+          <strong>
+            <button type="button" class="btn-link" onclick="openSupplierProfile('${jsName}')">
+              ${escapeHtml(name)}
+            </button>
+          </strong>
+          – ${list.length} תעודות פתוחות, סה"כ ${formatMoney(total)}
+        </div>`;
+      });
+      unreconciledContainer.innerHTML = html;
+    }
   }
 
   function renderReconcileSupplierSelect(){
@@ -1630,7 +1983,7 @@
     }
     html += `</div></div>`;
 
-    html += `<button class="primary small" style="margin-top:0.6rem;" onclick="markReconciled('${name.replace(/'/g,"\\'")}')">
+    html += `<button class="primary small" style="margin-top:0.6rem;" onclick="markReconciled('${name.replace(/\\/g,"\\\\").replace(/'/g,"\\'")}')">
       סמן את הבחירה כמותאמת
     </button>`;
 
@@ -1673,6 +2026,114 @@
     renderReconcileDetails(supplierName);
     renderEntries();
     showToast("התאמה סומנה בהצלחה");
+  }
+
+  /* Modal פרופיל ספק */
+
+  function openSupplierProfile(name){
+    supplierModalCurrentName = name;
+    const modal = document.getElementById("supplierModal");
+    const nameEl = document.getElementById("supplierModalName");
+    const catLine = document.getElementById("supplierModalCategoryLine");
+    const contactEl = document.getElementById("supplierModalContact");
+    const monthEl = document.getElementById("supplierModalMonth");
+    const delTotalEl = document.getElementById("supplierModalDeliveriesTotal");
+    const invTotalEl = document.getElementById("supplierModalInvoicesTotal");
+    const diffEl = document.getElementById("supplierModalDiff");
+    const countEl = document.getElementById("supplierModalCount");
+    const entriesEl = document.getElementById("supplierModalEntries");
+
+    const sup = state.suppliers.find(s=>s.name===name) || {name,category:"",phone:"",email:"",notes:""};
+
+    nameEl.textContent = sup.name;
+    if(sup.category){
+      catLine.textContent = "קטגוריה: " + sup.category;
+    }else{
+      catLine.textContent = "קטגוריה: לא משויך";
+    }
+
+    const contact = [];
+    if(sup.phone) contact.push("טלפון: "+sup.phone);
+    if(sup.email) contact.push("אימייל: "+sup.email);
+    if(sup.notes) contact.push("הערות: "+sup.notes);
+    if(!contact.length) contact.push("לא הוזנו פרטי קשר.");
+    contactEl.innerHTML = "";
+    contact.forEach(line=>{
+      const li = document.createElement("li");
+      li.textContent = line;
+      contactEl.appendChild(li);
+    });
+
+    ensureMonthExists(state.currentMonth);
+    monthEl.textContent = state.currentMonth;
+
+    const m = state.months[state.currentMonth];
+    const deliveries = (m.deliveries||[]).filter(d=>d.supplier===name);
+    const invoices = (m.invoices||[]).filter(f=>f.supplier===name);
+    const sumD = deliveries.reduce((acc,d)=>acc+(Number(d.amount)||0),0);
+    const sumI = invoices.reduce((acc,f)=>acc+(Number(f.amount)||0),0);
+    const diff = sumI - sumD;
+    delTotalEl.textContent = formatMoney(sumD);
+    invTotalEl.textContent = formatMoney(sumI);
+    diffEl.textContent = formatMoney(diff);
+    countEl.textContent = String(deliveries.length + invoices.length);
+
+    const all = deliveries.map(d=>({type:"delivery",...d})).concat(
+      invoices.map(f=>({type:"invoice",...f}))
+    );
+    all.sort((a,b)=>{
+      if(a.date!==b.date) return (b.date||"").localeCompare(a.date||"");
+      return b.amount - a.amount;
+    });
+
+    entriesEl.innerHTML = "";
+    if(!all.length){
+      const li = document.createElement("li");
+      li.textContent = "אין תנועות לספק זה בחודש הנוכחי.";
+      entriesEl.appendChild(li);
+    }else{
+      all.slice(0,10).forEach(e=>{
+        const li = document.createElement("li");
+        const typeLabel = e.type==="delivery" ? "ת. משלוח" : "חשבונית";
+        li.textContent = `${typeLabel} ${e.number || ""} · ${e.date || ""} · ${formatMoney(e.amount)}`;
+        entriesEl.appendChild(li);
+      });
+    }
+
+    modal.classList.add("show");
+  }
+
+  function closeSupplierModal(){
+    const modal = document.getElementById("supplierModal");
+    modal.classList.remove("show");
+  }
+
+  function filterEntriesForSupplierFromModal(){
+    if(!supplierModalCurrentName) return;
+    const entriesBtn = document.querySelector('nav .nav-inner button:nth-child(2)');
+    if(entriesBtn){
+      switchTab("entries", entriesBtn);
+    }else{
+      document.querySelectorAll("section").forEach(sec=>sec.classList.remove("active"));
+      document.getElementById("entries").classList.add("active");
+    }
+    const sel = document.getElementById("filterSupplier");
+    if(sel){
+      let exists = false;
+      for(const opt of sel.options){
+        if(opt.value===supplierModalCurrentName){ exists = true; break; }
+      }
+      if(!exists){
+        const opt = document.createElement("option");
+        opt.value = supplierModalCurrentName;
+        opt.textContent = supplierModalCurrentName;
+        sel.appendChild(opt);
+      }
+      sel.value = supplierModalCurrentName;
+    }
+    renderEntries();
+    closeSupplierModal();
+    window.scrollTo({top:0,behavior:"smooth"});
   }
 </script>
 </body>
