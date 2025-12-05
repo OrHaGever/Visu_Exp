@@ -9,45 +9,95 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
+    :root {
+      --bg-body: #0f172a;
+      --bg-main: #0b1220;
+      --bg-card: #020617;
+      --bg-card-soft: #020617;
+      --border-card: rgba(148,163,184,0.3);
+      --accent: #38bdf8;
+      --accent-soft: rgba(56,189,248,0.14);
+      --accent-strong: #0ea5e9;
+      --accent-grad-from: #38bdf8;
+      --accent-grad-to: #6366f1;
+      --text-main: #e5e7eb;
+      --text-soft: #9ca3af;
+      --text-muted: #6b7280;
+      --danger: #ef4444;
+      --success: #22c55e;
+      --warn: #f59e0b;
+      --radius-card: 18px;
+      --radius-pill: 999px;
+      --shadow-strong: 0 22px 45px rgba(15,23,42,0.65);
+      --shadow-card: 0 18px 35px rgba(15,23,42,0.75);
+      --shadow-soft: 0 10px 25px rgba(15,23,42,0.65);
+    }
+
     * { box-sizing:border-box; font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif; }
     html,body { margin:0; padding:0; }
+
     body {
-      background:#f5f5f7;
-      color:#111827;
+      background: radial-gradient(circle at top left, #1f2937 0, #020617 40%, #020617 100%);
+      color:var(--text-main);
       max-width:100%;
       overflow-x:hidden;
     }
+
     header {
-      background:linear-gradient(135deg,#2563eb,#1d4ed8);
+      background: radial-gradient(circle at top right, #38bdf8 0, #0f172a 40%, #020617 100%);
       color:#fff;
-      padding:0.5rem 1rem;
+      padding:0.7rem 1rem 0.6rem;
       position:sticky;
       top:0;
-      z-index:10;
-      box-shadow:0 8px 18px rgba(15,23,42,0.35);
+      z-index:20;
+      box-shadow:var(--shadow-strong);
+      border-bottom:1px solid rgba(148,163,184,0.35);
+      backdrop-filter: blur(18px);
     }
+
     .header-inner {
       max-width:1100px;
       margin:0 auto;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:0.5rem;
+      gap:0.75rem;
       flex-wrap:wrap;
     }
+
     .title {
-      font-size:1.1rem;
+      font-size:1.05rem;
       font-weight:600;
+      letter-spacing:0.02em;
+      display:flex;
+      align-items:center;
+      gap:0.45rem;
       white-space:nowrap;
     }
+
+    .title-icon {
+      width:26px;
+      height:26px;
+      border-radius:10px;
+      background: radial-gradient(circle at 30% 0, #f9fafb 0, #e5e7eb 20%, #38bdf8 55%, #0f172a 100%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 10px 25px rgba(15,23,42,0.65);
+      font-size:0.9rem;
+      color:#0f172a;
+      flex-shrink:0;
+    }
+
     .month-box {
       display:flex;
       align-items:center;
       gap:0.4rem;
-      background:rgba(15,23,42,0.25);
-      padding:0.25rem 0.6rem;
+      background:rgba(15,23,42,0.8);
+      padding:0.3rem 0.7rem;
       border-radius:999px;
-      border:1px solid rgba(191,219,254,0.6);
+      border:1px solid rgba(148,163,184,0.7);
+      box-shadow:0 8px 20px rgba(15,23,42,0.7);
     }
     .month-box span { font-size:0.78rem; opacity:0.9; }
     .month-box input[type="month"]{
@@ -57,341 +107,502 @@
       font-size:0.78rem;
       cursor:pointer;
     }
-    .month-box input[type="month"]::-webkit-calendar-picker-indicator{ filter:invert(1); cursor:pointer; }
+    .month-box input[type="month"]::-webkit-calendar-picker-indicator{
+      filter:invert(1);
+      cursor:pointer;
+    }
 
     nav {
-      background:#e5e7eb;
-      border-bottom:1px solid #d1d5db;
       position:sticky;
-      top:2.4rem;
-      z-index:9;
+      top:3rem;
+      z-index:19;
+      background:rgba(15,23,42,0.92);
+      backdrop-filter:blur(18px);
+      border-bottom:1px solid rgba(31,41,55,0.9);
     }
+
     nav .nav-inner {
       max-width:1100px;
       margin:0 auto;
-      padding:0.35rem 0.8rem;
+      padding:0.4rem 0.7rem;
       display:flex;
-      gap:0.5rem;
+      gap:0.4rem;
       flex-wrap:wrap;
     }
+
     nav button {
       border-radius:999px;
       border:1px solid transparent;
-      background:#ffffff;
-      padding:0.35rem 0.9rem;
-      font-size:0.82rem;
+      background:rgba(15,23,42,0.7);
+      padding:0.35rem 0.95rem;
+      font-size:0.8rem;
       cursor:pointer;
-      color:#374151;
+      color:var(--text-soft);
+      display:flex;
+      align-items:center;
+      gap:0.35rem;
+      transition:all 0.12s ease;
     }
+
+    nav button span.icon {
+      font-size:0.9rem;
+      opacity:0.9;
+    }
+
+    nav button:hover {
+      border-color:rgba(148,163,184,0.5);
+      background:rgba(15,23,42,0.9);
+      color:var(--text-main);
+    }
+
     nav button.active {
-      border-color:#2563eb;
-      color:#1d4ed8;
-      box-shadow:0 8px 18px rgba(37,99,235,0.35);
+      background:linear-gradient(135deg,var(--accent-grad-from),var(--accent-grad-to));
+      border-color:transparent;
+      color:#0b1120;
+      box-shadow:0 13px 30px rgba(56,189,248,0.45);
+      font-weight:500;
     }
 
     main {
       max-width:1100px;
-      margin:1rem auto 2.5rem;
-      padding:0 0.8rem;
+      margin:1.1rem auto 3rem;
+      padding:0 0.7rem 1.5rem;
     }
+
     section { display:none; }
     section.active { display:block; }
 
     .card {
-      background:#ffffff;
-      border-radius:14px;
+      background:radial-gradient(circle at top left, rgba(56,189,248,0.08) 0, rgba(15,23,42,0.75) 45%, #020617 100%);
+      border-radius:var(--radius-card);
       padding:0.9rem 1rem;
-      margin-bottom:0.9rem;
-      box-shadow:0 10px 22px rgba(15,23,42,0.08);
-      border:1px solid #e5e7eb;
+      margin-bottom:1rem;
+      box-shadow:var(--shadow-card);
+      border:1px solid var(--border-card);
     }
-    h2 { margin:0 0 0.4rem; font-size:1rem; }
-    h3 { margin:0 0 0.4rem; font-size:0.95rem; }
+
+    .card-soft {
+      background:radial-gradient(circle at top, rgba(15,23,42,0.9) 0, #020617 70%);
+      border-radius:var(--radius-card);
+      padding:0.75rem 0.9rem;
+      margin-bottom:0.8rem;
+      box-shadow:var(--shadow-soft);
+      border:1px solid rgba(51,65,85,0.9);
+    }
+
+    h2 {
+      margin:0 0 0.4rem;
+      font-size:1rem;
+      letter-spacing:0.01em;
+      color:#e5e7eb;
+    }
+
+    h3 {
+      margin:0 0 0.4rem;
+      font-size:0.95rem;
+      color:#e5e7eb;
+    }
+
+    h4 {
+      margin:0.2rem 0 0.2rem;
+      font-size:0.86rem;
+      color:#e5e7eb;
+    }
+
+    p, .hint {
+      font-size:0.8rem;
+      color:var(--text-soft);
+      margin:0.1rem 0 0.45rem;
+    }
 
     label {
       display:block;
-      font-size:0.8rem;
+      font-size:0.78rem;
       margin:0.4rem 0 0.15rem;
-      color:#4b5563;
+      color:var(--text-muted);
     }
+
     input,select,textarea {
       width:100%;
-      padding:0.45rem 0.55rem;
-      border-radius:10px;
-      border:1px solid #d1d5db;
+      padding:0.48rem 0.55rem;
+      border-radius:12px;
+      border:1px solid rgba(55,65,81,0.9);
       font-size:0.85rem;
-      background:#f9fafb;
+      background:rgba(15,23,42,0.9);
+      color:var(--text-main);
+      transition:border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
     }
+
+    input::placeholder,textarea::placeholder {
+      color:rgba(148,163,184,0.8);
+    }
+
     input:focus,select:focus,textarea:focus {
       outline:none;
-      border-color:#2563eb;
-      box-shadow:0 0 0 2px rgba(37,99,235,0.18);
-      background:#ffffff;
+      border-color:var(--accent);
+      box-shadow:0 0 0 1px rgba(56,189,248,0.6);
+      background:#020617;
     }
-    textarea { resize:vertical; min-height:50px; }
 
-    .row { display:flex; gap:0.7rem; flex-wrap:wrap; }
-    .row > div { flex:1 1 160px; }
+    textarea { resize:vertical; min-height:52px; }
+
+    .row {
+      display:flex;
+      gap:0.75rem;
+      flex-wrap:wrap;
+    }
+
+    .row > div {
+      flex:1 1 160px;
+    }
 
     button.primary {
-      margin-top:0.6rem;
-      padding:0.45rem 1.1rem;
-      border-radius:999px;
+      margin-top:0.7rem;
+      padding:0.48rem 1.2rem;
+      border-radius:var(--radius-pill);
       border:none;
-      background:linear-gradient(135deg,#2563eb,#1d9bf0);
-      color:#ffffff;
+      background:linear-gradient(135deg,var(--accent-grad-from),var(--accent-grad-to));
+      color:#0b1120;
       cursor:pointer;
       font-size:0.86rem;
+      font-weight:500;
+      box-shadow:0 12px 30px rgba(56,189,248,0.55);
+      display:inline-flex;
+      align-items:center;
+      gap:0.35rem;
     }
+
     button.primary.small {
-      padding:0.3rem 0.8rem;
+      padding:0.32rem 0.9rem;
       font-size:0.78rem;
-      background:#ffffff;
-      color:#111827;
-      border:1px solid #d1d5db;
       box-shadow:none;
-    }
-    button.primary.small:hover { background:#f9fafb; }
-
-    table {
-      width:100%;
-      border-collapse:collapse;
-      margin-top:0.4rem;
-      font-size:0.78rem;
-      background:#f9fafb;
-      border-radius:10px;
-      overflow:hidden;
-    }
-    thead { background:#e5e7eb; }
-    th,td {
-      padding:0.35rem 0.4rem;
-      border-bottom:1px solid #e5e7eb;
-      text-align:center;
-    }
-    tbody tr:nth-child(even){ background:#ffffff; }
-    tbody tr:nth-child(odd){ background:#f9fafb; }
-    .empty { text-align:center; color:#9ca3af; padding:0.5rem; }
-
-    .pill {
-      display:inline-block;
-      padding:0.15rem 0.55rem;
-      border-radius:999px;
-      font-size:0.72rem;
-    }
-    .pill-delivery {
-      background:#dbeafe;
-      color:#1d4ed8;
-    }
-    .pill-invoice {
-      background:#dcfce7;
-      color:#166534;
-    }
-    .pill-template {
-      background:#fef3c7;
-      color:#92400e;
+      background:rgba(15,23,42,0.95);
+      color:var(--text-main);
+      border:1px solid rgba(148,163,184,0.8);
     }
 
-    .amount-pos { color:#16a34a; font-weight:500; }
-    .amount-neg { color:#b91c1c; font-weight:500; }
-
-    .status-ok { color:#16a34a; font-weight:500; }
-    .status-problem { color:#b91c1c; font-weight:500; }
-    .status-warn { color:#d97706; font-weight:500; }
+    button.primary.small:hover {
+      background:#020617;
+    }
 
     .btn-ghost {
       border:none;
       background:none;
-      color:#2563eb;
-      font-size:0.75rem;
+      color:var(--accent);
+      font-size:0.76rem;
       text-decoration:underline;
       cursor:pointer;
       padding:0;
     }
+
     .btn-link {
       border:none;
       background:none;
-      color:#2563eb;
+      color:var(--accent);
       font-size:0.8rem;
       cursor:pointer;
       padding:0;
       text-decoration:underline;
     }
 
+    table {
+      width:100%;
+      border-collapse:collapse;
+      margin-top:0.45rem;
+      font-size:0.78rem;
+      border-radius:14px;
+      overflow:hidden;
+      background:rgba(15,23,42,0.95);
+      border:1px solid rgba(55,65,81,0.9);
+    }
+
+    thead {
+      background:linear-gradient(90deg,#020617,#020617,#111827);
+    }
+
+    th,td {
+      padding:0.38rem 0.45rem;
+      border-bottom:1px solid rgba(31,41,55,0.9);
+      text-align:center;
+      color:var(--text-soft);
+    }
+
+    th {
+      font-weight:500;
+      font-size:0.78rem;
+      color:#e5e7eb;
+    }
+
+    tbody tr:nth-child(even) {
+      background:#020617;
+    }
+
+    tbody tr:nth-child(odd) {
+      background:#020617;
+    }
+
+    .empty {
+      text-align:center;
+      color:#6b7280;
+      padding:0.6rem;
+    }
+
+    .pill {
+      display:inline-block;
+      padding:0.16rem 0.6rem;
+      border-radius:999px;
+      font-size:0.72rem;
+      border:1px solid transparent;
+    }
+
+    .pill-delivery {
+      background:rgba(56,189,248,0.12);
+      color:var(--accent);
+      border-color:rgba(56,189,248,0.35);
+    }
+
+    .pill-invoice {
+      background:rgba(52,211,153,0.16);
+      color:var(--success);
+      border-color:rgba(52,211,153,0.45);
+    }
+
+    .pill-template {
+      background:rgba(250,204,21,0.12);
+      color:var(--warn);
+      border-color:rgba(250,204,21,0.5);
+    }
+
+    .amount-pos { color:var(--success); font-weight:500; }
+    .amount-neg { color:var(--danger); font-weight:500; }
+
+    .status-ok { color:var(--success); font-weight:500; }
+    .status-problem { color:var(--danger); font-weight:500; }
+    .status-warn { color:var(--warn); font-weight:500; }
+
+    .group-row td {
+      background:rgba(15,23,42,0.96) !important;
+      font-weight:600;
+      text-align:right;
+      font-size:0.8rem;
+      color:#e5e7eb;
+    }
+
+    .summary-row td {
+      background:radial-gradient(circle at left, rgba(56,189,248,0.18) 0, #020617 70%);
+      font-weight:600;
+      font-size:0.8rem;
+      border-top:1px solid rgba(148,163,184,0.8);
+    }
+
+    .outlier-row td {
+      background:rgba(220,38,38,0.15) !important;
+    }
+
     #toast {
       position:fixed;
-      top:3rem;
+      top:3.4rem;
       left:50%;
       transform:translateX(-50%);
-      background:#111827;
-      color:#f9fafb;
-      padding:0.4rem 0.9rem;
+      background:#020617;
+      color:#e5e7eb;
+      padding:0.42rem 1rem;
       border-radius:999px;
       font-size:0.8rem;
       opacity:0;
       pointer-events:none;
       transition:opacity 0.2s ease;
-      z-index:50;
+      z-index:60;
+      border:1px solid rgba(148,163,184,0.8);
+      box-shadow:0 16px 30px rgba(15,23,42,0.9);
     }
+
     #toast.show { opacity:1; }
 
-    .group-row td {
-      background:#e5e7eb !important;
-      font-weight:600;
-      text-align:right;
-      font-size:0.8rem;
-    }
-    .summary-row td {
-      background:#eef2ff;
-      font-weight:600;
-      font-size:0.8rem;
-    }
-    .outlier-row td {
-      background:#fef2f2 !important;
-    }
-
-    /* כרטיסי תרשימים */
     .charts-row {
       align-items:flex-start;
     }
+
     .chart-block {
       flex:1 1 260px;
       text-align:center;
     }
+
     .chart-block canvas {
       max-width:100%;
       height:auto;
+      background:radial-gradient(circle at top, rgba(15,23,42,0.9) 0, #020617 70%);
+      border-radius:14px;
+      border:1px solid rgba(31,41,55,0.9);
     }
+
     .chart-legend {
-      margin-top:0.4rem;
+      margin-top:0.45rem;
       text-align:right;
       font-size:0.8rem;
     }
+
     .chart-legend-item {
       display:flex;
       align-items:center;
       gap:0.4rem;
-      margin-bottom:0.2rem;
+      margin-bottom:0.22rem;
+      color:var(--text-soft);
     }
+
     .chart-legend-color {
       width:10px;
       height:10px;
-      border-radius:2px;
+      border-radius:3px;
       flex-shrink:0;
+      border:1px solid rgba(15,23,42,0.8);
     }
 
-    /* Modal פרופיל ספק */
     .modal {
       position:fixed;
       inset:0;
       display:none;
       align-items:center;
       justify-content:center;
-      z-index:60;
+      z-index:70;
     }
+
     .modal.show { display:flex; }
+
     .modal-backdrop {
       position:absolute;
       inset:0;
-      background:rgba(15,23,42,0.5);
+      background:rgba(15,23,42,0.7);
+      backdrop-filter:blur(20px);
     }
+
     .modal-content {
       position:relative;
-      background:#ffffff;
-      border-radius:16px;
-      padding:1rem 1rem 0.8rem;
+      background:radial-gradient(circle at top left, rgba(56,189,248,0.18) 0, #020617 55%, #020617 100%);
+      border-radius:18px;
+      padding:1rem 1rem 0.85rem;
       max-width:420px;
       width:90%;
-      box-shadow:0 20px 40px rgba(15,23,42,0.3);
-      z-index:61;
+      box-shadow:0 24px 55px rgba(15,23,42,0.9);
+      z-index:71;
       max-height:90vh;
       overflow-y:auto;
+      border:1px solid rgba(148,163,184,0.7);
     }
+
     .modal-header {
       display:flex;
       justify-content:space-between;
       align-items:center;
-      margin-bottom:0.5rem;
+      margin-bottom:0.4rem;
     }
+
     .modal-header h3 {
       margin:0;
       font-size:1rem;
     }
+
     .modal-close {
       border:none;
       background:none;
-      font-size:1.2rem;
+      font-size:1.25rem;
       cursor:pointer;
-      color:#6b7280;
+      color:#9ca3af;
     }
+
     .modal-section-title {
       font-size:0.85rem;
       font-weight:600;
-      margin-top:0.5rem;
+      margin-top:0.55rem;
       margin-bottom:0.2rem;
-      color:#4b5563;
+      color:#e5e7eb;
     }
+
     .modal-list {
       font-size:0.8rem;
       margin:0;
       padding:0;
       list-style:none;
     }
+
     .modal-list li {
       margin-bottom:0.25rem;
+      color:var(--text-soft);
     }
 
-    /* כפתור צף במובייל */
     #fabAddEntry {
       position:fixed;
-      bottom:1rem;
-      right:1rem;
-      width:3rem;
-      height:3rem;
+      bottom:1.15rem;
+      right:1.1rem;
+      width:3.1rem;
+      height:3.1rem;
       border-radius:999px;
       border:none;
-      background:linear-gradient(135deg,#2563eb,#1d9bf0);
-      color:#ffffff;
-      font-size:1.6rem;
+      background:radial-gradient(circle at 20% 0, #f9fafb 0, #38bdf8 35%, #6366f1 100%);
+      color:#020617;
+      font-size:1.7rem;
       display:none;
       align-items:center;
       justify-content:center;
-      box-shadow:0 10px 25px rgba(15,23,42,0.35);
-      z-index:40;
+      box-shadow:0 22px 45px rgba(15,23,42,0.85);
+      z-index:50;
       cursor:pointer;
     }
 
+    #fabAddEntry span {
+      position:relative;
+      top:-1px;
+    }
+
+    .hint-label {
+      font-size:0.76rem;
+      color:var(--text-soft);
+    }
+
     @media (max-width:760px){
-      header { padding:0.5rem 0.7rem; }
-      nav .nav-inner { justify-content:center; }
-      table { background:none; }
+      header { padding:0.55rem 0.7rem 0.5rem; }
+      nav .nav-inner {
+        justify-content:center;
+        padding:0.35rem 0.4rem;
+      }
+
+      table {
+        background:none;
+        border:none;
+      }
+
       thead { display:none; }
       tbody { display:block; }
       tbody tr {
         display:block;
         margin-bottom:0.7rem;
-        background:#ffffff;
-        border-radius:10px;
+        background:#020617;
+        border-radius:14px;
+        border:1px solid rgba(31,41,55,0.9);
       }
       td {
         display:flex;
         justify-content:space-between;
-        gap:0.5rem;
-        border-bottom:1px solid #e5e7eb;
-        padding:0.3rem 0.6rem;
+        gap:0.6rem;
+        border-bottom:1px solid rgba(31,41,55,0.9);
+        padding:0.32rem 0.6rem;
       }
       td:last-child { border-bottom:none; }
       td::before {
         content:attr(data-label);
         font-weight:600;
-        color:#6b7280;
+        color:var(--text-muted);
       }
-      .group-row td::before { content:""; }
-      .group-row td { justify-content:flex-start; }
-      .summary-row td::before { content:""; }
-      .summary-row td { justify-content:space-between; }
+      .group-row td::before,
+      .summary-row td::before {
+        content:"";
+      }
 
       #fabAddEntry { display:flex; }
-      .charts-row { flex-direction:column; }
+
+      .charts-row {
+        flex-direction:column;
+      }
     }
   </style>
 </head>
@@ -399,7 +610,10 @@
 
 <header>
   <div class="header-inner">
-    <div class="title">ניהול ספקים · תעודות משלוח וחשבוניות</div>
+    <div class="title">
+      <div class="title-icon">₪</div>
+      <span>ניהול ספקים · תעודות משלוח וחשבוניות</span>
+    </div>
     <div class="month-box">
       <span>חודש:</span>
       <input type="month" id="monthInput" />
@@ -409,11 +623,11 @@
 
 <nav>
   <div class="nav-inner">
-    <button class="active" onclick="switchTab('dashboard',this)">דשבורד</button>
-    <button onclick="switchTab('entries',this)">תנועות</button>
-    <button onclick="switchTab('reconcile',this)">התאמת סוף חודש</button>
-    <button onclick="switchTab('categories',this)">קטגוריות ספקים</button>
-    <button onclick="switchTab('suppliers',this)">ספקים</button>
+    <button class="active" onclick="switchTab('dashboard',this)"><span class="icon">📊</span>דשבורד</button>
+    <button onclick="switchTab('entries',this)"><span class="icon">🧾</span>תנועות</button>
+    <button onclick="switchTab('reconcile',this)"><span class="icon">✅</span>התאמת סוף חודש</button>
+    <button onclick="switchTab('categories',this)"><span class="icon">🏷️</span>קטגוריות ספקים</button>
+    <button onclick="switchTab('suppliers',this)"><span class="icon">👥</span>ספקים</button>
   </div>
 </nav>
 
@@ -424,19 +638,22 @@
   <section id="dashboard" class="active">
     <div class="card">
       <h2>דשבורד חודשי</h2>
+      <p class="hint">מעקב אחרי מחזור, הוצאות לספקים והפרשים בין תעודות משלוח לחשבוניות.</p>
       <div class="row">
         <div>
           <label>מחזור (הכנסות)</label>
-          <input type="number" id="incomeInput" step="0.01" min="0" oninput="updateIncome(this.value)" />
+          <input type="number" id="incomeInput" step="0.01" min="0" oninput="updateIncome(this.value)" placeholder="לדוגמה: 250000" />
+          <div class="hint-label">הכנסות ברוטו לחודש הנוכחי</div>
         </div>
         <div>
           <label>חודש פעיל</label>
           <input type="text" id="currentMonthLabel" readonly />
+          <div class="hint-label">מתעדכן לפי הבחירה למעלה</div>
         </div>
       </div>
     </div>
 
-    <div class="card">
+    <div class="card-soft">
       <h3>סיכום כספי</h3>
       <table>
         <tbody>
@@ -456,7 +673,7 @@
       </table>
     </div>
 
-    <div class="card">
+    <div class="card-soft">
       <h3>לאן הכסף הולך</h3>
       <div class="row charts-row">
         <div class="chart-block">
@@ -477,6 +694,7 @@
   <section id="entries">
     <div class="card" id="addEntryCard">
       <h2>תנועה חדשה</h2>
+      <p class="hint">הוסף תעודת משלוח או חשבונית, לפי ספק, תאריך וסכום.</p>
       <form onsubmit="addEntry(event)">
         <div class="row">
           <div>
@@ -489,11 +707,12 @@
           <div>
             <label>ספק</label>
             <input list="supplierList" id="entrySupplier" placeholder="התחל להקליד שם ספק" />
+            <div class="hint-label">אפשר לבחור מהרשימה או להקליד ידנית</div>
           </div>
         </div>
 
         <label>מספר תעודה / חשבונית</label>
-        <input type="text" id="entryNumber" />
+        <input type="text" id="entryNumber" placeholder="לדוגמה: 5482" />
 
         <div class="row">
           <div>
@@ -502,18 +721,18 @@
           </div>
           <div>
             <label>סכום (₪)</label>
-            <input type="number" id="entryAmount" step="0.01" min="0" />
+            <input type="number" id="entryAmount" step="0.01" min="0" placeholder="לדוגמה: 1860" />
           </div>
         </div>
 
         <label>הערות</label>
-        <textarea id="entryNotes"></textarea>
+        <textarea id="entryNotes" placeholder="למשל: משלוח בשרים ראשון לחודש, מבצע 3+1"></textarea>
 
-        <button class="primary" type="submit">הוסף תנועה</button>
+        <button class="primary" type="submit">➕ הוסף תנועה</button>
       </form>
     </div>
 
-    <div class="card">
+    <div class="card-soft">
       <h3>תנועות בחודש</h3>
       <div class="row">
         <div>
@@ -572,8 +791,8 @@
   <section id="reconcile">
     <div class="card">
       <h2>התאמת סוף חודש · תעודות משלוח מול חשבוניות</h2>
-      <p style="font-size:0.82rem;color:#4b5563;">
-        לכל ספק: השוואה בין סכום כל תעודות המשלוח לבין סכום החשבוניות באותו חודש.
+      <p class="hint">
+        לכל ספק: השוואה בין סכום כל תעודות המשלוח לבין סכום החשבוניות באותו חודש, תוך התחשבות בטולרנס.
       </p>
       <table id="reconcileTable">
         <thead>
@@ -590,12 +809,12 @@
       </table>
     </div>
 
-    <div class="card">
+    <div class="card-soft">
       <h3>תעודות משלוח שלא הותאמו לחשבוניות</h3>
       <div id="unreconciledDeliveries" style="font-size:0.8rem;"></div>
     </div>
 
-    <div class="card">
+    <div class="card-soft">
       <h3>עוזר התאמה לפי ספק</h3>
       <label>בחר ספק</label>
       <select id="reconcileSupplierSelect" onchange="renderReconcileDetails(this.value)"></select>
@@ -609,12 +828,12 @@
       <h2>קטגוריית ספק חדשה</h2>
       <form onsubmit="addCategory(event)">
         <label>שם קטגוריה</label>
-        <input type="text" id="categoryName" />
-        <button class="primary" type="submit">הוסף קטגוריה</button>
+        <input type="text" id="categoryName" placeholder="לדוגמה: בשר ודגים / אלכוהול" />
+        <button class="primary" type="submit">➕ הוסף קטגוריה</button>
       </form>
     </div>
 
-    <div class="card">
+    <div class="card-soft">
       <h3>רשימת קטגוריות</h3>
       <table id="categoriesTable">
         <thead>
@@ -626,7 +845,7 @@
       </table>
     </div>
 
-    <div class="card">
+    <div class="card-soft">
       <h3>ספקים לפי קטגוריה</h3>
       <div id="categorySuppliersList" style="font-size:0.82rem;"></div>
     </div>
@@ -638,7 +857,7 @@
       <h2>ספק חדש / עריכה</h2>
       <form onsubmit="addSupplier(event)">
         <label>שם ספק</label>
-        <input type="text" id="supplierName" />
+        <input type="text" id="supplierName" placeholder="שם הספק" />
         <label>קטגוריה</label>
         <select id="supplierCategory"></select>
         <label>תבנית עבודה</label>
@@ -649,16 +868,16 @@
           <option value="fixed_monthly">חיוב קבוע חודשי</option>
         </select>
         <label>טלפון</label>
-        <input type="text" id="supplierPhone" />
+        <input type="text" id="supplierPhone" placeholder="טלפון איש קשר" />
         <label>אימייל</label>
-        <input type="email" id="supplierEmail" />
+        <input type="email" id="supplierEmail" placeholder="כתובת אימייל" />
         <label>הערות</label>
-        <textarea id="supplierNotes"></textarea>
-        <button class="primary" type="submit" id="supplierSubmitBtn">הוסף ספק</button>
+        <textarea id="supplierNotes" placeholder="שעות אספקה, תנאי תשלום, הערות מיוחדות"></textarea>
+        <button class="primary" type="submit" id="supplierSubmitBtn">➕ הוסף ספק</button>
       </form>
     </div>
 
-    <div class="card">
+    <div class="card-soft">
       <h3>רשימת ספקים</h3>
       <div class="row">
         <div>
@@ -695,7 +914,7 @@
 </main>
 
 <!-- כפתור צף לתנועה חדשה במובייל -->
-<button id="fabAddEntry" onclick="scrollToAddEntry()">+</button>
+<button id="fabAddEntry" onclick="scrollToAddEntry()"><span>+</span></button>
 
 <!-- Modal פרופיל ספק -->
 <div id="supplierModal" class="modal">
@@ -705,7 +924,7 @@
       <h3 id="supplierModalName">ספק</h3>
       <button class="modal-close" onclick="closeSupplierModal()">×</button>
     </div>
-    <div style="font-size:0.8rem;color:#4b5563;" id="supplierModalCategoryLine"></div>
+    <div style="font-size:0.8rem;color:#cbd5f5;" id="supplierModalCategoryLine"></div>
 
     <div class="modal-section-title">פרטי קשר</div>
     <ul class="modal-list" id="supplierModalContact"></ul>
@@ -927,7 +1146,7 @@
     renderReconcileSupplierSelect();
     renderDashboardCharts();
     setTodayDefaults();
-    // FAB הצגה ראשונית
+
     const fab = document.getElementById("fabAddEntry");
     if(fab){
       const isMobile = window.matchMedia && window.matchMedia("(max-width: 760px)").matches;
@@ -1019,7 +1238,7 @@
     const card = document.getElementById("addEntryCard");
     if(card){
       const rect = card.getBoundingClientRect();
-      const offset = rect.top + window.scrollY - 60;
+      const offset = rect.top + window.scrollY - 70;
       window.scrollTo({top:offset, behavior:"smooth"});
     }
   }
@@ -1188,7 +1407,7 @@
       state.suppliers[editingSupplierIndex] = supplier;
       state.suppliers.sort((a,b)=>a.name.localeCompare(b.name,"he"));
       editingSupplierIndex = null;
-      document.getElementById("supplierSubmitBtn").textContent = "הוסף ספק";
+      document.getElementById("supplierSubmitBtn").textContent = "➕ הוסף ספק";
       showToast("ספק עודכן");
     }else{
       state.suppliers.push(supplier);
@@ -1401,7 +1620,7 @@
     state.suppliers.splice(index,1);
     if(editingSupplierIndex === index){
       editingSupplierIndex = null;
-      document.getElementById("supplierSubmitBtn").textContent = "הוסף ספק";
+      document.getElementById("supplierSubmitBtn").textContent = "➕ הוסף ספק";
     }else if(editingSupplierIndex !== null && index < editingSupplierIndex){
       editingSupplierIndex -= 1;
     }
@@ -1759,19 +1978,18 @@
 
     const total = entries.reduce((acc, [,v])=>acc+v,0);
     const colors = [
-      "#2563eb","#f97316","#22c55e","#ec4899","#facc15",
-      "#06b6d4","#a855f7","#ef4444","#14b8a6","#4b5563",
-      "#0ea5e9","#6366f1","#e11d48","#16a34a"
+      "#38bdf8","#a855f7","#22c55e","#f97316","#facc15",
+      "#0ea5e9","#6366f1","#e11d48","#14b8a6","#64748b",
+      "#4ade80","#fb7185","#fbbf24","#22d3ee"
     ];
 
     let startAngle = -Math.PI/2;
     entries.forEach(([label,value],idx)=>{
       const sliceAngle = (value/total)*Math.PI*2;
       const color = colors[idx % colors.length];
-      // Slice
       ctx.beginPath();
       ctx.moveTo(canvas.width/2, canvas.height/2);
-      ctx.arc(canvas.width/2, canvas.height/2, Math.min(canvas.width,canvas.height)/2 - 10, startAngle, startAngle+sliceAngle);
+      ctx.arc(canvas.width/2, canvas.height/2, Math.min(canvas.width,canvas.height)/2 - 14, startAngle, startAngle+sliceAngle);
       ctx.closePath();
       ctx.fillStyle = color;
       ctx.fill();
@@ -1859,7 +2077,6 @@
       });
     }
 
-    // רשימת תעודות משלוח שלא הותאמו
     const unreconciledContainer = document.getElementById("unreconciledDeliveries");
     const unreconciled = deliveries.filter(d=>!d.reconciled);
     if(!unreconciled.length){
@@ -1937,7 +2154,7 @@
 
     html += `<div class="row">
       <div style="flex:1 1 300px;">
-        <h4 style="margin:0.3rem 0;">תעודות משלוח</h4>`;
+        <h4>תעודות משלוח</h4>`;
     if(!deliveries.length){
       html += `<div>אין תעודות משלוח לספק זה בחודש.</div>`;
     }else{
@@ -1960,7 +2177,7 @@
     }
     html += `</div>
       <div style="flex:1 1 300px;">
-        <h4 style="margin:0.3rem 0;">חשבוניות</h4>`;
+        <h4>חשבוניות</h4>`;
     if(!invoices.length){
       html += `<div>אין חשבוניות לספק זה בחודש.</div>`;
     }else{
