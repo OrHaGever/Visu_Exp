@@ -1,48 +1,46 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>דשבורד הוצאות ספקים - הצדף</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <title>הצדף – דשבורד ספקים ומסמכים</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- פונט Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js לגרפים -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     :root {
-      --bg1: #eef2ff;
-      --bg2: #f9fafb;
+      --primary: #2b6cb0;      /* כחול הצדף */
+      --primary-dark: #1e4e79;
+      --bg: #f5f7fa;
       --card-bg: #ffffff;
-      --border-subtle: #e2e8f0;
-      --border-strong: #cbd5f5;
-      --primary: #2563eb;
-      --primary-soft: #e0edff;
-      --accent: #10b981;
-      --danger: #ef4444;
-      --text-main: #0f172a;
+      --text: #111827;
       --text-muted: #6b7280;
-      --radius-lg: 16px;
+      --border: #d1d5db;
+      --shadow-soft: 0 8px 20px rgba(15, 23, 42, 0.08);
+
+      --success: #2f855a;
+      --danger: #c53030;
+      --warning: #dd6b20;
+      --credit: #2c7a7b;
+
+      --radius-lg: 14px;
       --radius-md: 10px;
-      --shadow-soft: 0 16px 36px rgba(15,23,42,0.08);
-      --shadow-subtle: 0 10px 24px rgba(15,23,42,0.06);
+      --radius-sm: 999px;
+
+      --transition-fast: 0.15s ease;
     }
 
-    body.dark-mode {
-      --bg1: #020617;
-      --bg2: #020617;
-      --card-bg: #0b1120;
-      --border-subtle: #1e293b;
-      --border-strong: #334155;
-      --primary: #60a5fa;
-      --primary-soft: #1e293b;
-      --accent: #22c55e;
-      --danger: #f97373;
-      --text-main: #e5e7eb;
+    body.dark {
+      --bg: #111827;
+      --card-bg: #1f2937;
+      --text: #e5e7eb;
       --text-muted: #9ca3af;
-      --shadow-soft: 0 16px 36px rgba(15,23,42,0.9);
-      --shadow-subtle: 0 10px 24px rgba(15,23,42,0.7);
+      --border: #374151;
+      --shadow-soft: 0 16px 32px rgba(0, 0, 0, 0.45);
     }
 
     * {
@@ -52,377 +50,402 @@
 
     html, body {
       margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
       max-width: 100%;
       overflow-x: hidden;
+      transition: background 0.2s ease, color 0.2s ease;
     }
 
-    body {
-      background:
-        radial-gradient(circle at top left, rgba(129,140,248,0.18) 0, transparent 55%),
-        radial-gradient(circle at top right, rgba(56,189,248,0.16) 0, transparent 55%),
-        linear-gradient(to bottom, var(--bg2), #edf2ff);
-      color: var(--text-main);
-    }
-
-    body.dark-mode {
-      background:
-        radial-gradient(circle at top left, rgba(37,99,235,0.26) 0, transparent 55%),
-        radial-gradient(circle at bottom right, rgba(16,185,129,0.16) 0, transparent 55%),
-        linear-gradient(to bottom, #020617, #020617);
-    }
-
-    header {
+    /* ===== NAVBAR ===== */
+    .navbar {
       position: sticky;
       top: 0;
-      z-index: 30;
-      background: radial-gradient(circle at top, #2563eb, #1d4ed8);
-      box-shadow: 0 14px 30px rgba(15,23,42,0.35);
-      color: #fff;
-    }
-
-    .header-inner {
-      max-width: 1024px;
-      margin: 0 auto;
-      padding: 0.7rem 1rem;
+      z-index: 40;
+      background: linear-gradient(90deg, #ffffff, #e5edf7);
+      border-bottom: 1px solid #cbd5e1;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+      padding: 10px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    .header-title {
-      font-weight: 600;
-      font-size: 1.1rem;
-      letter-spacing: 0.03em;
+    body.dark .navbar {
+      background: linear-gradient(90deg, #020617, #1f2937);
+      border-bottom-color: #1f2937;
     }
 
-    .header-actions {
+    .navbar-left {
       display: flex;
-      gap: 0.5rem;
       align-items: center;
+      gap: 10px;
+    }
+
+    .navbar-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #93c5fd, #1d4ed8);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.7);
+    }
+
+    .navbar-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    body.dark .navbar-title {
+      color: #bfdbfe;
+    }
+
+    .navbar-right {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 11px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(255,255,255,0.7);
+      color: #334155;
+      cursor: default;
+    }
+
+    body.dark .chip {
+      background: rgba(15, 23, 42, 0.85);
+      color: #e5e7eb;
+      border-color: #374151;
     }
 
     .chip-btn {
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.35);
-      background: rgba(15,23,42,0.2);
-      padding: 0.3rem 0.8rem;
-      font-size: 0.76rem;
-      color: #e5e7eb;
+      padding: 5px 10px;
+      font-size: 11px;
+      border: 1px solid rgba(37, 99, 235, 0.4);
+      background: #eff6ff;
+      color: #1d4ed8;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 0.3rem;
-      transition: background 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
+      gap: 4px;
+      transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
     }
 
     .chip-btn:hover {
-      background: rgba(15,23,42,0.35);
-      transform: translateY(-0.5px);
+      background: #dbeafe;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
     }
 
-    nav {
-      display: flex;
-      justify-content: center;
-      gap: 0.6rem;
-      background: rgba(226,232,240,0.92);
-      backdrop-filter: blur(10px);
-      padding: 0.55rem 0.8rem;
-      position: sticky;
-      top: 2.6rem;
-      z-index: 19;
-      border-bottom: 1px solid #d1ddf5;
-    }
-
-    body.dark-mode nav {
-      background: rgba(15,23,42,0.92);
-      border-bottom-color: #1e293b;
-    }
-
-    nav button {
-      border-radius: 999px;
-      border: 1px solid transparent;
-      background: rgba(255,255,255,0.7);
-      padding: 0.38rem 1.1rem;
-      font-size: 0.84rem;
-      font-weight: 500;
-      cursor: pointer;
-      color: #374151;
-      transition: background 0.14s ease, color 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease, transform 0.08s ease;
-    }
-
-    body.dark-mode nav button {
-      background: rgba(15,23,42,0.9);
-      color: #e5e7eb;
-      border-color: #1f2937;
-    }
-
-    nav button:hover {
-      background: #e0e7ff;
-      border-color: #c7d2fe;
-    }
-
-    body.dark-mode nav button:hover {
+    body.dark .chip-btn {
       background: #111827;
-      border-color: #4b5563;
+      border-color: #1d4ed8;
+      color: #bfdbfe;
     }
 
-    nav button.active {
-      background: #ffffff;
-      border-color: #2563eb;
-      color: #1d4ed8;
-      box-shadow: 0 8px 18px rgba(37,99,235,0.35);
+    /* ===== NAV TABS ===== */
+    .nav-tabs {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 6px 12px 8px;
+      background: rgba(241, 245, 249, 0.95);
+      border-bottom: 1px solid #cbd5e1;
+      position: sticky;
+      top: 58px;
+      z-index: 30;
+      backdrop-filter: blur(8px);
+    }
+
+    body.dark .nav-tabs {
+      background: rgba(15, 23, 42, 0.96);
+      border-bottom-color: #1f2937;
+    }
+
+    .nav-tab {
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 13px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.08s;
+      white-space: nowrap;
+    }
+
+    .nav-tab:hover {
+      border-color: rgba(148, 163, 184, 0.7);
+      background: rgba(255, 255, 255, 0.9);
       transform: translateY(-1px);
     }
 
-    body.dark-mode nav button.active {
+    body.dark .nav-tab:hover {
+      background: #111827;
+    }
+
+    .nav-tab.active {
+      background: #ffffff;
+      border-color: #2563eb;
+      color: #1d4ed8;
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.32);
+      transform: translateY(-1px);
+    }
+
+    body.dark .nav-tab.active {
       background: #1f2937;
       color: #bfdbfe;
       border-color: #60a5fa;
     }
 
-    main {
-      max-width: 1024px;
-      margin: 1.2rem auto 4.5rem;
-      padding: 0 0.9rem;
+    /* ===== CONTAINER & SCREENS ===== */
+    .container {
+      max-width: 1200px;
+      margin: 16px auto 40px;
+      padding: 0 14px;
     }
 
-    section { display: none; }
-    section.active { display: block; }
-
-    .card {
-      position: relative;
-      background: linear-gradient(135deg, var(--card-bg), #f9fbff);
-      border-radius: var(--radius-lg);
-      padding: 0.9rem 1.1rem;
-      margin-bottom: 0.9rem;
-      box-shadow: var(--shadow-subtle);
-      border: 1px solid rgba(199,210,254,0.8);
+    .screen {
+      display: none;
     }
 
-    body.dark-mode .card {
-      background: linear-gradient(135deg, #0b1120, #020617);
-      border-color: #1f2937;
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      inset-inline-start: 0;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      border-radius: 16px 0 0 16px;
-      background: linear-gradient(to bottom, rgba(37,99,235,0.75), rgba(59,130,246,0.1));
-    }
-
-    [dir="rtl"] .card::before {
-      inset-inline-start: auto;
-      inset-inline-end: 0;
-      border-radius: 0 16px 16px 0;
-    }
-
-    .card h3 {
-      margin: 0 0 0.5rem;
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-
-    .grid-3 {
-      display: grid;
-      gap: 0.8rem;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      margin-bottom: 0.8rem;
-    }
-
-    @media (max-width: 800px) {
-      .grid-3 { grid-template-columns: 1fr; }
-      nav { top: 2.9rem; }
-    }
-
-    .kpi-card {
-      background: radial-gradient(circle at top left, #e0f2fe, #eef2ff);
-      border-radius: 18px;
-      box-shadow: var(--shadow-soft);
-      border: 1px solid #dbe4ff;
-      padding: 0.8rem 0.9rem;
-    }
-
-    body.dark-mode .kpi-card {
-      background: radial-gradient(circle at top left, #020617, #020617);
-      border-color: #1f2937;
-    }
-
-    .kpi-label {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 0.25rem;
-    }
-
-    .kpi-value {
-      font-size: 1.35rem;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-
-    .row {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      flex-wrap: wrap;
-    }
-
-    .row.space-between {
-      justify-content: space-between;
-    }
-
-    label {
+    .screen.active {
       display: block;
-      font-size: 0.8rem;
-      margin: 0.45rem 0 0.2rem;
+    }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 16px 18px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .card-subtitle {
+      font-size: 12px;
       color: var(--text-muted);
+      margin-bottom: 10px;
     }
 
-    input, select, textarea {
+    /* ===== FORM ELEMENTS ===== */
+    .form-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .form-group {
+      flex: 1 1 140px;
+      min-width: 140px;
+      margin-bottom: 8px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="month"],
+    select,
+    textarea {
       width: 100%;
-      padding: 0.48rem 0.6rem;
       border-radius: 10px;
-      border: 1px solid var(--border-subtle);
-      font-size: 0.87rem;
-      background: #f9fafb;
-      color: var(--text-main);
-      transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease, transform 0.06s ease;
-    }
-
-    body.dark-mode input,
-    body.dark-mode select,
-    body.dark-mode textarea {
-      background: #0f172a;
-      border-color: #1f2937;
-      color: #e5e7eb;
-    }
-
-    input::placeholder, textarea::placeholder {
-      color: #9ca3af;
-    }
-
-    input:focus, textarea:focus, select:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
-      background: #ffffff;
-      transform: translateY(-0.5px);
-    }
-
-    body.dark-mode input:focus,
-    body.dark-mode textarea:focus,
-    body.dark-mode select:focus {
-      background: #020617;
-      box-shadow: 0 0 0 2px rgba(96,165,250,0.35);
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text);
+      padding: 7px 9px;
+      font-size: 13px;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
     }
 
     textarea {
       resize: vertical;
-      min-height: 52px;
+      min-height: 60px;
     }
 
-    button.primary {
-      margin-top: 0.55rem;
-      padding: 0.46rem 1.15rem;
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(43, 108, 176, 0.18);
+      background: #ffffff;
+    }
+
+    body.dark input:focus,
+    body.dark select:focus,
+    body.dark textarea:focus {
+      background: #020617;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn {
       border-radius: 999px;
       border: none;
-      font-size: 0.87rem;
+      padding: 7px 14px;
+      font-size: 13px;
       font-weight: 500;
       cursor: pointer;
-      background: linear-gradient(135deg, #2563eb, #1d9bf0);
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #1d4ed8);
       color: #ffffff;
-      box-shadow: 0 10px 24px rgba(37,99,235,0.35);
-      transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.12s ease;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
     }
 
-    button.primary:hover {
+    .btn-primary:hover {
       transform: translateY(-1px);
-      box-shadow: 0 14px 30px rgba(37,99,235,0.45);
-      filter: brightness(1.03);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.45);
     }
 
-    button.primary.small {
-      padding: 0.35rem 0.9rem;
-      font-size: 0.78rem;
-      box-shadow: 0 6px 14px rgba(15,23,42,0.14);
-      background: #ffffff;
-      color: #111827;
-      border: 1px solid #cbd5f5;
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--primary);
+      color: var(--primary);
     }
 
-    body.dark-mode button.primary.small {
-      background: #020617;
-      color: #e5e7eb;
-      border-color: #1f2937;
+    .btn-outline:hover {
+      background: rgba(37, 99, 235, 0.05);
     }
 
-    .btn-ghost {
-      border: none;
-      background: none;
-      color: #2563eb;
-      cursor: pointer;
-      font-size: 0.78rem;
-      text-decoration: underline;
-      padding: 0.1rem 0.2rem;
+    .btn-danger {
+      background: var(--danger);
+      color: #ffffff;
     }
 
-    body.dark-mode .btn-ghost {
-      color: #93c5fd;
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 11px;
     }
 
-    .btn-ghost:hover {
-      color: #1d4ed8;
+    /* ===== KPI CARDS ===== */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+      margin-bottom: 8px;
     }
 
-    body.dark-mode .btn-ghost:hover {
-      color: #bfdbfe;
+    .kpi-card {
+      border-radius: 12px;
+      padding: 10px 12px;
+      border: 1px solid #dbeafe;
+      background: radial-gradient(circle at top left, #eff6ff, #ffffff);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
     }
 
+    body.dark .kpi-card {
+      background: radial-gradient(circle at top left, #1f2937, #020617);
+      border-color: #1e40af;
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .kpi-value {
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .kpi-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      display: inline-block;
+      margin-top: 2px;
+      color: var(--text-muted);
+    }
+
+    /* ===== CHART GRID ===== */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.8fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .chart-card {
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      padding: 10px 12px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .chart-title {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .chart-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    canvas {
+      max-width: 100%;
+    }
+
+    /* ===== TABLES ===== */
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.8rem;
-      margin-top: 0.45rem;
+      font-size: 12px;
+      margin-top: 6px;
       border-radius: var(--radius-md);
       overflow: hidden;
-      background: #ffffff;
-    }
-
-    body.dark-mode table {
-      background: #0f172a;
+      background: var(--card-bg);
     }
 
     thead {
-      background: linear-gradient(135deg, #e5edff, #f3f4ff);
+      background: linear-gradient(to bottom, #eff6ff, #e5edf7);
     }
 
-    body.dark-mode thead {
+    body.dark thead {
       background: #111827;
     }
 
     th, td {
-      padding: 0.45rem 0.35rem;
-      border-bottom: 1px solid #e5e7eb;
+      padding: 6px 6px;
+      border-bottom: 1px solid var(--border);
       text-align: center;
-    }
-
-    body.dark-mode th, body.dark-mode td {
-      border-bottom-color: #1f2937;
-    }
-
-    th {
-      font-weight: 600;
-      color: #374151;
-      font-size: 0.78rem;
-    }
-
-    body.dark-mode th {
-      color: #e5e7eb;
     }
 
     tbody tr:nth-child(even) {
@@ -433,211 +456,117 @@
       background: #ffffff;
     }
 
-    body.dark-mode tbody tr:nth-child(even) {
+    body.dark tbody tr:nth-child(even) {
       background: #020617;
     }
-    body.dark-mode tbody tr:nth-child(odd) {
+
+    body.dark tbody tr:nth-child(odd) {
       background: #0b1120;
     }
 
     tbody tr:hover {
-      background: #e0f2fe;
+      background: #e0ecff;
     }
 
-    body.dark-mode tbody tr:hover {
+    body.dark tbody tr:hover {
       background: #1f2937;
     }
 
-    body.compact-tables th,
-    body.compact-tables td {
-      padding: 0.25rem 0.25rem;
-    }
-
-    .empty {
-      text-align: center;
-      color: #9ca3af;
-      padding: 0.7rem;
-    }
-
-    .pill {
+    .tag {
       display: inline-flex;
       align-items: center;
-      padding: 0.18rem 0.75rem;
+      justify-content: center;
+      padding: 2px 8px;
       border-radius: 999px;
-      font-size: 0.72rem;
-      background: var(--primary-soft);
-      color: #1d4ed8;
-      font-weight: 500;
-      border: 1px solid #bfdbfe;
+      font-size: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--text-muted);
     }
 
-    body.dark-mode .pill {
-      background: #020617;
-      color: #bfdbfe;
-      border-color: #1f2937;
-    }
-
-    .status-select {
-      padding: 0.22rem 0.55rem;
-      border-radius: 999px;
-      border-width: 1px;
-      font-size: 0.76rem;
-      min-width: 95px;
-    }
-    .status-paid {
-      background-color: #dcfce7;
+    .tag-success {
       border-color: #4ade80;
+      background: #dcfce7;
       color: #166534;
     }
-    .status-partial {
-      background-color: #fef9c3;
+
+    .tag-danger {
+      border-color: #fca5a5;
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .tag-warning {
       border-color: #facc15;
+      background: #fef9c3;
       color: #854d0e;
     }
-    .status-unpaid {
-      background-color: #fee2e2;
-      border-color: #f97373;
-      color: #b91c1c;
-    }
 
-    .amount-charge {
-      color: #b91c1c;
-      font-weight: 500;
-    }
-    .amount-credit {
+    .amount-pos {
       color: #16a34a;
-      font-weight: 500;
-    }
-    body.dark-mode .amount-charge {
-      color: #fca5a5;
-    }
-    body.dark-mode .amount-credit {
-      color: #6ee7b7;
+      font-weight: 600;
     }
 
-    #toast {
-      position: fixed;
-      inset-inline-start: 50%;
-      transform: translateX(-50%) translateY(-120%);
-      top: 3.6rem;
-      min-width: 220px;
-      max-width: 90%;
-      background: #111827;
-      color: #f9fafb;
-      padding: 0.55rem 0.9rem;
-      border-radius: 999px;
-      font-size: 0.8rem;
+    .amount-neg {
+      color: #b91c1c;
+      font-weight: 600;
+    }
+
+    /* ===== MOBILE CARDS FOR DOCUMENTS ===== */
+    .documents-table-wrapper {
+      display: block;
+    }
+
+    .documents-mobile-cards {
+      display: none;
+      margin-top: 8px;
+    }
+
+    .doc-card {
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      padding: 10px 12px;
+      box-shadow: var(--shadow-soft);
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+
+    .doc-card-header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-      box-shadow: 0 14px 30px rgba(15,23,42,0.7);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-      z-index: 40;
+      margin-bottom: 4px;
     }
 
-    #toast.show {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateX(-50%) translateY(0);
+    .doc-card-title {
+      font-weight: 600;
     }
 
-    #toast.success { background: #16a34a; }
-    #toast.error { background: #b91c1c; }
-
-    .fab {
-      position: fixed;
-      inset-inline-end: 1.2rem;
-      bottom: 1.6rem;
-      width: 52px;
-      height: 52px;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      background: radial-gradient(circle at top left, #2563eb, #1d4ed8);
-      color: #fff;
-      font-size: 1.6rem;
+    .doc-card-body-row {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 18px 40px rgba(15,23,42,0.4);
-      z-index: 35;
-      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 2px;
     }
 
-    .fab:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 22px 50px rgba(15,23,42,0.6);
+    .doc-card-label {
+      font-size: 11px;
+      color: var(--text-muted);
     }
 
-    body.dark-mode .fab {
-      background: radial-gradient(circle at top left, #60a5fa, #1d4ed8);
+    .doc-card-value {
+      font-size: 12px;
     }
 
-    @media (max-width: 600px) {
-      .fab {
-        inset-inline-end: 0.8rem;
-        bottom: 1.2rem;
-        width: 46px;
-        height: 46px;
-        font-size: 1.5rem;
-      }
-    }
-
-    @media (max-width: 750px) {
-      table.responsive {
-        border-radius: 0;
-        background: transparent;
-      }
-      table.responsive thead {
-        display: none;
-      }
-      table.responsive tbody {
-        display: block;
-      }
-      table.responsive tbody tr {
-        display: block;
-        margin-bottom: 0.8rem;
-        border-radius: 14px;
-        background: var(--card-bg);
-        box-shadow: var(--shadow-subtle);
-        overflow: hidden;
-      }
-      body.dark-mode table.responsive tbody tr {
-        box-shadow: 0 10px 24px rgba(15,23,42,0.9);
-      }
-      table.responsive tbody td {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.35rem 0.7rem;
-        border-bottom: 1px solid #e5e7eb;
-      }
-      body.dark-mode table.responsive tbody td {
-        border-bottom-color: #1f2937;
-      }
-      table.responsive tbody td:last-child {
-        border-bottom: none;
-      }
-      table.responsive tbody td::before {
-        content: attr(data-label);
-        font-weight: 600;
-        color: #6b7280;
-        font-size: 0.75rem;
-        margin-left: 0.5rem;
-      }
-    }
-
+    /* ===== MODALS ===== */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(15,23,42,0.55);
+      background: rgba(15, 23, 42, 0.65);
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 50;
+      z-index: 60;
     }
 
     .modal-backdrop.show {
@@ -646,1577 +575,1921 @@
 
     .modal {
       background: var(--card-bg);
-      border-radius: 16px;
-      padding: 1rem 1.1rem 0.9rem;
-      box-shadow: 0 18px 40px rgba(15,23,42,0.6);
-      border: 1px solid var(--border-subtle);
-      max-width: 360px;
-      width: 90%;
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+      max-width: 420px;
+      width: 92%;
+      border: 1px solid var(--border);
+      padding: 14px 16px;
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.4rem;
+      margin-bottom: 6px;
     }
 
-    .modal-header h4 {
-      margin: 0;
-      font-size: 0.95rem;
+    .modal-header-title {
+      font-size: 15px;
+      font-weight: 600;
     }
 
     .modal-close {
       border: none;
-      background: none;
+      background: transparent;
+      font-size: 16px;
       cursor: pointer;
-      font-size: 1rem;
       color: var(--text-muted);
     }
 
-    .filters-row {
+    .modal-footer {
       display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-top: 0.4rem;
-      margin-bottom: 0.3rem;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 8px;
     }
 
-    .filters-row > div {
-      flex: 1 1 140px;
+    /* ===== FLOATING BUTTON ===== */
+    .fab {
+      position: fixed;
+      bottom: 18px;
+      inset-inline-end: 16px;
+      width: 48px;
+      height: 48px;
+      border-radius: 999px;
+      border: none;
+      background: radial-gradient(circle at top left, #93c5fd, #1d4ed8);
+      color: #ffffff;
+      font-size: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.45);
+      transition: transform 0.12s ease, box-shadow 0.15s ease;
+      z-index: 50;
     }
 
-    .tag-muted {
-      font-size: 0.75rem;
-      color: var(--text-muted);
+    .fab:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 22px 48px rgba(15, 23, 42, 0.65);
+    }
+
+    /* ===== TOAST ===== */
+    #toast {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1f2937;
+      color: #f9fafb;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 70;
+    }
+
+    #toast.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(-4px);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .chart-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .documents-table-wrapper {
+        display: none;
+      }
+      .documents-mobile-cards {
+        display: block;
+      }
+      .nav-tabs {
+        overflow-x: auto;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .kpi-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .navbar-title {
+        font-size: 16px;
+      }
+      .navbar {
+        padding-inline: 10px;
+      }
     }
   </style>
 </head>
+
 <body>
+  <div id="toast"></div>
 
-<header>
-  <div class="header-inner">
-    <div class="header-title">דשבורד הוצאות ספקים - הצדף</div>
-    <div class="header-actions">
-      <button class="chip-btn" type="button" onclick="toggleCompactTables()">
-        תצוגה צפופה
-      </button>
-      <button class="chip-btn" type="button" onclick="toggleTheme()">
-        מצב לילה
-      </button>
+  <div class="navbar">
+    <div class="navbar-left">
+      <div class="navbar-logo"></div>
+      <div class="navbar-title">דשבורד ספקים – הצדף</div>
+    </div>
+    <div class="navbar-right">
+      <div class="chip" id="currentMonthChip"></div>
+      <button class="chip-btn" id="toggleDarkBtn">מצב לילה</button>
     </div>
   </div>
-</header>
 
-<nav>
-  <button class="active" onclick="switchTab('dashboard', this)">דשבורד</button>
-  <button onclick="switchTab('suppliers', this)">ספקים</button>
-  <button onclick="switchTab('categories', this)">קטגוריות ספקים</button>
-  <button onclick="switchTab('invoices', this)">חשבוניות</button>
-  <button onclick="switchTab('summary', this)">סיכומים</button>
-</nav>
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-screen="dashboard">דשבורד</button>
+    <button class="nav-tab" data-screen="documents">מסמכים</button>
+    <button class="nav-tab" data-screen="reports">דוחות</button>
+    <button class="nav-tab" data-screen="suppliers">ספקים</button>
+    <button class="nav-tab" data-screen="categories">קטגוריות</button>
+    <button class="nav-tab" data-screen="settings">הגדרות</button>
+  </div>
 
-<div id="toast"></div>
+  <div class="container">
+    <!-- ========== מסך דשבורד ========== -->
+    <div class="screen active" id="screen-dashboard">
+      <div class="card">
+        <div class="card-title">דשבורד חודשי</div>
+        <div class="card-subtitle">סקירה כללית על מסמכים, פערים ורווחיות בחודש הנבחר.</div>
 
-<main>
-
-  <!-- דשבורד -->
-  <section id="dashboard" class="active">
-    <div class="card">
-      <div class="row space-between">
-        <div>
-          <label>חודש פעיל</label>
-          <input type="month" id="monthInput" onchange="changeMonth(this.value)">
+        <div class="form-row">
+          <div class="form-group" style="max-width: 180px;">
+            <label>חודש</label>
+            <input type="month" id="monthInput" />
+          </div>
+          <div class="form-group" style="max-width: 200px;">
+            <label>מחזור (הכנסות)</label>
+            <input type="number" id="incomeInput" step="0.01" min="0" placeholder="לדוגמה 180000" />
+          </div>
         </div>
-        <div>
-          <label>מחזור (הכנסות)</label>
-          <input type="number" id="incomeInput" step="0.01" min="0"
-                 oninput="updateIncome(this.value)" placeholder="לדוגמה 180000">
+
+        <div class="kpi-grid" id="dashboardKpiGrid">
+          <!-- ימולא דינאמית -->
+        </div>
+
+        <div class="chart-grid">
+          <div class="chart-card">
+            <div class="chart-title">חלוקה כללית – משלוחים, חשבוניות ופער</div>
+            <div class="chart-subtitle">סכומים נטו לחודש הנבחר</div>
+            <canvas id="pieDocuments"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">פערים לפי ספק</div>
+            <div class="chart-subtitle">משלוחים מול חשבוניות (כולל זיכויים) לכל ספק</div>
+            <canvas id="barSuppliers"></canvas>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="grid-3">
-      <div class="kpi-card">
-        <div class="kpi-label">סה״כ הוצאות נטו</div>
-        <div class="kpi-value" id="totalExpenses"><span class="amount-charge">0 ₪</span></div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">הכנסות (מחזור)</div>
-        <div class="kpi-value" id="totalIncome">0 ₪</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">רווח נקי</div>
-        <div class="kpi-value" id="netProfit">0 ₪</div>
+    <!-- ========== מסך מסמכים ========== -->
+    <div class="screen" id="screen-documents">
+      <div class="card">
+        <div class="card-title">ניהול מסמכים</div>
+        <div class="card-subtitle">חשבוניות, תעודות משלוח וזיכויים – לפי חודשים, ספקים וקטגוריות.</div>
+
+        <div class="form-row">
+          <div class="form-group" style="max-width: 140px;">
+            <label>סוג מסמך</label>
+            <select id="filterDocType">
+              <option value="">הכל</option>
+              <option value="invoice">חשבוניות</option>
+              <option value="delivery">תעודות משלוח</option>
+              <option value="credit">זיכויים</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>ספק</label>
+            <select id="filterDocSupplier"></select>
+          </div>
+          <div class="form-group">
+            <label>קטגוריה</label>
+            <select id="filterDocCategory"></select>
+          </div>
+          <div class="form-group">
+            <label>חיפוש חופשי</label>
+            <input type="text" id="filterDocSearch" placeholder="מס׳ מסמך, הערות, ספק..." />
+          </div>
+        </div>
+
+        <!-- טבלה לדסקטופ -->
+        <div class="documents-table-wrapper" id="documentsTableWrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>סוג</th>
+                <th>ספק</th>
+                <th>קטגוריה</th>
+                <th>מס׳ מסמך</th>
+                <th>תאריך</th>
+                <th>סכום</th>
+                <th>סטטוס</th>
+                <th>הערות</th>
+                <th>פעולות</th>
+              </tr>
+            </thead>
+            <tbody id="documentsTableBody"></tbody>
+          </table>
+        </div>
+
+        <!-- כרטיסים למובייל -->
+        <div class="documents-mobile-cards" id="documentsCards"></div>
       </div>
     </div>
 
-    <div class="grid-3">
-      <div class="kpi-card">
-        <div class="kpi-label">חשבוניות לא משולמות</div>
-        <div class="kpi-value" id="unpaidTotal"><span class="amount-charge">0 ₪</span></div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">סה״כ זיכויים</div>
-        <div class="kpi-value" id="creditsTotal"><span class="amount-credit">0 ₪</span></div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">סה״כ חשבוניות בחודש</div>
-        <div class="kpi-value" id="invoiceCount">0</div>
-      </div>
-    </div>
+    <!-- ========== מסך דוחות ========== -->
+    <div class="screen" id="screen-reports">
+      <div class="card">
+        <div class="card-title">דוחות וניתוח פערים</div>
+        <div class="card-subtitle">
+          ניתוח הפרשים בין תעודות משלוח וחשבוניות, לפי ספקים וקטגוריות, כולל זיכויים.
+        </div>
 
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;">
-        <strong>הוצאות לפי ספק (נטו)</strong>
-        <div class="row" style="gap:0.4rem;">
-          <span class="pill">חודש נוכחי בלבד</span>
-          <button type="button" class="primary small" onclick="toggleDashboardSuppliersView()"
-                  id="dashboardSuppliersToggleBtn">
-            הצג טופ 5 בלבד
-          </button>
+        <div class="kpi-grid" id="reportsKpiGrid"></div>
+
+        <div class="chart-grid" style="margin-top:10px;">
+          <div class="chart-card">
+            <div class="chart-title">פערים לפי ספק</div>
+            <div class="chart-subtitle">סיכום משלוחים, חשבוניות, זיכויים ונטו לכל ספק</div>
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>ספק</th>
+                  <th>משלוחים</th>
+                  <th>חשבוניות</th>
+                  <th>זיכויים</th>
+                  <th>נטו</th>
+                </tr>
+              </thead>
+              <tbody id="reportSuppliersBody"></tbody>
+            </table>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">פערים לפי קטגוריה</div>
+            <div class="chart-subtitle">סיכום לפי קטגוריות הספקים</div>
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>קטגוריה</th>
+                  <th>משלוחים</th>
+                  <th>חשבוניות</th>
+                  <th>זיכויים</th>
+                  <th>נטו</th>
+                </tr>
+              </thead>
+              <tbody id="reportCategoriesBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="chart-card" style="margin-top:12px;">
+          <div class="chart-title">מסמכים חריגים</div>
+          <div class="chart-subtitle">
+            משלוחים ללא חשבונית, חשבוניות ללא משלוח, ופערים מעל סף מוגדר.
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>סוג</th>
+                <th>ספק</th>
+                <th>מס׳ מסמך</th>
+                <th>תאריך</th>
+                <th>סכום</th>
+                <th>סוג חריגה</th>
+              </tr>
+            </thead>
+            <tbody id="reportAnomaliesBody"></tbody>
+          </table>
         </div>
       </div>
-      <table id="dashboardSuppliersTable" class="responsive">
-        <thead>
-          <tr><th>#</th><th>ספק</th><th>נטו</th></tr>
-        </thead>
-        <tbody>
-          <tr><td colspan="3" class="empty">אין נתונים</td></tr>
-        </tbody>
-      </table>
     </div>
-  </section>
 
-  <!-- ספקים -->
-  <section id="suppliers">
-    <div class="card">
-      <form onsubmit="addOrUpdateSupplier(event)">
-        <h3>ספק חדש / עריכה</h3>
+    <!-- ========== מסך ספקים ========== -->
+    <div class="screen" id="screen-suppliers">
+      <div class="card">
+        <div class="card-title">ספקים</div>
+        <div class="card-subtitle">רשימת ספקים, פרטי קשר ושיוך לקטגוריות.</div>
 
-        <label>שם ספק</label>
-        <input
-          type="text"
-          id="supplierName"
-          placeholder="למשל: החברה המרכזית"
-          list="supplierNameList">
-        <datalist id="supplierNameList"></datalist>
-
-        <label>קטגוריה</label>
-        <select id="supplierCategorySelect"></select>
-
-        <label>טלפון</label>
-        <input type="text" id="supplierPhone" placeholder="לדוגמה: 050-1234567">
-
-        <label>אימייל</label>
-        <input type="email" id="supplierEmail" placeholder="supplier@example.com">
-
-        <label>הערות על ספק</label>
-        <textarea id="supplierNotes" rows="2" placeholder="שעות אספקה, איש קשר, תנאי תשלום וכו׳"></textarea>
-
-        <div class="row">
-          <button class="primary" type="submit" id="supplierBtn">הוסף ספק</button>
-          <button class="primary small" type="button" id="cancelSupplierEdit"
-                  style="display:none;" onclick="cancelSupplierEditMode()">בטל עריכה</button>
+        <div class="form-row">
+          <div class="form-group">
+            <label>חיפוש ספק</label>
+            <input type="text" id="supplierSearchInput" placeholder="חיפוש לפי שם" />
+          </div>
+          <div class="form-group" style="max-width: 180px;">
+            <label>סינון לפי קטגוריה</label>
+            <select id="supplierFilterCategory"></select>
+          </div>
         </div>
-      </form>
-    </div>
 
-    <div class="card">
-      <div class="row space-between" style="margin-bottom:0.2rem;">
-        <strong>רשימת ספקים (ממוינים א׳–ת׳)</strong>
-        <button class="primary small" type="button" onclick="toggleSuppliersEditMode()" id="suppliersEditBtn">
-          מצב עריכה: כבוי
-        </button>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>שם</th>
+              <th>קטגוריה</th>
+              <th>טלפון</th>
+              <th>אימייל</th>
+              <th>הערות</th>
+              <th>פעולות</th>
+            </tr>
+          </thead>
+          <tbody id="suppliersTableBody"></tbody>
+        </table>
       </div>
+    </div>
 
-      <div class="filters-row">
-        <div>
-          <label>חיפוש ספק</label>
-          <input type="text" id="supplierSearchInput" placeholder="חיפוש לפי שם"
-                 oninput="setSupplierSearch(this.value)">
+    <!-- ========== מסך קטגוריות ========== -->
+    <div class="screen" id="screen-categories">
+      <div class="card">
+        <div class="card-title">קטגוריות ספקים</div>
+        <div class="card-subtitle">קבוצות עבודה למזון, שתייה, תחזוקה, שיווק ועוד.</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>קטגוריה חדשה</label>
+            <input type="text" id="newCategoryInput" placeholder="למשל: מזון, תחזוקה" />
+          </div>
+          <div class="form-group" style="align-self:flex-end;max-width:150px;">
+            <button class="btn btn-primary btn-sm" id="addCategoryBtn">הוסף קטגוריה</button>
+          </div>
         </div>
-        <div>
-          <label>סינון לפי קטגוריה</label>
-          <select id="supplierFilterCategory" onchange="setSupplierCategoryFilter(this.value)">
-            <option value="כל">כל הקטגוריות</option>
+
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>קטגוריה</th>
+              <th>פעולות</th>
+            </tr>
+          </thead>
+          <tbody id="categoriesTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========== מסך הגדרות ========== -->
+    <div class="screen" id="screen-settings">
+      <div class="card">
+        <div class="card-title">הגדרות ונתונים</div>
+        <div class="card-subtitle">ייצוא/ייבוא נתונים, מצב תצוגה ועוד.</div>
+
+        <div class="form-group">
+          <label>ייצוא JSON (כל המערכת)</label>
+          <button class="btn btn-primary btn-sm" id="exportJsonBtn">ייצוא JSON</button>
+        </div>
+
+        <div class="form-group">
+          <label>ייצוא CSV (מסמכי החודש הנוכחי)</label>
+          <button class="btn btn-primary btn-sm" id="exportCsvBtn">ייצוא CSV</button>
+        </div>
+
+        <div class="form-group">
+          <label>ייבוא נתונים (JSON/CSV)</label>
+          <input type="file" id="importFileInput" />
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">
+            תומך גם בקבצי JSON/CSV מהגרסה הנוכחית וגם בקבצי חודש ישנים עם invoices.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>מצב לילה</label>
+          <button class="btn btn-outline btn-sm" id="settingsToggleDarkBtn">החלף מצב</button>
+        </div>
+
+        <div class="form-group">
+          <label>תצוגה צפופה בטבלאות</label>
+          <button class="btn btn-outline btn-sm" id="toggleCompactBtn">החלף</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODALS ===== -->
+  <div class="modal-backdrop" id="documentModalBackdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-header-title" id="documentModalTitle">מסמך חדש</div>
+        <button class="modal-close" id="closeDocumentModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>סוג מסמך</label>
+          <select id="docType" >
+            <option value="invoice">חשבונית</option>
+            <option value="delivery">תעודת משלוח</option>
+            <option value="credit">זיכוי</option>
           </select>
         </div>
-      </div>
-
-      <table id="suppliersTable" class="responsive">
-        <thead>
-          <tr>
-            <th>#</th><th>שם</th><th>קטגוריה</th>
-            <th>טלפון</th><th>אימייל</th><th>הערות</th><th>פעולות</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- קטגוריות ספקים -->
-  <section id="categories">
-    <div class="card">
-      <div class="row space-between" style="margin-bottom:0.4rem;">
-        <h3>קטגוריות ספקים</h3>
-        <button class="primary small" type="button" onclick="toggleCategoriesEditMode()" id="categoriesEditBtn">
-          מצב עריכה: כבוי
-        </button>
-      </div>
-
-      <form onsubmit="addCategory(event)" class="row">
-        <div style="flex:1 1 220px;">
-          <label>קטגוריה חדשה</label>
-          <input type="text" id="categoryNameInput" placeholder="למשל: מזון, תחזוקה, שיווק">
+        <div class="form-group">
+          <label>ספק</label>
+          <input type="text" id="docSupplier" list="docSupplierList" />
+          <datalist id="docSupplierList"></datalist>
         </div>
-        <div>
-          <button class="primary" type="submit" style="margin-top:1.55rem;">הוסף קטגוריה</button>
-        </div>
-      </form>
-
-      <table id="categoriesTable" class="responsive">
-        <thead>
-          <tr>
-            <th>#</th><th>שם קטגוריה</th><th>פעולות</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <div class="tag-muted" style="margin-top:0.35rem;">
-        מחיקת קטגוריה תעביר את הספקים שלה לקטגוריה „לא משויך”.
-      </div>
-    </div>
-  </section>
-
-  <!-- חשבוניות -->
-  <section id="invoices">
-    <div class="card">
-      <form onsubmit="addInvoice(event)">
-        <h3>הוספת חשבונית</h3>
-
-        <label>ספק</label>
-        <div class="row">
-          <input list="supplierList" id="invoiceSupplier" placeholder="התחל להקליד שם ספק" style="flex:1 1 auto;">
-          <button type="button" class="primary small" onclick="openQuickSupplierModal()">
-            + ספק חדש
-          </button>
-        </div>
-        <datalist id="supplierList"></datalist>
-
-        <label>מספר חשבונית</label>
-        <input type="text" id="invoiceNumber">
-
-        <label>תאריך חשבונית</label>
-        <input type="date" id="invoiceDate">
-
-        <label>סכום (₪)</label>
-        <input type="number" id="invoiceAmount" step="0.01" min="0">
-
-        <label>סטטוס תשלום</label>
-        <select id="invoiceStatus">
-          <option value="שולם" selected>שולם</option>
-          <option value="לא שולם">לא שולם</option>
-          <option value="חלקי">שולם חלקית</option>
-        </select>
-
-        <label>סוג חשבונית</label>
-        <select id="invoiceType">
-          <option value="קבוע">קבוע</option>
-          <option value="חד פעמי">חד פעמי</option>
-        </select>
-
-        <label>הערות</label>
-        <textarea id="invoiceNotes" rows="2"></textarea>
-
-        <label title="חשבונית זיכוי מחושבת כהוצאה שלילית ומפחיתה את סך ההוצאות">
-          <input type="checkbox" id="invoiceCredit">
-          זיכוי?
-        </label>
-
-        <button class="primary" type="submit">הוסף חשבונית</button>
-      </form>
-    </div>
-
-    <div class="card">
-      <div class="row space-between" style="margin-bottom:0.25rem;">
-        <strong>כל החשבוניות בחודש</strong>
-        <button class="primary small" type="button" onclick="toggleInvoicesEditMode()" id="invoicesEditBtn">
-          מצב עריכה: כבוי
-        </button>
-      </div>
-
-      <div class="grid-3" style="margin-bottom:0.4rem;">
-        <div class="kpi-card">
-          <div class="kpi-label">סה״כ חשבוניות</div>
-          <div class="kpi-value" id="invStatCount">0</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">שולם (סה״כ)</div>
-          <div class="kpi-value" id="invStatPaid"><span class="amount-charge">0 ₪</span></div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">לא שולם + חלקי</div>
-          <div class="kpi-value" id="invStatUnpaid"><span class="amount-charge">0 ₪</span></div>
-        </div>
-      </div>
-
-      <div class="filters-row">
-        <div>
-          <label>חיפוש חופשי</label>
-          <input type="text" id="invoiceSearchInput"
-                 placeholder="חיפוש לפי ספק, מס׳ חשבונית, הערות..."
-                 oninput="setInvoiceSearch(this.value)">
-        </div>
-        <div>
-          <label>סטטוס</label>
-          <select id="invoiceStatusFilter" onchange="setInvoiceStatusFilter(this.value)">
-            <option value="הכל">הכל</option>
-            <option value="שולם">שולם</option>
-            <option value="לא שולם">לא שולם</option>
-            <option value="חלקי">שולם חלקית</option>
-          </select>
-        </div>
-        <div>
-          <label>סוג</label>
-          <select id="invoiceTypeFilter" onchange="setInvoiceTypeFilter(this.value)">
-            <option value="הכל">הכל</option>
-            <option value="קבוע">קבוע</option>
-            <option value="חד פעמי">חד פעמי</option>
-          </select>
-        </div>
-        <div>
-          <label>זיכוי</label>
-          <select id="invoiceCreditFilter" onchange="setInvoiceCreditFilter(this.value)">
-            <option value="הכל">הכל</option>
-            <option value="זיכוי">רק זיכויים</option>
-            <option value="לא_זיכוי">ללא זיכויים</option>
-          </select>
-        </div>
-        <div>
+        <div class="form-group">
           <label>קטגוריה (לפי ספק)</label>
-          <select id="invoiceCategoryFilter" onchange="setInvoiceCategoryFilter(this.value)">
-            <option value="הכל">הכל</option>
+          <select id="docCategory"></select>
+        </div>
+        <div class="form-group">
+          <label>מס׳ מסמך / מזהה</label>
+          <input type="text" id="docRef" />
+        </div>
+        <div class="form-group">
+          <label>תאריך</label>
+          <input type="date" id="docDate" />
+        </div>
+        <div class="form-group">
+          <label>סכום (₪)</label>
+          <input type="number" id="docAmount" step="0.01" min="0" />
+        </div>
+        <div class="form-group">
+          <label>סטטוס תשלום</label>
+          <select id="docStatus">
+            <option value="paid">שולם</option>
+            <option value="unpaid">לא שולם</option>
+            <option value="partial">שולם חלקית</option>
           </select>
         </div>
-      </div>
-
-      <table id="invoicesTable" class="responsive">
-        <thead>
-          <tr>
-            <th>#</th><th>ספק</th><th>קטגוריה</th><th>מס׳</th><th>תאריך</th>
-            <th>סכום</th><th>סטטוס</th><th>זיכוי</th><th>הערות</th><th>מחיקה</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <div class="tag-muted" style="margin-top:0.35rem;">
-        מחיקה זמינה רק במצב עריכה. שינוי סטטוס אפשרי תמיד.
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="row" style="align-items:flex-end;">
-        <div>
-          <button class="primary small" type="button" onclick="exportMonthJSON()">ייצוא JSON</button>
-          <button class="primary small" type="button" onclick="exportMonthCSV()">ייצוא CSV</button>
-          <button class="primary small" type="button" onclick="undoDelete()">בטל מחיקה אחרונה</button>
-        </div>
-        <div style="flex:1 1 220px;">
-          <label style="margin-bottom:0.15rem;">ייבוא חודש מ־JSON/CSV</label>
-          <input type="file" id="importMonthFileInput" accept=".json,.csv"
-                 onchange="if(this.files[0]) importMonthFile(this.files[0]); this.value='';">
+        <div class="form-group">
+          <label>הערות</label>
+          <textarea id="docNotes" rows="2"></textarea>
         </div>
       </div>
-      <small style="font-size:0.7rem;color:var(--text-muted);">
-        הקובץ צריך להיות קובץ שיוצא מהאפליקציה (JSON/CSV של חודש) – הנתונים יחליפו את החשבוניות של החודש הפעיל.
-      </small>
-    </div>
-  </section>
-
-  <!-- סיכומים -->
-  <section id="summary">
-    <div class="card">
-      <strong>סיכום לפי ספק</strong>
-      <table id="summarySuppliers">
-        <thead>
-          <tr>
-            <th>#</th><th>ספק</th><th>חיובים</th><th>זיכויים</th><th>נטו</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-
-    <div class="card">
-      <strong>סיכום לפי קטגוריה</strong>
-      <table id="summaryCategories">
-        <thead>
-          <tr>
-            <th>#</th><th>קטגוריה</th><th>חיובים</th><th>זיכויים</th><th>נטו</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </section>
-
-</main>
-
-<!-- Modal להוספת ספק מהירה מתוך חשבונית -->
-<div class="modal-backdrop" id="quickSupplierModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h4>ספק חדש (מהיר)</h4>
-      <button type="button" class="modal-close" onclick="closeQuickSupplierModal()">✕</button>
-    </div>
-    <label>שם ספק</label>
-    <input type="text" id="quickSupplierName" placeholder="לדוגמה: ספק חדש">
-
-    <label>קטגוריה</label>
-    <select id="quickSupplierCategory"></select>
-
-    <div class="row" style="margin-top:0.6rem;justify-content:flex-end;">
-      <button class="primary small" type="button" onclick="submitQuickSupplier()">שמור ספק</button>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm" id="deleteDocumentBtn" style="display:none;">מחק</button>
+        <button class="btn btn-primary btn-sm" id="saveDocumentBtn">שמור</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- כפתור צף להוספת חשבונית -->
-<button class="fab" type="button" onclick="quickAddInvoice()">＋</button>
+  <div class="modal-backdrop" id="supplierModalBackdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-header-title" id="supplierModalTitle">ספק חדש</div>
+        <button class="modal-close" id="closeSupplierModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>שם ספק</label>
+          <input type="text" id="supplierNameInputModal" list="supplierNameListModal" />
+          <datalist id="supplierNameListModal"></datalist>
+        </div>
+        <div class="form-group">
+          <label>קטגוריה</label>
+          <select id="supplierCategoryModal"></select>
+        </div>
+        <div class="form-group">
+          <label>טלפון</label>
+          <input type="text" id="supplierPhoneModal" />
+        </div>
+        <div class="form-group">
+          <label>אימייל</label>
+          <input type="email" id="supplierEmailModal" />
+        </div>
+        <div class="form-group">
+          <label>הערות</label>
+          <textarea id="supplierNotesModal" rows="2"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm" id="deleteSupplierBtn" style="display:none;">מחק</button>
+        <button class="btn btn-primary btn-sm" id="saveSupplierModalBtn">שמור</button>
+      </div>
+    </div>
+  </div>
 
-<script>
-/* ───────────── מבנה נתונים ───────────── */
+  <!-- FAB להוספת מסמך -->
+  <button class="fab" id="fabAddDoc">＋</button>
 
-var STORAGE_KEY = "restaurant_dashboard_v3";
+  <script>
+    /* ===== CONSTANTS & STATE ===== */
+    const NEW_STORAGE_KEY = "hatza_def_ledger_v2";
+    const OLD_STORAGE_KEY = "restaurant_dashboard_v3";
+    const THEME_KEY = "hatza_def_theme";
+    const COMPACT_KEY = "hatza_def_compact";
 
-var state = {
-  categories: [],
-  suppliers: [],
-  months: {},
-  currentMonth: "",
-  lastDeleted: null
-};
+    let state = {
+      categories: [],
+      suppliers: [],
+      months: {},   // { "YYYY-MM": { income:number, documents:[...] } }
+      currentMonth: "",
+      lastDeleted: null  // { type: 'document'|'supplier'|'category', payload... }
+    };
 
-/* מצבי מסך / סינונים */
-var showAllDashboardSuppliers = true;
-var suppliersEditMode = false;
-var invoicesEditMode = false;
-var categoriesEditMode = false;
+    let editingDocumentId = null;
+    let editingSupplierId = null;
 
-var supplierSearchTerm = "";
-var supplierCategoryFilter = "כל";
+    // Charts
+    let pieChart = null;
+    let barChart = null;
 
-var invoiceSearchTerm = "";
-var invoiceStatusFilter = "הכל";
-var invoiceTypeFilter = "הכל";
-var invoiceCreditFilter = "הכל";
-var invoiceCategoryFilter = "הכל";
-
-/* ───────────── Toast ───────────── */
-
-var toastTimeout = null;
-function showToast(msg, type) {
-  var el = document.getElementById("toast");
-  el.textContent = msg;
-  el.className = "";
-  el.classList.add("show");
-  if (type) el.classList.add(type);
-  if (toastTimeout) clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(function() {
-    el.classList.remove("show");
-  }, 2600);
-}
-
-/* ───────────── פורמט מספרים עם פסיקים ───────────── */
-
-function formatCurrency(num) {
-  var n = Number(num) || 0;
-  return n.toLocaleString('he-IL', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }) + " ₪";
-}
-
-/* ───────────── שמירה / טעינה ───────────── */
-
-function saveState() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch (e) {
-    console.error("Save failed", e);
-  }
-}
-
-function loadState() {
-  try {
-    var raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return false;
-    var data = JSON.parse(raw);
-    if (!data) return false;
-    state = data;
-    return true;
-  } catch (e) {
-    console.error("Load failed", e);
-    return false;
-  }
-}
-
-/* ───────────── נתוני ברירת מחדל ───────────── */
-
-function getDefaultCategories() {
-  return [
-    "מזון",
-    "שתייה",
-    "אלכוהול",
-    "קינוחים",
-    "קפה",
-    "חד פעמי",
-    "ניקיון",
-    "תחזוקה",
-    "שיווק ופרסום",
-    "עבודה / כוח אדם",
-    "ארנונה ומסים",
-    "תקשורת ואינטרנט",
-    "חשמל / מים / גז",
-    "ציוד בר ומטבח",
-    "שירותים חיצוניים",
-    "לא משויך"
-  ];
-}
-
-function getDefaultSuppliers() {
-  let names = [
-    'חשבוניות','מדחסקור אוניברסל','ג׳אקו שירות למטבחים','יוסי סימן טוב','י.שבי','צ.י.שיווק',
-    'קנקון','לוילן סחר ומוצרים חקלאיים בע״מ','עואודה לשיווק בע״מ','מדג סי פרוט בע״מ',
-    'אהרון שיווק','שיווק שלי א.א בע״מ','אקיפ החברה לציוד מלונאי בע״מ','דאלאס מוצרי נייר בע״מ',
-    'חברת חשמל','א.א.ר שירותי ביוב','תמי 4','בזק','היכל היין','החברה המרכזית','סוקליק',
-    'ביסקוטי','אייס דרים','ג.מ טעם הארץ בע״מ','יזמקו חברה בע״מ','אסטרטג טכנולוגיות בע״מ',
-    'אביב אש מערכות בע״מ','מניב ראשון','אודי בכור שיווק דגים בע״מ','לירי כוח אדם בע״מ',
-    'מש-נט בע״מ','זאפ גרופ בע״מ','שיא ״10״ בע״מ','קורקידי יעקב שיווק והפצה בסיטונאות',
-    'מקס עסקים','וינטר מכשירי גז בעמ','מפעל הפרסום','וולט','אלירן פרחים','פרסום תבור בעצ',
-    'אינפיניה מחזור','ייצוגית פלוס תעשיות בעמ','משלוחה','ביימי טכנולוגיות','ישראכרט',
-    'סוגת','אייפרקטיקום','אמישרגז','מאירוביץ שלי','לה פסטה דלה קזה בעמ','ארנונה ראשון לציון'
-  ];
-
-  return names.map(n => ({
-    name: n,
-    category: "לא משויך",
-    phone: "",
-    email: "",
-    notes: ""
-  }));
-}
-
-/* ───────────── אתחול ───────────── */
-
-function sortCategories() {
-  state.categories.sort((a, b) => a.localeCompare(b, "he"));
-}
-
-function sortSuppliers() {
-  state.suppliers.sort((a, b) => a.name.localeCompare(b.name, "he"));
-}
-
-function setTodayAsDefaultInvoiceDate() {
-  var d = new Date();
-  var mm = String(d.getMonth() + 1).padStart(2, "0");
-  var dd = String(d.getDate()).padStart(2, "0");
-  var el = document.getElementById("invoiceDate");
-  if (el) el.value = d.getFullYear() + "-" + mm + "-" + dd;
-}
-
-function init() {
-  var loaded = loadState();
-
-  if (!loaded) {
-    state.categories = getDefaultCategories();
-    state.suppliers = getDefaultSuppliers();
-    var now = new Date();
-    var mm = String(now.getMonth() + 1).padStart(2, "0");
-    var m = now.getFullYear() + "-" + mm;
-    state.currentMonth = m;
-    state.months[m] = { income: 0, invoices: [] };
-    saveState();
-  } else {
-    if (!state.categories || !Array.isArray(state.categories)) {
-      state.categories = getDefaultCategories();
+    /* ===== UTILITIES ===== */
+    function showToast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      setTimeout(() => el.classList.remove("show"), 2200);
     }
-    if (!state.suppliers) {
-      state.suppliers = getDefaultSuppliers();
+
+    function formatCurrency(n) {
+      const num = Number(n) || 0;
+      return num.toLocaleString("he-IL", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }) + " ₪";
     }
-    if (!state.months) {
-      state.months = {};
+
+    function todayYMD() {
+      const d = new Date();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return d.getFullYear() + "-" + m + "-" + day;
     }
-    if (!state.currentMonth || !state.months[state.currentMonth]) {
-      var now2 = new Date();
-      var mm2 = String(now2.getMonth() + 1).padStart(2, "0");
-      var m2 = now2.getFullYear() + "-" + mm2;
-      state.currentMonth = m2;
-      if (!state.months[m2]) {
-        state.months[m2] = { income: 0, invoices: [] };
+
+    function currentYM() {
+      const d = new Date();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      return d.getFullYear() + "-" + m;
+    }
+
+    function generateId(prefix) {
+      return prefix + "_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+    }
+
+    /* ===== STORAGE ===== */
+    function saveState() {
+      try {
+        localStorage.setItem(NEW_STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        console.error("Save failed", e);
+        showToast("שגיאה בשמירת הנתונים (localStorage)");
       }
     }
-  }
 
-  sortCategories();
-  sortSuppliers();
-
-  document.getElementById("monthInput").value = state.currentMonth;
-  document.getElementById("incomeInput").value =
-    state.months[state.currentMonth].income || "";
-
-  renderCategoriesTable();
-  renderCategorySelect();
-  renderSuppliersTable();
-  renderSupplierSelect();
-  renderSupplierNameDatalist();
-  renderInvoicesTable();
-  updateDashboard();
-  renderAllSummaries();
-  setTodayAsDefaultInvoiceDate();
-  renderSupplierFilterCategoryOptions();
-  renderQuickSupplierCategory();
-  renderInvoiceCategoryFilterOptions();
-}
-
-document.addEventListener("DOMContentLoaded", init);
-
-/* ───────────── ניווט ───────────── */
-
-function switchTab(id, btn) {
-  document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-
-  document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-
-  if (id === "dashboard") updateDashboard();
-  if (id === "summary") renderAllSummaries();
-}
-
-/* ───────────── Theme + צפיפות ───────────── */
-
-function toggleTheme() {
-  document.body.classList.toggle("dark-mode");
-}
-
-function toggleCompactTables() {
-  document.body.classList.toggle("compact-tables");
-}
-
-/* ───────────── חודשים ───────────── */
-
-function changeMonth(val) {
-  if (!val) return;
-  state.currentMonth = val;
-  if (!state.months[val]) {
-    state.months[val] = { income: 0, invoices: [] };
-  }
-  document.getElementById("incomeInput").value =
-    state.months[val].income || "";
-  renderInvoicesTable();
-  updateDashboard();
-  renderAllSummaries();
-  saveState();
-}
-
-function updateIncome(val) {
-  var n = parseFloat(val) || 0;
-  state.months[state.currentMonth].income = n;
-  updateDashboard();
-  saveState();
-}
-
-/* ───────────── קטגוריות ───────────── */
-
-function addCategory(e) {
-  e.preventDefault();
-  var name = categoryNameInput.value.trim();
-  if (!name) {
-    showToast("שם קטגוריה לא יכול להיות ריק", "error");
-    return;
-  }
-
-  if (!state.categories.includes(name)) {
-    state.categories.push(name);
-    sortCategories();
-  } else {
-    showToast("קטגוריה זו כבר קיימת", "error");
-  }
-
-  categoryNameInput.value = "";
-  renderCategoriesTable();
-  renderCategorySelect();
-  renderSupplierFilterCategoryOptions();
-  renderQuickSupplierCategory();
-  renderInvoiceCategoryFilterOptions();
-  saveState();
-}
-
-function renderCategoriesTable() {
-  var tbody = document.querySelector("#categoriesTable tbody");
-  tbody.innerHTML = "";
-
-  if (!state.categories || state.categories.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="3" class="empty">אין קטגוריות</td></tr>`;
-    return;
-  }
-
-  state.categories.forEach((cat, i) => {
-    tbody.innerHTML += `
-      <tr>
-        <td data-label="#">${i+1}</td>
-        <td data-label="קטגוריה">${cat}</td>
-        <td data-label="פעולות">
-          ${categoriesEditMode
-            ? `<button class="btn-ghost" onclick="deleteCategory(${i})">מחק</button>`
-            : ``}
-        </td>
-      </tr>
-    `;
-  });
-}
-
-function toggleCategoriesEditMode() {
-  categoriesEditMode = !categoriesEditMode;
-  document.getElementById("categoriesEditBtn").textContent =
-    "מצב עריכה: " + (categoriesEditMode ? "פועל" : "כבוי");
-  renderCategoriesTable();
-}
-
-function deleteCategory(index) {
-  if (!categoriesEditMode) return;
-  var catName = state.categories[index];
-
-  if (!state.categories.includes("לא משויך")) {
-    state.categories.push("לא משויך");
-  }
-
-  state.suppliers.forEach(s => {
-    if (s.category === catName) s.category = "לא משויך";
-  });
-
-  state.categories.splice(index, 1);
-  sortCategories();
-
-  renderCategoriesTable();
-  renderSuppliersTable();
-  renderCategorySelect();
-  renderSupplierFilterCategoryOptions();
-  renderQuickSupplierCategory();
-  renderInvoiceCategoryFilterOptions();
-  renderAllSummaries();
-  saveState();
-  showToast("קטגוריה נמחקה. ספקים הועברו ל„לא משויך”.", "success");
-}
-
-function renderCategorySelect() {
-  var sel = document.getElementById("supplierCategorySelect");
-  sel.innerHTML = "";
-  if (!state.categories || state.categories.length === 0) return;
-
-  state.categories.forEach(cat => {
-    var opt = document.createElement("option");
-    opt.value = cat;
-    opt.textContent = cat;
-    sel.appendChild(opt);
-  });
-}
-
-function renderSupplierFilterCategoryOptions() {
-  var sel = document.getElementById("supplierFilterCategory");
-  if (!sel) return;
-  sel.innerHTML = `<option value="כל">כל הקטגוריות</option>`;
-  state.categories.forEach(cat => {
-    var opt = document.createElement("option");
-    opt.value = cat;
-    opt.textContent = cat;
-    sel.appendChild(opt);
-  });
-}
-
-/* ───────────── ספקים ───────────── */
-
-var editingSupplierIndex = null;
-
-function addOrUpdateSupplier(e) {
-  e.preventDefault();
-
-  var name = supplierName.value.trim();
-  if (!name) {
-    showToast("חובה למלא שם ספק", "error");
-    return;
-  }
-
-  var catSel = supplierCategorySelect.value || "לא משויך";
-
-  var s = {
-    name: name,
-    category: catSel,
-    phone: supplierPhone.value.trim(),
-    email: supplierEmail.value.trim(),
-    notes: supplierNotes.value.trim()
-  };
-
-  if (editingSupplierIndex === null) {
-    state.suppliers.push(s);
-    showToast("ספק נוסף בהצלחה", "success");
-  } else {
-    state.suppliers[editingSupplierIndex] = s;
-    editingSupplierIndex = null;
-    cancelSupplierEdit.style.display = "none";
-    supplierBtn.textContent = "הוסף ספק";
-    showToast("ספק עודכן בהצלחה", "success");
-  }
-
-  sortSuppliers();
-  clearSupplierForm();
-  renderSuppliersTable();
-  renderSupplierSelect();
-  renderSupplierNameDatalist();
-  renderInvoiceCategoryFilterOptions();
-  updateDashboard();
-  renderAllSummaries();
-  saveState();
-}
-
-function clearSupplierForm() {
-  supplierName.value = "";
-  supplierPhone.value = "";
-  supplierEmail.value = "";
-  supplierNotes.value = "";
-  if (state.categories.length > 0) {
-    supplierCategorySelect.value = state.categories[0];
-  }
-}
-
-function cancelSupplierEditMode() {
-  editingSupplierIndex = null;
-  cancelSupplierEdit.style.display = "none";
-  supplierBtn.textContent = "הוסף ספק";
-  clearSupplierForm();
-}
-
-function startEditSupplier(i) {
-  var s = state.suppliers[i];
-  editingSupplierIndex = i;
-
-  supplierName.value = s.name;
-  supplierPhone.value = s.phone;
-  supplierEmail.value = s.email;
-  supplierNotes.value = s.notes || "";
-
-  if (state.categories.includes(s.category)) {
-    supplierCategorySelect.value = s.category;
-  } else if (state.categories.length > 0) {
-    supplierCategorySelect.value = state.categories[0];
-  }
-
-  supplierBtn.textContent = "עדכון ספק";
-  cancelSupplierEdit.style.display = "inline-block";
-}
-
-function deleteSupplier(i) {
-  if (!suppliersEditMode) return;
-  state.lastDeleted = { type: "supplier", data: state.suppliers[i], index: i };
-  state.suppliers.splice(i, 1);
-  sortSuppliers();
-  renderSuppliersTable();
-  renderSupplierSelect();
-  renderSupplierNameDatalist();
-  renderInvoiceCategoryFilterOptions();
-  updateDashboard();
-  renderAllSummaries();
-  saveState();
-  showToast("ספק נמחק (ניתן לבטל מחיקה)", "success");
-}
-
-function renderSuppliersTable() {
-  var tbody = document.querySelector("#suppliersTable tbody");
-  tbody.innerHTML = "";
-
-  if (!state.suppliers || state.suppliers.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" class="empty">אין ספקים</td></tr>`;
-    return;
-  }
-
-  var filtered = state.suppliers.filter(s => {
-    var matchName = !supplierSearchTerm ||
-      s.name.toLowerCase().includes(supplierSearchTerm.toLowerCase());
-    var matchCat = (supplierCategoryFilter === "כל") ||
-       s.category === supplierCategoryFilter;
-    return matchName && matchCat;
-  });
-
-  if (filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" class="empty">לא נמצאו ספקים לפי הסינון</td></tr>`;
-    return;
-  }
-
-  filtered.forEach((s, idx) => {
-    var i = state.suppliers.indexOf(s);
-    tbody.innerHTML += `
-      <tr>
-        <td data-label="#">${idx+1}</td>
-        <td data-label="שם">${s.name}</td>
-        <td data-label="קטגוריה">${s.category}</td>
-        <td data-label="טלפון">${s.phone}</td>
-        <td data-label="אימייל">${s.email}</td>
-        <td data-label="הערות">${s.notes || ""}</td>
-        <td data-label="פעולות">
-          <button class="btn-ghost" onclick="startEditSupplier(${i})">ערוך</button>
-          ${suppliersEditMode
-            ? `<button class="btn-ghost" onclick="deleteSupplier(${i})">מחק</button>`
-            : ``}
-        </td>
-      </tr>
-    `;
-  });
-}
-
-function renderSupplierSelect() {
-  var dl = document.getElementById("supplierList");
-  dl.innerHTML = "";
-  state.suppliers.forEach(s => {
-    dl.innerHTML += `<option value="${s.name}">`;
-  });
-}
-
-function renderSupplierNameDatalist() {
-  var dl = document.getElementById("supplierNameList");
-  if (!dl) return;
-  dl.innerHTML = "";
-  state.suppliers.forEach(s => {
-    var opt = document.createElement("option");
-    opt.value = s.name;
-    dl.appendChild(opt);
-  });
-}
-
-/* חיפוש / סינון ספקים */
-function setSupplierSearch(v) {
-  supplierSearchTerm = v || "";
-  renderSuppliersTable();
-}
-
-function setSupplierCategoryFilter(v) {
-  supplierCategoryFilter = v;
-  renderSuppliersTable();
-}
-
-function toggleSuppliersEditMode() {
-  suppliersEditMode = !suppliersEditMode;
-  document.getElementById("suppliersEditBtn").textContent =
-    "מצב עריכה: " + (suppliersEditMode ? "פועל" : "כבוי");
-  renderSuppliersTable();
-}
-
-/* ───────────── ספק מהיר מתוך חשבונית ───────────── */
-
-function openQuickSupplierModal() {
-  document.getElementById("quickSupplierName").value = invoiceSupplier.value || "";
-  renderQuickSupplierCategory();
-  document.getElementById("quickSupplierModal").classList.add("show");
-}
-
-function closeQuickSupplierModal() {
-  document.getElementById("quickSupplierModal").classList.remove("show");
-}
-
-function renderQuickSupplierCategory() {
-  var sel = document.getElementById("quickSupplierCategory");
-  if (!sel) return;
-  sel.innerHTML = "";
-  state.categories.forEach(cat => {
-    var opt = document.createElement("option");
-    opt.value = cat;
-    opt.textContent = cat;
-    sel.appendChild(opt);
-  });
-}
-
-function submitQuickSupplier() {
-  var name = quickSupplierName.value.trim();
-  if (!name) {
-    showToast("חובה למלא שם ספק", "error");
-    return;
-  }
-  var cat = quickSupplierCategory.value || "לא משויך";
-  var s = {
-    name: name,
-    category: cat,
-    phone: "",
-    email: "",
-    notes: ""
-  };
-  state.suppliers.push(s);
-  sortSuppliers();
-  renderSuppliersTable();
-  renderSupplierSelect();
-  renderSupplierNameDatalist();
-  renderInvoiceCategoryFilterOptions();
-  saveState();
-  invoiceSupplier.value = name;
-  closeQuickSupplierModal();
-  showToast("ספק נוסף ונבחר לחשבונית", "success");
-}
-
-/* ───────────── חשבוניות ───────────── */
-
-function addInvoice(e) {
-  e.preventDefault();
-
-  var supplier = invoiceSupplier.value.trim();
-  var number = invoiceNumber.value.trim();
-  var amount = parseFloat(invoiceAmount.value);
-
-  if (!supplier || !number || isNaN(amount)) {
-    showToast("חובה למלא ספק, מספר חשבונית וסכום", "error");
-    return;
-  }
-
-  var list = state.months[state.currentMonth].invoices || [];
-
-  var inv = {
-    supplier: supplier,
-    number: number,
-    date: invoiceDate.value || "",
-    amount: amount,
-    status: invoiceStatus.value || "שולם",
-    type: invoiceType.value || "חד פעמי",
-    notes: invoiceNotes.value.trim(),
-    isCredit: invoiceCredit.checked
-  };
-
-  list.push(inv);
-  state.months[state.currentMonth].invoices = list;
-
-  invoiceSupplier.value = "";
-  invoiceNumber.value = "";
-  invoiceAmount.value = "";
-  invoiceNotes.value = "";
-  invoiceCredit.checked = false;
-  invoiceStatus.value = "שולם";
-  setTodayAsDefaultInvoiceDate();
-
-  renderInvoicesTable();
-  updateDashboard();
-  renderAllSummaries();
-  saveState();
-  showToast("חשבונית נוספה", "success");
-}
-
-function deleteInvoice(i) {
-  if (!invoicesEditMode) return;
-  var list = state.months[state.currentMonth].invoices;
-  state.lastDeleted = { type: "invoice", data: list[i], index: i };
-  list.splice(i, 1);
-  renderInvoicesTable();
-  updateDashboard();
-  renderAllSummaries();
-  saveState();
-  showToast("חשבונית נמחקה (ניתן לבטל מחיקה)", "success");
-}
-
-function changeInvoiceStatus(index, newStatus) {
-  var list = state.months[state.currentMonth].invoices;
-  if (!list[index]) return;
-  list[index].status = newStatus;
-  renderInvoicesTable();
-  updateDashboard();
-  renderAllSummaries();
-  saveState();
-}
-
-/* Undo מחיקה */
-function undoDelete() {
-  if (!state.lastDeleted) {
-    showToast("אין מחיקה אחרונה לביטול", "error");
-    return;
-  }
-  var d = state.lastDeleted;
-
-  if (d.type === "supplier") {
-    state.suppliers.splice(d.index, 0, d.data);
-    sortSuppliers();
-    renderSuppliersTable();
-    renderSupplierSelect();
-    renderSupplierNameDatalist();
-    renderInvoiceCategoryFilterOptions();
-    updateDashboard();
-    renderAllSummaries();
-  }
-
-  if (d.type === "invoice") {
-    state.months[state.currentMonth].invoices.splice(d.index, 0, d.data);
-    renderInvoicesTable();
-    updateDashboard();
-    renderAllSummaries();
-  }
-
-  state.lastDeleted = null;
-  saveState();
-  showToast("המחיקה האחרונה בוטלה", "success");
-}
-
-/* חיפוש / סינון חשבוניות */
-
-function setInvoiceSearch(v) {
-  invoiceSearchTerm = v || "";
-  renderInvoicesTable();
-}
-function setInvoiceStatusFilter(v) {
-  invoiceStatusFilter = v;
-  renderInvoicesTable();
-}
-function setInvoiceTypeFilter(v) {
-  invoiceTypeFilter = v;
-  renderInvoicesTable();
-}
-function setInvoiceCreditFilter(v) {
-  invoiceCreditFilter = v;
-  renderInvoicesTable();
-}
-function setInvoiceCategoryFilter(v) {
-  invoiceCategoryFilter = v;
-  renderInvoicesTable();
-}
-
-function toggleInvoicesEditMode() {
-  invoicesEditMode = !invoicesEditMode;
-  document.getElementById("invoicesEditBtn").textContent =
-    "מצב עריכה: " + (invoicesEditMode ? "פועל" : "כבוי");
-  renderInvoicesTable();
-}
-
-function getSupplierByName(name) {
-  return state.suppliers.find(s => s.name === name);
-}
-
-function renderInvoicesTable() {
-  var tbody = document.querySelector("#invoicesTable tbody");
-  tbody.innerHTML = "";
-
-  var invs = state.months[state.currentMonth].invoices || [];
-  if (invs.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="10" class="empty">אין חשבוניות</td></tr>`;
-    updateInvoiceStats();
-    return;
-  }
-
-  var filtered = invs.filter(inv => {
-    var matchSearch = true;
-    if (invoiceSearchTerm) {
-      var t = (inv.supplier + " " + inv.number + " " + (inv.notes || "")).toLowerCase();
-      matchSearch = t.includes(invoiceSearchTerm.toLowerCase());
+    function migrateOldState(oldState) {
+      const newState = {
+        categories: Array.isArray(oldState.categories) ? [...oldState.categories] : [],
+        suppliers: [],
+        months: {},
+        currentMonth: currentYM(),
+        lastDeleted: null
+      };
+
+      if (!newState.categories.includes("לא משויך")) {
+        newState.categories.push("לא משויך");
+      }
+
+      // suppliers
+      const supplierMap = {};
+      if (Array.isArray(oldState.suppliers)) {
+        oldState.suppliers.forEach(s => {
+          const id = generateId("sup");
+          supplierMap[s.name] = id;
+          newState.suppliers.push({
+            id,
+            name: s.name,
+            category: s.category || "לא משויך",
+            phone: s.phone || "",
+            email: s.email || "",
+            notes: s.notes || ""
+          });
+        });
+      }
+
+      // months & invoices -> documents
+      if (oldState.months && typeof oldState.months === "object") {
+        Object.keys(oldState.months).forEach(monthKey => {
+          const oldMonth = oldState.months[monthKey] || {};
+          const newMonth = {
+            income: Number(oldMonth.income) || 0,
+            documents: []
+          };
+          const invs = oldMonth.invoices || [];
+          invs.forEach(inv => {
+            const docId = generateId("doc");
+            const statusMap = {
+              "שולם": "paid",
+              "לא שולם": "unpaid",
+              "חלקי": "partial"
+            };
+            let type = "invoice";
+            if (inv.isCredit) type = "credit";
+
+            const supplierName = inv.supplier || "";
+            const supplierId = supplierMap[supplierName] || null;
+            const supplierObj = newState.suppliers.find(s => s.id === supplierId);
+            const category = supplierObj ? supplierObj.category : "לא משויך";
+
+            newMonth.documents.push({
+              id: docId,
+              type,
+              supplierId,
+              supplierName,
+              category,
+              ref: inv.number || "",
+              date: inv.date || "",
+              amount: Number(inv.amount) || 0,
+              status: statusMap[inv.status] || "paid",
+              notes: inv.notes || ""
+            });
+          });
+          newState.months[monthKey] = newMonth;
+        });
+      }
+
+      newState.currentMonth = oldState.currentMonth || currentYM();
+      if (!newState.months[newState.currentMonth]) {
+        newState.months[newState.currentMonth] = { income: 0, documents: [] };
+      }
+
+      return newState;
     }
-    var matchStatus = (invoiceStatusFilter === "הכל") || inv.status === invoiceStatusFilter;
-    var matchType = (invoiceTypeFilter === "הכל") || inv.type === invoiceTypeFilter;
-    var matchCredit = true;
-    if (invoiceCreditFilter === "זיכוי") matchCredit = !!inv.isCredit;
-    if (invoiceCreditFilter === "לא_זיכוי") matchCredit = !inv.isCredit;
 
-    var s = getSupplierByName(inv.supplier);
-    var cat = (s && s.category) ? s.category : "לא משויך";
-    var matchCat = (invoiceCategoryFilter === "הכל") || (cat === invoiceCategoryFilter);
-
-    return matchSearch && matchStatus && matchType && matchCredit && matchCat;
-  });
-
-  if (filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="10" class="empty">לא נמצאו חשבוניות לפי הסינון</td></tr>`;
-    updateInvoiceStats();
-    return;
-  }
-
-  filtered.forEach((inv, idx) => {
-    var i = invs.indexOf(inv);
-    var cls = "status-select ";
-    if (inv.status === "שולם") cls += "status-paid";
-    else if (inv.status === "חלקי") cls += "status-partial";
-    else cls += "status-unpaid";
-
-    var s = getSupplierByName(inv.supplier);
-    var cat = (s && s.category) ? s.category : "לא משויך";
-
-    tbody.innerHTML += `
-      <tr>
-        <td data-label="#">${idx+1}</td>
-        <td data-label="ספק">${inv.supplier}</td>
-        <td data-label="קטגוריה">${cat}</td>
-        <td data-label="מס׳">${inv.number}</td>
-        <td data-label="תאריך">${inv.date}</td>
-        <td data-label="סכום">${formatCurrency(inv.amount)}</td>
-        <td data-label="סטטוס">
-          <select class="${cls}" onchange="changeInvoiceStatus(${i}, this.value)">
-            <option value="שולם" ${inv.status === "שולם" ? "selected" : ""}>שולם</option>
-            <option value="לא שולם" ${inv.status === "לא שולם" ? "selected" : ""}>לא שולם</option>
-            <option value="חלקי" ${inv.status === "חלקי" ? "selected" : ""}>שולם חלקית</option>
-          </select>
-        </td>
-        <td data-label="זיכוי">
-          ${inv.isCredit ? '<span class="amount-credit">זיכוי</span>' : ''}
-        </td>
-        <td data-label="הערות">${inv.notes || ""}</td>
-        <td data-label="מחיקה">
-          ${invoicesEditMode
-            ? `<button class="btn-ghost" onclick="deleteInvoice(${i})">מחק</button>`
-            : ``}
-        </td>
-      </tr>
-    `;
-  });
-
-  updateInvoiceStats();
-}
-
-/* סטטיסטיקות חשבוניות */
-
-function updateInvoiceStats() {
-  var invs = state.months[state.currentMonth].invoices || [];
-  var count = invs.length;
-  var paidSum = 0;
-  var unpaidSum = 0;
-
-  invs.forEach(inv => {
-    var net = (inv.isCredit ? -inv.amount : inv.amount);
-    if (inv.status === "שולם") {
-      paidSum += net;
-    } else {
-      unpaidSum += net;
-    }
-  });
-
-  document.getElementById("invStatCount").textContent = count;
-  document.getElementById("invStatPaid").innerHTML =
-    `<span class="amount-charge">${formatCurrency(paidSum)}</span>`;
-  document.getElementById("invStatUnpaid").innerHTML =
-    `<span class="amount-charge">${formatCurrency(unpaidSum)}</span>`;
-}
-
-/* ───────────── דשבורד ───────────── */
-
-function updateDashboard() {
-  var month = state.months[state.currentMonth];
-  var invs = month.invoices || [];
-
-  var totalNet = 0;
-  var unpaidTotal = 0;
-  var creditsTotal = 0;
-
-  invs.forEach(inv => {
-    var net = inv.isCredit ? -inv.amount : inv.amount;
-    totalNet += net;
-    if (inv.status !== "שולם") unpaidTotal += net;
-    if (inv.isCredit) creditsTotal += inv.amount;
-  });
-
-  document.getElementById("totalExpenses").innerHTML =
-    `<span class="amount-charge">${formatCurrency(totalNet)}</span>`;
-  document.getElementById("totalIncome").textContent =
-    formatCurrency(month.income || 0);
-
-  var netProfit = (month.income || 0) - totalNet;
-  var npElem = document.getElementById("netProfit");
-  npElem.innerHTML = formatCurrency(netProfit);
-  if (netProfit >= 0) {
-    npElem.classList.add("amount-credit");
-    npElem.classList.remove("amount-charge");
-  } else {
-    npElem.classList.add("amount-charge");
-    npElem.classList.remove("amount-credit");
-  }
-
-  document.getElementById("unpaidTotal").innerHTML =
-    `<span class="amount-charge">${formatCurrency(unpaidTotal)}</span>`;
-  document.getElementById("creditsTotal").innerHTML =
-    `<span class="amount-credit">${formatCurrency(-creditsTotal)}</span>`;
-  document.getElementById("invoiceCount").textContent =
-    invs.length;
-
-  renderDashboardSuppliers();
-}
-
-function renderDashboardSuppliers() {
-  var tbody = document.querySelector("#dashboardSuppliersTable tbody");
-  tbody.innerHTML = "";
-
-  var totals = {};
-  var invs = state.months[state.currentMonth].invoices || [];
-
-  invs.forEach(inv => {
-    if (!totals[inv.supplier]) totals[inv.supplier] = 0;
-    totals[inv.supplier] += inv.isCredit ? -inv.amount : inv.amount;
-  });
-
-  var names = Object.keys(totals);
-  if (names.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="3" class="empty">אין נתונים</td></tr>`;
-    return;
-  }
-
-  names.sort((a,b) => totals[b] - totals[a]);
-
-  var listToShow = names;
-  if (!showAllDashboardSuppliers && names.length > 5) {
-    listToShow = names.slice(0,5);
-  }
-
-  listToShow.forEach((name, i) => {
-    var val = totals[name];
-    tbody.innerHTML += `
-      <tr>
-        <td data-label="#">${i+1}</td>
-        <td data-label="ספק">${name}</td>
-        <td data-label="נטו">
-          ${val >= 0
-            ? `<span class="amount-charge">${formatCurrency(val)}</span>`
-            : `<span class="amount-credit">${formatCurrency(val)}</span>`}
-        </td>
-      </tr>
-    `;
-  });
-}
-
-function toggleDashboardSuppliersView() {
-  showAllDashboardSuppliers = !showAllDashboardSuppliers;
-  document.getElementById("dashboardSuppliersToggleBtn").textContent =
-    showAllDashboardSuppliers ? "הצג טופ 5 בלבד" : "הצג את כל הספקים";
-  renderDashboardSuppliers();
-}
-
-/* ───────────── סיכומים ───────────── */
-
-function renderAllSummaries() {
-  renderSummarySuppliers();
-  renderSummaryCategories();
-}
-
-function renderSummarySuppliers() {
-  var tbody = document.querySelector("#summarySuppliers tbody");
-  tbody.innerHTML = "";
-
-  var map = {};
-  var invs = state.months[state.currentMonth].invoices || [];
-
-  invs.forEach(inv => {
-    var name = inv.supplier;
-    if (!map[name]) map[name] = { charge:0, credit:0 };
-    if (inv.isCredit) map[name].credit += inv.amount;
-    else map[name].charge += inv.amount;
-  });
-
-  var names = Object.keys(map);
-  if (names.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" class="empty">אין נתונים</td></tr>`;
-    return;
-  }
-
-  names.sort((a,b) => (map[b].charge - map[b].credit) - (map[a].charge - map[a].credit));
-
-  names.forEach((name, i) => {
-    var m = map[name];
-    var net = m.charge - m.credit;
-    tbody.innerHTML += `
-      <tr>
-        <td>${i+1}</td>
-        <td>${name}</td>
-        <td class="amount-charge">${formatCurrency(m.charge)}</td>
-        <td class="amount-credit">${formatCurrency(m.credit)}</td>
-        <td ${net >= 0 ? 'class="amount-charge"' : 'class="amount-credit"'}>
-          ${formatCurrency(net)}
-        </td>
-      </tr>
-    `;
-  });
-}
-
-function renderSummaryCategories() {
-  var tbody = document.querySelector("#summaryCategories tbody");
-  tbody.innerHTML = "";
-
-  var map = {};
-  var invs = state.months[state.currentMonth].invoices || [];
-
-  invs.forEach(inv => {
-    var s = getSupplierByName(inv.supplier);
-    var cat = (s && s.category) ? s.category : "לא משויך";
-
-    if (!map[cat]) map[cat] = { charge:0, credit:0 };
-    if (inv.isCredit) map[cat].credit += inv.amount;
-    else map[cat].charge += inv.amount;
-  });
-
-  var cats = Object.keys(map);
-  if (cats.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" class="empty">אין נתונים</td></tr>`;
-    return;
-  }
-
-  cats.sort((a,b) => (map[b].charge - map[b].credit) - (map[a].charge - map[a].credit));
-
-  cats.forEach((cat, i) => {
-    var m = map[cat];
-    var net = m.charge - m.credit;
-    tbody.innerHTML += `
-      <tr>
-        <td>${i+1}</td>
-        <td>${cat}</td>
-        <td class="amount-charge">${formatCurrency(m.charge)}</td>
-        <td class="amount-credit">${formatCurrency(m.credit)}</td>
-        <td ${net >= 0 ? 'class="amount-charge"' : 'class="amount-credit"'}>
-          ${formatCurrency(net)}
-        </td>
-      </tr>
-    `;
-  });
-}
-
-/* ───────────── ייצוא / ייבוא ───────────── */
-
-function exportMonthJSON() {
-  var data = state.months[state.currentMonth];
-  var blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-  var a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "month_" + state.currentMonth + ".json";
-  a.click();
-}
-
-function exportMonthCSV() {
-  var invs = state.months[state.currentMonth].invoices || [];
-  var csv = "supplier,number,date,amount,status,type,notes,isCredit\n";
-
-  invs.forEach(inv => {
-    csv += [
-      inv.supplier,
-      inv.number,
-      inv.date,
-      inv.amount,
-      inv.status,
-      inv.type,
-      (inv.notes || "").replace(/,/g, ";"),
-      inv.isCredit ? "yes" : "no"
-    ].join(",") + "\n";
-  });
-
-  var blob = new Blob([csv], { type: "text/csv" });
-  var a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "invoices_" + state.currentMonth + ".csv";
-  a.click();
-}
-
-function importMonthFile(file) {
-  if (!file) return;
-
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var text = e.target.result;
-
-    if (file.name.toLowerCase().endsWith(".json")) {
+    function loadState() {
       try {
-        var obj = JSON.parse(text);
-        if (!obj || !Array.isArray(obj.invoices)) {
-          showToast("קובץ JSON לא בפורמט הצפוי (חייב לכלול invoices)", "error");
+        const rawNew = localStorage.getItem(NEW_STORAGE_KEY);
+        if (rawNew) {
+          state = JSON.parse(rawNew);
           return;
         }
-        var income = typeof obj.income === "number" ? obj.income : state.months[state.currentMonth].income || 0;
-        state.months[state.currentMonth] = {
-          income: income,
-          invoices: obj.invoices.map(normalizeInvoiceFromImport)
-        };
-      } catch (err) {
-        console.error(err);
-        showToast("שגיאה בקריאת קובץ JSON", "error");
-        return;
-      }
-    } else if (file.name.toLowerCase().endsWith(".csv")) {
-      var lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-      if (lines.length <= 1) {
-        showToast("קובץ CSV ריק או ללא נתונים", "error");
-        return;
-      }
-      var invoices = [];
-      for (var i = 1; i < lines.length; i++) {
-        var line = lines[i];
-        if (!line.trim()) continue;
-        var cols = line.split(",");
-        var inv = {
-          supplier: cols[0] || "",
-          number: cols[1] || "",
-          date: cols[2] || "",
-          amount: parseFloat(cols[3]) || 0,
-          status: cols[4] || "שולם",
-          type: cols[5] || "חד פעמי",
-          notes: cols[6] ? cols[6].replace(/;/g, ",") : "",
-          isCredit: (cols[7] || "").trim().toLowerCase() === "yes"
-        };
-        if (inv.supplier && inv.number) {
-          invoices.push(inv);
+        const rawOld = localStorage.getItem(OLD_STORAGE_KEY);
+        if (rawOld) {
+          const old = JSON.parse(rawOld);
+          state = migrateOldState(old);
+          saveState();
+          return;
         }
+      } catch (e) {
+        console.error("Load failed", e);
       }
-      state.months[state.currentMonth].invoices = invoices;
-    } else {
-      showToast("סוג הקובץ לא נתמך. השתמש ב־JSON או CSV שיוצאו מהמערכת.", "error");
-      return;
+
+      // אם אין כלום – סט ברירת מחדל
+      initDefaultState();
+      saveState();
     }
 
-    renderInvoicesTable();
-    updateDashboard();
-    renderAllSummaries();
-    saveState();
-    showToast("הייבוא הסתיים בהצלחה לחודש הפעיל", "success");
-  };
+    function initDefaultState() {
+      const defaultCategories = [
+        "מזון",
+        "דגים ופירות ים",
+        "שתייה",
+        "אלכוהול",
+        "קינוחים",
+        "קפה",
+        "חד פעמי",
+        "ניקיון",
+        "תחזוקה",
+        "שיווק ופרסום",
+        "עבודה / כוח אדם",
+        "ארנונה ומסים",
+        "תקשורת ואינטרנט",
+        "חשמל / מים / גז",
+        "ציוד בר ומטבח",
+        "שירותים חיצוניים",
+        "לא משויך"
+      ];
 
-  reader.readAsText(file);
-}
+      const defaultSuppliersNames = [
+        'חשבוניות','מדחסקור אוניברסל','ג׳אקו שירות למטבחים','יוסי סימן טוב','י.שבי','צ.י.שיווק',
+        'קנקון','לוילן סחר ומוצרים חקלאיים בע״מ','עואודה לשיווק בע״מ','מדג סי פרוט בע״מ',
+        'אהרון שיווק','שיווק שלי א.א בע״מ','אקיפ החברה לציוד מלונאי בע״מ','דאלאס מוצרי נייר בע״מ',
+        'חברת חשמל','א.א.ר שירותי ביוב','תמי 4','בזק','היכל היין','החברה המרכזית','סוקליק',
+        'ביסקוטי','אייס דרים','ג.מ טעם הארץ בע״מ','יזמקו חברה בע״מ','אסטרטג טכנולוגיות בע״מ',
+        'אביב אש מערכות בע״מ','מניב ראשון','אודי בכור שיווק דגים בע״מ','לירי כוח אדם בע״מ',
+        'מש-נט בע״מ','זאפ גרופ בע״מ','שיא ״10״ בע״מ','קורקידי יעקב שיווק והפצה בסיטונאות',
+        'מקס עסקים','וינטר מכשירי גז בעמ','מפעל הפרסום','וולט','אלירן פרחים','פרסום תבור בעצ',
+        'אינפיניה מחזור','ייצוגית פלוס תעשיות בעמ','משלוחה','ביימי טכנולוגיות','ישראכרט',
+        'סוגת','אייפרקטיקום','אמישרגז','מאירוביץ שלי','לה פסטה דלה קזה בעמ','ארנונה ראשון לציון'
+      ];
 
-function normalizeInvoiceFromImport(inv) {
-  return {
-    supplier: inv.supplier || "",
-    number: inv.number || "",
-    date: inv.date || "",
-    amount: typeof inv.amount === "number" ? inv.amount : parseFloat(inv.amount) || 0,
-    status: inv.status || "שולם",
-    type: inv.type || "חד פעמי",
-    notes: inv.notes || "",
-    isCredit: !!inv.isCredit
-  };
-}
+      state = {
+        categories: defaultCategories,
+        suppliers: defaultSuppliersNames.map(n => ({
+          id: generateId("sup"),
+          name: n,
+          category: "לא משויך",
+          phone: "",
+          email: "",
+          notes: ""
+        })),
+        months: {},
+        currentMonth: currentYM(),
+        lastDeleted: null
+      };
 
-/* ───────────── פילטר קטגוריה לחשבוניות ───────────── */
+      state.months[state.currentMonth] = { income: 0, documents: [] };
+    }
 
-function renderInvoiceCategoryFilterOptions() {
-  var sel = document.getElementById("invoiceCategoryFilter");
-  if (!sel) return;
-  var current = sel.value;
-  sel.innerHTML = `<option value="הכל">הכל</option>`;
-  state.categories.forEach(cat => {
-    var opt = document.createElement("option");
-    opt.value = cat;
-    opt.textContent = cat;
-    sel.appendChild(opt);
-  });
-  if (state.categories.includes(current)) sel.value = current;
-}
+    /* ===== THEME & COMPACT ===== */
+    function applySavedTheme() {
+      const t = localStorage.getItem(THEME_KEY);
+      if (t === "dark") {
+        document.body.classList.add("dark");
+      }
+    }
 
-/* ───────────── כפתור צף – מעבר מהיר לטופס חשבונית ───────────── */
+    function toggleTheme() {
+      document.body.classList.toggle("dark");
+      const isDark = document.body.classList.contains("dark");
+      localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
+    }
 
-function quickAddInvoice() {
-  var navButtons = document.querySelectorAll("nav button");
-  navButtons.forEach(b => b.classList.remove("active"));
-  navButtons[3].classList.add("active");
+    function applyCompact() {
+      const c = localStorage.getItem(COMPACT_KEY);
+      if (c === "1") {
+        document.body.classList.add("compact-tables");
+        document.querySelectorAll("th,td").forEach(el=>{
+          el.style.padding = "4px 4px";
+        });
+      }
+    }
 
-  document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
-  document.getElementById("invoices").classList.add("active");
+    function toggleCompactTables() {
+      const isNow = document.body.classList.toggle("compact-tables");
+      localStorage.setItem(COMPACT_KEY, isNow ? "1" : "0");
+      document.querySelectorAll("th,td").forEach(el=>{
+        el.style.padding = isNow ? "4px 4px" : "6px 6px";
+      });
+    }
 
-  document.querySelector("#invoices form").scrollIntoView({ behavior: "smooth", block: "start" });
-  document.getElementById("invoiceSupplier").focus();
-}
-</script>
+    /* ===== NAVIGATION ===== */
+    function switchScreen(name) {
+      document.querySelectorAll(".nav-tab").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.screen === name);
+      });
+      document.querySelectorAll(".screen").forEach(scr => {
+        scr.classList.remove("active");
+      });
+      const screen = document.getElementById("screen-" + name);
+      if (screen) screen.classList.add("active");
+    }
 
+    /* ===== MONTH HELPERS ===== */
+    function ensureCurrentMonth() {
+      if (!state.months[state.currentMonth]) {
+        state.months[state.currentMonth] = { income: 0, documents: [] };
+      }
+    }
+
+    function getCurrentMonthData() {
+      ensureCurrentMonth();
+      return state.months[state.currentMonth];
+    }
+
+    /* ===== STAT CALCS ===== */
+    function calcMonthStats(monthData) {
+      const docs = monthData.documents || [];
+      let deliveriesTotal = 0;
+      let invoicesTotal = 0;
+      let creditsTotal = 0;
+      let unpaidTotal = 0;
+
+      const perSupplier = {}; // {name: {deliveries,invoices,credits}}
+
+      docs.forEach(d => {
+        const amt = Number(d.amount) || 0;
+        const supplierName = d.supplierName || "לא משויך";
+        if (!perSupplier[supplierName]) {
+          perSupplier[supplierName] = { deliveries: 0, invoices: 0, credits: 0 };
+        }
+        if (d.type === "delivery") {
+          deliveriesTotal += amt;
+          perSupplier[supplierName].deliveries += amt;
+        } else if (d.type === "invoice") {
+          invoicesTotal += amt;
+          perSupplier[supplierName].invoices += amt;
+        } else if (d.type === "credit") {
+          creditsTotal += amt;
+          perSupplier[supplierName].credits += amt;
+        }
+
+        if (d.status !== "paid") {
+          const signed = (d.type === "credit") ? -amt : amt;
+          unpaidTotal += signed;
+        }
+      });
+
+      const invoicesNet = invoicesTotal - creditsTotal;
+      const gapTotal = invoicesNet - deliveriesTotal;
+
+      return { deliveriesTotal, invoicesTotal, creditsTotal, invoicesNet, gapTotal, unpaidTotal, perSupplier };
+    }
+
+    /* ===== RENDER DASHBOARD ===== */
+    function renderMonthChip() {
+      const chip = document.getElementById("currentMonthChip");
+      const ym = state.currentMonth;
+      const [y, m] = ym.split("-");
+      chip.textContent = "חודש " + (m || "") + "/" + (y || "");
+    }
+
+    function renderDashboard() {
+      ensureCurrentMonth();
+      const monthData = getCurrentMonthData();
+      const stats = calcMonthStats(monthData);
+
+      const income = Number(monthData.income) || 0;
+      const netProfit = income - stats.invoicesNet;
+
+      const kpiGrid = document.getElementById("dashboardKpiGrid");
+      kpiGrid.innerHTML = `
+        <div class="kpi-card">
+          <div class="kpi-label">סה״כ תעודות משלוח</div>
+          <div class="kpi-value">${formatCurrency(stats.deliveriesTotal)}</div>
+          <div class="kpi-badge">מסמכים: ${monthData.documents.filter(d=>d.type==="delivery").length}</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">סה״כ חשבוניות (נטו אחרי זיכויים)</div>
+          <div class="kpi-value">${formatCurrency(stats.invoicesNet)}</div>
+          <div class="kpi-badge">חשבוניות: ${monthData.documents.filter(d=>d.type==="invoice").length}</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">זיכויים</div>
+          <div class="kpi-value amount-pos">-${formatCurrency(stats.creditsTotal)}</div>
+          <div class="kpi-badge">מס׳ זיכויים: ${monthData.documents.filter(d=>d.type==="credit").length}</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">פער בין משלוחים וחשבוניות</div>
+          <div class="kpi-value ${stats.gapTotal >= 0 ? "amount-pos" : "amount-neg"}">${formatCurrency(stats.gapTotal)}</div>
+          <div class="kpi-badge">רווח נקי: ${formatCurrency(netProfit)}</div>
+        </div>
+      `;
+
+      renderDashboardCharts(stats);
+      renderMonthChip();
+    }
+
+    function renderDashboardCharts(stats) {
+      const ctxPie = document.getElementById("pieDocuments").getContext("2d");
+      const ctxBar = document.getElementById("barSuppliers").getContext("2d");
+
+      // Pie
+      const deliveries = stats.deliveriesTotal;
+      const invoicesNet = stats.invoicesNet;
+      const absGap = Math.abs(stats.gapTotal);
+
+      const pieData = [deliveries, invoicesNet, absGap];
+      const pieLabels = ["תעודות משלוח", "חשבוניות נטו", "פער (אבסולוטי)"];
+
+      if (pieChart) pieChart.destroy();
+      pieChart = new Chart(ctxPie, {
+        type: "pie",
+        data: {
+          labels: pieLabels,
+          datasets: [{
+            data: pieData,
+            backgroundColor: ["#60a5fa", "#4ade80", "#f97316"]
+          }]
+        },
+        options: {
+          plugins: {
+            legend: { position: "bottom", labels:{ font:{ size:11 } } },
+          }
+        }
+      });
+
+      // Bar per supplier
+      const names = Object.keys(stats.perSupplier);
+      const deliveriesArr = [];
+      const invoicesArr = [];
+      const gapArr = [];
+
+      names.forEach(n => {
+        const p = stats.perSupplier[n];
+        const netInv = p.invoices - p.credits;
+        deliveriesArr.push(p.deliveries);
+        invoicesArr.push(netInv);
+        gapArr.push(netInv - p.deliveries);
+      });
+
+      if (barChart) barChart.destroy();
+      barChart = new Chart(ctxBar, {
+        type: "bar",
+        data: {
+          labels: names,
+          datasets: [
+            {
+              label: "משלוחים",
+              data: deliveriesArr,
+              backgroundColor: "#93c5fd"
+            },
+            {
+              label: "חשבוניות (נטו)",
+              data: invoicesArr,
+              backgroundColor: "#4ade80"
+            },
+            {
+              label: "פער",
+              data: gapArr,
+              backgroundColor: "#f97316"
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: "bottom", labels:{ font:{ size:11 } } },
+          },
+          scales: {
+            x: { ticks: { font:{ size:10 } } },
+            y: { ticks: { font:{ size:10 } } }
+          }
+        }
+      });
+    }
+
+    /* ===== DOCUMENTS ===== */
+    function getSuppliersSorted() {
+      return [...state.suppliers].sort((a,b) => a.name.localeCompare(b.name, "he"));
+    }
+
+    function renderDocFilters() {
+      const supplierSelect = document.getElementById("filterDocSupplier");
+      const categorySelect = document.getElementById("filterDocCategory");
+
+      supplierSelect.innerHTML = `<option value="">כל הספקים</option>`;
+      getSuppliersSorted().forEach(s => {
+        const opt = document.createElement("option");
+        opt.value = s.id;
+        opt.textContent = s.name;
+        supplierSelect.appendChild(opt);
+      });
+
+      categorySelect.innerHTML = `<option value="">כל הקטגוריות</option>`;
+      state.categories.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        categorySelect.appendChild(opt);
+      });
+    }
+
+    function renderDocSupplierDatalist() {
+      const dl = document.getElementById("docSupplierList");
+      dl.innerHTML = "";
+      getSuppliersSorted().forEach(s => {
+        const opt = document.createElement("option");
+        opt.value = s.name;
+        dl.appendChild(opt);
+      });
+    }
+
+    function findSupplierByName(name) {
+      return state.suppliers.find(s => s.name === name);
+    }
+
+    function findSupplierById(id) {
+      return state.suppliers.find(s => s.id === id);
+    }
+
+    function openDocumentModal(docId = null) {
+      editingDocumentId = docId;
+
+      const backdrop = document.getElementById("documentModalBackdrop");
+      const title = document.getElementById("documentModalTitle");
+      const deleteBtn = document.getElementById("deleteDocumentBtn");
+
+      if (docId) {
+        const monthData = getCurrentMonthData();
+        const doc = monthData.documents.find(d => d.id === docId);
+        if (!doc) return;
+        title.textContent = "עריכת מסמך";
+        document.getElementById("docType").value = doc.type;
+        document.getElementById("docSupplier").value = doc.supplierName || "";
+        document.getElementById("docRef").value = doc.ref || "";
+        document.getElementById("docDate").value = doc.date || "";
+        document.getElementById("docAmount").value = doc.amount || "";
+        document.getElementById("docStatus").value = doc.status || "paid";
+        document.getElementById("docNotes").value = doc.notes || "";
+        deleteBtn.style.display = "inline-flex";
+
+        updateDocCategorySelect(doc.supplierName, doc.category);
+      } else {
+        title.textContent = "מסמך חדש";
+        document.getElementById("docType").value = "invoice";
+        document.getElementById("docSupplier").value = "";
+        document.getElementById("docRef").value = "";
+        document.getElementById("docDate").value = todayYMD();
+        document.getElementById("docAmount").value = "";
+        document.getElementById("docStatus").value = "paid";
+        document.getElementById("docNotes").value = "";
+        deleteBtn.style.display = "none";
+        updateDocCategorySelect("", "");
+      }
+
+      backdrop.classList.add("show");
+    }
+
+    function closeDocumentModal() {
+      document.getElementById("documentModalBackdrop").classList.remove("show");
+      editingDocumentId = null;
+    }
+
+    function updateDocCategorySelect(supplierName, currentCategory) {
+      const select = document.getElementById("docCategory");
+      select.innerHTML = "";
+      state.categories.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        select.appendChild(opt);
+      });
+
+      let defaultCat = currentCategory || "לא משויך";
+      const s = findSupplierByName(supplierName);
+      if (s && s.category) defaultCat = s.category;
+
+      if (!state.categories.includes(defaultCat)) defaultCat = "לא משויך";
+      select.value = defaultCat;
+    }
+
+    function handleDocSupplierInputChange() {
+      const name = document.getElementById("docSupplier").value.trim();
+      updateDocCategorySelect(name, "");
+    }
+
+    function saveDocumentFromModal() {
+      const type = document.getElementById("docType").value;
+      const supplierName = document.getElementById("docSupplier").value.trim();
+      const category = document.getElementById("docCategory").value || "לא משויך";
+      const ref = document.getElementById("docRef").value.trim();
+      const date = document.getElementById("docDate").value || "";
+      const amount = Number(document.getElementById("docAmount").value) || 0;
+      const status = document.getElementById("docStatus").value;
+      const notes = document.getElementById("docNotes").value.trim();
+
+      if (!supplierName || !ref || !amount) {
+        showToast("חובה למלא ספק, מס׳ מסמך וסכום");
+        return;
+      }
+
+      const supplierObj = findSupplierByName(supplierName);
+      let supplierId = null;
+      let finalCategory = category;
+
+      if (supplierObj) {
+        supplierId = supplierObj.id;
+        finalCategory = supplierObj.category || category;
+      }
+
+      const monthData = getCurrentMonthData();
+
+      if (editingDocumentId) {
+        const idx = monthData.documents.findIndex(d => d.id === editingDocumentId);
+        if (idx !== -1) {
+          monthData.documents[idx] = {
+            ...monthData.documents[idx],
+            type,
+            supplierName,
+            supplierId,
+            category: finalCategory,
+            ref,
+            date,
+            amount,
+            status,
+            notes
+          };
+        }
+        showToast("מסמך עודכן");
+      } else {
+        const id = generateId("doc");
+        monthData.documents.push({
+          id,
+          type,
+          supplierName,
+          supplierId,
+          category: finalCategory,
+          ref,
+          date,
+          amount,
+          status,
+          notes
+        });
+        showToast("מסמך נוסף");
+      }
+
+      saveState();
+      renderDocuments();
+      renderDashboard();
+      renderReports();
+      closeDocumentModal();
+    }
+
+    function deleteCurrentDocument() {
+      if (!editingDocumentId) return;
+      const monthData = getCurrentMonthData();
+      const idx = monthData.documents.findIndex(d => d.id === editingDocumentId);
+      if (idx === -1) return;
+
+      state.lastDeleted = {
+        type: "document",
+        month: state.currentMonth,
+        doc: { ...monthData.documents[idx] }
+      };
+
+      monthData.documents.splice(idx, 1);
+      saveState();
+      renderDocuments();
+      renderDashboard();
+      renderReports();
+      closeDocumentModal();
+      showToast("מסמך נמחק (ניתן לבטל מחיקה דרך Undo שנוסיף בעתיד)");
+    }
+
+    function renderDocuments() {
+      ensureCurrentMonth();
+      const monthData = getCurrentMonthData();
+      const docs = monthData.documents || [];
+
+      const typeFilter = document.getElementById("filterDocType").value;
+      const supplierFilter = document.getElementById("filterDocSupplier").value;
+      const categoryFilter = document.getElementById("filterDocCategory").value;
+      const search = document.getElementById("filterDocSearch").value.toLowerCase().trim();
+
+      const filtered = docs.filter(d => {
+        if (typeFilter && d.type !== typeFilter) return false;
+        if (supplierFilter && d.supplierId !== supplierFilter) return false;
+        if (categoryFilter && d.category !== categoryFilter) return false;
+        if (search) {
+          const txt = (d.supplierName + " " + d.ref + " " + (d.notes || "")).toLowerCase();
+          if (!txt.includes(search)) return false;
+        }
+        return true;
+      });
+
+      // Table
+      const tbody = document.getElementById("documentsTableBody");
+      tbody.innerHTML = "";
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="color:var(--text-muted);padding:10px;">אין מסמכים לפי הסינון</td></tr>`;
+      } else {
+        filtered.forEach((d, idx) => {
+          let typeLabel = "חשבונית";
+          if (d.type === "delivery") typeLabel = "תעודת משלוח";
+          if (d.type === "credit") typeLabel = "זיכוי";
+
+          let statusTag = "";
+          if (d.status === "paid") {
+            statusTag = `<span class="tag tag-success">שולם</span>`;
+          } else if (d.status === "partial") {
+            statusTag = `<span class="tag tag-warning">חלקי</span>`;
+          } else {
+            statusTag = `<span class="tag tag-danger">לא שולם</span>`;
+          }
+
+          tbody.innerHTML += `
+            <tr>
+              <td>${idx + 1}</td>
+              <td>${typeLabel}</td>
+              <td>${d.supplierName || ""}</td>
+              <td>${d.category || ""}</td>
+              <td>${d.ref || ""}</td>
+              <td>${d.date || ""}</td>
+              <td>${formatCurrency(d.amount)}</td>
+              <td>${statusTag}</td>
+              <td>${d.notes || ""}</td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="openDocumentModal('${d.id}')">ערוך</button>
+              </td>
+            </tr>
+          `;
+        });
+      }
+
+      // Mobile cards
+      const cards = document.getElementById("documentsCards");
+      cards.innerHTML = "";
+      filtered.forEach((d, idx) => {
+        let typeLabel = "חשבונית";
+        if (d.type === "delivery") typeLabel = "תעודת משלוח";
+        if (d.type === "credit") typeLabel = "זיכוי";
+
+        let statusLabel = "שולם";
+        if (d.status === "partial") statusLabel = "חלקי";
+        else if (d.status === "unpaid") statusLabel = "לא שולם";
+
+        cards.innerHTML += `
+          <div class="doc-card">
+            <div class="doc-card-header">
+              <div class="doc-card-title">${typeLabel} – ${d.supplierName || ""}</div>
+              <button class="btn btn-outline btn-sm" onclick="openDocumentModal('${d.id}')">ערוך</button>
+            </div>
+            <div class="doc-card-body-row">
+              <div>
+                <div class="doc-card-label">מס׳</div>
+                <div class="doc-card-value">${d.ref || ""}</div>
+              </div>
+              <div>
+                <div class="doc-card-label">תאריך</div>
+                <div class="doc-card-value">${d.date || ""}</div>
+              </div>
+              <div>
+                <div class="doc-card-label">סכום</div>
+                <div class="doc-card-value">${formatCurrency(d.amount)}</div>
+              </div>
+            </div>
+            <div class="doc-card-body-row">
+              <div>
+                <div class="doc-card-label">קטגוריה</div>
+                <div class="doc-card-value">${d.category || ""}</div>
+              </div>
+              <div>
+                <div class="doc-card-label">סטטוס</div>
+                <div class="doc-card-value">${statusLabel}</div>
+              </div>
+            </div>
+            ${d.notes ? `
+            <div class="doc-card-body-row">
+              <div>
+                <div class="doc-card-label">הערות</div>
+                <div class="doc-card-value">${d.notes}</div>
+              </div>
+            </div>` : ``}
+          </div>
+        `;
+      });
+    }
+
+    /* ===== REPORTS ===== */
+    function renderReports() {
+      ensureCurrentMonth();
+      const monthData = getCurrentMonthData();
+      const stats = calcMonthStats(monthData);
+
+      const income = Number(monthData.income) || 0;
+      const netProfit = income - stats.invoicesNet;
+
+      const kpiGrid = document.getElementById("reportsKpiGrid");
+      kpiGrid.innerHTML = `
+        <div class="kpi-card">
+          <div class="kpi-label">סה״כ תעודות משלוח</div>
+          <div class="kpi-value">${formatCurrency(stats.deliveriesTotal)}</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">סה״כ חשבוניות</div>
+          <div class="kpi-value">${formatCurrency(stats.invoicesTotal)}</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">סה״כ זיכויים</div>
+          <div class="kpi-value amount-pos">-${formatCurrency(stats.creditsTotal)}</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">רווח נקי (הכנסות - חשבוניות נטו)</div>
+          <div class="kpi-value ${netProfit >= 0 ? "amount-pos" : "amount-neg"}">${formatCurrency(netProfit)}</div>
+        </div>
+      `;
+
+      // per supplier
+      const tbodySup = document.getElementById("reportSuppliersBody");
+      tbodySup.innerHTML = "";
+      const supplierNames = Object.keys(stats.perSupplier);
+      supplierNames.sort((a,b) => a.localeCompare(b, "he"));
+      if (supplierNames.length === 0) {
+        tbodySup.innerHTML = `<tr><td colspan="6" style="color:var(--text-muted);padding:8px;">אין נתונים</td></tr>`;
+      } else {
+        supplierNames.forEach((name, idx) => {
+          const p = stats.perSupplier[name];
+          const netInv = p.invoices - p.credits;
+          const net = netInv - p.deliveries;
+          tbodySup.innerHTML += `
+            <tr>
+              <td>${idx + 1}</td>
+              <td>${name}</td>
+              <td>${formatCurrency(p.deliveries)}</td>
+              <td>${formatCurrency(p.invoices)}</td>
+              <td>${formatCurrency(p.credits)}</td>
+              <td class="${net >= 0 ? "amount-pos" : "amount-neg"}">${formatCurrency(net)}</td>
+            </tr>
+          `;
+        });
+      }
+
+      // per category
+      const catMap = {};
+      (monthData.documents || []).forEach(d => {
+        const cat = d.category || "לא משויך";
+        if (!catMap[cat]) catMap[cat] = { deliveries:0, invoices:0, credits:0 };
+        const amt = Number(d.amount) || 0;
+        if (d.type === "delivery") catMap[cat].deliveries += amt;
+        else if (d.type === "invoice") catMap[cat].invoices += amt;
+        else if (d.type === "credit") catMap[cat].credits += amt;
+      });
+
+      const tbodyCat = document.getElementById("reportCategoriesBody");
+      tbodyCat.innerHTML = "";
+      const catNames = Object.keys(catMap);
+      catNames.sort((a,b) => a.localeCompare(b,"he"));
+      if (catNames.length === 0) {
+        tbodyCat.innerHTML = `<tr><td colspan="6" style="color:var(--text-muted);padding:8px;">אין נתונים</td></tr>`;
+      } else {
+        catNames.forEach((cat, idx) => {
+          const p = catMap[cat];
+          const netInv = p.invoices - p.credits;
+          const net = netInv - p.deliveries;
+          tbodyCat.innerHTML += `
+            <tr>
+              <td>${idx + 1}</td>
+              <td>${cat}</td>
+              <td>${formatCurrency(p.deliveries)}</td>
+              <td>${formatCurrency(p.invoices)}</td>
+              <td>${formatCurrency(p.credits)}</td>
+              <td class="${net >= 0 ? "amount-pos" : "amount-neg"}">${formatCurrency(net)}</td>
+            </tr>
+          `;
+        });
+      }
+
+      // anomalies
+      const anomaliesBody = document.getElementById("reportAnomaliesBody");
+      anomaliesBody.innerHTML = "";
+
+      const bySupplier = {};
+      (monthData.documents || []).forEach(d => {
+        const key = d.supplierName || "לא משויך";
+        if (!bySupplier[key]) bySupplier[key] = { deliveries: [], invoices: [], credits: [] };
+        bySupplier[key][d.type === "delivery" ? "deliveries" : d.type === "invoice" ? "invoices" : "credits"].push(d);
+      });
+
+      const rows = [];
+      const GAP_THRESHOLD = 500; // סף לדוגמה
+
+      Object.keys(bySupplier).forEach(name => {
+        const group = bySupplier[name];
+        const sumDel = group.deliveries.reduce((s,d)=>s+(Number(d.amount)||0),0);
+        const sumInv = group.invoices.reduce((s,d)=>s+(Number(d.amount)||0),0);
+        const sumCred = group.credits.reduce((s,d)=>s+(Number(d.amount)||0),0);
+        const netInv = sumInv - sumCred;
+        const gap = netInv - sumDel;
+
+        if (group.deliveries.length > 0 && group.invoices.length === 0) {
+          group.deliveries.forEach(d => {
+            rows.push({
+              type:"delivery",
+              supplier:name,
+              ref:d.ref,
+              date:d.date,
+              amount:d.amount,
+              reason:"משלוח ללא חשבונית"
+            });
+          });
+        }
+        if (group.invoices.length > 0 && group.deliveries.length === 0 && sumInv>0) {
+          group.invoices.forEach(d => {
+            rows.push({
+              type:"invoice",
+              supplier:name,
+              ref:d.ref,
+              date:d.date,
+              amount:d.amount,
+              reason:"חשבונית ללא משלוח"
+            });
+          });
+        }
+        if (Math.abs(gap) >= GAP_THRESHOLD) {
+          rows.push({
+            type:"gap",
+            supplier:name,
+            ref:"",
+            date:"",
+            amount:gap,
+            reason:"פער גבוה בין משלוחים לחשבוניות"
+          });
+        }
+      });
+
+      if (rows.length === 0) {
+        anomaliesBody.innerHTML = `<tr><td colspan="7" style="color:var(--text-muted);padding:8px;">לא נמצאו חריגות משמעותיות לפי הכללים הנוכחיים</td></tr>`;
+      } else {
+        rows.forEach((r, idx) => {
+          let typeLabel = "אחר";
+          if (r.type === "delivery") typeLabel = "תעודת משלוח";
+          if (r.type === "invoice") typeLabel = "חשבונית";
+          if (r.type === "gap") typeLabel = "פער";
+
+          anomaliesBody.innerHTML += `
+            <tr>
+              <td>${idx + 1}</td>
+              <td>${typeLabel}</td>
+              <td>${r.supplier}</td>
+              <td>${r.ref || ""}</td>
+              <td>${r.date || ""}</td>
+              <td>${formatCurrency(r.amount)}</td>
+              <td>${r.reason}</td>
+            </tr>
+          `;
+        });
+      }
+    }
+
+    /* ===== SUPPLIERS ===== */
+    function renderSuppliersFilters() {
+      const sel = document.getElementById("supplierFilterCategory");
+      sel.innerHTML = `<option value="">כל הקטגוריות</option>`;
+      state.categories.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        sel.appendChild(opt);
+      });
+    }
+
+    function renderSupplierNameDatalistModal() {
+      const dl = document.getElementById("supplierNameListModal");
+      dl.innerHTML = "";
+      getSuppliersSorted().forEach(s => {
+        const opt = document.createElement("option");
+        opt.value = s.name;
+        dl.appendChild(opt);
+      });
+    }
+
+    function renderSupplierCategorySelectModal() {
+      const sel = document.getElementById("supplierCategoryModal");
+      sel.innerHTML = "";
+      state.categories.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        sel.appendChild(opt);
+      });
+    }
+
+    function renderSuppliersTable() {
+      const tbody = document.getElementById("suppliersTableBody");
+      tbody.innerHTML = "";
+
+      const search = document.getElementById("supplierSearchInput").value.toLowerCase().trim();
+      const catFilter = document.getElementById("supplierFilterCategory").value;
+
+      const sorted = getSuppliersSorted().filter(s => {
+        if (search && !s.name.toLowerCase().includes(search)) return false;
+        if (catFilter && s.category !== catFilter) return false;
+        return true;
+      });
+
+      if (sorted.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="color:var(--text-muted);padding:8px;">אין ספקים לפי הסינון</td></tr>`;
+      } else {
+        sorted.forEach((s, idx) => {
+          tbody.innerHTML += `
+            <tr>
+              <td>${idx + 1}</td>
+              <td>${s.name}</td>
+              <td>${s.category}</td>
+              <td>${s.phone || ""}</td>
+              <td>${s.email || ""}</td>
+              <td>${s.notes || ""}</td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="openSupplierModal('${s.id}')">ערוך</button>
+              </td>
+            </tr>
+          `;
+        });
+      }
+    }
+
+    function openSupplierModal(id = null) {
+      editingSupplierId = id;
+      const backdrop = document.getElementById("supplierModalBackdrop");
+      const titleEl = document.getElementById("supplierModalTitle");
+      const delBtn = document.getElementById("deleteSupplierBtn");
+
+      renderSupplierCategorySelectModal();
+      renderSupplierNameDatalistModal();
+
+      if (id) {
+        const s = state.suppliers.find(x => x.id === id);
+        if (!s) return;
+        titleEl.textContent = "עריכת ספק";
+        document.getElementById("supplierNameInputModal").value = s.name;
+        document.getElementById("supplierCategoryModal").value = s.category;
+        document.getElementById("supplierPhoneModal").value = s.phone || "";
+        document.getElementById("supplierEmailModal").value = s.email || "";
+        document.getElementById("supplierNotesModal").value = s.notes || "";
+        delBtn.style.display = "inline-flex";
+      } else {
+        titleEl.textContent = "ספק חדש";
+        document.getElementById("supplierNameInputModal").value = "";
+        document.getElementById("supplierCategoryModal").value = state.categories[0] || "לא משויך";
+        document.getElementById("supplierPhoneModal").value = "";
+        document.getElementById("supplierEmailModal").value = "";
+        document.getElementById("supplierNotesModal").value = "";
+        delBtn.style.display = "none";
+      }
+
+      backdrop.classList.add("show");
+    }
+
+    function closeSupplierModal() {
+      document.getElementById("supplierModalBackdrop").classList.remove("show");
+      editingSupplierId = null;
+    }
+
+    function saveSupplierFromModal() {
+      const name = document.getElementById("supplierNameInputModal").value.trim();
+      const category = document.getElementById("supplierCategoryModal").value;
+      const phone = document.getElementById("supplierPhoneModal").value.trim();
+      const email = document.getElementById("supplierEmailModal").value.trim();
+      const notes = document.getElementById("supplierNotesModal").value.trim();
+
+      if (!name) {
+        showToast("חובה למלא שם ספק");
+        return;
+      }
+
+      if (editingSupplierId) {
+        const idx = state.suppliers.findIndex(s => s.id === editingSupplierId);
+        if (idx !== -1) {
+          state.suppliers[idx] = { ...state.suppliers[idx], name, category, phone, email, notes };
+        }
+        showToast("ספק עודכן");
+      } else {
+        const id = generateId("sup");
+        state.suppliers.push({ id, name, category, phone, email, notes });
+        showToast("ספק נוסף");
+      }
+
+      saveState();
+      renderSuppliersTable();
+      renderDocFilters();
+      renderDocSupplierDatalist();
+      closeSupplierModal();
+    }
+
+    function deleteCurrentSupplier() {
+      if (!editingSupplierId) return;
+      const idx = state.suppliers.findIndex(s => s.id === editingSupplierId);
+      if (idx === -1) return;
+
+      const removed = state.suppliers[idx];
+      state.lastDeleted = { type: "supplier", supplier: { ...removed } };
+      state.suppliers.splice(idx, 1);
+
+      // מסמכים שנשענו עליו – נשמר רק השם, id הופך ל-null
+      Object.values(state.months).forEach(m => {
+        (m.documents || []).forEach(d => {
+          if (d.supplierId === removed.id) {
+            d.supplierId = null;
+          }
+        });
+      });
+
+      saveState();
+      renderSuppliersTable();
+      renderDocFilters();
+      renderDocSupplierDatalist();
+      closeSupplierModal();
+      showToast("ספק נמחק (השם נשאר במסמכים, הקישור הוסר)");
+    }
+
+    /* ===== CATEGORIES ===== */
+    function renderCategoriesTable() {
+      const tbody = document.getElementById("categoriesTableBody");
+      tbody.innerHTML = "";
+      const cats = [...state.categories].sort((a,b)=>a.localeCompare(b,"he"));
+      if (cats.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);padding:8px;">אין קטגוריות</td></tr>`;
+        return;
+      }
+      cats.forEach((cat, idx) => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${idx + 1}</td>
+            <td>${cat}</td>
+            <td>
+              ${cat === "לא משויך" ? "" : `<button class="btn btn-outline btn-sm" onclick="deleteCategory('${cat}')">מחק</button>`}
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function addCategory() {
+      const val = document.getElementById("newCategoryInput").value.trim();
+      if (!val) {
+        showToast("שם קטגוריה לא יכול להיות ריק");
+        return;
+      }
+      if (state.categories.includes(val)) {
+        showToast("קטגוריה זו כבר קיימת");
+        return;
+      }
+      state.categories.push(val);
+      saveState();
+      document.getElementById("newCategoryInput").value = "";
+      renderCategoriesTable();
+      renderSuppliersFilters();
+      renderSupplierCategorySelectModal();
+      renderDocFilters();
+      renderDashboard();
+      renderReports();
+    }
+
+    function deleteCategory(catName) {
+      if (!state.categories.includes(catName)) return;
+      if (catName === "לא משויך") return;
+
+      state.categories = state.categories.filter(c => c !== catName);
+      // ספקים של הקטגוריה הזו -> לא משויך
+      state.suppliers.forEach(s => {
+        if (s.category === catName) s.category = "לא משויך";
+      });
+      // מסמכים שקשורים לקטגוריה הזו -> לא משויך
+      Object.values(state.months).forEach(m => {
+        (m.documents || []).forEach(d => {
+          if (d.category === catName) d.category = "לא משויך";
+        });
+      });
+
+      saveState();
+      renderCategoriesTable();
+      renderSuppliersTable();
+      renderSuppliersFilters();
+      renderDocFilters();
+      renderDashboard();
+      renderReports();
+      showToast("הקטגוריה נמחקה. ספקים ומסמכים הועברו ל'לא משויך'.");
+    }
+
+    /* ===== IMPORT / EXPORT ===== */
+    function exportJson() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "hatza_def_state.json";
+      a.click();
+    }
+
+    function exportCsvCurrentMonth() {
+      ensureCurrentMonth();
+      const { documents } = getCurrentMonthData();
+      let csv = "type,supplierName,category,ref,date,amount,status,notes\n";
+      (documents || []).forEach(d => {
+        const line = [
+          d.type,
+          (d.supplierName || "").replace(/,/g,";"),
+          (d.category || "").replace(/,/g,";"),
+          (d.ref || "").replace(/,/g,";"),
+          d.date || "",
+          d.amount || 0,
+          d.status || "",
+          (d.notes || "").replace(/,/g,";")
+        ].join(",");
+        csv += line + "\n";
+      });
+      const blob = new Blob([csv], { type: "text/csv" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "hatza_def_" + state.currentMonth + ".csv";
+      a.click();
+    }
+
+    function importFile(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const text = e.target.result;
+
+        if (file.name.toLowerCase().endsWith(".json")) {
+          try {
+            const obj = JSON.parse(text);
+            if (obj && obj.months && obj.suppliers && obj.categories) {
+              // full state
+              state = obj;
+              saveState();
+              initUiAfterStateLoaded();
+              showToast("JSON נטען (כל המערכת)");
+            } else if (obj && obj.documents) {
+              // month-only new format
+              ensureCurrentMonth();
+              state.months[state.currentMonth].documents = obj.documents.map(normalizeImportedDoc);
+              if (typeof obj.income === "number") {
+                state.months[state.currentMonth].income = obj.income;
+              }
+              saveState();
+              renderDocuments();
+              renderDashboard();
+              renderReports();
+              showToast("JSON נטען (חודש אחד)");
+            } else if (obj && obj.invoices) {
+              // month-only old format
+              ensureCurrentMonth();
+              const tempMonth = { income: obj.income || 0, invoices: obj.invoices };
+              const migratedMonth = migrateOldState({ months: { tmp: tempMonth }, suppliers: state.suppliers, categories: state.categories, currentMonth: "tmp" }).months.tmp;
+              state.months[state.currentMonth] = migratedMonth;
+              saveState();
+              renderDocuments();
+              renderDashboard();
+              renderReports();
+              showToast("JSON ישן נטען (חודש אחד)");
+            } else {
+              showToast("פורמט JSON לא מזוהה");
+            }
+          } catch (err) {
+            console.error(err);
+            showToast("שגיאה בקריאת JSON");
+          }
+        } else if (file.name.toLowerCase().endsWith(".csv")) {
+          // parse csv (תומך גם בפורמט החדש וגם בפורמט הישן)
+          const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+          if (lines.length <= 1) {
+            showToast("קובץ CSV ריק");
+            return;
+          }
+          const header = lines[0].split(",");
+          const docs = [];
+          for (let i = 1; i < lines.length; i++) {
+            const cols = lines[i].split(",");
+            if (!cols[0]) continue;
+            const row = {};
+            header.forEach((h, idx) => {
+              row[h.trim()] = cols[idx] || "";
+            });
+
+            if (row.type && row.supplierName) {
+              // new style
+              docs.push(normalizeImportedDoc(row));
+            } else if (row.supplier && row.number) {
+              // old style: supplier,number,date,amount,status,type,notes,isCredit
+              const doc = {
+                type: row.isCredit && row.isCredit.toLowerCase() === "yes" ? "credit" : "invoice",
+                supplierName: row.supplier,
+                category: "",
+                ref: row.number,
+                date: row.date || "",
+                amount: Number(row.amount) || 0,
+                status: (row.status === "שולם" ? "paid" : row.status === "לא שולם" ? "unpaid" : "partial"),
+                notes: (row.notes || "").replace(/;/g,",")
+              };
+              docs.push(normalizeImportedDoc(doc));
+            }
+          }
+          ensureCurrentMonth();
+          state.months[state.currentMonth].documents = docs;
+          saveState();
+          renderDocuments();
+          renderDashboard();
+          renderReports();
+          showToast("CSV נטען לחודש הנוכחי");
+        } else {
+          showToast("פורמט קובץ לא נתמך");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function normalizeImportedDoc(d) {
+      const supplierObj = findSupplierByName(d.supplierName || d.supplier || "");
+      const supplierId = supplierObj ? supplierObj.id : null;
+      let category = d.category || (supplierObj ? supplierObj.category : "לא משויך");
+
+      if (!state.categories.includes(category)) category = "לא משויך";
+
+      const status = d.status || "paid";
+      const ref = d.ref || d.number || "";
+      const type = d.type || "invoice";
+
+      return {
+        id: generateId("doc"),
+        type,
+        supplierName: d.supplierName || d.supplier || "",
+        supplierId,
+        category,
+        ref,
+        date: d.date || "",
+        amount: Number(d.amount) || 0,
+        status,
+        notes: d.notes || ""
+      };
+    }
+
+    /* ===== INIT UI ===== */
+    function initUiAfterStateLoaded() {
+      // Theme + compact
+      applySavedTheme();
+      applyCompact();
+
+      // Month
+      if (!state.currentMonth) state.currentMonth = currentYM();
+      ensureCurrentMonth();
+      document.getElementById("monthInput").value = state.currentMonth;
+      document.getElementById("incomeInput").value = getCurrentMonthData().income || "";
+
+      // Filters & lists
+      renderDocFilters();
+      renderDocSupplierDatalist();
+      renderSuppliersFilters();
+      renderSupplierNameDatalistModal();
+      renderSupplierCategorySelectModal();
+      renderCategoriesTable();
+
+      // Render main
+      renderDashboard();
+      renderDocuments();
+      renderSuppliersTable();
+      renderReports();
+    }
+
+    /* ===== EVENT LISTENERS ===== */
+    window.addEventListener("DOMContentLoaded", () => {
+      loadState();
+      initUiAfterStateLoaded();
+
+      // Nav
+      document.querySelectorAll(".nav-tab").forEach(btn => {
+        btn.addEventListener("click", () => {
+          switchScreen(btn.dataset.screen);
+          if (btn.dataset.screen === "dashboard") renderDashboard();
+          if (btn.dataset.screen === "reports") renderReports();
+          if (btn.dataset.screen === "documents") renderDocuments();
+          if (btn.dataset.screen === "suppliers") renderSuppliersTable();
+        });
+      });
+
+      // Month & income
+      document.getElementById("monthInput").addEventListener("change", e => {
+        const v = e.target.value;
+        if (!v) return;
+        state.currentMonth = v;
+        ensureCurrentMonth();
+        document.getElementById("incomeInput").value = getCurrentMonthData().income || "";
+        saveState();
+        renderDashboard();
+        renderDocuments();
+        renderReports();
+        renderMonthChip();
+      });
+
+      document.getElementById("incomeInput").addEventListener("input", e => {
+        ensureCurrentMonth();
+        state.months[state.currentMonth].income = Number(e.target.value) || 0;
+        saveState();
+        renderDashboard();
+        renderReports();
+      });
+
+      // Dark mode buttons
+      document.getElementById("toggleDarkBtn").addEventListener("click", toggleTheme);
+      document.getElementById("settingsToggleDarkBtn").addEventListener("click", toggleTheme);
+
+      // Compact tables
+      document.getElementById("toggleCompactBtn").addEventListener("click", toggleCompactTables);
+
+      // Documents filters
+      document.getElementById("filterDocType").addEventListener("change", renderDocuments);
+      document.getElementById("filterDocSupplier").addEventListener("change", renderDocuments);
+      document.getElementById("filterDocCategory").addEventListener("change", renderDocuments);
+      document.getElementById("filterDocSearch").addEventListener("input", renderDocuments);
+
+      // Document modal
+      document.getElementById("docSupplier").addEventListener("input", handleDocSupplierInputChange);
+      document.getElementById("saveDocumentBtn").addEventListener("click", saveDocumentFromModal);
+      document.getElementById("closeDocumentModal").addEventListener("click", closeDocumentModal);
+      document.getElementById("deleteDocumentBtn").addEventListener("click", deleteCurrentDocument);
+
+      // FAB + add doc from Documents screen
+      document.getElementById("fabAddDoc").addEventListener("click", () => {
+        switchScreen("documents");
+        openDocumentModal(null);
+      });
+
+      // Suppliers
+      document.getElementById("supplierSearchInput").addEventListener("input", renderSuppliersTable);
+      document.getElementById("supplierFilterCategory").addEventListener("change", renderSuppliersTable);
+      document.getElementById("saveSupplierModalBtn").addEventListener("click", saveSupplierFromModal);
+      document.getElementById("closeSupplierModal").addEventListener("click", closeSupplierModal);
+      document.getElementById("deleteSupplierBtn").addEventListener("click", deleteCurrentSupplier);
+
+      // Categories
+      document.getElementById("addCategoryBtn").addEventListener("click", addCategory);
+
+      // Settings: export/import
+      document.getElementById("exportJsonBtn").addEventListener("click", exportJson);
+      document.getElementById("exportCsvBtn").addEventListener("click", exportCsvCurrentMonth);
+      document.getElementById("importFileInput").addEventListener("change", e => {
+        const file = e.target.files[0];
+        if (file) importFile(file);
+        e.target.value = "";
+      });
+
+      renderMonthChip();
+    });
+  </script>
 </body>
 </html>
