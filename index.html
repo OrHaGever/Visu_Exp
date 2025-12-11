@@ -28,9 +28,7 @@
       --radius-md: 12px;
       --radius-sm: 999px;
     }
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     html, body {
       margin: 0;
       padding: 0;
@@ -64,11 +62,7 @@
       justify-content: space-between;
       gap: 12px;
     }
-    .brand-area {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .brand-area { display: flex; align-items: center; gap: 10px; }
     .brand-logo {
       width: 32px;
       height: 32px;
@@ -146,12 +140,8 @@
       overflow-y: auto;
     }
 
-    .screen {
-      display: none;
-    }
-    .screen.active {
-      display: block;
-    }
+    .screen { display: none; }
+    .screen.active { display: block; }
 
     .card {
       background: radial-gradient(circle at top left, rgba(30,64,175,0.3), #020617 42%);
@@ -190,14 +180,8 @@
       flex-direction: column;
       gap: 4px;
     }
-    .stat-label {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-    .stat-value {
-      font-size: 17px;
-      font-weight: 600;
-    }
+    .stat-label { font-size: 11px; color: var(--text-muted); }
+    .stat-value { font-size: 17px; font-weight: 600; }
     .stat-chip {
       margin-top: 2px;
       font-size: 11px;
@@ -373,12 +357,8 @@
       background: rgba(148,163,184,0.16);
       color: #e5e7eb;
     }
-    .amount-pos {
-      color: var(--success);
-    }
-    .amount-neg {
-      color: var(--danger);
-    }
+    .amount-pos { color: var(--success); }
+    .amount-neg { color: var(--danger); }
 
     .month-strip {
       display: flex;
@@ -387,9 +367,7 @@
       padding-bottom: 2px;
       margin: 4px 0 6px;
     }
-    .month-strip::-webkit-scrollbar {
-      height: 4px;
-    }
+    .month-strip::-webkit-scrollbar { height: 4px; }
     .month-strip::-webkit-scrollbar-thumb {
       background: rgba(148, 163, 184, 0.6);
       border-radius: 999px;
@@ -443,9 +421,7 @@
       justify-content: center;
       z-index: 2000;
     }
-    .modal-backdrop.show {
-      display: flex;
-    }
+    .modal-backdrop.show { display: flex; }
     .modal {
       width: 100%;
       max-width: 520px;
@@ -510,7 +486,7 @@
       border-radius: 10px;
       border: 1px dashed var(--border);
       padding: 6px 6px 4px;
-      max-height: 180px;
+      max-height: 200px;
       overflow-y: auto;
       background: rgba(15,23,42,0.85);
     }
@@ -519,25 +495,15 @@
       gap: 6px;
       align-items: center;
       margin-bottom: 4px;
-    }
-    .doc-item-row select,
-    .doc-item-row input {
       font-size: 11px;
-      padding: 3px 6px;
     }
-    .doc-item-remove {
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: transparent;
+    .doc-item-name {
+      flex: 1;
+      color: var(--text);
+    }
+    .doc-item-unit {
+      font-size: 11px;
       color: var(--text-muted);
-      padding: 2px 7px;
-      font-size: 11px;
-      cursor: pointer;
-    }
-    .doc-item-remove:hover {
-      background: rgba(239,68,68,0.08);
-      border-color: #f87171;
-      color: #b91c1c;
     }
     .doc-items-hint {
       font-size: 10px;
@@ -546,33 +512,15 @@
     }
 
     @media (max-width: 768px) {
-      body {
-        padding: 6px;
-      }
-      .app-shell {
-        border-radius: 18px;
-      }
-      .grid-3 {
-        grid-template-columns: 1fr;
-      }
-      .grid-2 {
-        grid-template-columns: 1fr;
-      }
-      table {
-        font-size: 10px;
-      }
-      th, td {
-        padding: 4px 4px;
-      }
-      header {
-        padding-inline: 10px;
-      }
-      .nav-tabs {
-        padding-inline: 10px;
-      }
-      .card {
-        padding-inline: 10px;
-      }
+      body { padding: 6px; }
+      .app-shell { border-radius: 18px; }
+      .grid-3 { grid-template-columns: 1fr; }
+      .grid-2 { grid-template-columns: 1fr; }
+      table { font-size: 10px; }
+      th, td { padding: 4px 4px; }
+      header { padding-inline: 10px; }
+      .nav-tabs { padding-inline: 10px; }
+      .card { padding-inline: 10px; }
     }
   </style>
 </head>
@@ -815,7 +763,7 @@
         <div class="card">
           <div class="card-title">רשימת פריטים</div>
           <div class="card-subtitle">
-            פריטים שנרכשים בשגרה (דגים, פירות ים, בשרים ועוד) – לפי קטגוריות, כולל סיכומי כמות לחודש.
+            פריטים שנרכשים בשגרה (דגים, בשרים, פירות ים ועוד) – לפי קטגוריות ספקים, כולל סיכומי כמות לחודש.
           </div>
 
           <div class="form-row">
@@ -824,7 +772,7 @@
               <input type="text" id="itemSearchInput" placeholder="לדוגמה: דניס, סלמון..." />
             </div>
             <div class="form-group" style="max-width:180px;">
-              <label>קטגוריית פריט</label>
+              <label>קטגוריית פריט (קטגוריית ספק)</label>
               <select id="itemGroupFilter"></select>
             </div>
             <div class="form-group" style="align-self:flex-end;max-width:160px;">
@@ -938,10 +886,24 @@
 
         <div class="form-group">
           <label>פריטים במסמך</label>
+          <div class="form-row">
+            <div class="form-group">
+              <select id="docItemSelect"></select>
+            </div>
+            <div class="form-group" style="max-width:120px;">
+              <input type="number" id="docItemQty" min="0" step="0.01" placeholder="כמות" />
+            </div>
+            <div class="form-group" style="max-width:130px;align-self:flex-end;">
+              <button type="button" class="btn btn-outline btn-sm" id="addDocItemBtn">הוסף פריט למסמך</button>
+            </div>
+          </div>
           <div id="docItemsContainer" class="doc-items-container"></div>
-          <button type="button" class="btn btn-outline btn-sm" id="addDocItemBtn">הוסף פריט</button>
+          <div style="margin-top:4px;display:flex;gap:6px;flex-wrap:wrap;">
+            <button type="button" class="btn btn-outline btn-sm" id="addDocItemNewBtn">הוסף פריט חדש לרשימה</button>
+          </div>
           <div class="doc-items-hint">
-            הפריטים מסוננים לפי קטגוריית הספק (לדוגמה: דגים, פירות ים, בשרים). לפריטים במשקל (לוקוס) הכמות היא בק״ג.
+            בחר פריט מהרשימה, הזן כמות ולחץ "הוסף פריט למסמך". ניתן להוסיף כמה פריטים,
+            ולמחוק כל פריט מתוך הרשימה שלמטה.
           </div>
         </div>
 
@@ -1026,9 +988,8 @@
           <input type="text" id="itemNameModal" />
         </div>
         <div class="form-group">
-          <label>קטגוריית פריט</label>
-          <input type="text" id="itemGroupModal" list="itemGroupListModal" />
-          <datalist id="itemGroupListModal"></datalist>
+          <label>קטגוריית פריט (כמו קטגוריית ספק)</label>
+          <select id="itemGroupModal"></select>
         </div>
         <div class="form-group">
           <label>
@@ -1045,7 +1006,7 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "supplier-dashboard-v4"; // אם תרצה לשמור המשכיות, אל תשנה אותו יותר
+    const STORAGE_KEY = "supplier-dashboard-v4";
     let state = {
       categories: [],
       suppliers: [],
@@ -1057,6 +1018,7 @@
     let editingDocumentId = null;
     let editingSupplierId = null;
     let editingItemId = null;
+    let currentDocItems = []; // פריטים של המסמך הפתוח כעת
     let toastTimeout = null;
 
     function showToast(msg) {
@@ -1087,30 +1049,31 @@
     }
 
     function getDefaultItems() {
-      const base = [
-        { name: "דניס", group: "דגים", isWeightBased: false },
-        { name: "לברק", group: "דגים", isWeightBased: false },
-        { name: "מושט", group: "דגים", isWeightBased: false },
-        { name: "ברבוניה", group: "דגים", isWeightBased: false },
-        { name: "בר ים", group: "דגים", isWeightBased: false },
-        { name: "סלמון", group: "דגים", isWeightBased: false },
-        { name: "לוקוס", group: "דגים", isWeightBased: true },
-        { name: "שרימפס", group: "פירות ים", isWeightBased: false },
-        { name: "קלמרי", group: "פירות ים", isWeightBased: false },
-        { name: "ראשי קלמרי", group: "פירות ים", isWeightBased: false },
-        { name: "סרטנים", group: "פירות ים", isWeightBased: false },
-        { name: "מולים", group: "פירות ים", isWeightBased: false },
-        { name: "סטייק אנטריקוט", group: "בשרים", isWeightBased: false },
-        { name: "פילה בקר", group: "בשרים", isWeightBased: false },
-        { name: "פרגית", group: "בשרים", isWeightBased: false },
-        { name: "חזה עוף", group: "בשרים", isWeightBased: false },
-        { name: "צלעות", group: "בשרים", isWeightBased: false }
+      const foodCat = "מזון";
+      const names = [
+        "דניס",
+        "לברק",
+        "מושט",
+        "ברבוניה",
+        "בר ים",
+        "סלמון",
+        "לוקוס",
+        "שרימפס",
+        "קלמרי",
+        "ראשי קלמרי",
+        "סרטנים",
+        "מולים",
+        "סטייק אנטריקוט",
+        "פילה בקר",
+        "פרגית",
+        "חזה עוף",
+        "צלעות"
       ];
-      return base.map(it => ({
+      return names.map(name => ({
         id: generateId("item"),
-        name: it.name,
-        group: it.group,
-        isWeightBased: !!it.isWeightBased
+        name,
+        group: foodCat,
+        isWeightBased: name === "לוקוס"
       }));
     }
 
@@ -1119,7 +1082,7 @@
         "מזון",
         "דגים ופירות ים",
         "שתייה",
-        "אלכוהול",
+        "אלכोहול",
         "קינוחים",
         "קפה",
         "חד פעמי",
@@ -1557,6 +1520,28 @@
         opt.textContent = cat;
         docCatFilter.appendChild(opt);
       });
+
+      const itemGroupFilter = document.getElementById("itemGroupFilter");
+      if (itemGroupFilter) {
+        itemGroupFilter.innerHTML = `<option value="">כל הקטגוריות</option>`;
+        cats.forEach(cat => {
+          const opt = document.createElement("option");
+          opt.value = cat;
+          opt.textContent = cat;
+          itemGroupFilter.appendChild(opt);
+        });
+      }
+
+      const itemGroupModal = document.getElementById("itemGroupModal");
+      if (itemGroupModal) {
+        itemGroupModal.innerHTML = "";
+        cats.forEach(cat => {
+          const opt = document.createElement("option");
+          opt.value = cat;
+          opt.textContent = cat;
+          itemGroupModal.appendChild(opt);
+        });
+      }
     }
 
     function deleteCategory(catName) {
@@ -1570,12 +1555,16 @@
           if (doc.category === catName) doc.category = "לא משויך";
         });
       });
+      (state.items || []).forEach(it => {
+        if (it.group === catName) it.group = "לא משויך";
+      });
       saveState();
       renderCategoriesTable();
       renderSuppliersTable();
       renderDocuments();
       renderDashboard();
       renderReports();
+      renderItemsTable();
       showToast("קטגוריה נמחקה");
     }
 
@@ -1710,38 +1699,6 @@
       showToast("ספק נמחק");
     }
 
-    function getItemGroups() {
-      const set = new Set();
-      (state.items || []).forEach(it => {
-        if (it.group) set.add(it.group);
-      });
-      return Array.from(set).sort((a,b)=>a.localeCompare(b,"he"));
-    }
-
-    function renderItemGroupFilter() {
-      const sel = document.getElementById("itemGroupFilter");
-      if (!sel) return;
-      const groups = getItemGroups();
-      sel.innerHTML = `<option value="">כל הקטגוריות</option>`;
-      groups.forEach(g => {
-        const opt = document.createElement("option");
-        opt.value = g;
-        opt.textContent = g;
-        sel.appendChild(opt);
-      });
-    }
-
-    function renderItemGroupDatalistModal() {
-      const dl = document.getElementById("itemGroupListModal");
-      if (!dl) return;
-      dl.innerHTML = "";
-      getItemGroups().forEach(g => {
-        const opt = document.createElement("option");
-        opt.value = g;
-        dl.appendChild(opt);
-      });
-    }
-
     function calcItemStatsForCurrentMonth() {
       const stats = {};
       const monthData = getCurrentMonthData();
@@ -1763,20 +1720,29 @@
       const backdrop = document.getElementById("itemModalBackdrop");
       const titleEl = document.getElementById("itemModalTitle");
       const delBtn = document.getElementById("deleteItemBtn");
-      renderItemGroupDatalistModal();
+
+      const cats = state.categories || [];
+      const sel = document.getElementById("itemGroupModal");
+      sel.innerHTML = "";
+      cats.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        sel.appendChild(opt);
+      });
 
       if (id) {
         const it = (state.items || []).find(x => x.id === id);
         if (!it) return;
         titleEl.textContent = "עריכת פריט";
         document.getElementById("itemNameModal").value = it.name;
-        document.getElementById("itemGroupModal").value = it.group || "";
+        document.getElementById("itemGroupModal").value = it.group || "לא משויך";
         document.getElementById("itemIsWeightModal").checked = !!it.isWeightBased;
         delBtn.style.display = "inline-flex";
       } else {
         titleEl.textContent = "פריט חדש";
         document.getElementById("itemNameModal").value = "";
-        document.getElementById("itemGroupModal").value = "";
+        document.getElementById("itemGroupModal").value = "מזון";
         document.getElementById("itemIsWeightModal").checked = false;
         delBtn.style.display = "none";
       }
@@ -1790,7 +1756,7 @@
 
     function saveItemFromModal() {
       const name = document.getElementById("itemNameModal").value.trim();
-      const group = document.getElementById("itemGroupModal").value.trim() || "לא משויך";
+      const group = document.getElementById("itemGroupModal").value || "לא משויך";
       const isWeightBased = document.getElementById("itemIsWeightModal").checked;
       if (!name) {
         showToast("חובה למלא שם פריט");
@@ -1814,7 +1780,7 @@
       }
       saveState();
       renderItemsTable();
-      renderItemGroupFilter();
+      renderCategoriesTable();
       closeItemModal();
     }
 
@@ -1878,92 +1844,83 @@
       const cat = docCategory || "";
       const all = state.items || [];
       if (!cat) return all;
-      return all.filter(it => {
-        if (!it.group) return true;
-        if (cat.includes(it.group) || it.group.includes(cat)) return true;
-        if (cat.includes("דגים") && (it.group === "דגים" || it.group === "פירות ים")) return true;
-        if (cat.includes("פירות ים") && (it.group === "פירות ים" || it.group === "דגים")) return true;
-        if (cat.includes("בשר") && it.group === "בשרים") return true;
-        return false;
-      });
+      return all.filter(it => it.group === cat);
     }
 
-    function clearDocItemsUI() {
+    function renderDocItemsUI(docToInit) {
       const container = document.getElementById("docItemsContainer");
-      if (container) container.innerHTML = "";
-    }
+      const select = document.getElementById("docItemSelect");
+      const category = document.getElementById("docCategory").value || "";
 
-    function addDocItemRow(line) {
-      const container = document.getElementById("docItemsContainer");
-      if (!container) return;
-      const currentCat = document.getElementById("docCategory").value || "";
-      const available = getItemsForDocCategory(currentCat);
-      const row = document.createElement("div");
-      row.className = "doc-item-row";
-
-      const sel = document.createElement("select");
-      sel.className = "doc-item-select";
-      sel.innerHTML = `<option value="">בחר פריט</option>`;
-      available.forEach(it => {
-        const opt = document.createElement("option");
-        opt.value = it.id;
-        opt.textContent = it.name;
-        sel.appendChild(opt);
-      });
-
-      const qty = document.createElement("input");
-      qty.type = "number";
-      qty.min = "0";
-      qty.step = "0.01";
-      qty.placeholder = "כמות";
-
-      const btnRemove = document.createElement("button");
-      btnRemove.type = "button";
-      btnRemove.className = "doc-item-remove";
-      btnRemove.textContent = "✕";
-      btnRemove.addEventListener("click", () => row.remove());
-
-      row.appendChild(sel);
-      row.appendChild(qty);
-      row.appendChild(btnRemove);
-      container.appendChild(row);
-
-      if (line) {
-        if (line.itemId) sel.value = line.itemId;
-        if (line.quantity != null) qty.value = line.quantity;
+      if (docToInit) {
+        currentDocItems = Array.isArray(docToInit.items) ? docToInit.items.map(l => ({...l})) : [];
       }
+
+      const available = getItemsForDocCategory(category);
+      select.innerHTML = `<option value="">בחר פריט...</option>` +
+        available.map(it => `<option value="${it.id}">${it.name}</option>`).join("");
+
+      container.innerHTML = "";
+      if (!currentDocItems.length) {
+        container.innerHTML = `<div style="font-size:11px;color:var(--text-muted);padding:4px 2px;">
+          לא נוספו עדיין פריטים למסמך זה.
+        </div>`;
+        return;
+      }
+
+      currentDocItems.forEach((line, idx) => {
+        const item = (state.items || []).find(it => it.id === line.itemId);
+        const name = item ? item.name : (line.itemName || "פריט");
+        const unit = item && item.isWeightBased ? "ק״ג" : "יח'";
+        const row = document.createElement("div");
+        row.className = "doc-item-row";
+        row.innerHTML = `
+          <div class="doc-item-name">${name}</div>
+          <div class="doc-item-unit">${formatNumber(line.quantity)} ${unit}</div>
+          <button type="button" class="btn btn-outline btn-sm" data-index="${idx}">מחק</button>
+        `;
+        container.appendChild(row);
+      });
+
+      container.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const idx = Number(btn.dataset.index);
+          if (!isNaN(idx)) {
+            currentDocItems.splice(idx, 1);
+            renderDocItemsUI(null);
+          }
+        });
+      });
     }
 
-    function renderDocItemsUI(doc) {
-      clearDocItemsUI();
-      const lines = doc && Array.isArray(doc.items) ? doc.items : [];
-      if (lines.length === 0) {
-        addDocItemRow(null);
+    function addDocItemFromSelect() {
+      const sel = document.getElementById("docItemSelect");
+      const qtyInput = document.getElementById("docItemQty");
+      if (!sel || !qtyInput) return;
+      const itemId = sel.value;
+      const qty = Number(qtyInput.value);
+      if (!itemId) {
+        showToast("בחר פריט מהרשימה");
+        return;
+      }
+      if (!qty || qty <= 0) {
+        showToast("כמות חייבת להיות גדולה מ-0");
+        return;
+      }
+      const item = (state.items || []).find(it => it.id === itemId);
+      const name = item ? item.name : "";
+      const existingIdx = currentDocItems.findIndex(l => l.itemId === itemId);
+      if (existingIdx !== -1) {
+        currentDocItems[existingIdx].quantity += qty;
       } else {
-        lines.forEach(line => addDocItemRow(line));
+        currentDocItems.push({ itemId, itemName: name, quantity: qty });
       }
+      qtyInput.value = "";
+      renderDocItemsUI(null);
     }
 
     function collectDocItemsFromUI() {
-      const container = document.getElementById("docItemsContainer");
-      if (!container) return [];
-      const rows = container.querySelectorAll(".doc-item-row");
-      const result = [];
-      rows.forEach(row => {
-        const sel = row.querySelector(".doc-item-select");
-        const qtyInput = row.querySelector("input");
-        if (!sel || !qtyInput) return;
-        const itemId = sel.value;
-        const quantity = Number(qtyInput.value) || 0;
-        if (!itemId || quantity <= 0) return;
-        const item = (state.items || []).find(it => it.id === itemId);
-        result.push({
-          itemId,
-          itemName: item ? item.name : "",
-          quantity
-        });
-      });
-      return result;
+      return currentDocItems.map(l => ({...l}));
     }
 
     function updateDocCategorySelect(supplierName, existingCategory) {
@@ -1984,6 +1941,27 @@
       } else {
         catSel.value = "לא משויך";
       }
+    }
+
+    function addNewItemFromDocModal() {
+      const cat = document.getElementById("docCategory").value || "לא משויך";
+      const name = prompt("שם פריט חדש לקטגוריה \"" + cat + "\":");
+      if (!name) return;
+      const trimmed = name.trim();
+      if (!trimmed) return;
+      const newItem = {
+        id: generateId("item"),
+        name: trimmed,
+        group: cat,
+        isWeightBased: false
+      };
+      if (!state.items) state.items = [];
+      state.items.push(newItem);
+      saveState();
+      renderItemsTable();
+      renderCategoriesTable();
+      renderDocItemsUI(null);
+      showToast("פריט חדש נוסף לקטגוריה");
     }
 
     function openDocumentModal(id = null) {
@@ -2020,6 +1998,7 @@
         document.getElementById("docStatus").value = "paid";
         document.getElementById("docIsCredit").value = "no";
         document.getElementById("docNotes").value = "";
+        currentDocItems = [];
         renderDocItemsUI(null);
         delBtn.style.display = "none";
       }
@@ -2029,6 +2008,7 @@
     function closeDocumentModal() {
       document.getElementById("documentModalBackdrop").classList.remove("show");
       editingDocumentId = null;
+      currentDocItems = [];
     }
 
     function saveDocumentFromModal() {
@@ -2197,7 +2177,6 @@
       document.getElementById("incomeInput").value = getCurrentMonthData().income || "";
       renderCategoriesTable();
       renderSuppliersTable();
-      renderItemGroupFilter();
       renderItemsTable();
       renderDashboard();
       renderDocuments();
@@ -2251,7 +2230,12 @@
         renderDocItemsUI(null);
       });
 
-      document.getElementById("addDocItemBtn").addEventListener("click", () => addDocItemRow(null));
+      document.getElementById("docCategory").addEventListener("change", () => {
+        renderDocItemsUI(null);
+      });
+
+      document.getElementById("addDocItemBtn").addEventListener("click", addDocItemFromSelect);
+      document.getElementById("addDocItemNewBtn").addEventListener("click", addNewItemFromDocModal);
       document.getElementById("saveDocumentBtn").addEventListener("click", saveDocumentFromModal);
       document.getElementById("closeDocumentModal").addEventListener("click", closeDocumentModal);
       document.getElementById("deleteDocumentBtn").addEventListener("click", deleteCurrentDocument);
