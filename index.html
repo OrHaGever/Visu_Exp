@@ -916,13 +916,6 @@
               <option value="partial">שולם חלקית</option>
             </select>
           </div>
-          <div class="form-group">
-            <label>האם זה זיכוי?</label>
-            <select id="docIsCredit">
-              <option value="no">לא</option>
-              <option value="yes">כן</option>
-            </select>
-          </div>
         </div>
 
         <div class="form-group">
@@ -1018,7 +1011,7 @@
     let editingDocumentId = null;
     let editingSupplierId = null;
     let editingItemId = null;
-    let currentDocItems = []; // פריטים של המסמך הפתוח כעת
+    let currentDocItems = [];
     let toastTimeout = null;
 
     function showToast(msg) {
@@ -1082,7 +1075,7 @@
         "מזון",
         "דגים ופירות ים",
         "שתייה",
-        "אלכोहול",
+        "אלכוהול",
         "קינוחים",
         "קפה",
         "חד פעמי",
@@ -1781,6 +1774,7 @@
       saveState();
       renderItemsTable();
       renderCategoriesTable();
+      renderDocItemsUI(null);
       closeItemModal();
     }
 
@@ -1841,10 +1835,11 @@
     }
 
     function getItemsForDocCategory(docCategory) {
-      const cat = docCategory || "";
       const all = state.items || [];
+      const cat = docCategory || "";
       if (!cat) return all;
-      return all.filter(it => it.group === cat);
+      const filtered = all.filter(it => it.group === cat);
+      return filtered.length ? filtered : all; // אם אין התאמה – מציגים את כל הפריטים
     }
 
     function renderDocItemsUI(docToInit) {
@@ -1983,7 +1978,6 @@
         document.getElementById("docDate").value = doc.date || todayYMD();
         document.getElementById("docAmount").value = doc.amount || "";
         document.getElementById("docStatus").value = doc.status || "paid";
-        document.getElementById("docIsCredit").value = doc.isCredit ? "yes" : "no";
         document.getElementById("docNotes").value = doc.notes || "";
         renderDocItemsUI(doc);
         delBtn.style.display = "inline-flex";
@@ -1996,7 +1990,6 @@
         document.getElementById("docDate").value = todayYMD();
         document.getElementById("docAmount").value = "";
         document.getElementById("docStatus").value = "paid";
-        document.getElementById("docIsCredit").value = "no";
         document.getElementById("docNotes").value = "";
         currentDocItems = [];
         renderDocItemsUI(null);
@@ -2018,7 +2011,6 @@
       const date = document.getElementById("docDate").value || todayYMD();
       const amount = Number(document.getElementById("docAmount").value) || 0;
       const status = document.getElementById("docStatus").value;
-      const isCredit = document.getElementById("docIsCredit").value === "yes";
       const notes = document.getElementById("docNotes").value.trim();
       const category = document.getElementById("docCategory").value || "לא משויך";
 
@@ -2030,6 +2022,8 @@
         showToast("סכום חייב להיות גדול מ-0");
         return;
       }
+
+      const isCredit = (type === "credit");
 
       let supplierId = null;
       const existing = state.suppliers.find(s => s.name === supplierName);
