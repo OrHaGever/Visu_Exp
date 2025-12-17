@@ -191,14 +191,8 @@
       align-items: center;
       gap: 4px;
     }
-    .stat-chip.success {
-      background: var(--success-soft);
-      color: var(--success);
-    }
-    .stat-chip.danger {
-      background: var(--danger-soft);
-      color: var(--danger);
-    }
+    .stat-chip.success { background: var(--success-soft); color: var(--success); }
+    .stat-chip.danger { background: var(--danger-soft); color: var(--danger); }
 
     .form-row {
       display: flex;
@@ -233,6 +227,10 @@
       width: 100%;
       resize: vertical;
     }
+    input[readonly] {
+      opacity: 0.9;
+      background: rgba(15,23,42,0.72);
+    }
     input::placeholder,
     textarea::placeholder {
       color: #6b7280;
@@ -259,46 +257,32 @@
       white-space: nowrap;
       transition: background 0.15s ease, transform 0.08s ease, box-shadow 0.15s ease, border-color 0.15s ease;
     }
-    .btn-sm {
-      padding: 4px 9px;
-      font-size: 11px;
-    }
+    .btn-sm { padding: 4px 9px; font-size: 11px; }
     .btn:hover {
       background: #2563eb;
       transform: translateY(-1px);
       box-shadow: 0 10px 25px rgba(37,99,235,0.5);
     }
-    .btn:active {
-      transform: translateY(0);
-      box-shadow: none;
-    }
+    .btn:active { transform: translateY(0); box-shadow: none; }
     .btn-outline {
       background: transparent;
       border-color: rgba(148,163,184,0.9);
       color: var(--text);
     }
-    .btn-outline:hover {
-      background: rgba(148,163,184,0.14);
-    }
+    .btn-outline:hover { background: rgba(148,163,184,0.14); }
     .btn-ghost {
       background: transparent;
       border-color: transparent;
       color: var(--text-muted);
       padding-inline: 4px;
     }
-    .btn-ghost:hover {
-      background: rgba(148,163,184,0.1);
-      color: var(--text);
-    }
+    .btn-ghost:hover { background: rgba(148,163,184,0.1); color: var(--text); }
     .btn-danger {
       background: var(--danger-soft);
       color: var(--danger);
       border-color: rgba(248,113,113,0.7);
     }
-    .btn-danger:hover {
-      background: #ef4444;
-      color: #f9fafb;
-    }
+    .btn-danger:hover { background: #ef4444; color: #f9fafb; }
 
     table {
       width: 100%;
@@ -307,28 +291,16 @@
       border-radius: var(--radius-md);
       overflow: hidden;
     }
-    thead {
-      background: rgba(15,23,42,0.98);
-    }
+    thead { background: rgba(15,23,42,0.98); }
     th, td {
       padding: 5px 6px;
       border-bottom: 1px solid rgba(30,64,175,0.4);
       text-align: right;
     }
-    th {
-      font-weight: 500;
-      color: var(--text-muted);
-      white-space: nowrap;
-    }
-    tbody tr:nth-child(even) {
-      background: rgba(15,23,42,0.85);
-    }
-    tbody tr:nth-child(odd) {
-      background: rgba(15,23,42,0.95);
-    }
-    tbody tr:hover {
-      background: rgba(37,99,235,0.11);
-    }
+    th { font-weight: 500; color: var(--text-muted); white-space: nowrap; }
+    tbody tr:nth-child(even) { background: rgba(15,23,42,0.85); }
+    tbody tr:nth-child(odd) { background: rgba(15,23,42,0.95); }
+    tbody tr:hover { background: rgba(37,99,235,0.11); }
 
     .chip-status {
       border-radius: 999px;
@@ -338,18 +310,9 @@
       align-items: center;
       gap: 4px;
     }
-    .chip-status.paid {
-      background: var(--success-soft);
-      color: var(--success);
-    }
-    .chip-status.unpaid {
-      background: rgba(234,179,8,0.12);
-      color: #facc15;
-    }
-    .chip-status.partial {
-      background: rgba(59,130,246,0.12);
-      color: var(--accent);
-    }
+    .chip-status.paid { background: var(--success-soft); color: var(--success); }
+    .chip-status.unpaid { background: rgba(234,179,8,0.12); color: #facc15; }
+    .chip-status.partial { background: rgba(59,130,246,0.12); color: var(--accent); }
     .chip-type {
       font-size: 10px;
       border-radius: 999px;
@@ -383,10 +346,7 @@
       white-space: nowrap;
       transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
     }
-    .month-chip:hover {
-      background: #1e293b;
-      transform: translateY(-1px);
-    }
+    .month-chip:hover { background: #1e293b; transform: translateY(-1px); }
     .month-chip.active {
       background: #1d4ed8;
       color: #ffffff;
@@ -443,10 +403,7 @@
       padding-bottom: 6px;
       border-bottom: 1px solid rgba(31,41,55,0.85);
     }
-    .modal-header-title {
-      font-weight: 600;
-      font-size: 14px;
-    }
+    .modal-header-title { font-weight: 600; font-size: 14px; }
     .modal-close {
       border-radius: 999px;
       border: 1px solid rgba(148,163,184,0.7);
@@ -460,10 +417,7 @@
       cursor: pointer;
       font-size: 13px;
     }
-    .modal-close:hover {
-      background: rgba(148,163,184,0.15);
-      color: #e5e7eb;
-    }
+    .modal-close:hover { background: rgba(148,163,184,0.15); color: #e5e7eb; }
     .modal-body {
       flex: 1;
       overflow-y: auto;
@@ -486,7 +440,7 @@
       border-radius: 10px;
       border: 1px dashed var(--border);
       padding: 6px 6px 4px;
-      max-height: 200px;
+      max-height: 220px;
       overflow-y: auto;
       background: rgba(15,23,42,0.85);
     }
@@ -497,19 +451,22 @@
       margin-bottom: 4px;
       font-size: 11px;
     }
-    .doc-item-name {
-      flex: 1;
-      color: var(--text);
-    }
-    .doc-item-unit {
+    .doc-item-name { flex: 1; color: var(--text); }
+    .doc-item-unit { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+    .doc-item-linecost { font-size: 11px; color: #e5e7eb; white-space: nowrap; }
+    .doc-items-hint { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
+    .doc-items-total {
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(148,163,184,0.25);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
       font-size: 11px;
-      color: var(--text-muted);
+      color: #e5e7eb;
     }
-    .doc-items-hint {
-      font-size: 10px;
-      color: var(--text-muted);
-      margin-top: 3px;
-    }
+    .doc-items-total strong { font-weight: 600; }
 
     @media (max-width: 768px) {
       body { padding: 6px; }
@@ -565,7 +522,7 @@
               <label>חודש</label>
               <input type="month" id="monthInput" />
             </div>
-            <div class="form-group" style="max-width: 200px;">
+            <div class="form-group" style="max-width: 220px;">
               <label>מחזור (הכנסות, ₪)</label>
               <input type="number" id="incomeInput" step="0.01" min="0" placeholder="לדוגמה 180000" />
             </div>
@@ -579,7 +536,7 @@
               <div class="stat-value" id="statIncome">₪ 0</div>
             </div>
             <div class="stat-card">
-              <div class="stat-label">הוצאות ספקים</div>
+              <div class="stat-label">הוצאות ספקים (כולל זיכויים)</div>
               <div class="stat-value" id="statExpenses">₪ 0</div>
               <span class="stat-chip danger" id="statExpensesChip">0% מהמחזור</span>
             </div>
@@ -599,10 +556,7 @@
               <h4 style="font-size:12px;margin:0 0 4px;">ספקים מובילים</h4>
               <table>
                 <thead>
-                  <tr>
-                    <th>ספק</th>
-                    <th>סה״כ</th>
-                  </tr>
+                  <tr><th>ספק</th><th>סה״כ</th></tr>
                 </thead>
                 <tbody id="topSuppliersBody"></tbody>
               </table>
@@ -611,10 +565,7 @@
               <h4 style="font-size:12px;margin:0 0 4px;">קטגוריות מובילות</h4>
               <table>
                 <thead>
-                  <tr>
-                    <th>קטגוריה</th>
-                    <th>סה״כ</th>
-                  </tr>
+                  <tr><th>קטגוריה</th><th>סה״כ</th></tr>
                 </thead>
                 <tbody id="topCategoriesBody"></tbody>
               </table>
@@ -695,26 +646,14 @@
             <div>
               <h4 style="font-size:12px;margin:0 0 4px;">לפי ספק</h4>
               <table>
-                <thead>
-                  <tr>
-                    <th>ספק</th>
-                    <th>מסמכים</th>
-                    <th>סה״כ</th>
-                  </tr>
-                </thead>
+                <thead><tr><th>ספק</th><th>מסמכים</th><th>סה״כ</th></tr></thead>
                 <tbody id="reportBySupplierBody"></tbody>
               </table>
             </div>
             <div>
               <h4 style="font-size:12px;margin:0 0 4px;">לפי קטגוריה</h4>
               <table>
-                <thead>
-                  <tr>
-                    <th>קטגוריה</th>
-                    <th>מסמכים</th>
-                    <th>סה״כ</th>
-                  </tr>
-                </thead>
+                <thead><tr><th>קטגוריה</th><th>מסמכים</th><th>סה״כ</th></tr></thead>
                 <tbody id="reportByCategoryBody"></tbody>
               </table>
             </div>
@@ -763,7 +702,7 @@
         <div class="card">
           <div class="card-title">רשימת פריטים</div>
           <div class="card-subtitle">
-            פריטים שנרכשים בשגרה (דגים, בשרים, פירות ים ועוד) – לפי קטגוריות ספקים, כולל סיכומי כמות לחודש.
+            פריטים שנרכשים בשגרה – לפי קטגוריות ספקים, כולל מחיר וחישובי כמות.
           </div>
 
           <div class="form-row">
@@ -787,6 +726,7 @@
                 <th>שם</th>
                 <th>קטגוריה</th>
                 <th>יחידת מדידה</th>
+                <th>מחיר</th>
                 <th>סה״כ כמות בחודש</th>
                 <th>מס׳ מסמכים</th>
                 <th>פעולות</th>
@@ -801,7 +741,7 @@
       <div class="screen" id="screen-categories">
         <div class="card">
           <div class="card-title">קטגוריות ספקים</div>
-          <div class="card-subtitle">מזון, דגים ופירות ים, שתייה, תחזוקה, שיווק ועוד.</div>
+          <div class="card-subtitle">מזון, שתייה, תחזוקה, שיווק ועוד.</div>
 
           <div class="form-row">
             <div class="form-group">
@@ -814,12 +754,7 @@
           </div>
 
           <table>
-            <thead>
-              <tr>
-                <th>קטגוריה</th>
-                <th>פעולות</th>
-              </tr>
-            </thead>
+            <thead><tr><th>קטגוריה</th><th>פעולות</th></tr></thead>
             <tbody id="categoriesTableBody"></tbody>
           </table>
         </div>
@@ -858,11 +793,16 @@
               <option value="credit">זיכוי</option>
             </select>
           </div>
+
           <div class="form-group">
             <label>ספק</label>
             <input type="text" id="docSupplierName" list="supplierNameList" placeholder="בחר או כתוב שם ספק" />
             <datalist id="supplierNameList"></datalist>
+            <div style="margin-top:6px;">
+              <button type="button" class="btn btn-outline btn-sm" id="addSupplierFromDocBtn">הוסף ספק חדש</button>
+            </div>
           </div>
+
           <div class="form-group">
             <label>קטגוריה</label>
             <select id="docCategory"></select>
@@ -884,6 +824,15 @@
           </div>
         </div>
 
+        <div class="form-row">
+          <div class="form-group" style="min-width:260px;">
+            <label>
+              <input type="checkbox" id="docAutoAmount" checked />
+              לחשב סכום אוטומטית לפי פריטים
+            </label>
+          </div>
+        </div>
+
         <div class="form-group">
           <label>פריטים במסמך</label>
           <div class="form-row">
@@ -897,13 +846,15 @@
               <button type="button" class="btn btn-outline btn-sm" id="addDocItemBtn">הוסף פריט למסמך</button>
             </div>
           </div>
+
           <div id="docItemsContainer" class="doc-items-container"></div>
+
           <div style="margin-top:4px;display:flex;gap:6px;flex-wrap:wrap;">
             <button type="button" class="btn btn-outline btn-sm" id="addDocItemNewBtn">הוסף פריט חדש לרשימה</button>
           </div>
+
           <div class="doc-items-hint">
-            בחר פריט מהרשימה, הזן כמות ולחץ "הוסף פריט למסמך". ניתן להוסיף כמה פריטים,
-            ולמחוק כל פריט מתוך הרשימה שלמטה.
+            בחר פריט מהרשימה, הזן כמות ולחץ "הוסף פריט למסמך". מוצגת עלות פריט אוטומטית לפי מחיר הפריט.
           </div>
         </div>
 
@@ -985,6 +936,10 @@
           <select id="itemGroupModal"></select>
         </div>
         <div class="form-group">
+          <label>מחיר (₪) לפי יחידה / ק״ג</label>
+          <input type="number" id="itemPriceModal" min="0" step="0.01" placeholder="לדוגמה: 29.90" />
+        </div>
+        <div class="form-group">
           <label>
             <input type="checkbox" id="itemIsWeightModal" />
             נמדד לפי משקל (ק״ג)?
@@ -1008,6 +963,7 @@
       currentMonth: "",
       lastDeleted: null
     };
+
     let editingDocumentId = null;
     let editingSupplierId = null;
     let editingItemId = null;
@@ -1035,6 +991,7 @@
       const day = String(d.getDate()).padStart(2, "0");
       return `${d.getFullYear()}-${m}-${day}`;
     }
+
     function currentYM() {
       const d = new Date();
       const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -1044,29 +1001,16 @@
     function getDefaultItems() {
       const foodCat = "מזון";
       const names = [
-        "דניס",
-        "לברק",
-        "מושט",
-        "ברבוניה",
-        "בר ים",
-        "סלמון",
-        "לוקוס",
-        "שרימפס",
-        "קלמרי",
-        "ראשי קלמרי",
-        "סרטנים",
-        "מולים",
-        "סטייק אנטריקוט",
-        "פילה בקר",
-        "פרגית",
-        "חזה עוף",
-        "צלעות"
+        "דניס","לברק","מושט","ברבוניה","בר ים","סלמון","לוקוס",
+        "שרימפס","קלמרי","ראשי קלמרי","סרטנים","מולים",
+        "סטייק אנטריקוט","פילה בקר","פרגית","חזה עוף","צלעות"
       ];
       return names.map(name => ({
         id: generateId("item"),
         name,
         group: foodCat,
-        isWeightBased: name === "לוקוס"
+        isWeightBased: name === "לוקוס",
+        price: 0
       }));
     }
 
@@ -1176,11 +1120,18 @@
       try {
         const obj = JSON.parse(raw);
         state = obj;
+
         if (!state.categories) state.categories = [];
         if (!state.suppliers) state.suppliers = [];
         if (!state.items || !Array.isArray(state.items)) {
           state.items = getDefaultItems();
         }
+
+        // Migration: ensure each item has numeric price
+        (state.items || []).forEach(it => {
+          if (typeof it.price !== "number") it.price = Number(it.price) || 0;
+        });
+
         if (!state.months) state.months = {};
         if (!state.currentMonth) state.currentMonth = currentYM();
         if (!state.months[state.currentMonth]) {
@@ -1249,6 +1200,7 @@
       `).join("");
       if (dashStrip) dashStrip.innerHTML = html;
       if (docsStrip) docsStrip.innerHTML = html;
+
       document.querySelectorAll(".month-chip").forEach(btn => {
         btn.addEventListener("click", () => {
           const ym = btn.dataset.month;
@@ -1270,9 +1222,11 @@
       document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
       const el = document.getElementById("screen-" + screenId);
       if (el) el.classList.add("active");
+
       document.querySelectorAll(".nav-tab").forEach(b => {
         b.classList.toggle("active", b.dataset.screen === screenId);
       });
+
       if (screenId === "dashboard") renderDashboard();
       if (screenId === "documents") renderDocuments();
       if (screenId === "reports") renderReports();
@@ -1286,12 +1240,14 @@
       const income = Number(monthData.income) || 0;
       const docs = monthData.documents || [];
       let totalExpenses = 0;
+
       docs.forEach(doc => {
         const amount = Number(doc.amount) || 0;
         if (!amount) return;
         const signed = doc.isCredit ? -amount : amount;
         totalExpenses += signed;
       });
+
       const net = income - totalExpenses;
 
       document.getElementById("statIncome").textContent = formatCurrency(income);
@@ -1314,6 +1270,7 @@
         const cat = d.category || "לא משויך";
         perCategory[cat] = (perCategory[cat] || 0) + signed;
       });
+
       const topSup = Object.entries(perSupplier)
         .sort((a,b)=>Math.abs(b[1]) - Math.abs(a[1]))
         .slice(0,5);
@@ -1325,25 +1282,21 @@
       const topCatBody = document.getElementById("topCategoriesBody");
       topSupBody.innerHTML = "";
       topCatBody.innerHTML = "";
+
       if (topSup.length === 0) {
         topSupBody.innerHTML = `<tr><td colspan="2" style="color:var(--text-muted);">אין נתונים לחודש זה</td></tr>`;
         topCatBody.innerHTML = `<tr><td colspan="2" style="color:var(--text-muted);">אין נתונים לחודש זה</td></tr>`;
         return;
       }
+
       topSup.forEach(([name, sum]) => {
         const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${name}</td>
-          <td>${formatCurrency(sum)}</td>
-        `;
+        tr.innerHTML = `<td>${name}</td><td>${formatCurrency(sum)}</td>`;
         topSupBody.appendChild(tr);
       });
       topCat.forEach(([name, sum]) => {
         const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${name}</td>
-          <td>${formatCurrency(sum)}</td>
-        `;
+        tr.innerHTML = `<td>${name}</td><td>${formatCurrency(sum)}</td>`;
         topCatBody.appendChild(tr);
       });
     }
@@ -1401,9 +1354,7 @@
             </span>
           </td>
           <td>${itemsCount > 0 ? itemsCount + " פריטים" : "-"}</td>
-          <td>
-            <button class="btn btn-outline btn-sm" onclick="openDocumentModal('${doc.id}')">ערוך</button>
-          </td>
+          <td><button class="btn btn-outline btn-sm" onclick="openDocumentModal('${doc.id}')">ערוך</button></td>
         `;
         tbody.appendChild(tr);
       });
@@ -1445,20 +1396,12 @@
 
       supArr.forEach(([name, d]) => {
         const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${name}</td>
-          <td>${d.count}</td>
-          <td>${formatCurrency(d.sum)}</td>
-        `;
+        tr.innerHTML = `<td>${name}</td><td>${d.count}</td><td>${formatCurrency(d.sum)}</td>`;
         tbodySup.appendChild(tr);
       });
       catArr.forEach(([name, d]) => {
         const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${name}</td>
-          <td>${d.count}</td>
-          <td>${formatCurrency(d.sum)}</td>
-        `;
+        tr.innerHTML = `<td>${name}</td><td>${d.count}</td><td>${formatCurrency(d.sum)}</td>`;
         tbodyCat.appendChild(tr);
       });
     }
@@ -1478,6 +1421,7 @@
         tbody.appendChild(tr);
       });
 
+      // Update supplier modal categories + filters + doc category
       const selSupplierCat = document.getElementById("supplierCategoryModal");
       selSupplierCat.innerHTML = "";
       cats.forEach(cat => {
@@ -1515,42 +1459,42 @@
       });
 
       const itemGroupFilter = document.getElementById("itemGroupFilter");
-      if (itemGroupFilter) {
-        itemGroupFilter.innerHTML = `<option value="">כל הקטגוריות</option>`;
-        cats.forEach(cat => {
-          const opt = document.createElement("option");
-          opt.value = cat;
-          opt.textContent = cat;
-          itemGroupFilter.appendChild(opt);
-        });
-      }
+      itemGroupFilter.innerHTML = `<option value="">כל הקטגוריות</option>`;
+      cats.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        itemGroupFilter.appendChild(opt);
+      });
 
       const itemGroupModal = document.getElementById("itemGroupModal");
-      if (itemGroupModal) {
-        itemGroupModal.innerHTML = "";
-        cats.forEach(cat => {
-          const opt = document.createElement("option");
-          opt.value = cat;
-          opt.textContent = cat;
-          itemGroupModal.appendChild(opt);
-        });
-      }
+      itemGroupModal.innerHTML = "";
+      cats.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        itemGroupModal.appendChild(opt);
+      });
     }
 
     function deleteCategory(catName) {
       if (!confirm("למחוק קטגוריה זו?")) return;
       state.categories = state.categories.filter(c => c !== catName);
+
       state.suppliers.forEach(s => {
         if (s.category === catName) s.category = "לא משויך";
       });
+
       Object.values(state.months || {}).forEach(m => {
         (m.documents || []).forEach(doc => {
           if (doc.category === catName) doc.category = "לא משויך";
         });
       });
+
       (state.items || []).forEach(it => {
         if (it.group === catName) it.group = "לא משויך";
       });
+
       saveState();
       renderCategoriesTable();
       renderSuppliersTable();
@@ -1587,13 +1531,12 @@
           <td>${s.phone || ""}</td>
           <td>${s.email || ""}</td>
           <td>${s.notes || ""}</td>
-          <td>
-            <button class="btn btn-outline btn-sm" onclick="openSupplierModal('${s.id}')">ערוך</button>
-          </td>
+          <td><button class="btn btn-outline btn-sm" onclick="openSupplierModal('${s.id}')">ערוך</button></td>
         `;
         tbody.appendChild(tr);
       });
 
+      // Update datalist for document supplier input
       const dl = document.getElementById("supplierNameList");
       dl.innerHTML = "";
       suppliers.forEach(s => {
@@ -1642,10 +1585,7 @@
       const phone = document.getElementById("supplierPhoneModal").value.trim();
       const email = document.getElementById("supplierEmailModal").value.trim();
       const notes = document.getElementById("supplierNotesModal").value.trim();
-      if (!name) {
-        showToast("חובה למלא שם ספק");
-        return;
-      }
+      if (!name) { showToast("חובה למלא שם ספק"); return; }
 
       if (!state.suppliers) state.suppliers = [];
       if (editingSupplierId) {
@@ -1655,20 +1595,20 @@
         }
         showToast("ספק עודכן");
       } else {
-        state.suppliers.push({
-          id: generateId("sup"),
-          name,
-          category,
-          phone,
-          email,
-          notes
-        });
+        state.suppliers.push({ id: generateId("sup"), name, category, phone, email, notes });
         showToast("ספק נוסף");
       }
+
       saveState();
       closeSupplierModal();
       renderSuppliersTable();
-      renderDocuments();
+
+      // If doc modal is open, keep supplier field aligned
+      const docSupplierField = document.getElementById("docSupplierName");
+      if (docSupplierField && docSupplierField.value.trim() === name) {
+        updateDocCategorySelect(name, "");
+        renderDocItemsUI(null);
+      }
     }
 
     function deleteCurrentSupplier() {
@@ -1678,13 +1618,13 @@
       if (idx === -1) return;
       const removed = state.suppliers[idx];
       state.suppliers.splice(idx, 1);
+
       Object.values(state.months || {}).forEach(m => {
         (m.documents || []).forEach(doc => {
-          if (doc.supplierId === removed.id) {
-            doc.supplierId = null;
-          }
+          if (doc.supplierId === removed.id) doc.supplierId = null;
         });
       });
+
       saveState();
       closeSupplierModal();
       renderSuppliersTable();
@@ -1698,9 +1638,7 @@
       (monthData.documents || []).forEach(doc => {
         (doc.items || []).forEach(line => {
           if (!line.itemId) return;
-          if (!stats[line.itemId]) {
-            stats[line.itemId] = { qty: 0, docs: new Set() };
-          }
+          if (!stats[line.itemId]) stats[line.itemId] = { qty: 0, docs: new Set() };
           stats[line.itemId].qty += Number(line.quantity) || 0;
           stats[line.itemId].docs.add(doc.id);
         });
@@ -1730,12 +1668,14 @@
         titleEl.textContent = "עריכת פריט";
         document.getElementById("itemNameModal").value = it.name;
         document.getElementById("itemGroupModal").value = it.group || "לא משויך";
+        document.getElementById("itemPriceModal").value = (typeof it.price === "number" ? it.price : (Number(it.price) || 0));
         document.getElementById("itemIsWeightModal").checked = !!it.isWeightBased;
         delBtn.style.display = "inline-flex";
       } else {
         titleEl.textContent = "פריט חדש";
         document.getElementById("itemNameModal").value = "";
         document.getElementById("itemGroupModal").value = "מזון";
+        document.getElementById("itemPriceModal").value = 0;
         document.getElementById("itemIsWeightModal").checked = false;
         delBtn.style.display = "none";
       }
@@ -1750,27 +1690,22 @@
     function saveItemFromModal() {
       const name = document.getElementById("itemNameModal").value.trim();
       const group = document.getElementById("itemGroupModal").value || "לא משויך";
+      const price = Number(document.getElementById("itemPriceModal").value) || 0;
       const isWeightBased = document.getElementById("itemIsWeightModal").checked;
-      if (!name) {
-        showToast("חובה למלא שם פריט");
-        return;
-      }
+      if (!name) { showToast("חובה למלא שם פריט"); return; }
+
       if (!state.items) state.items = [];
       if (editingItemId) {
         const idx = state.items.findIndex(it => it.id === editingItemId);
         if (idx !== -1) {
-          state.items[idx] = { ...state.items[idx], name, group, isWeightBased };
+          state.items[idx] = { ...state.items[idx], name, group, price, isWeightBased };
         }
         showToast("פריט עודכן");
       } else {
-        state.items.push({
-          id: generateId("item"),
-          name,
-          group,
-          isWeightBased
-        });
+        state.items.push({ id: generateId("item"), name, group, price, isWeightBased });
         showToast("פריט נוסף");
       }
+
       saveState();
       renderItemsTable();
       renderCategoriesTable();
@@ -1785,6 +1720,7 @@
       if (idx === -1) return;
       const removed = state.items[idx];
       state.items.splice(idx, 1);
+
       Object.values(state.months || {}).forEach(m => {
         (m.documents || []).forEach(doc => {
           if (Array.isArray(doc.items)) {
@@ -1792,6 +1728,7 @@
           }
         });
       });
+
       saveState();
       renderItemsTable();
       closeItemModal();
@@ -1801,9 +1738,11 @@
     function renderItemsTable() {
       const tbody = document.getElementById("itemsTableBody");
       if (!tbody) return;
+
       const search = (document.getElementById("itemSearchInput")?.value || "").toLowerCase().trim();
       const groupFilter = document.getElementById("itemGroupFilter")?.value || "";
       const stats = calcItemStatsForCurrentMonth();
+
       const arr = (state.items || []).filter(it => {
         if (search && !it.name.toLowerCase().includes(search)) return false;
         if (groupFilter && it.group !== groupFilter) return false;
@@ -1812,20 +1751,26 @@
 
       tbody.innerHTML = "";
       if (arr.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="color:var(--text-muted);padding:8px;">אין פריטים לפי סינון זה</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" style="color:var(--text-muted);padding:8px;">אין פריטים לפי סינון זה</td></tr>`;
         return;
       }
+
       arr.forEach((it, idx) => {
         const st = stats[it.id] || { qty: 0, docs: new Set() };
         const unit = it.isWeightBased ? "ק״ג" : "יחידות";
         const qtyLabel = st.qty ? formatNumber(st.qty) + " " + unit : "-";
         const docCount = st.docs instanceof Set ? st.docs.size : 0;
+
+        const p = Number(it.price) || 0;
+        const priceLabel = p > 0 ? `${p.toFixed(2)} ₪ / ${it.isWeightBased ? 'ק״ג' : 'יח׳'}` : "-";
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${idx+1}</td>
           <td>${it.name}</td>
           <td>${it.group || ""}</td>
           <td>${unit}</td>
+          <td>${priceLabel}</td>
           <td>${qtyLabel}</td>
           <td>${docCount}</td>
           <td><button class="btn btn-outline btn-sm" onclick="openItemModal('${it.id}')">ערוך</button></td>
@@ -1839,7 +1784,32 @@
       const cat = docCategory || "";
       if (!cat) return all;
       const filtered = all.filter(it => it.group === cat);
-      return filtered.length ? filtered : all; // אם אין התאמה – מציגים את כל הפריטים
+      return filtered.length ? filtered : all; // fallback
+    }
+
+    function calcDocItemsTotal() {
+      let total = 0;
+      (currentDocItems || []).forEach(line => {
+        const item = (state.items || []).find(it => it.id === line.itemId);
+        const price = Number(item?.price) || 0;
+        const qty = Number(line.quantity) || 0;
+        total += price * qty;
+      });
+      return total;
+    }
+
+    function syncDocAmountWithItemsIfAuto() {
+      const auto = document.getElementById("docAutoAmount");
+      const amountInput = document.getElementById("docAmount");
+      if (!auto || !amountInput) return;
+
+      if (auto.checked) {
+        const total = calcDocItemsTotal();
+        amountInput.value = total ? total.toFixed(2) : "";
+        amountInput.readOnly = true;
+      } else {
+        amountInput.readOnly = false;
+      }
     }
 
     function renderDocItemsUI(docToInit) {
@@ -1856,36 +1826,56 @@
         available.map(it => `<option value="${it.id}">${it.name}</option>`).join("");
 
       container.innerHTML = "";
+
       if (!currentDocItems.length) {
         container.innerHTML = `<div style="font-size:11px;color:var(--text-muted);padding:4px 2px;">
           לא נוספו עדיין פריטים למסמך זה.
         </div>`;
+        syncDocAmountWithItemsIfAuto();
         return;
       }
 
       currentDocItems.forEach((line, idx) => {
         const item = (state.items || []).find(it => it.id === line.itemId);
         const name = item ? item.name : (line.itemName || "פריט");
-        const unit = item && item.isWeightBased ? "ק״ג" : "יח'";
+        const unit = item && item.isWeightBased ? "ק״ג" : "יח׳";
+        const price = Number(item?.price) || 0;
+        const qty = Number(line.quantity) || 0;
+        const lineCost = price * qty;
+
         const row = document.createElement("div");
         row.className = "doc-item-row";
         row.innerHTML = `
           <div class="doc-item-name">${name}</div>
-          <div class="doc-item-unit">${formatNumber(line.quantity)} ${unit}</div>
+          <div class="doc-item-unit">${formatNumber(qty)} ${unit}</div>
+          <div class="doc-item-linecost">${price > 0 ? (lineCost.toFixed(2) + " ₪") : "-"}</div>
           <button type="button" class="btn btn-outline btn-sm" data-index="${idx}">מחק</button>
         `;
         container.appendChild(row);
       });
 
-      container.querySelectorAll("button").forEach(btn => {
+      // Total footer
+      const total = calcDocItemsTotal();
+      const footer = document.createElement("div");
+      footer.className = "doc-items-total";
+      footer.innerHTML = `
+        <div>סה״כ פריטים:</div>
+        <div><strong>${total ? total.toFixed(2) : "0.00"} ₪</strong></div>
+      `;
+      container.appendChild(footer);
+
+      container.querySelectorAll("button[data-index]").forEach(btn => {
         btn.addEventListener("click", () => {
           const idx = Number(btn.dataset.index);
           if (!isNaN(idx)) {
             currentDocItems.splice(idx, 1);
             renderDocItemsUI(null);
+            syncDocAmountWithItemsIfAuto();
           }
         });
       });
+
+      syncDocAmountWithItemsIfAuto();
     }
 
     function addDocItemFromSelect() {
@@ -1894,24 +1884,23 @@
       if (!sel || !qtyInput) return;
       const itemId = sel.value;
       const qty = Number(qtyInput.value);
-      if (!itemId) {
-        showToast("בחר פריט מהרשימה");
-        return;
-      }
-      if (!qty || qty <= 0) {
-        showToast("כמות חייבת להיות גדולה מ-0");
-        return;
-      }
+
+      if (!itemId) { showToast("בחר פריט מהרשימה"); return; }
+      if (!qty || qty <= 0) { showToast("כמות חייבת להיות גדולה מ-0"); return; }
+
       const item = (state.items || []).find(it => it.id === itemId);
       const name = item ? item.name : "";
+
       const existingIdx = currentDocItems.findIndex(l => l.itemId === itemId);
       if (existingIdx !== -1) {
         currentDocItems[existingIdx].quantity += qty;
       } else {
         currentDocItems.push({ itemId, itemName: name, quantity: qty });
       }
+
       qtyInput.value = "";
       renderDocItemsUI(null);
+      syncDocAmountWithItemsIfAuto();
     }
 
     function collectDocItemsFromUI() {
@@ -1929,6 +1918,7 @@
         opt.textContent = cat;
         catSel.appendChild(opt);
       });
+
       if (existingCategory && cats.includes(existingCategory)) {
         catSel.value = existingCategory;
       } else if (sup && sup.category && cats.includes(sup.category)) {
@@ -1940,23 +1930,26 @@
 
     function addNewItemFromDocModal() {
       const cat = document.getElementById("docCategory").value || "לא משויך";
-      const name = prompt("שם פריט חדש לקטגוריה \"" + cat + "\":");
+      const name = prompt(`שם פריט חדש לקטגוריה "${cat}":`);
       if (!name) return;
       const trimmed = name.trim();
       if (!trimmed) return;
+
       const newItem = {
         id: generateId("item"),
         name: trimmed,
         group: cat,
-        isWeightBased: false
+        isWeightBased: false,
+        price: 0
       };
       if (!state.items) state.items = [];
       state.items.push(newItem);
+
       saveState();
       renderItemsTable();
       renderCategoriesTable();
       renderDocItemsUI(null);
-      showToast("פריט חדש נוסף לקטגוריה");
+      showToast("פריט חדש נוסף (מחיר: 0)");
     }
 
     function openDocumentModal(id = null) {
@@ -1979,7 +1972,11 @@
         document.getElementById("docAmount").value = doc.amount || "";
         document.getElementById("docStatus").value = doc.status || "paid";
         document.getElementById("docNotes").value = doc.notes || "";
+
+        document.getElementById("docAutoAmount").checked = true;
         renderDocItemsUI(doc);
+        syncDocAmountWithItemsIfAuto();
+
         delBtn.style.display = "inline-flex";
       } else {
         title.textContent = "מסמך חדש";
@@ -1991,10 +1988,15 @@
         document.getElementById("docAmount").value = "";
         document.getElementById("docStatus").value = "paid";
         document.getElementById("docNotes").value = "";
+
+        document.getElementById("docAutoAmount").checked = true;
         currentDocItems = [];
         renderDocItemsUI(null);
+        syncDocAmountWithItemsIfAuto();
+
         delBtn.style.display = "none";
       }
+
       backdrop.classList.add("show");
     }
 
@@ -2014,14 +2016,8 @@
       const notes = document.getElementById("docNotes").value.trim();
       const category = document.getElementById("docCategory").value || "לא משויך";
 
-      if (!supplierName) {
-        showToast("חובה לבחור ספק");
-        return;
-      }
-      if (!amount) {
-        showToast("סכום חייב להיות גדול מ-0");
-        return;
-      }
+      if (!supplierName) { showToast("חובה לבחור ספק"); return; }
+      if (!amount || amount <= 0) { showToast("סכום חייב להיות גדול מ-0"); return; }
 
       const isCredit = (type === "credit");
 
@@ -2030,6 +2026,7 @@
       if (existing) {
         supplierId = existing.id;
       } else {
+        // Auto-create supplier if not found
         const newSup = {
           id: generateId("sup"),
           name: supplierName,
@@ -2082,6 +2079,7 @@
         });
         showToast("מסמך נוסף");
       }
+
       saveState();
       closeDocumentModal();
       renderSuppliersTable();
@@ -2116,10 +2114,8 @@
     function exportCsvCurrentMonth() {
       const monthData = getCurrentMonthData();
       const docs = monthData.documents || [];
-      if (docs.length === 0) {
-        showToast("אין מסמכים לחודש הנוכחי");
-        return;
-      }
+      if (docs.length === 0) { showToast("אין מסמכים לחודש הנוכחי"); return; }
+
       const headers = ["type","supplierName","category","ref","date","amount","status","isCredit","notes"];
       const rows = docs.map(d => headers.map(h => {
         let v = d[h];
@@ -2148,13 +2144,15 @@
           if (!obj || typeof obj !== "object") throw new Error("not object");
           if (!obj.months || !obj.suppliers) throw new Error("missing");
           state = obj;
-          if (!state.items || !Array.isArray(state.items)) {
-            state.items = getDefaultItems();
-          }
+
+          if (!state.items || !Array.isArray(state.items)) state.items = getDefaultItems();
+          (state.items || []).forEach(it => {
+            if (typeof it.price !== "number") it.price = Number(it.price) || 0;
+          });
+
           if (!state.currentMonth) state.currentMonth = currentYM();
-          if (!state.months[state.currentMonth]) {
-            state.months[state.currentMonth] = { income: 0, documents: [] };
-          }
+          if (!state.months[state.currentMonth]) state.months[state.currentMonth] = { income: 0, documents: [] };
+
           saveState();
           initUiAfterStateLoaded();
           showToast("JSON נטען בהצלחה");
@@ -2183,18 +2181,14 @@
       initUiAfterStateLoaded();
 
       document.querySelectorAll(".nav-tab").forEach(btn => {
-        btn.addEventListener("click", () => {
-          changeScreen(btn.dataset.screen);
-        });
+        btn.addEventListener("click", () => changeScreen(btn.dataset.screen));
       });
 
       document.getElementById("monthInput").addEventListener("change", e => {
         const v = e.target.value;
         if (!v) return;
         state.currentMonth = v;
-        if (!state.months[state.currentMonth]) {
-          state.months[state.currentMonth] = { income: 0, documents: [] };
-        }
+        if (!state.months[state.currentMonth]) state.months[state.currentMonth] = { income: 0, documents: [] };
         document.getElementById("incomeInput").value = getCurrentMonthData().income || "";
         saveState();
         renderDashboard();
@@ -2224,8 +2218,18 @@
         renderDocItemsUI(null);
       });
 
+      document.getElementById("addSupplierFromDocBtn").addEventListener("click", () => {
+        const name = document.getElementById("docSupplierName").value.trim();
+        openSupplierModal(null);
+        if (name) document.getElementById("supplierNameModal").value = name;
+      });
+
       document.getElementById("docCategory").addEventListener("change", () => {
         renderDocItemsUI(null);
+      });
+
+      document.getElementById("docAutoAmount").addEventListener("change", () => {
+        syncDocAmountWithItemsIfAuto();
       });
 
       document.getElementById("addDocItemBtn").addEventListener("click", addDocItemFromSelect);
@@ -2241,26 +2245,16 @@
       document.getElementById("saveSupplierModalBtn").addEventListener("click", saveSupplierFromModal);
       document.getElementById("deleteSupplierBtn").addEventListener("click", deleteCurrentSupplier);
 
-      const itemSearch = document.getElementById("itemSearchInput");
-      const itemGroupFilter = document.getElementById("itemGroupFilter");
-      const addItemBtn = document.getElementById("addItemBtn");
-      const closeItemModalBtn = document.getElementById("closeItemModal");
-      const saveItemBtn = document.getElementById("saveItemModalBtn");
-      const deleteItemBtn = document.getElementById("deleteItemBtn");
-
-      if (itemSearch) itemSearch.addEventListener("input", renderItemsTable);
-      if (itemGroupFilter) itemGroupFilter.addEventListener("change", renderItemsTable);
-      if (addItemBtn) addItemBtn.addEventListener("click", () => openItemModal(null));
-      if (closeItemModalBtn) closeItemModalBtn.addEventListener("click", closeItemModal);
-      if (saveItemBtn) saveItemBtn.addEventListener("click", saveItemFromModal);
-      if (deleteItemBtn) deleteItemBtn.addEventListener("click", deleteCurrentItem);
+      document.getElementById("itemSearchInput").addEventListener("input", renderItemsTable);
+      document.getElementById("itemGroupFilter").addEventListener("change", renderItemsTable);
+      document.getElementById("addItemBtn").addEventListener("click", () => openItemModal(null));
+      document.getElementById("closeItemModal").addEventListener("click", closeItemModal);
+      document.getElementById("saveItemModalBtn").addEventListener("click", saveItemFromModal);
+      document.getElementById("deleteItemBtn").addEventListener("click", deleteCurrentItem);
 
       document.getElementById("addCategoryBtn").addEventListener("click", () => {
         const val = document.getElementById("newCategoryInput").value.trim();
-        if (!val) {
-          showToast("חובה למלא שם קטגוריה");
-          return;
-        }
+        if (!val) { showToast("חובה למלא שם קטגוריה"); return; }
         if (!state.categories.includes(val)) {
           state.categories.push(val);
           saveState();
@@ -2273,9 +2267,7 @@
       });
 
       document.getElementById("exportJsonBtn").addEventListener("click", exportJson);
-      document.getElementById("importJsonBtn").addEventListener("click", () => {
-        document.getElementById("fileInput").click();
-      });
+      document.getElementById("importJsonBtn").addEventListener("click", () => document.getElementById("fileInput").click());
       document.getElementById("fileInput").addEventListener("change", e => {
         const file = e.target.files[0];
         if (file) importJsonFile(file);
@@ -2285,6 +2277,7 @@
       document.getElementById("exportCsvBtn").addEventListener("click", exportCsvCurrentMonth);
     });
 
+    // Expose for inline onclick
     window.openDocumentModal = openDocumentModal;
     window.openSupplierModal = openSupplierModal;
     window.openItemModal = openItemModal;
