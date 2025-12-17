@@ -28,12 +28,31 @@
       --radius-md: 12px;
       --radius-sm: 999px;
     }
+
+    :root[data-theme="light"] {
+      --bg: #f6f7fb;
+      --bg-elevated: #ffffff;
+      --bg-soft: #ffffff;
+      --card-bg: #ffffff;
+      --border: rgba(15,23,42,0.18);
+      --text: #0f172a;
+      --text-muted: #475569;
+      --accent: #2563eb;
+      --accent-soft: rgba(37,99,235,0.10);
+      --accent-strong: #1d4ed8;
+      --danger: #dc2626;
+      --danger-soft: rgba(220,38,38,0.10);
+      --success: #16a34a;
+      --success-soft: rgba(22,163,74,0.10);
+      --shadow-soft: 0 18px 45px rgba(2,6,23,0.12);
+    }
+
     * { box-sizing: border-box; }
     html, body {
       margin: 0;
       padding: 0;
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top left, #1e293b, #020617 52%, #020617 100%);
+      background: radial-gradient(circle at top left, rgba(37,99,235,0.22), var(--bg) 55%, var(--bg) 100%);
       color: var(--text);
       height: 100%;
     }
@@ -42,6 +61,7 @@
       justify-content: center;
       padding: 16px;
     }
+
     .app-shell {
       width: 100%;
       max-width: 1200px;
@@ -54,14 +74,23 @@
       flex-direction: column;
       overflow: hidden;
     }
+    :root[data-theme="light"] .app-shell {
+      background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,255,255,0.98));
+      border-color: rgba(15,23,42,0.18);
+    }
+
     header {
       padding: 14px 18px 8px;
-      border-bottom: 1px solid rgba(31,41,55,0.8);
+      border-bottom: 1px solid rgba(31,41,55,0.35);
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
     }
+    :root[data-theme="light"] header {
+      border-bottom-color: rgba(15,23,42,0.12);
+    }
+
     .brand-area { display: flex; align-items: center; gap: 10px; }
     .brand-logo {
       width: 32px;
@@ -77,6 +106,10 @@
       color: #e5e7eb;
       box-shadow: 0 10px 30px rgba(37,99,235,0.65);
     }
+    :root[data-theme="light"] .brand-logo {
+      border-color: rgba(15,23,42,0.18);
+    }
+
     .brand-text-title {
       font-size: 16px;
       font-weight: 600;
@@ -90,14 +123,21 @@
       color: #93c5fd;
       font-weight: 500;
     }
+    :root[data-theme="light"] .brand-text-sub span {
+      color: #2563eb;
+    }
 
     .nav-tabs {
       display: flex;
       gap: 6px;
       padding: 0 18px 8px;
-      border-bottom: 1px solid rgba(31,41,55,0.8);
+      border-bottom: 1px solid rgba(31,41,55,0.35);
       overflow-x: auto;
     }
+    :root[data-theme="light"] .nav-tabs {
+      border-bottom-color: rgba(15,23,42,0.12);
+    }
+
     .nav-tab {
       border-radius: 999px;
       border: 1px solid transparent;
@@ -121,17 +161,17 @@
     .nav-tab.active {
       background: rgba(37,99,235,0.16);
       border-color: rgba(37,99,235,0.7);
-      color: #e5e7eb;
+      color: var(--text);
       transform: translateY(-1px);
     }
     .nav-tab.active span.dot {
       background: #3b82f6;
-      box-shadow: 0 0 0 4px rgba(59,130,246,0.4);
+      box-shadow: 0 0 0 4px rgba(59,130,246,0.25);
     }
     .nav-tab:hover:not(.active) {
       background: rgba(148,163,184,0.14);
-      border-color: rgba(148,163,184,0.7);
-      color: #e5e7eb;
+      border-color: rgba(148,163,184,0.55);
+      color: var(--text);
     }
 
     main {
@@ -144,12 +184,16 @@
     .screen.active { display: block; }
 
     .card {
-      background: radial-gradient(circle at top left, rgba(30,64,175,0.3), #020617 42%);
+      background: radial-gradient(circle at top left, rgba(30,64,175,0.24), rgba(2,6,23,0.96) 46%);
       border-radius: var(--radius-lg);
       border: 1px solid var(--border);
       padding: 14px 14px 12px;
       margin-bottom: 12px;
     }
+    :root[data-theme="light"] .card {
+      background: radial-gradient(circle at top left, rgba(37,99,235,0.10), #ffffff 55%);
+    }
+
     .card-title {
       font-size: 15px;
       font-weight: 600;
@@ -173,12 +217,16 @@
     }
     .stat-card {
       border-radius: var(--radius-md);
-      border: 1px solid rgba(148,163,184,0.45);
-      background: radial-gradient(circle at top, rgba(148,163,184,0.25), rgba(15,23,42,0.98));
+      border: 1px solid rgba(148,163,184,0.35);
+      background: radial-gradient(circle at top, rgba(148,163,184,0.16), rgba(15,23,42,0.85));
       padding: 8px 9px;
       display: flex;
       flex-direction: column;
       gap: 4px;
+    }
+    :root[data-theme="light"] .stat-card {
+      background: radial-gradient(circle at top, rgba(37,99,235,0.06), rgba(255,255,255,0.95));
+      border-color: rgba(15,23,42,0.18);
     }
     .stat-label { font-size: 11px; color: var(--text-muted); }
     .stat-value { font-size: 17px; font-weight: 600; }
@@ -218,19 +266,33 @@
     select,
     textarea {
       border-radius: 10px;
-      border: 1px solid rgba(148,163,184,0.5);
-      background: rgba(15,23,42,0.95);
+      border: 1px solid rgba(148,163,184,0.42);
+      background: rgba(15,23,42,0.85);
       color: var(--text);
-      padding: 5px 8px;
+      padding: 6px 9px;
       font-size: 12px;
       outline: none;
       width: 100%;
       resize: vertical;
     }
-    input[readonly] {
-      opacity: 0.9;
-      background: rgba(15,23,42,0.72);
+    :root[data-theme="light"] input[type="text"],
+    :root[data-theme="light"] input[type="number"],
+    :root[data-theme="light"] input[type="date"],
+    :root[data-theme="light"] input[type="month"],
+    :root[data-theme="light"] select,
+    :root[data-theme="light"] textarea {
+      background: rgba(255,255,255,0.98);
+      border-color: rgba(15,23,42,0.18);
     }
+
+    input[readonly] {
+      opacity: 0.92;
+      background: rgba(15,23,42,0.65);
+    }
+    :root[data-theme="light"] input[readonly] {
+      background: rgba(241,245,249,0.9);
+    }
+
     input::placeholder,
     textarea::placeholder {
       color: #6b7280;
@@ -240,7 +302,7 @@
     select:focus,
     textarea:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(37,99,235,0.6);
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.22);
     }
 
     .btn {
@@ -248,7 +310,7 @@
       border: 1px solid transparent;
       background: #1d4ed8;
       color: #f9fafb;
-      padding: 5px 11px;
+      padding: 6px 12px;
       font-size: 12px;
       cursor: pointer;
       display: inline-flex;
@@ -257,30 +319,30 @@
       white-space: nowrap;
       transition: background 0.15s ease, transform 0.08s ease, box-shadow 0.15s ease, border-color 0.15s ease;
     }
-    .btn-sm { padding: 4px 9px; font-size: 11px; }
+    .btn-sm { padding: 5px 10px; font-size: 11px; }
     .btn:hover {
       background: #2563eb;
       transform: translateY(-1px);
-      box-shadow: 0 10px 25px rgba(37,99,235,0.5);
+      box-shadow: 0 10px 25px rgba(37,99,235,0.35);
     }
     .btn:active { transform: translateY(0); box-shadow: none; }
     .btn-outline {
       background: transparent;
-      border-color: rgba(148,163,184,0.9);
+      border-color: rgba(148,163,184,0.65);
       color: var(--text);
     }
-    .btn-outline:hover { background: rgba(148,163,184,0.14); }
+    .btn-outline:hover { background: rgba(148,163,184,0.12); }
     .btn-ghost {
       background: transparent;
       border-color: transparent;
       color: var(--text-muted);
-      padding-inline: 4px;
+      padding-inline: 6px;
     }
     .btn-ghost:hover { background: rgba(148,163,184,0.1); color: var(--text); }
     .btn-danger {
       background: var(--danger-soft);
       color: var(--danger);
-      border-color: rgba(248,113,113,0.7);
+      border-color: rgba(248,113,113,0.55);
     }
     .btn-danger:hover { background: #ef4444; color: #f9fafb; }
 
@@ -290,17 +352,25 @@
       font-size: 11px;
       border-radius: var(--radius-md);
       overflow: hidden;
+      border: 1px solid rgba(148,163,184,0.18);
     }
-    thead { background: rgba(15,23,42,0.98); }
+    thead { background: rgba(15,23,42,0.88); }
+    :root[data-theme="light"] thead { background: rgba(241,245,249,0.95); }
+
     th, td {
-      padding: 5px 6px;
-      border-bottom: 1px solid rgba(30,64,175,0.4);
+      padding: 6px 7px;
+      border-bottom: 1px solid rgba(148,163,184,0.22);
       text-align: right;
+      vertical-align: top;
     }
-    th { font-weight: 500; color: var(--text-muted); white-space: nowrap; }
-    tbody tr:nth-child(even) { background: rgba(15,23,42,0.85); }
-    tbody tr:nth-child(odd) { background: rgba(15,23,42,0.95); }
-    tbody tr:hover { background: rgba(37,99,235,0.11); }
+    th { font-weight: 600; color: var(--text-muted); white-space: nowrap; }
+
+    tbody tr:nth-child(even) { background: rgba(15,23,42,0.65); }
+    tbody tr:nth-child(odd) { background: rgba(15,23,42,0.80); }
+    :root[data-theme="light"] tbody tr:nth-child(even) { background: rgba(248,250,252,0.98); }
+    :root[data-theme="light"] tbody tr:nth-child(odd) { background: rgba(255,255,255,0.98); }
+
+    tbody tr:hover { background: rgba(37,99,235,0.10); }
 
     .chip-status {
       border-radius: 999px;
@@ -309,6 +379,7 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      border: 1px solid rgba(148,163,184,0.22);
     }
     .chip-status.paid { background: var(--success-soft); color: var(--success); }
     .chip-status.unpaid { background: rgba(234,179,8,0.12); color: #facc15; }
@@ -318,8 +389,10 @@
       border-radius: 999px;
       padding: 1px 6px;
       background: rgba(148,163,184,0.16);
-      color: #e5e7eb;
+      color: var(--text);
+      border: 1px solid rgba(148,163,184,0.20);
     }
+
     .amount-pos { color: var(--success); }
     .amount-neg { color: var(--danger); }
 
@@ -332,26 +405,30 @@
     }
     .month-strip::-webkit-scrollbar { height: 4px; }
     .month-strip::-webkit-scrollbar-thumb {
-      background: rgba(148, 163, 184, 0.6);
+      background: rgba(148, 163, 184, 0.55);
       border-radius: 999px;
     }
     .month-chip {
       border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      background: rgba(15,23,42,0.96);
-      padding: 3px 10px;
+      border: 1px solid rgba(148, 163, 184, 0.50);
+      background: rgba(15,23,42,0.72);
+      padding: 4px 10px;
       font-size: 11px;
-      color: #d1d5db;
+      color: var(--text);
       cursor: pointer;
       white-space: nowrap;
       transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
     }
-    .month-chip:hover { background: #1e293b; transform: translateY(-1px); }
+    :root[data-theme="light"] .month-chip {
+      background: rgba(255,255,255,0.98);
+      border-color: rgba(15,23,42,0.18);
+    }
+    .month-chip:hover { background: rgba(148,163,184,0.14); transform: translateY(-1px); }
     .month-chip.active {
       background: #1d4ed8;
       color: #ffffff;
       border-color: #1d4ed8;
-      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4);
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
     }
 
     .toast {
@@ -361,15 +438,19 @@
       transform: translateX(-50%);
       background: rgba(17,24,39,0.98);
       border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.7);
-      padding: 6px 10px;
+      border: 1px solid rgba(148,163,184,0.55);
+      padding: 7px 11px;
       font-size: 11px;
       color: #e5e7eb;
       display: flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 14px 30px rgba(15,23,42,0.8);
+      box-shadow: 0 14px 30px rgba(15,23,42,0.55);
       z-index: 9999;
+    }
+    :root[data-theme="light"] .toast {
+      background: rgba(255,255,255,0.98);
+      color: #0f172a;
     }
 
     .modal-backdrop {
@@ -381,43 +462,51 @@
       justify-content: center;
       z-index: 2000;
     }
+    :root[data-theme="light"] .modal-backdrop {
+      background: rgba(2,6,23,0.55);
+    }
     .modal-backdrop.show { display: flex; }
     .modal {
       width: 100%;
       max-width: 520px;
       max-height: 90vh;
-      background: #020617;
+      background: var(--card-bg);
       border-radius: 20px;
-      border: 1px solid rgba(148,163,184,0.7);
-      box-shadow: 0 20px 60px rgba(15,23,42,0.9);
+      border: 1px solid rgba(148,163,184,0.55);
+      box-shadow: 0 20px 60px rgba(15,23,42,0.55);
       padding: 12px 14px 10px;
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
+    :root[data-theme="light"] .modal {
+      border-color: rgba(15,23,42,0.18);
+      box-shadow: 0 20px 60px rgba(2,6,23,0.22);
+    }
+
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 10px;
       padding-bottom: 6px;
-      border-bottom: 1px solid rgba(31,41,55,0.85);
+      border-bottom: 1px solid rgba(148,163,184,0.20);
     }
-    .modal-header-title { font-weight: 600; font-size: 14px; }
+    .modal-header-title { font-weight: 700; font-size: 14px; }
     .modal-close {
       border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.7);
+      border: 1px solid rgba(148,163,184,0.45);
       background: transparent;
       color: var(--text-muted);
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       font-size: 13px;
     }
-    .modal-close:hover { background: rgba(148,163,184,0.15); color: #e5e7eb; }
+    .modal-close:hover { background: rgba(148,163,184,0.12); color: var(--text); }
     .modal-body {
       flex: 1;
       overflow-y: auto;
@@ -433,17 +522,22 @@
       align-items: center;
       gap: 8px;
       padding-top: 6px;
-      border-top: 1px solid rgba(31,41,55,0.85);
+      border-top: 1px solid rgba(148,163,184,0.20);
     }
 
     .doc-items-container {
       border-radius: 10px;
-      border: 1px dashed var(--border);
+      border: 1px dashed rgba(148,163,184,0.42);
       padding: 6px 6px 4px;
       max-height: 220px;
       overflow-y: auto;
-      background: rgba(15,23,42,0.85);
+      background: rgba(15,23,42,0.55);
     }
+    :root[data-theme="light"] .doc-items-container {
+      background: rgba(248,250,252,0.95);
+      border-color: rgba(15,23,42,0.18);
+    }
+
     .doc-item-row {
       display: flex;
       gap: 6px;
@@ -453,28 +547,28 @@
     }
     .doc-item-name { flex: 1; color: var(--text); }
     .doc-item-unit { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
-    .doc-item-linecost { font-size: 11px; color: #e5e7eb; white-space: nowrap; }
+    .doc-item-linecost { font-size: 11px; color: var(--text); white-space: nowrap; }
     .doc-items-hint { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
+
     .doc-items-total {
       margin-top: 6px;
       padding-top: 6px;
-      border-top: 1px solid rgba(148,163,184,0.25);
+      border-top: 1px solid rgba(148,163,184,0.22);
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
       gap: 8px;
       font-size: 11px;
-      color: #e5e7eb;
+      color: var(--text);
     }
-    .doc-items-total strong { font-weight: 600; }
 
     @media (max-width: 768px) {
-      body { padding: 6px; }
+      body { padding: 8px; }
       .app-shell { border-radius: 18px; }
       .grid-3 { grid-template-columns: 1fr; }
       .grid-2 { grid-template-columns: 1fr; }
       table { font-size: 10px; }
-      th, td { padding: 4px 4px; }
+      th, td { padding: 5px 5px; }
       header { padding-inline: 10px; }
       .nav-tabs { padding-inline: 10px; }
       .card { padding-inline: 10px; }
@@ -489,11 +583,12 @@
         <div>
           <div class="brand-text-title">הצדף · דשבורד הוצאות ספקים</div>
           <div class="brand-text-sub">
-            מעקב חכם אחרי חשבוניות, תעודות משלוח, פריטים וספקים · <span>חודשי</span>
+            מעקב חודשי אחרי מחזור, הוצאות, מסמכים, ספקים ופריטים · <span>חכם</span>
           </div>
         </div>
       </div>
       <div>
+        <button class="btn-ghost btn-sm" id="themeToggleBtn">מצב בהיר</button>
         <button class="btn-ghost btn-sm" id="exportJsonBtn">ייצוא JSON</button>
         <button class="btn-ghost btn-sm" id="importJsonBtn">ייבוא JSON</button>
         <input type="file" id="fileInput" style="display:none" />
@@ -555,18 +650,14 @@
             <div>
               <h4 style="font-size:12px;margin:0 0 4px;">ספקים מובילים</h4>
               <table>
-                <thead>
-                  <tr><th>ספק</th><th>סה״כ</th></tr>
-                </thead>
+                <thead><tr><th>ספק</th><th>סה״כ</th></tr></thead>
                 <tbody id="topSuppliersBody"></tbody>
               </table>
             </div>
             <div>
               <h4 style="font-size:12px;margin:0 0 4px;">קטגוריות מובילות</h4>
               <table>
-                <thead>
-                  <tr><th>קטגוריה</th><th>סה״כ</th></tr>
-                </thead>
+                <thead><tr><th>קטגוריה</th><th>סה״כ</th></tr></thead>
                 <tbody id="topCategoriesBody"></tbody>
               </table>
             </div>
@@ -582,7 +673,8 @@
 
           <div class="month-strip" id="monthStripDocs"></div>
 
-          <div class="form-row">
+          <!-- סינונים -->
+          <div class="form-row" id="docFiltersRow">
             <div class="form-group" style="max-width:140px;">
               <label>סוג מסמך</label>
               <select id="docTypeFilter">
@@ -592,14 +684,17 @@
                 <option value="credit">זיכוי</option>
               </select>
             </div>
+
             <div class="form-group" style="max-width:170px;">
               <label>ספק</label>
               <input type="text" id="docSupplierFilter" placeholder="חיפוש ספק" />
             </div>
+
             <div class="form-group" style="max-width:170px;">
               <label>קטגוריה</label>
               <select id="docCategoryFilter"></select>
             </div>
+
             <div class="form-group" style="max-width:140px;">
               <label>סטטוס</label>
               <select id="docStatusFilter">
@@ -609,31 +704,36 @@
                 <option value="partial">שולם חלקית</option>
               </select>
             </div>
+
             <div class="form-group" style="max-width:160px;">
               <label>חיפוש חופשי</label>
               <input type="text" id="docSearchInput" placeholder="מס׳ מסמך, הערות..." />
             </div>
-            <div class="form-group" style="align-self:flex-end;max-width:120px;">
-              <button class="btn btn-primary btn-sm" id="addDocumentBtn">מסמך חדש</button>
-            </div>
           </div>
 
-          <table>
-            <thead>
-              <tr>
-                <th>תאריך</th>
-                <th>ספק</th>
-                <th>סוג</th>
-                <th>מס׳ מסמך</th>
-                <th>קטגוריה</th>
-                <th>סכום</th>
-                <th>סטטוס</th>
-                <th>פריטים</th>
-                <th>פעולות</th>
-              </tr>
-            </thead>
-            <tbody id="documentsTableBody"></tbody>
-          </table>
+          <!-- פעולות -->
+          <div style="display:flex;justify-content:flex-end;align-items:center;margin:8px 0 0;padding-top:8px;border-top:1px solid rgba(148,163,184,0.22);">
+            <button class="btn btn-primary btn-sm" id="addDocumentBtn">מסמך חדש</button>
+          </div>
+
+          <div style="margin-top:10px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>תאריך</th>
+                  <th>ספק</th>
+                  <th>סוג</th>
+                  <th>מס׳ מסמך</th>
+                  <th>קטגוריה</th>
+                  <th>סכום</th>
+                  <th>סטטוס</th>
+                  <th>פריטים</th>
+                  <th>פעולות</th>
+                </tr>
+              </thead>
+              <tbody id="documentsTableBody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -701,9 +801,7 @@
       <div class="screen" id="screen-items">
         <div class="card">
           <div class="card-title">רשימת פריטים</div>
-          <div class="card-subtitle">
-            פריטים שנרכשים בשגרה – לפי קטגוריות ספקים, כולל מחיר וחישובי כמות.
-          </div>
+          <div class="card-subtitle">פריטים שנרכשים בשגרה – לפי קטגוריות ספקים, כולל מחיר וחישובי כמות.</div>
 
           <div class="form-row">
             <div class="form-group">
@@ -783,6 +881,7 @@
         <div class="modal-header-title" id="documentModalTitle">מסמך חדש</div>
         <button class="modal-close" id="closeDocumentModal">✕</button>
       </div>
+
       <div class="modal-body">
         <div class="form-row">
           <div class="form-group">
@@ -812,7 +911,7 @@
         <div class="form-row">
           <div class="form-group">
             <label>מס׳ מסמך</label>
-            <input type="text" id="docRef" placeholder="מס׳ חשבונית/תע\"מ" />
+            <input type="text" id="docRef" placeholder="מס׳ חשבונית/תע״מ" />
           </div>
           <div class="form-group">
             <label>תאריך</label>
@@ -829,6 +928,13 @@
             <label>
               <input type="checkbox" id="docAutoAmount" checked />
               לחשב סכום אוטומטית לפי פריטים
+            </label>
+          </div>
+
+          <div class="form-group" style="min-width:180px;">
+            <label>
+              <input type="checkbox" id="docIncludeVat" checked />
+              להוסיף מע״מ?
             </label>
           </div>
         </div>
@@ -874,6 +980,7 @@
           <textarea id="docNotes" rows="2" placeholder="פרטים נוספים, תנאי תשלום, וכו׳"></textarea>
         </div>
       </div>
+
       <div class="modal-footer">
         <button class="btn btn-outline btn-sm" id="deleteDocumentBtn" style="display:none;">מחק</button>
         <button class="btn btn-primary btn-sm" id="saveDocumentBtn">שמור</button>
@@ -955,6 +1062,8 @@
 
   <script>
     const STORAGE_KEY = "supplier-dashboard-v4";
+    const THEME_KEY = "supplier-dashboard-theme";
+
     let state = {
       categories: [],
       suppliers: [],
@@ -969,6 +1078,19 @@
     let editingItemId = null;
     let currentDocItems = [];
     let toastTimeout = null;
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem(THEME_KEY, theme);
+      const btn = document.getElementById("themeToggleBtn");
+      if (btn) btn.textContent = (theme === "light") ? "מצב לילה" : "מצב בהיר";
+    }
+
+    function initTheme() {
+      const saved = localStorage.getItem(THEME_KEY);
+      const theme = saved || "dark";
+      applyTheme(theme);
+    }
 
     function showToast(msg) {
       const old = document.querySelector(".toast");
@@ -1036,56 +1158,15 @@
       ];
 
       const defaultSuppliersNames = [
-        "מדחסקור אוניברסל",
-        "ג׳אקו שירות למטבחים",
-        "יוסי סימן טוב",
-        "י.שבי",
-        "צ.י.שיווק",
-        "קנקון",
-        "לוילן סחר ומוצרים חקלאיים בע״מ",
-        "עואודה לשיווק בע״מ",
-        "מדג סי פרוט בע״מ",
-        "אהרון שיווק",
-        "שיווק שלי א.א בע״מ",
-        "אקיפ החברה לציוד מלונאי בע״מ",
-        "דאלאס מוצרי נייר בע״מ",
-        "חברת חשמל",
-        "א.א.ר שירותי ביוב",
-        "תמי 4",
-        "בזק",
-        "היכל היין",
-        "החברה המרכזית",
-        "סוקליק",
-        "ביסקוטי",
-        "אייס דרים",
-        "ג.מ טעם הארץ בע״מ",
-        "יזמקו חברה בע״מ",
-        "אסטרטג טכנולוגיות בע״מ",
-        "אביב אש מערכות בע״מ",
-        "מניב ראשון",
-        "אודי בכור שיווק דגים בע״מ",
-        "לירי כוח אדם בע״מ",
-        "מש-נט בע״מ",
-        "זאפ גרופ בע״מ",
-        "שיא ״10״ בע״מ",
-        "קורקידי יעקב שיווק והפצה בסיטונאות",
-        "מקס עסקים",
-        "וינטר מכשירי גז בעמ",
-        "מפעל הפרסום",
-        "וולט",
-        "אלירן פרחים",
-        "פרסום תבור בעצ",
-        "אינפיניה מחזור",
-        "ייצוגית פלוס תעשיות בעמ",
-        "משלוחה",
-        "ביימי טכנולוגיות",
-        "ישראכרט",
-        "סוגת",
-        "אייפרקטיקום",
-        "אמישרגז",
-        "מאירוביץ שלי",
-        "לה פסטה דלה קזה בעמ",
-        "ארנונה ראשון לציון"
+        "מדחסקור אוניברסל","ג׳אקו שירות למטבחים","יוסי סימן טוב","י.שבי","צ.י.שיווק","קנקון",
+        "לוילן סחר ומוצרים חקלאיים בע״מ","עואודה לשיווק בע״מ","מדג סי פרוט בע״מ","אהרון שיווק",
+        "שיווק שלי א.א בע״מ","אקיפ החברה לציוד מלונאי בע״מ","דאלאס מוצרי נייר בע״מ","חברת חשמל",
+        "א.א.ר שירותי ביוב","תמי 4","בזק","היכל היין","החברה המרכזית","סוקליק","ביסקוטי","אייס דרים",
+        "ג.מ טעם הארץ בע״מ","יזמקו חברה בע״מ","אסטרטג טכנולוגיות בע״מ","אביב אש מערכות בע״מ","מניב ראשון",
+        "אודי בכור שיווק דגים בע״מ","לירי כוח אדם בע״מ","מש-נט בע״מ","זאפ גרופ בע״מ","שיא ״10״ בע״מ",
+        "קורקידי יעקב שיווק והפצה בסיטונאות","מקס עסקים","וינטר מכשירי גז בעמ","מפעל הפרסום","וולט",
+        "אלירן פרחים","פרסום תבור בעצ","אינפיניה מחזור","ייצוגית פלוס תעשיות בעמ","משלוחה","ביימי טכנולוגיות",
+        "ישראכרט","סוגת","אייפרקטיקום","אמישרגז","מאירוביץ שלי","לה פסטה דלה קזה בעמ","ארנונה ראשון לציון"
       ];
 
       state = {
@@ -1123,9 +1204,7 @@
 
         if (!state.categories) state.categories = [];
         if (!state.suppliers) state.suppliers = [];
-        if (!state.items || !Array.isArray(state.items)) {
-          state.items = getDefaultItems();
-        }
+        if (!state.items || !Array.isArray(state.items)) state.items = getDefaultItems();
 
         // Migration: ensure each item has numeric price
         (state.items || []).forEach(it => {
@@ -1134,9 +1213,7 @@
 
         if (!state.months) state.months = {};
         if (!state.currentMonth) state.currentMonth = currentYM();
-        if (!state.months[state.currentMonth]) {
-          state.months[state.currentMonth] = { income: 0, documents: [] };
-        }
+        if (!state.months[state.currentMonth]) state.months[state.currentMonth] = { income: 0, documents: [] };
       } catch (e) {
         console.error("loadState error", e);
         initDefaultState();
@@ -1145,9 +1222,7 @@
     }
 
     function getCurrentMonthData() {
-      if (!state.months[state.currentMonth]) {
-        state.months[state.currentMonth] = { income: 0, documents: [] };
-      }
+      if (!state.months[state.currentMonth]) state.months[state.currentMonth] = { income: 0, documents: [] };
       return state.months[state.currentMonth];
     }
 
@@ -1161,10 +1236,7 @@
     function monthKeyToLabel(ym) {
       if (!ym || typeof ym !== "string") return ym || "";
       const [y, m] = ym.split("-");
-      const months = [
-        "ינואר","פברואר","מרץ","אפריל","מאי","יוני",
-        "יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"
-      ];
+      const months = ["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"];
       const mi = Number(m) || 0;
       const name = months[mi-1] || ym;
       return name + " " + (y || "");
@@ -1173,9 +1245,7 @@
     function handleMonthChangeByChip(monthKey) {
       if (!monthKey) return;
       state.currentMonth = monthKey;
-      if (!state.months[state.currentMonth]) {
-        state.months[state.currentMonth] = { income: 0, documents: [] };
-      }
+      if (!state.months[state.currentMonth]) state.months[state.currentMonth] = { income: 0, documents: [] };
       const monthInput = document.getElementById("monthInput");
       if (monthInput) monthInput.value = state.currentMonth;
       const incomeInput = document.getElementById("incomeInput");
@@ -1202,10 +1272,7 @@
       if (docsStrip) docsStrip.innerHTML = html;
 
       document.querySelectorAll(".month-chip").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const ym = btn.dataset.month;
-          handleMonthChangeByChip(ym);
-        });
+        btn.addEventListener("click", () => handleMonthChangeByChip(btn.dataset.month));
       });
     }
 
@@ -1271,12 +1338,8 @@
         perCategory[cat] = (perCategory[cat] || 0) + signed;
       });
 
-      const topSup = Object.entries(perSupplier)
-        .sort((a,b)=>Math.abs(b[1]) - Math.abs(a[1]))
-        .slice(0,5);
-      const topCat = Object.entries(perCategory)
-        .sort((a,b)=>Math.abs(b[1]) - Math.abs(a[1]))
-        .slice(0,5);
+      const topSup = Object.entries(perSupplier).sort((a,b)=>Math.abs(b[1]) - Math.abs(a[1])).slice(0,5);
+      const topCat = Object.entries(perCategory).sort((a,b)=>Math.abs(b[1]) - Math.abs(a[1])).slice(0,5);
 
       const topSupBody = document.getElementById("topSuppliersBody");
       const topCatBody = document.getElementById("topCategoriesBody");
@@ -1331,9 +1394,7 @@
       }
 
       filtered.forEach(doc => {
-        const typeLabel = doc.type === "invoice" ? "חשבונית" :
-                          doc.type === "delivery" ? "תעודת משלוח" :
-                          "זיכוי";
+        const typeLabel = doc.type === "invoice" ? "חשבונית" : doc.type === "delivery" ? "תעודת משלוח" : "זיכוי";
         const amount = Number(doc.amount) || 0;
         const signedAmt = doc.isCredit ? -amount : amount;
         const amountClass = signedAmt < 0 ? "amount-pos" : "amount-neg";
@@ -1421,7 +1482,6 @@
         tbody.appendChild(tr);
       });
 
-      // Update supplier modal categories + filters + doc category
       const selSupplierCat = document.getElementById("supplierCategoryModal");
       selSupplierCat.innerHTML = "";
       cats.forEach(cat => {
@@ -1536,7 +1596,6 @@
         tbody.appendChild(tr);
       });
 
-      // Update datalist for document supplier input
       const dl = document.getElementById("supplierNameList");
       dl.innerHTML = "";
       suppliers.forEach(s => {
@@ -1590,9 +1649,7 @@
       if (!state.suppliers) state.suppliers = [];
       if (editingSupplierId) {
         const idx = state.suppliers.findIndex(s => s.id === editingSupplierId);
-        if (idx !== -1) {
-          state.suppliers[idx] = { ...state.suppliers[idx], name, category, phone, email, notes };
-        }
+        if (idx !== -1) state.suppliers[idx] = { ...state.suppliers[idx], name, category, phone, email, notes };
         showToast("ספק עודכן");
       } else {
         state.suppliers.push({ id: generateId("sup"), name, category, phone, email, notes });
@@ -1602,13 +1659,6 @@
       saveState();
       closeSupplierModal();
       renderSuppliersTable();
-
-      // If doc modal is open, keep supplier field aligned
-      const docSupplierField = document.getElementById("docSupplierName");
-      if (docSupplierField && docSupplierField.value.trim() === name) {
-        updateDocCategorySelect(name, "");
-        renderDocItemsUI(null);
-      }
     }
 
     function deleteCurrentSupplier() {
@@ -1697,9 +1747,7 @@
       if (!state.items) state.items = [];
       if (editingItemId) {
         const idx = state.items.findIndex(it => it.id === editingItemId);
-        if (idx !== -1) {
-          state.items[idx] = { ...state.items[idx], name, group, price, isWeightBased };
-        }
+        if (idx !== -1) state.items[idx] = { ...state.items[idx], name, group, price, isWeightBased };
         showToast("פריט עודכן");
       } else {
         state.items.push({ id: generateId("item"), name, group, price, isWeightBased });
@@ -1708,7 +1756,6 @@
 
       saveState();
       renderItemsTable();
-      renderCategoriesTable();
       renderDocItemsUI(null);
       closeItemModal();
     }
@@ -1723,9 +1770,7 @@
 
       Object.values(state.months || {}).forEach(m => {
         (m.documents || []).forEach(doc => {
-          if (Array.isArray(doc.items)) {
-            doc.items = doc.items.filter(line => line.itemId !== removed.id);
-          }
+          if (Array.isArray(doc.items)) doc.items = doc.items.filter(line => line.itemId !== removed.id);
         });
       });
 
@@ -1784,7 +1829,7 @@
       const cat = docCategory || "";
       if (!cat) return all;
       const filtered = all.filter(it => it.group === cat);
-      return filtered.length ? filtered : all; // fallback
+      return filtered.length ? filtered : all;
     }
 
     function calcDocItemsTotal() {
@@ -1800,11 +1845,15 @@
 
     function syncDocAmountWithItemsIfAuto() {
       const auto = document.getElementById("docAutoAmount");
+      const vat = document.getElementById("docIncludeVat");
       const amountInput = document.getElementById("docAmount");
       if (!auto || !amountInput) return;
 
+      const includeVat = vat ? !!vat.checked : true;
+
       if (auto.checked) {
-        const total = calcDocItemsTotal();
+        const subtotal = calcDocItemsTotal();
+        const total = includeVat ? subtotal * 1.18 : subtotal;
         amountInput.value = total ? total.toFixed(2) : "";
         amountInput.readOnly = true;
       } else {
@@ -1854,13 +1903,23 @@
         container.appendChild(row);
       });
 
-      // Total footer
-      const total = calcDocItemsTotal();
+      // Totals (subtotal + VAT + total)
+      const subtotal = calcDocItemsTotal();
+      const includeVat = document.getElementById("docIncludeVat")?.checked ?? true;
+      const vatAmount = includeVat ? subtotal * 0.18 : 0;
+      const total = includeVat ? subtotal * 1.18 : subtotal;
+
       const footer = document.createElement("div");
       footer.className = "doc-items-total";
       footer.innerHTML = `
-        <div>סה״כ פריטים:</div>
-        <div><strong>${total ? total.toFixed(2) : "0.00"} ₪</strong></div>
+        <div style="display:flex;flex-direction:column;gap:2px;">
+          <div>סה״כ לפני מע״מ: <strong>${subtotal.toFixed(2)} ₪</strong></div>
+          <div style="color:var(--text-muted)">מע״מ (18%): <strong>${vatAmount.toFixed(2)} ₪</strong></div>
+        </div>
+        <div style="text-align:left;">
+          <div style="color:var(--text-muted);font-size:10px;">סה״כ לתשלום</div>
+          <div><strong>${total.toFixed(2)} ₪</strong></div>
+        </div>
       `;
       container.appendChild(footer);
 
@@ -1892,11 +1951,8 @@
       const name = item ? item.name : "";
 
       const existingIdx = currentDocItems.findIndex(l => l.itemId === itemId);
-      if (existingIdx !== -1) {
-        currentDocItems[existingIdx].quantity += qty;
-      } else {
-        currentDocItems.push({ itemId, itemName: name, quantity: qty });
-      }
+      if (existingIdx !== -1) currentDocItems[existingIdx].quantity += qty;
+      else currentDocItems.push({ itemId, itemName: name, quantity: qty });
 
       qtyInput.value = "";
       renderDocItemsUI(null);
@@ -1919,13 +1975,9 @@
         catSel.appendChild(opt);
       });
 
-      if (existingCategory && cats.includes(existingCategory)) {
-        catSel.value = existingCategory;
-      } else if (sup && sup.category && cats.includes(sup.category)) {
-        catSel.value = sup.category;
-      } else {
-        catSel.value = "לא משויך";
-      }
+      if (existingCategory && cats.includes(existingCategory)) catSel.value = existingCategory;
+      else if (sup && sup.category && cats.includes(sup.category)) catSel.value = sup.category;
+      else catSel.value = "לא משויך";
     }
 
     function addNewItemFromDocModal() {
@@ -1935,19 +1987,12 @@
       const trimmed = name.trim();
       if (!trimmed) return;
 
-      const newItem = {
-        id: generateId("item"),
-        name: trimmed,
-        group: cat,
-        isWeightBased: false,
-        price: 0
-      };
+      const newItem = { id: generateId("item"), name: trimmed, group: cat, isWeightBased: false, price: 0 };
       if (!state.items) state.items = [];
       state.items.push(newItem);
 
       saveState();
       renderItemsTable();
-      renderCategoriesTable();
       renderDocItemsUI(null);
       showToast("פריט חדש נוסף (מחיר: 0)");
     }
@@ -1974,9 +2019,10 @@
         document.getElementById("docNotes").value = doc.notes || "";
 
         document.getElementById("docAutoAmount").checked = true;
+        document.getElementById("docIncludeVat").checked = (doc.includeVat !== false);
+
         renderDocItemsUI(doc);
         syncDocAmountWithItemsIfAuto();
-
         delBtn.style.display = "inline-flex";
       } else {
         title.textContent = "מסמך חדש";
@@ -1990,6 +2036,8 @@
         document.getElementById("docNotes").value = "";
 
         document.getElementById("docAutoAmount").checked = true;
+        document.getElementById("docIncludeVat").checked = true;
+
         currentDocItems = [];
         renderDocItemsUI(null);
         syncDocAmountWithItemsIfAuto();
@@ -2015,6 +2063,7 @@
       const status = document.getElementById("docStatus").value;
       const notes = document.getElementById("docNotes").value.trim();
       const category = document.getElementById("docCategory").value || "לא משויך";
+      const includeVat = document.getElementById("docIncludeVat").checked;
 
       if (!supplierName) { showToast("חובה לבחור ספק"); return; }
       if (!amount || amount <= 0) { showToast("סכום חייב להיות גדול מ-0"); return; }
@@ -2023,18 +2072,9 @@
 
       let supplierId = null;
       const existing = state.suppliers.find(s => s.name === supplierName);
-      if (existing) {
-        supplierId = existing.id;
-      } else {
-        // Auto-create supplier if not found
-        const newSup = {
-          id: generateId("sup"),
-          name: supplierName,
-          category: category || "לא משויך",
-          phone: "",
-          email: "",
-          notes: ""
-        };
+      if (existing) supplierId = existing.id;
+      else {
+        const newSup = { id: generateId("sup"), name: supplierName, category: category || "לא משויך", phone: "", email: "", notes: "" };
         state.suppliers.push(newSup);
         supplierId = newSup.id;
       }
@@ -2048,16 +2088,8 @@
         if (idx !== -1) {
           monthData.documents[idx] = {
             ...monthData.documents[idx],
-            type,
-            supplierName,
-            supplierId,
-            category,
-            ref,
-            date,
-            amount,
-            status,
-            isCredit,
-            notes,
+            type, supplierName, supplierId, category, ref, date,
+            amount, status, isCredit, notes, includeVat,
             items: docItems
           };
         }
@@ -2065,16 +2097,8 @@
       } else {
         monthData.documents.push({
           id: generateId("doc"),
-          type,
-          supplierName,
-          supplierId,
-          category,
-          ref,
-          date,
-          amount,
-          status,
-          isCredit,
-          notes,
+          type, supplierName, supplierId, category, ref, date,
+          amount, status, isCredit, notes, includeVat,
           items: docItems
         });
         showToast("מסמך נוסף");
@@ -2116,14 +2140,12 @@
       const docs = monthData.documents || [];
       if (docs.length === 0) { showToast("אין מסמכים לחודש הנוכחי"); return; }
 
-      const headers = ["type","supplierName","category","ref","date","amount","status","isCredit","notes"];
+      const headers = ["type","supplierName","category","ref","date","amount","status","isCredit","includeVat","notes"];
       const rows = docs.map(d => headers.map(h => {
         let v = d[h];
         if (v == null) v = "";
         if (typeof v === "boolean") v = v ? "true" : "false";
-        if (typeof v === "string" && (v.includes(",") || v.includes("\""))) {
-          v = '"' + v.replace(/"/g,'""') + '"';
-        }
+        if (typeof v === "string" && (v.includes(",") || v.includes("\""))) v = '"' + v.replace(/"/g,'""') + '"';
         return v;
       }).join(","));
       const csv = headers.join(",") + "\n" + rows.join("\n");
@@ -2177,8 +2199,15 @@
     }
 
     window.addEventListener("DOMContentLoaded", () => {
+      initTheme();
+
       loadState();
       initUiAfterStateLoaded();
+
+      document.getElementById("themeToggleBtn").addEventListener("click", () => {
+        const current = document.documentElement.getAttribute("data-theme") || "dark";
+        applyTheme(current === "light" ? "dark" : "light");
+      });
 
       document.querySelectorAll(".nav-tab").forEach(btn => {
         btn.addEventListener("click", () => changeScreen(btn.dataset.screen));
@@ -2224,12 +2253,16 @@
         if (name) document.getElementById("supplierNameModal").value = name;
       });
 
-      document.getElementById("docCategory").addEventListener("change", () => {
-        renderDocItemsUI(null);
-      });
+      document.getElementById("docCategory").addEventListener("change", () => renderDocItemsUI(null));
 
       document.getElementById("docAutoAmount").addEventListener("change", () => {
         syncDocAmountWithItemsIfAuto();
+        renderDocItemsUI(null);
+      });
+
+      document.getElementById("docIncludeVat").addEventListener("change", () => {
+        syncDocAmountWithItemsIfAuto();
+        renderDocItemsUI(null);
       });
 
       document.getElementById("addDocItemBtn").addEventListener("click", addDocItemFromSelect);
@@ -2277,7 +2310,6 @@
       document.getElementById("exportCsvBtn").addEventListener("click", exportCsvCurrentMonth);
     });
 
-    // Expose for inline onclick
     window.openDocumentModal = openDocumentModal;
     window.openSupplierModal = openSupplierModal;
     window.openItemModal = openItemModal;
