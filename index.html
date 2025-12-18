@@ -1,2319 +1,429 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <title>דשבורד הוצאות ספקים - הצדף</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #0f172a;
-      --bg-elevated: #020617;
-      --bg-soft: #111827;
-      --card-bg: #020617;
-      --border: rgba(148, 163, 184, 0.35);
-      --text: #e5e7eb;
-      --text-muted: #9ca3af;
-      --accent: #3b82f6;
-      --accent-soft: rgba(59,130,246,0.12);
-      --accent-strong: #2563eb;
-      --danger: #ef4444;
-      --danger-soft: rgba(248,113,113,0.12);
-      --success: #22c55e;
-      --success-soft: rgba(34,197,94,0.12);
-      --shadow-soft: 0 18px 45px rgba(15,23,42,0.75);
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --radius-sm: 999px;
-    }
+<meta charset="UTF-8">
+<title>דשבורד הוצאות ספקים - הצדף</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    :root[data-theme="light"] {
-      --bg: #f6f7fb;
-      --bg-elevated: #ffffff;
-      --bg-soft: #ffffff;
-      --card-bg: #ffffff;
-      --border: rgba(15,23,42,0.18);
-      --text: #0f172a;
-      --text-muted: #475569;
-      --accent: #2563eb;
-      --accent-soft: rgba(37,99,235,0.10);
-      --accent-strong: #1d4ed8;
-      --danger: #dc2626;
-      --danger-soft: rgba(220,38,38,0.10);
-      --success: #16a34a;
-      --success-soft: rgba(22,163,74,0.10);
-      --shadow-soft: 0 18px 45px rgba(2,6,23,0.12);
-    }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top left, rgba(37,99,235,0.22), var(--bg) 55%, var(--bg) 100%);
-      color: var(--text);
-      height: 100%;
-    }
-    body {
-      display: flex;
-      justify-content: center;
-      padding: 16px;
-    }
+<style>
+/* ================= THEME ================= */
+:root{
+  --bg:#0f172a;
+  --card:#020617;
+  --border:rgba(148,163,184,.28);
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --accent:#3b82f6;
+  --success:#22c55e;
+  --danger:#ef4444;
+}
+:root[data-theme="light"]{
+  --bg:#f6f7fb;
+  --card:#ffffff;
+  --border:rgba(15,23,42,.18);
+  --text:#0f172a;
+  --muted:#475569;
+  --accent:#2563eb;
+  --success:#16a34a;
+  --danger:#dc2626;
+}
 
-    .app-shell {
-      width: 100%;
-      max-width: 1200px;
-      min-height: 92vh;
-      background: linear-gradient(135deg, rgba(15,23,42,0.97), rgba(15,23,42,0.99));
-      border-radius: 24px;
-      border: 1px solid rgba(148,163,184,0.35);
-      box-shadow: var(--shadow-soft);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    :root[data-theme="light"] .app-shell {
-      background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,255,255,0.98));
-      border-color: rgba(15,23,42,0.18);
-    }
+*{box-sizing:border-box}
+html,body{
+  margin:0;
+  font-family:Inter,system-ui;
+  background:radial-gradient(circle at top left,rgba(37,99,235,.18),var(--bg) 60%);
+  color:var(--text);
+}
 
-    header {
-      padding: 14px 18px 8px;
-      border-bottom: 1px solid rgba(31,41,55,0.35);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    :root[data-theme="light"] header {
-      border-bottom-color: rgba(15,23,42,0.12);
-    }
+.app{
+  max-width:1200px;
+  margin:auto;
+  min-height:100vh;
+}
 
-    .brand-area { display: flex; align-items: center; gap: 10px; }
-    .brand-logo {
-      width: 32px;
-      height: 32px;
-      border-radius: 14px;
-      background: radial-gradient(circle at 30% 0%, #3b82f6, #0f172a 60%, #020617 100%);
-      border: 1px solid rgba(148,163,184,0.35);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 16px;
-      color: #e5e7eb;
-      box-shadow: 0 10px 30px rgba(37,99,235,0.65);
-    }
-    :root[data-theme="light"] .brand-logo {
-      border-color: rgba(15,23,42,0.18);
-    }
+/* ================= HEADER ================= */
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 16px;
+  border-bottom:1px solid var(--border);
+}
+header h1{
+  font-size:16px;
+  margin:0;
+}
+header .actions button{
+  margin-inline-start:6px;
+}
 
-    .brand-text-title {
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-    }
-    .brand-text-sub {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-    .brand-text-sub span {
-      color: #93c5fd;
-      font-weight: 500;
-    }
-    :root[data-theme="light"] .brand-text-sub span {
-      color: #2563eb;
-    }
+/* ================= NAV ================= */
+nav{
+  display:flex;
+  gap:6px;
+  padding:8px 12px;
+  border-bottom:1px solid var(--border);
+  overflow-x:auto;
+}
+nav button{
+  border-radius:999px;
+  border:1px solid transparent;
+  background:none;
+  color:var(--muted);
+  padding:6px 12px;
+  cursor:pointer;
+  white-space:nowrap;
+}
+nav button.active{
+  background:rgba(59,130,246,.2);
+  color:var(--text);
+  border-color:var(--accent);
+}
 
-    .nav-tabs {
-      display: flex;
-      gap: 6px;
-      padding: 0 18px 8px;
-      border-bottom: 1px solid rgba(31,41,55,0.35);
-      overflow-x: auto;
-    }
-    :root[data-theme="light"] .nav-tabs {
-      border-bottom-color: rgba(15,23,42,0.12);
-    }
+/* ================= GENERAL ================= */
+main{padding:14px}
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:14px;
+  margin-bottom:14px;
+}
+h2{font-size:15px;margin:0 0 10px}
+label{font-size:11px;color:var(--muted)}
+input,select,textarea{
+  width:100%;
+  padding:7px 9px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--text);
+}
+textarea{resize:vertical}
+button{
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  border-radius:999px;
+  padding:6px 12px;
+  cursor:pointer;
+  font-size:12px;
+}
+button.outline{
+  background:none;
+  border:1px solid var(--border);
+  color:var(--text);
+}
 
-    .nav-tab {
-      border-radius: 999px;
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--text-muted);
-      padding: 5px 10px;
-      font-size: 12px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
-    }
-    .nav-tab span.dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: rgba(148,163,184,0.7);
-    }
-    .nav-tab.active {
-      background: rgba(37,99,235,0.16);
-      border-color: rgba(37,99,235,0.7);
-      color: var(--text);
-      transform: translateY(-1px);
-    }
-    .nav-tab.active span.dot {
-      background: #3b82f6;
-      box-shadow: 0 0 0 4px rgba(59,130,246,0.25);
-    }
-    .nav-tab:hover:not(.active) {
-      background: rgba(148,163,184,0.14);
-      border-color: rgba(148,163,184,0.55);
-      color: var(--text);
-    }
+/* ================= TABLE ================= */
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:11px;
+}
+th,td{
+  padding:6px;
+  border-bottom:1px solid var(--border);
+  text-align:right;
+}
+.amount-pos{color:var(--success)}
+.amount-neg{color:var(--danger)}
 
-    main {
-      flex: 1;
-      padding: 10px 16px 16px;
-      overflow-y: auto;
-    }
+.details{
+  background:rgba(148,163,184,.08);
+  padding:8px;
+  border-radius:10px;
+}
 
-    .screen { display: none; }
-    .screen.active { display: block; }
+/* ================= MODAL ================= */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:50;
+}
+.modal .box{
+  background:var(--card);
+  border-radius:16px;
+  padding:14px;
+  width:100%;
+  max-width:420px;
+  border:1px solid var(--border);
+}
+.modal h3{margin-top:0}
 
-    .card {
-      background: radial-gradient(circle at top left, rgba(30,64,175,0.24), rgba(2,6,23,0.96) 46%);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      padding: 14px 14px 12px;
-      margin-bottom: 12px;
-    }
-    :root[data-theme="light"] .card {
-      background: radial-gradient(circle at top left, rgba(37,99,235,0.10), #ffffff 55%);
-    }
-
-    .card-title {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-    .card-subtitle {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap: 10px;
-    }
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 10px;
-    }
-    .stat-card {
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(148,163,184,0.35);
-      background: radial-gradient(circle at top, rgba(148,163,184,0.16), rgba(15,23,42,0.85));
-      padding: 8px 9px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    :root[data-theme="light"] .stat-card {
-      background: radial-gradient(circle at top, rgba(37,99,235,0.06), rgba(255,255,255,0.95));
-      border-color: rgba(15,23,42,0.18);
-    }
-    .stat-label { font-size: 11px; color: var(--text-muted); }
-    .stat-value { font-size: 17px; font-weight: 600; }
-    .stat-chip {
-      margin-top: 2px;
-      font-size: 11px;
-      border-radius: 999px;
-      padding: 2px 8px;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .stat-chip.success { background: var(--success-soft); color: var(--success); }
-    .stat-chip.danger { background: var(--danger-soft); color: var(--danger); }
-
-    .form-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 6px;
-    }
-    .form-group {
-      flex: 1;
-      min-width: 130px;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-    label {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-    input[type="text"],
-    input[type="number"],
-    input[type="date"],
-    input[type="month"],
-    select,
-    textarea {
-      border-radius: 10px;
-      border: 1px solid rgba(148,163,184,0.42);
-      background: rgba(15,23,42,0.85);
-      color: var(--text);
-      padding: 6px 9px;
-      font-size: 12px;
-      outline: none;
-      width: 100%;
-      resize: vertical;
-    }
-    :root[data-theme="light"] input[type="text"],
-    :root[data-theme="light"] input[type="number"],
-    :root[data-theme="light"] input[type="date"],
-    :root[data-theme="light"] input[type="month"],
-    :root[data-theme="light"] select,
-    :root[data-theme="light"] textarea {
-      background: rgba(255,255,255,0.98);
-      border-color: rgba(15,23,42,0.18);
-    }
-
-    input[readonly] {
-      opacity: 0.92;
-      background: rgba(15,23,42,0.65);
-    }
-    :root[data-theme="light"] input[readonly] {
-      background: rgba(241,245,249,0.9);
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-      color: #6b7280;
-      font-size: 11px;
-    }
-    input:focus,
-    select:focus,
-    textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(37,99,235,0.22);
-    }
-
-    .btn {
-      border-radius: 999px;
-      border: 1px solid transparent;
-      background: #1d4ed8;
-      color: #f9fafb;
-      padding: 6px 12px;
-      font-size: 12px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      white-space: nowrap;
-      transition: background 0.15s ease, transform 0.08s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-    }
-    .btn-sm { padding: 5px 10px; font-size: 11px; }
-    .btn:hover {
-      background: #2563eb;
-      transform: translateY(-1px);
-      box-shadow: 0 10px 25px rgba(37,99,235,0.35);
-    }
-    .btn:active { transform: translateY(0); box-shadow: none; }
-    .btn-outline {
-      background: transparent;
-      border-color: rgba(148,163,184,0.65);
-      color: var(--text);
-    }
-    .btn-outline:hover { background: rgba(148,163,184,0.12); }
-    .btn-ghost {
-      background: transparent;
-      border-color: transparent;
-      color: var(--text-muted);
-      padding-inline: 6px;
-    }
-    .btn-ghost:hover { background: rgba(148,163,184,0.1); color: var(--text); }
-    .btn-danger {
-      background: var(--danger-soft);
-      color: var(--danger);
-      border-color: rgba(248,113,113,0.55);
-    }
-    .btn-danger:hover { background: #ef4444; color: #f9fafb; }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 11px;
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      border: 1px solid rgba(148,163,184,0.18);
-    }
-    thead { background: rgba(15,23,42,0.88); }
-    :root[data-theme="light"] thead { background: rgba(241,245,249,0.95); }
-
-    th, td {
-      padding: 6px 7px;
-      border-bottom: 1px solid rgba(148,163,184,0.22);
-      text-align: right;
-      vertical-align: top;
-    }
-    th { font-weight: 600; color: var(--text-muted); white-space: nowrap; }
-
-    tbody tr:nth-child(even) { background: rgba(15,23,42,0.65); }
-    tbody tr:nth-child(odd) { background: rgba(15,23,42,0.80); }
-    :root[data-theme="light"] tbody tr:nth-child(even) { background: rgba(248,250,252,0.98); }
-    :root[data-theme="light"] tbody tr:nth-child(odd) { background: rgba(255,255,255,0.98); }
-
-    tbody tr:hover { background: rgba(37,99,235,0.10); }
-
-    .chip-status {
-      border-radius: 999px;
-      padding: 2px 7px;
-      font-size: 10px;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      border: 1px solid rgba(148,163,184,0.22);
-    }
-    .chip-status.paid { background: var(--success-soft); color: var(--success); }
-    .chip-status.unpaid { background: rgba(234,179,8,0.12); color: #facc15; }
-    .chip-status.partial { background: rgba(59,130,246,0.12); color: var(--accent); }
-    .chip-type {
-      font-size: 10px;
-      border-radius: 999px;
-      padding: 1px 6px;
-      background: rgba(148,163,184,0.16);
-      color: var(--text);
-      border: 1px solid rgba(148,163,184,0.20);
-    }
-
-    .amount-pos { color: var(--success); }
-    .amount-neg { color: var(--danger); }
-
-    .month-strip {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding-bottom: 2px;
-      margin: 4px 0 6px;
-    }
-    .month-strip::-webkit-scrollbar { height: 4px; }
-    .month-strip::-webkit-scrollbar-thumb {
-      background: rgba(148, 163, 184, 0.55);
-      border-radius: 999px;
-    }
-    .month-chip {
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.50);
-      background: rgba(15,23,42,0.72);
-      padding: 4px 10px;
-      font-size: 11px;
-      color: var(--text);
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
-    }
-    :root[data-theme="light"] .month-chip {
-      background: rgba(255,255,255,0.98);
-      border-color: rgba(15,23,42,0.18);
-    }
-    .month-chip:hover { background: rgba(148,163,184,0.14); transform: translateY(-1px); }
-    .month-chip.active {
-      background: #1d4ed8;
-      color: #ffffff;
-      border-color: #1d4ed8;
-      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 14px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(17,24,39,0.98);
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.55);
-      padding: 7px 11px;
-      font-size: 11px;
-      color: #e5e7eb;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 14px 30px rgba(15,23,42,0.55);
-      z-index: 9999;
-    }
-    :root[data-theme="light"] .toast {
-      background: rgba(255,255,255,0.98);
-      color: #0f172a;
-    }
-
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(15,23,42,0.78);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-    }
-    :root[data-theme="light"] .modal-backdrop {
-      background: rgba(2,6,23,0.55);
-    }
-    .modal-backdrop.show { display: flex; }
-    .modal {
-      width: 100%;
-      max-width: 520px;
-      max-height: 90vh;
-      background: var(--card-bg);
-      border-radius: 20px;
-      border: 1px solid rgba(148,163,184,0.55);
-      box-shadow: 0 20px 60px rgba(15,23,42,0.55);
-      padding: 12px 14px 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    :root[data-theme="light"] .modal {
-      border-color: rgba(15,23,42,0.18);
-      box-shadow: 0 20px 60px rgba(2,6,23,0.22);
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid rgba(148,163,184,0.20);
-    }
-    .modal-header-title { font-weight: 700; font-size: 14px; }
-    .modal-close {
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.45);
-      background: transparent;
-      color: var(--text-muted);
-      width: 26px;
-      height: 26px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 13px;
-    }
-    .modal-close:hover { background: rgba(148,163,184,0.12); color: var(--text); }
-    .modal-body {
-      flex: 1;
-      overflow-y: auto;
-      padding-top: 4px;
-      padding-bottom: 6px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .modal-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      padding-top: 6px;
-      border-top: 1px solid rgba(148,163,184,0.20);
-    }
-
-    .doc-items-container {
-      border-radius: 10px;
-      border: 1px dashed rgba(148,163,184,0.42);
-      padding: 6px 6px 4px;
-      max-height: 220px;
-      overflow-y: auto;
-      background: rgba(15,23,42,0.55);
-    }
-    :root[data-theme="light"] .doc-items-container {
-      background: rgba(248,250,252,0.95);
-      border-color: rgba(15,23,42,0.18);
-    }
-
-    .doc-item-row {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      margin-bottom: 4px;
-      font-size: 11px;
-    }
-    .doc-item-name { flex: 1; color: var(--text); }
-    .doc-item-unit { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
-    .doc-item-linecost { font-size: 11px; color: var(--text); white-space: nowrap; }
-    .doc-items-hint { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
-
-    .doc-items-total {
-      margin-top: 6px;
-      padding-top: 6px;
-      border-top: 1px solid rgba(148,163,184,0.22);
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 8px;
-      font-size: 11px;
-      color: var(--text);
-    }
-
-    @media (max-width: 768px) {
-      body { padding: 8px; }
-      .app-shell { border-radius: 18px; }
-      .grid-3 { grid-template-columns: 1fr; }
-      .grid-2 { grid-template-columns: 1fr; }
-      table { font-size: 10px; }
-      th, td { padding: 5px 5px; }
-      header { padding-inline: 10px; }
-      .nav-tabs { padding-inline: 10px; }
-      .card { padding-inline: 10px; }
-    }
-  </style>
+/* ================= MOBILE ================= */
+@media(max-width:768px){
+  table{font-size:10px}
+}
+</style>
 </head>
+
 <body>
-  <div class="app-shell">
-    <header>
-      <div class="brand-area">
-        <div class="brand-logo">צ</div>
-        <div>
-          <div class="brand-text-title">הצדף · דשבורד הוצאות ספקים</div>
-          <div class="brand-text-sub">
-            מעקב חודשי אחרי מחזור, הוצאות, מסמכים, ספקים ופריטים · <span>חכם</span>
-          </div>
-        </div>
-      </div>
-      <div>
-        <button class="btn-ghost btn-sm" id="themeToggleBtn">מצב בהיר</button>
-        <button class="btn-ghost btn-sm" id="exportJsonBtn">ייצוא JSON</button>
-        <button class="btn-ghost btn-sm" id="importJsonBtn">ייבוא JSON</button>
-        <input type="file" id="fileInput" style="display:none" />
-      </div>
-    </header>
+<div class="app">
 
-    <nav class="nav-tabs">
-      <button class="nav-tab active" data-screen="dashboard"><span class="dot"></span>דשבורד</button>
-      <button class="nav-tab" data-screen="documents"><span class="dot"></span>מסמכים</button>
-      <button class="nav-tab" data-screen="reports"><span class="dot"></span>דוחות</button>
-      <button class="nav-tab" data-screen="suppliers"><span class="dot"></span>ספקים</button>
-      <button class="nav-tab" data-screen="items"><span class="dot"></span>רשימת פריטים</button>
-      <button class="nav-tab" data-screen="categories"><span class="dot"></span>קטגוריות ספקים</button>
-      <button class="nav-tab" data-screen="settings"><span class="dot"></span>הגדרות</button>
-    </nav>
-
-    <main>
-      <!-- ========== דשבורד ========== -->
-      <div class="screen active" id="screen-dashboard">
-        <div class="card">
-          <div class="card-title">דשבורד הוצאות ספקים - הצדף</div>
-          <div class="card-subtitle">מעקב חודשי אחרי מחזור, הוצאות, רווח נקי, ספקים ופריטים.</div>
-
-          <div class="form-row">
-            <div class="form-group" style="max-width: 180px;">
-              <label>חודש</label>
-              <input type="month" id="monthInput" />
-            </div>
-            <div class="form-group" style="max-width: 220px;">
-              <label>מחזור (הכנסות, ₪)</label>
-              <input type="number" id="incomeInput" step="0.01" min="0" placeholder="לדוגמה 180000" />
-            </div>
-          </div>
-
-          <div class="month-strip" id="monthStrip"></div>
-
-          <div class="grid-3" style="margin-top: 6px;">
-            <div class="stat-card">
-              <div class="stat-label">הכנסות (מחזור)</div>
-              <div class="stat-value" id="statIncome">₪ 0</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">הוצאות ספקים (כולל זיכויים)</div>
-              <div class="stat-value" id="statExpenses">₪ 0</div>
-              <span class="stat-chip danger" id="statExpensesChip">0% מהמחזור</span>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">רווח נקי משוער (לפני שכר ועמלות)</div>
-              <div class="stat-value" id="statNet">₪ 0</div>
-              <span class="stat-chip success" id="statNetChip">0% מהמחזור</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">Top ספקים וקטגוריות לחודש</div>
-          <div class="card-subtitle">סיכום מהיר לפי הוצאות.</div>
-          <div class="grid-2">
-            <div>
-              <h4 style="font-size:12px;margin:0 0 4px;">ספקים מובילים</h4>
-              <table>
-                <thead><tr><th>ספק</th><th>סה״כ</th></tr></thead>
-                <tbody id="topSuppliersBody"></tbody>
-              </table>
-            </div>
-            <div>
-              <h4 style="font-size:12px;margin:0 0 4px;">קטגוריות מובילות</h4>
-              <table>
-                <thead><tr><th>קטגוריה</th><th>סה״כ</th></tr></thead>
-                <tbody id="topCategoriesBody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========== מסמכים ========== -->
-      <div class="screen" id="screen-documents">
-        <div class="card">
-          <div class="card-title">ניהול מסמכים</div>
-          <div class="card-subtitle">חשבוניות, תעודות משלוח וזיכויים – לפי חודשים, ספקים, קטגוריות ופריטים.</div>
-
-          <div class="month-strip" id="monthStripDocs"></div>
-
-          <!-- סינונים -->
-          <div class="form-row" id="docFiltersRow">
-            <div class="form-group" style="max-width:140px;">
-              <label>סוג מסמך</label>
-              <select id="docTypeFilter">
-                <option value="">הכל</option>
-                <option value="invoice">חשבונית</option>
-                <option value="delivery">תעודת משלוח</option>
-                <option value="credit">זיכוי</option>
-              </select>
-            </div>
-
-            <div class="form-group" style="max-width:170px;">
-              <label>ספק</label>
-              <input type="text" id="docSupplierFilter" placeholder="חיפוש ספק" />
-            </div>
-
-            <div class="form-group" style="max-width:170px;">
-              <label>קטגוריה</label>
-              <select id="docCategoryFilter"></select>
-            </div>
-
-            <div class="form-group" style="max-width:140px;">
-              <label>סטטוס</label>
-              <select id="docStatusFilter">
-                <option value="">הכל</option>
-                <option value="paid">שולם</option>
-                <option value="unpaid">לא שולם</option>
-                <option value="partial">שולם חלקית</option>
-              </select>
-            </div>
-
-            <div class="form-group" style="max-width:160px;">
-              <label>חיפוש חופשי</label>
-              <input type="text" id="docSearchInput" placeholder="מס׳ מסמך, הערות..." />
-            </div>
-          </div>
-
-          <!-- פעולות -->
-          <div style="display:flex;justify-content:flex-end;align-items:center;margin:8px 0 0;padding-top:8px;border-top:1px solid rgba(148,163,184,0.22);">
-            <button class="btn btn-primary btn-sm" id="addDocumentBtn">מסמך חדש</button>
-          </div>
-
-          <div style="margin-top:10px;">
-            <table>
-              <thead>
-                <tr>
-                  <th>תאריך</th>
-                  <th>ספק</th>
-                  <th>סוג</th>
-                  <th>מס׳ מסמך</th>
-                  <th>קטגוריה</th>
-                  <th>סכום</th>
-                  <th>סטטוס</th>
-                  <th>פריטים</th>
-                  <th>פעולות</th>
-                </tr>
-              </thead>
-              <tbody id="documentsTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========== דוחות ========== -->
-      <div class="screen" id="screen-reports">
-        <div class="card">
-          <div class="card-title">דוחות לפי ספקים וקטגוריות</div>
-          <div class="card-subtitle">סיכומים לחודש הנוכחי.</div>
-          <div class="grid-2">
-            <div>
-              <h4 style="font-size:12px;margin:0 0 4px;">לפי ספק</h4>
-              <table>
-                <thead><tr><th>ספק</th><th>מסמכים</th><th>סה״כ</th></tr></thead>
-                <tbody id="reportBySupplierBody"></tbody>
-              </table>
-            </div>
-            <div>
-              <h4 style="font-size:12px;margin:0 0 4px;">לפי קטגוריה</h4>
-              <table>
-                <thead><tr><th>קטגוריה</th><th>מסמכים</th><th>סה״כ</th></tr></thead>
-                <tbody id="reportByCategoryBody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========== ספקים ========== -->
-      <div class="screen" id="screen-suppliers">
-        <div class="card">
-          <div class="card-title">ספקים</div>
-          <div class="card-subtitle">ניהול ספקים, פרטי קשר, קטגוריות והערות.</div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>חיפוש ספק</label>
-              <input type="text" id="supplierSearchInput" placeholder="לדוגמה: החברה המרכזית" />
-            </div>
-            <div class="form-group" style="max-width:180px;">
-              <label>קטגוריה</label>
-              <select id="supplierCategoryFilter"></select>
-            </div>
-            <div class="form-group" style="align-self:flex-end;max-width:150px;">
-              <button class="btn btn-primary btn-sm" id="addSupplierBtn">ספק חדש</button>
-            </div>
-          </div>
-
-          <table>
-            <thead>
-              <tr>
-                <th>שם</th>
-                <th>קטגוריה</th>
-                <th>טלפון</th>
-                <th>מייל</th>
-                <th>הערות</th>
-                <th>פעולות</th>
-              </tr>
-            </thead>
-            <tbody id="suppliersTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ========== פריטים ========== -->
-      <div class="screen" id="screen-items">
-        <div class="card">
-          <div class="card-title">רשימת פריטים</div>
-          <div class="card-subtitle">פריטים שנרכשים בשגרה – לפי קטגוריות ספקים, כולל מחיר וחישובי כמות.</div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>חיפוש פריט</label>
-              <input type="text" id="itemSearchInput" placeholder="לדוגמה: דניס, סלמון..." />
-            </div>
-            <div class="form-group" style="max-width:180px;">
-              <label>קטגוריית פריט (קטגוריית ספק)</label>
-              <select id="itemGroupFilter"></select>
-            </div>
-            <div class="form-group" style="align-self:flex-end;max-width:160px;">
-              <button class="btn btn-primary btn-sm" id="addItemBtn">פריט חדש</button>
-            </div>
-          </div>
-
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>שם</th>
-                <th>קטגוריה</th>
-                <th>יחידת מדידה</th>
-                <th>מחיר</th>
-                <th>סה״כ כמות בחודש</th>
-                <th>מס׳ מסמכים</th>
-                <th>פעולות</th>
-              </tr>
-            </thead>
-            <tbody id="itemsTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ========== קטגוריות ספקים ========== -->
-      <div class="screen" id="screen-categories">
-        <div class="card">
-          <div class="card-title">קטגוריות ספקים</div>
-          <div class="card-subtitle">מזון, שתייה, תחזוקה, שיווק ועוד.</div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>קטגוריה חדשה</label>
-              <input type="text" id="newCategoryInput" placeholder="לדוגמה: ארנונה ומסים" />
-            </div>
-            <div class="form-group" style="align-self:flex-end;max-width:140px;">
-              <button class="btn btn-primary btn-sm" id="addCategoryBtn">הוסף קטגוריה</button>
-            </div>
-          </div>
-
-          <table>
-            <thead><tr><th>קטגוריה</th><th>פעולות</th></tr></thead>
-            <tbody id="categoriesTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ========== הגדרות ========== -->
-      <div class="screen" id="screen-settings">
-        <div class="card">
-          <div class="card-title">הגדרות</div>
-          <div class="card-subtitle">ייבוא/ייצוא נתונים.</div>
-          <div class="form-row">
-            <div class="form-group" style="max-width:200px;">
-              <label>ייצוא חודש נוכחי כ-CSV</label>
-              <button class="btn btn-outline btn-sm" id="exportCsvBtn">ייצוא CSV</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
+<header>
+  <h1>דשבורד הוצאות ספקים - הצדף</h1>
+  <div class="actions">
+    <button id="themeBtn" class="outline">מצב בהיר</button>
+    <button id="exportBtn" class="outline">ייצוא JSON</button>
+    <button id="importBtn" class="outline">ייבוא</button>
+    <input type="file" id="fileInput" hidden>
   </div>
+</header>
 
-  <!-- ========== מודאל מסמך ========== -->
-  <div class="modal-backdrop" id="documentModalBackdrop">
-    <div class="modal">
-      <div class="modal-header">
-        <div class="modal-header-title" id="documentModalTitle">מסמך חדש</div>
-        <button class="modal-close" id="closeDocumentModal">✕</button>
-      </div>
+<nav>
+  <button class="tab active" data-screen="dashboard">דשבורד</button>
+  <button class="tab" data-screen="documents">מסמכים</button>
+  <button class="tab" data-screen="suppliers">ספקים</button>
+  <button class="tab" data-screen="items">פריטים</button>
+</nav>
 
-      <div class="modal-body">
-        <div class="form-row">
-          <div class="form-group">
-            <label>סוג מסמך</label>
-            <select id="docType">
-              <option value="invoice">חשבונית</option>
-              <option value="delivery">תעודת משלוח</option>
-              <option value="credit">זיכוי</option>
-            </select>
-          </div>
+<main>
 
-          <div class="form-group">
-            <label>ספק</label>
-            <input type="text" id="docSupplierName" list="supplierNameList" placeholder="בחר או כתוב שם ספק" />
-            <datalist id="supplierNameList"></datalist>
-            <div style="margin-top:6px;">
-              <button type="button" class="btn btn-outline btn-sm" id="addSupplierFromDocBtn">הוסף ספק חדש</button>
-            </div>
-          </div>
+<!-- ================= DASHBOARD ================= -->
+<section id="dashboard" class="screen">
+  <div class="card">
+    <h2>סיכום חודשי</h2>
 
-          <div class="form-group">
-            <label>קטגוריה</label>
-            <select id="docCategory"></select>
-          </div>
-        </div>
+    <label>חודש</label>
+    <input type="month" id="monthInput">
 
-        <div class="form-row">
-          <div class="form-group">
-            <label>מס׳ מסמך</label>
-            <input type="text" id="docRef" placeholder="מס׳ חשבונית/תע״מ" />
-          </div>
-          <div class="form-group">
-            <label>תאריך</label>
-            <input type="date" id="docDate" />
-          </div>
-          <div class="form-group">
-            <label>סכום (₪)</label>
-            <input type="number" id="docAmount" step="0.01" min="0" />
-          </div>
-        </div>
+    <label>מחזור (הכנסות)</label>
+    <input type="number" id="incomeInput">
 
-        <div class="form-row">
-          <div class="form-group" style="min-width:260px;">
-            <label>
-              <input type="checkbox" id="docAutoAmount" checked />
-              לחשב סכום אוטומטית לפי פריטים
-            </label>
-          </div>
-
-          <div class="form-group" style="min-width:180px;">
-            <label>
-              <input type="checkbox" id="docIncludeVat" checked />
-              להוסיף מע״מ?
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>פריטים במסמך</label>
-          <div class="form-row">
-            <div class="form-group">
-              <select id="docItemSelect"></select>
-            </div>
-            <div class="form-group" style="max-width:120px;">
-              <input type="number" id="docItemQty" min="0" step="0.01" placeholder="כמות" />
-            </div>
-            <div class="form-group" style="max-width:130px;align-self:flex-end;">
-              <button type="button" class="btn btn-outline btn-sm" id="addDocItemBtn">הוסף פריט למסמך</button>
-            </div>
-          </div>
-
-          <div id="docItemsContainer" class="doc-items-container"></div>
-
-          <div style="margin-top:4px;display:flex;gap:6px;flex-wrap:wrap;">
-            <button type="button" class="btn btn-outline btn-sm" id="addDocItemNewBtn">הוסף פריט חדש לרשימה</button>
-          </div>
-
-          <div class="doc-items-hint">
-            בחר פריט מהרשימה, הזן כמות ולחץ "הוסף פריט למסמך". מוצגת עלות פריט אוטומטית לפי מחיר הפריט.
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>סטטוס תשלום</label>
-            <select id="docStatus">
-              <option value="paid">שולם</option>
-              <option value="unpaid">לא שולם</option>
-              <option value="partial">שולם חלקית</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>הערות</label>
-          <textarea id="docNotes" rows="2" placeholder="פרטים נוספים, תנאי תשלום, וכו׳"></textarea>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-outline btn-sm" id="deleteDocumentBtn" style="display:none;">מחק</button>
-        <button class="btn btn-primary btn-sm" id="saveDocumentBtn">שמור</button>
-      </div>
-    </div>
+    <p>סה״כ הוצאות: <strong id="expSum">₪0</strong></p>
+    <p>רווח נקי: <strong id="netSum">₪0</strong></p>
   </div>
+</section>
 
-  <!-- ========== מודאל ספק ========== -->
-  <div class="modal-backdrop" id="supplierModalBackdrop">
-    <div class="modal">
-      <div class="modal-header">
-        <div class="modal-header-title" id="supplierModalTitle">ספק חדש</div>
-        <button class="modal-close" id="closeSupplierModal">✕</button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label>שם ספק</label>
-          <input type="text" id="supplierNameModal" />
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>קטגוריה</label>
-            <select id="supplierCategoryModal"></select>
-          </div>
-          <div class="form-group">
-            <label>טלפון</label>
-            <input type="text" id="supplierPhoneModal" />
-          </div>
-          <div class="form-group">
-            <label>מייל</label>
-            <input type="text" id="supplierEmailModal" />
-          </div>
-        </div>
-        <div class="form-group">
-          <label>הערות</label>
-          <textarea id="supplierNotesModal" rows="2"></textarea>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-outline btn-sm" id="deleteSupplierBtn" style="display:none;">מחק</button>
-        <button class="btn btn-primary btn-sm" id="saveSupplierModalBtn">שמור</button>
-      </div>
-    </div>
+<!-- ================= DOCUMENTS ================= -->
+<section id="documents" class="screen" style="display:none">
+  <div class="card">
+    <h2>מסמכים</h2>
+    <button id="addDoc">מסמך חדש</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>תאריך</th>
+          <th>ספק</th>
+          <th>סכום</th>
+          <th>פריטים</th>
+          <th>הרחב</th>
+        </tr>
+      </thead>
+      <tbody id="docsBody"></tbody>
+    </table>
   </div>
+</section>
 
-  <!-- ========== מודאל פריט ========== -->
-  <div class="modal-backdrop" id="itemModalBackdrop">
-    <div class="modal">
-      <div class="modal-header">
-        <div class="modal-header-title" id="itemModalTitle">פריט חדש</div>
-        <button class="modal-close" id="closeItemModal">✕</button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label>שם פריט</label>
-          <input type="text" id="itemNameModal" />
-        </div>
-        <div class="form-group">
-          <label>קטגוריית פריט (כמו קטגוריית ספק)</label>
-          <select id="itemGroupModal"></select>
-        </div>
-        <div class="form-group">
-          <label>מחיר (₪) לפי יחידה / ק״ג</label>
-          <input type="number" id="itemPriceModal" min="0" step="0.01" placeholder="לדוגמה: 29.90" />
-        </div>
-        <div class="form-group">
-          <label>
-            <input type="checkbox" id="itemIsWeightModal" />
-            נמדד לפי משקל (ק״ג)?
-          </label>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-outline btn-sm" id="deleteItemBtn" style="display:none;">מחק</button>
-        <button class="btn btn-primary btn-sm" id="saveItemModalBtn">שמור</button>
-      </div>
-    </div>
+<!-- ================= SUPPLIERS ================= -->
+<section id="suppliers" class="screen" style="display:none">
+  <div class="card">
+    <h2>ספקים</h2>
+    <button id="addSupplier">ספק חדש</button>
+
+    <table>
+      <thead>
+        <tr><th>שם</th><th>קטגוריה</th></tr>
+      </thead>
+      <tbody id="supBody"></tbody>
+    </table>
   </div>
-
-  <script>
-    const STORAGE_KEY = "supplier-dashboard-v4";
-    const THEME_KEY = "supplier-dashboard-theme";
-
-    let state = {
-      categories: [],
-      suppliers: [],
-      items: [],
-      months: {},
-      currentMonth: "",
-      lastDeleted: null
-    };
-
-    let editingDocumentId = null;
-    let editingSupplierId = null;
-    let editingItemId = null;
-    let currentDocItems = [];
-    let toastTimeout = null;
-
-    function applyTheme(theme) {
-      document.documentElement.setAttribute("data-theme", theme);
-      localStorage.setItem(THEME_KEY, theme);
-      const btn = document.getElementById("themeToggleBtn");
-      if (btn) btn.textContent = (theme === "light") ? "מצב לילה" : "מצב בהיר";
-    }
-
-    function initTheme() {
-      const saved = localStorage.getItem(THEME_KEY);
-      const theme = saved || "dark";
-      applyTheme(theme);
-    }
-
-    function showToast(msg) {
-      const old = document.querySelector(".toast");
-      if (old) old.remove();
-      const t = document.createElement("div");
-      t.className = "toast";
-      t.textContent = msg;
-      document.body.appendChild(t);
-      if (toastTimeout) clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => t.remove(), 2600);
-    }
-
-    function generateId(prefix) {
-      return prefix + "_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-    }
-
-    function todayYMD() {
-      const d = new Date();
-      const m = String(d.getMonth() + 1).padStart(2, "0");
-      const day = String(d.getDate()).padStart(2, "0");
-      return `${d.getFullYear()}-${m}-${day}`;
-    }
-
-    function currentYM() {
-      const d = new Date();
-      const m = String(d.getMonth() + 1).padStart(2, "0");
-      return `${d.getFullYear()}-${m}`;
-    }
-
-    function getDefaultItems() {
-      const foodCat = "מזון";
-      const names = [
-        "דניס","לברק","מושט","ברבוניה","בר ים","סלמון","לוקוס",
-        "שרימפס","קלמרי","ראשי קלמרי","סרטנים","מולים",
-        "סטייק אנטריקוט","פילה בקר","פרגית","חזה עוף","צלעות"
-      ];
-      return names.map(name => ({
-        id: generateId("item"),
-        name,
-        group: foodCat,
-        isWeightBased: name === "לוקוס",
-        price: 0
-      }));
-    }
-
-    function initDefaultState() {
-      const defaultCategories = [
-        "מזון",
-        "דגים ופירות ים",
-        "שתייה",
-        "אלכוהול",
-        "קינוחים",
-        "קפה",
-        "חד פעמי",
-        "ניקיון",
-        "תחזוקה",
-        "שיווק ופרסום",
-        "עבודה / כוח אדם",
-        "ארנונה ומסים",
-        "תקשורת ואינטרנט",
-        "חשמל / מים / גז",
-        "ציוד בר ומטבח",
-        "שירותים חיצוניים",
-        "לא משויך"
-      ];
-
-      const defaultSuppliersNames = [
-        "מדחסקור אוניברסל","ג׳אקו שירות למטבחים","יוסי סימן טוב","י.שבי","צ.י.שיווק","קנקון",
-        "לוילן סחר ומוצרים חקלאיים בע״מ","עואודה לשיווק בע״מ","מדג סי פרוט בע״מ","אהרון שיווק",
-        "שיווק שלי א.א בע״מ","אקיפ החברה לציוד מלונאי בע״מ","דאלאס מוצרי נייר בע״מ","חברת חשמל",
-        "א.א.ר שירותי ביוב","תמי 4","בזק","היכל היין","החברה המרכזית","סוקליק","ביסקוטי","אייס דרים",
-        "ג.מ טעם הארץ בע״מ","יזמקו חברה בע״מ","אסטרטג טכנולוגיות בע״מ","אביב אש מערכות בע״מ","מניב ראשון",
-        "אודי בכור שיווק דגים בע״מ","לירי כוח אדם בע״מ","מש-נט בע״מ","זאפ גרופ בע״מ","שיא ״10״ בע״מ",
-        "קורקידי יעקב שיווק והפצה בסיטונאות","מקס עסקים","וינטר מכשירי גז בעמ","מפעל הפרסום","וולט",
-        "אלירן פרחים","פרסום תבור בעצ","אינפיניה מחזור","ייצוגית פלוס תעשיות בעמ","משלוחה","ביימי טכנולוגיות",
-        "ישראכרט","סוגת","אייפרקטיקום","אמישרגז","מאירוביץ שלי","לה פסטה דלה קזה בעמ","ארנונה ראשון לציון"
-      ];
-
-      state = {
-        categories: defaultCategories,
-        suppliers: defaultSuppliersNames.map(n => ({
-          id: generateId("sup"),
-          name: n,
-          category: "לא משויך",
-          phone: "",
-          email: "",
-          notes: ""
-        })),
-        items: getDefaultItems(),
-        months: {},
-        currentMonth: currentYM(),
-        lastDeleted: null
-      };
-      state.months[state.currentMonth] = { income: 0, documents: [] };
-    }
-
-    function saveState() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
-
-    function loadState() {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) {
-        initDefaultState();
-        saveState();
-        return;
-      }
-      try {
-        const obj = JSON.parse(raw);
-        state = obj;
-
-        if (!state.categories) state.categories = [];
-        if (!state.suppliers) state.suppliers = [];
-        if (!state.items || !Array.isArray(state.items)) state.items = getDefaultItems();
-
-        // Migration: ensure each item has numeric price
-        (state.items || []).forEach(it => {
-          if (typeof it.price !== "number") it.price = Number(it.price) || 0;
-        });
-
-        if (!state.months) state.months = {};
-        if (!state.currentMonth) state.currentMonth = currentYM();
-        if (!state.months[state.currentMonth]) state.months[state.currentMonth] = { income: 0, documents: [] };
-      } catch (e) {
-        console.error("loadState error", e);
-        initDefaultState();
-        saveState();
-      }
-    }
-
-    function getCurrentMonthData() {
-      if (!state.months[state.currentMonth]) state.months[state.currentMonth] = { income: 0, documents: [] };
-      return state.months[state.currentMonth];
-    }
-
-    function getAllMonthsFromState() {
-      const months = Object.keys(state.months || {});
-      if (!months.includes(state.currentMonth)) months.push(state.currentMonth);
-      months.sort();
-      return months;
-    }
-
-    function monthKeyToLabel(ym) {
-      if (!ym || typeof ym !== "string") return ym || "";
-      const [y, m] = ym.split("-");
-      const months = ["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"];
-      const mi = Number(m) || 0;
-      const name = months[mi-1] || ym;
-      return name + " " + (y || "");
-    }
-
-    function handleMonthChangeByChip(monthKey) {
-      if (!monthKey) return;
-      state.currentMonth = monthKey;
-      if (!state.months[state.currentMonth]) state.months[state.currentMonth] = { income: 0, documents: [] };
-      const monthInput = document.getElementById("monthInput");
-      if (monthInput) monthInput.value = state.currentMonth;
-      const incomeInput = document.getElementById("incomeInput");
-      if (incomeInput) incomeInput.value = getCurrentMonthData().income || "";
-      saveState();
-      renderDashboard();
-      renderDocuments();
-      renderReports();
-      renderItemsTable();
-      renderMonthStrips();
-    }
-
-    function renderMonthStrips() {
-      const months = getAllMonthsFromState();
-      const current = state.currentMonth;
-      const dashStrip = document.getElementById("monthStrip");
-      const docsStrip = document.getElementById("monthStripDocs");
-      const html = months.map(m => `
-        <button class="month-chip ${m===current?"active":""}" data-month="${m}">
-          ${monthKeyToLabel(m)}
-        </button>
-      `).join("");
-      if (dashStrip) dashStrip.innerHTML = html;
-      if (docsStrip) docsStrip.innerHTML = html;
-
-      document.querySelectorAll(".month-chip").forEach(btn => {
-        btn.addEventListener("click", () => handleMonthChangeByChip(btn.dataset.month));
-      });
-    }
-
-    function formatCurrency(num) {
-      const n = Number(num) || 0;
-      return n.toLocaleString("he-IL", { style: "currency", currency: "ILS", maximumFractionDigits: 2 });
-    }
-    function formatNumber(num) {
-      const n = Number(num) || 0;
-      return n.toLocaleString("he-IL", { maximumFractionDigits: 2 });
-    }
-
-    function changeScreen(screenId) {
-      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-      const el = document.getElementById("screen-" + screenId);
-      if (el) el.classList.add("active");
-
-      document.querySelectorAll(".nav-tab").forEach(b => {
-        b.classList.toggle("active", b.dataset.screen === screenId);
-      });
-
-      if (screenId === "dashboard") renderDashboard();
-      if (screenId === "documents") renderDocuments();
-      if (screenId === "reports") renderReports();
-      if (screenId === "suppliers") renderSuppliersTable();
-      if (screenId === "items") renderItemsTable();
-      if (screenId === "categories") renderCategoriesTable();
-    }
-
-    function renderDashboard() {
-      const monthData = getCurrentMonthData();
-      const income = Number(monthData.income) || 0;
-      const docs = monthData.documents || [];
-      let totalExpenses = 0;
-
-      docs.forEach(doc => {
-        const amount = Number(doc.amount) || 0;
-        if (!amount) return;
-        const signed = doc.isCredit ? -amount : amount;
-        totalExpenses += signed;
-      });
-
-      const net = income - totalExpenses;
-
-      document.getElementById("statIncome").textContent = formatCurrency(income);
-      document.getElementById("statExpenses").textContent = formatCurrency(totalExpenses);
-      document.getElementById("statNet").textContent = formatCurrency(net);
-
-      const expPct = income > 0 ? (totalExpenses / income * 100) : 0;
-      const netPct = income > 0 ? (net / income * 100) : 0;
-      document.getElementById("statExpensesChip").textContent = `${expPct.toFixed(1)}% מהמחזור`;
-      document.getElementById("statNetChip").textContent = `${netPct.toFixed(1)}% מהמחזור`;
-
-      const perSupplier = {};
-      const perCategory = {};
-      docs.forEach(d => {
-        const amount = Number(d.amount) || 0;
-        if (!amount) return;
-        const signed = d.isCredit ? -amount : amount;
-        const sName = d.supplierName || "ללא שם";
-        perSupplier[sName] = (perSupplier[sName] || 0) + signed;
-        const cat = d.category || "לא משויך";
-        perCategory[cat] = (perCategory[cat] || 0) + signed;
-      });
-
-      const topSup = Object.entries(perSupplier).sort((a,b)=>Math.abs(b[1]) - Math.abs(a[1])).slice(0,5);
-      const topCat = Object.entries(perCategory).sort((a,b)=>Math.abs(b[1]) - Math.abs(a[1])).slice(0,5);
-
-      const topSupBody = document.getElementById("topSuppliersBody");
-      const topCatBody = document.getElementById("topCategoriesBody");
-      topSupBody.innerHTML = "";
-      topCatBody.innerHTML = "";
-
-      if (topSup.length === 0) {
-        topSupBody.innerHTML = `<tr><td colspan="2" style="color:var(--text-muted);">אין נתונים לחודש זה</td></tr>`;
-        topCatBody.innerHTML = `<tr><td colspan="2" style="color:var(--text-muted);">אין נתונים לחודש זה</td></tr>`;
-        return;
-      }
-
-      topSup.forEach(([name, sum]) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${name}</td><td>${formatCurrency(sum)}</td>`;
-        topSupBody.appendChild(tr);
-      });
-      topCat.forEach(([name, sum]) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${name}</td><td>${formatCurrency(sum)}</td>`;
-        topCatBody.appendChild(tr);
-      });
-    }
-
-    function renderDocuments() {
-      const tbody = document.getElementById("documentsTableBody");
-      const monthData = getCurrentMonthData();
-      const docs = monthData.documents || [];
-
-      const typeFilter = document.getElementById("docTypeFilter").value;
-      const supplierFilter = document.getElementById("docSupplierFilter").value.trim().toLowerCase();
-      const categoryFilter = document.getElementById("docCategoryFilter").value;
-      const statusFilter = document.getElementById("docStatusFilter").value;
-      const searchText = document.getElementById("docSearchInput").value.trim().toLowerCase();
-
-      const filtered = docs.filter(doc => {
-        if (typeFilter && doc.type !== typeFilter) return false;
-        if (supplierFilter && !(doc.supplierName || "").toLowerCase().includes(supplierFilter)) return false;
-        if (categoryFilter && doc.category !== categoryFilter) return false;
-        if (statusFilter && doc.status !== statusFilter) return false;
-        if (searchText) {
-          const hay = ((doc.ref || "") + " " + (doc.notes || "")).toLowerCase();
-          if (!hay.includes(searchText)) return false;
-        }
-        return true;
-      }).sort((a,b) => (a.date || "").localeCompare(b.date || ""));
-
-      tbody.innerHTML = "";
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" style="color:var(--text-muted);padding:8px;">אין מסמכים לפי סינון זה</td></tr>`;
-        return;
-      }
-
-      filtered.forEach(doc => {
-        const typeLabel = doc.type === "invoice" ? "חשבונית" : doc.type === "delivery" ? "תעודת משלוח" : "זיכוי";
-        const amount = Number(doc.amount) || 0;
-        const signedAmt = doc.isCredit ? -amount : amount;
-        const amountClass = signedAmt < 0 ? "amount-pos" : "amount-neg";
-        const statusClass = doc.status || "paid";
-        const itemsCount = Array.isArray(doc.items) ? doc.items.length : 0;
-
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${doc.date || ""}</td>
-          <td>${doc.supplierName || ""}</td>
-          <td><span class="chip-type">${typeLabel}</span></td>
-          <td>${doc.ref || ""}</td>
-          <td>${doc.category || ""}</td>
-          <td class="${amountClass}">${formatCurrency(signedAmt)}</td>
-          <td>
-            <span class="chip-status ${statusClass}">
-              ${statusClass === "paid" ? "שולם" : statusClass === "unpaid" ? "לא שולם" : "שולם חלקית"}
-            </span>
-          </td>
-          <td>${itemsCount > 0 ? itemsCount + " פריטים" : "-"}</td>
-          <td><button class="btn btn-outline btn-sm" onclick="openDocumentModal('${doc.id}')">ערוך</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function renderReports() {
-      const tbodySup = document.getElementById("reportBySupplierBody");
-      const tbodyCat = document.getElementById("reportByCategoryBody");
-      const docs = getCurrentMonthData().documents || [];
-
-      const bySup = {};
-      const byCat = {};
-      docs.forEach(doc => {
-        const amount = Number(doc.amount) || 0;
-        if (!amount) return;
-        const signed = doc.isCredit ? -amount : amount;
-        const sName = doc.supplierName || "ללא שם";
-        if (!bySup[sName]) bySup[sName] = { sum: 0, count: 0 };
-        bySup[sName].sum += signed;
-        bySup[sName].count++;
-
-        const cat = doc.category || "לא משויך";
-        if (!byCat[cat]) byCat[cat] = { sum: 0, count: 0 };
-        byCat[cat].sum += signed;
-        byCat[cat].count++;
-      });
-
-      const supArr = Object.entries(bySup).sort((a,b)=>Math.abs(b[1].sum) - Math.abs(a[1].sum));
-      const catArr = Object.entries(byCat).sort((a,b)=>Math.abs(b[1].sum) - Math.abs(a[1].sum));
-
-      tbodySup.innerHTML = "";
-      tbodyCat.innerHTML = "";
-
-      if (supArr.length === 0) {
-        tbodySup.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);">אין נתונים לחודש זה</td></tr>`;
-        tbodyCat.innerHTML = `<tr><td colspan="3" style="color:var(--text-muted);">אין נתונים לחודש זה</td></tr>`;
-        return;
-      }
-
-      supArr.forEach(([name, d]) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${name}</td><td>${d.count}</td><td>${formatCurrency(d.sum)}</td>`;
-        tbodySup.appendChild(tr);
-      });
-      catArr.forEach(([name, d]) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${name}</td><td>${d.count}</td><td>${formatCurrency(d.sum)}</td>`;
-        tbodyCat.appendChild(tr);
-      });
-    }
-
-    function renderCategoriesTable() {
-      const tbody = document.getElementById("categoriesTableBody");
-      const cats = state.categories || [];
-      tbody.innerHTML = "";
-      cats.forEach(cat => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${cat}</td>
-          <td>
-            ${cat === "לא משויך" ? "" : `<button class="btn btn-outline btn-sm" onclick="deleteCategory('${cat.replace(/'/g,"&#39;")}')">מחק</button>`}
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      const selSupplierCat = document.getElementById("supplierCategoryModal");
-      selSupplierCat.innerHTML = "";
-      cats.forEach(cat => {
-        const opt = document.createElement("option");
-        opt.value = cat;
-        opt.textContent = cat;
-        selSupplierCat.appendChild(opt);
-      });
-
-      const selFilter = document.getElementById("supplierCategoryFilter");
-      selFilter.innerHTML = `<option value="">כל הקטגוריות</option>`;
-      cats.forEach(cat => {
-        const opt = document.createElement("option");
-        opt.value = cat;
-        opt.textContent = cat;
-        selFilter.appendChild(opt);
-      });
-
-      const docCatSel = document.getElementById("docCategory");
-      docCatSel.innerHTML = "";
-      cats.forEach(cat => {
-        const opt = document.createElement("option");
-        opt.value = cat;
-        opt.textContent = cat;
-        docCatSel.appendChild(opt);
-      });
-
-      const docCatFilter = document.getElementById("docCategoryFilter");
-      docCatFilter.innerHTML = `<option value="">הכל</option>`;
-      cats.forEach(cat => {
-        const opt = document.createElement("option");
-        opt.value = cat;
-        opt.textContent = cat;
-        docCatFilter.appendChild(opt);
-      });
-
-      const itemGroupFilter = document.getElementById("itemGroupFilter");
-      itemGroupFilter.innerHTML = `<option value="">כל הקטגוריות</option>`;
-      cats.forEach(cat => {
-        const opt = document.createElement("option");
-        opt.value = cat;
-        opt.textContent = cat;
-        itemGroupFilter.appendChild(opt);
-      });
-
-      const itemGroupModal = document.getElementById("itemGroupModal");
-      itemGroupModal.innerHTML = "";
-      cats.forEach(cat => {
-        const opt = document.createElement("option");
-        opt.value = cat;
-        opt.textContent = cat;
-        itemGroupModal.appendChild(opt);
-      });
-    }
-
-    function deleteCategory(catName) {
-      if (!confirm("למחוק קטגוריה זו?")) return;
-      state.categories = state.categories.filter(c => c !== catName);
-
-      state.suppliers.forEach(s => {
-        if (s.category === catName) s.category = "לא משויך";
-      });
-
-      Object.values(state.months || {}).forEach(m => {
-        (m.documents || []).forEach(doc => {
-          if (doc.category === catName) doc.category = "לא משויך";
-        });
-      });
-
-      (state.items || []).forEach(it => {
-        if (it.group === catName) it.group = "לא משויך";
-      });
-
-      saveState();
-      renderCategoriesTable();
-      renderSuppliersTable();
-      renderDocuments();
-      renderDashboard();
-      renderReports();
-      renderItemsTable();
-      showToast("קטגוריה נמחקה");
-    }
-
-    function renderSuppliersTable() {
-      const tbody = document.getElementById("suppliersTableBody");
-      const search = document.getElementById("supplierSearchInput").value.trim().toLowerCase();
-      const catFilter = document.getElementById("supplierCategoryFilter").value;
-      const suppliers = (state.suppliers || []).slice().sort((a,b)=>a.name.localeCompare(b.name,"he"));
-
-      const filtered = suppliers.filter(s => {
-        if (search && !s.name.toLowerCase().includes(search)) return false;
-        if (catFilter && s.category !== catFilter) return false;
-        return true;
-      });
-
-      tbody.innerHTML = "";
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="color:var(--text-muted);padding:8px;">אין ספקים לפי סינון זה</td></tr>`;
-        return;
-      }
-
-      filtered.forEach(s => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${s.name}</td>
-          <td>${s.category || ""}</td>
-          <td>${s.phone || ""}</td>
-          <td>${s.email || ""}</td>
-          <td>${s.notes || ""}</td>
-          <td><button class="btn btn-outline btn-sm" onclick="openSupplierModal('${s.id}')">ערוך</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      const dl = document.getElementById("supplierNameList");
-      dl.innerHTML = "";
-      suppliers.forEach(s => {
-        const opt = document.createElement("option");
-        opt.value = s.name;
-        dl.appendChild(opt);
-      });
-    }
-
-    function openSupplierModal(id = null) {
-      editingSupplierId = id;
-      const backdrop = document.getElementById("supplierModalBackdrop");
-      const title = document.getElementById("supplierModalTitle");
-      const delBtn = document.getElementById("deleteSupplierBtn");
-
-      if (id) {
-        const s = state.suppliers.find(x => x.id === id);
-        if (!s) return;
-        title.textContent = "עריכת ספק";
-        document.getElementById("supplierNameModal").value = s.name;
-        document.getElementById("supplierCategoryModal").value = s.category || "לא משויך";
-        document.getElementById("supplierPhoneModal").value = s.phone || "";
-        document.getElementById("supplierEmailModal").value = s.email || "";
-        document.getElementById("supplierNotesModal").value = s.notes || "";
-        delBtn.style.display = "inline-flex";
-      } else {
-        title.textContent = "ספק חדש";
-        document.getElementById("supplierNameModal").value = "";
-        document.getElementById("supplierCategoryModal").value = "לא משויך";
-        document.getElementById("supplierPhoneModal").value = "";
-        document.getElementById("supplierEmailModal").value = "";
-        document.getElementById("supplierNotesModal").value = "";
-        delBtn.style.display = "none";
-      }
-      backdrop.classList.add("show");
-    }
-
-    function closeSupplierModal() {
-      document.getElementById("supplierModalBackdrop").classList.remove("show");
-      editingSupplierId = null;
-    }
-
-    function saveSupplierFromModal() {
-      const name = document.getElementById("supplierNameModal").value.trim();
-      const category = document.getElementById("supplierCategoryModal").value || "לא משויך";
-      const phone = document.getElementById("supplierPhoneModal").value.trim();
-      const email = document.getElementById("supplierEmailModal").value.trim();
-      const notes = document.getElementById("supplierNotesModal").value.trim();
-      if (!name) { showToast("חובה למלא שם ספק"); return; }
-
-      if (!state.suppliers) state.suppliers = [];
-      if (editingSupplierId) {
-        const idx = state.suppliers.findIndex(s => s.id === editingSupplierId);
-        if (idx !== -1) state.suppliers[idx] = { ...state.suppliers[idx], name, category, phone, email, notes };
-        showToast("ספק עודכן");
-      } else {
-        state.suppliers.push({ id: generateId("sup"), name, category, phone, email, notes });
-        showToast("ספק נוסף");
-      }
-
-      saveState();
-      closeSupplierModal();
-      renderSuppliersTable();
-    }
-
-    function deleteCurrentSupplier() {
-      if (!editingSupplierId) return;
-      if (!confirm("למחוק ספק זה?")) return;
-      const idx = state.suppliers.findIndex(s => s.id === editingSupplierId);
-      if (idx === -1) return;
-      const removed = state.suppliers[idx];
-      state.suppliers.splice(idx, 1);
-
-      Object.values(state.months || {}).forEach(m => {
-        (m.documents || []).forEach(doc => {
-          if (doc.supplierId === removed.id) doc.supplierId = null;
-        });
-      });
-
-      saveState();
-      closeSupplierModal();
-      renderSuppliersTable();
-      renderDocuments();
-      showToast("ספק נמחק");
-    }
-
-    function calcItemStatsForCurrentMonth() {
-      const stats = {};
-      const monthData = getCurrentMonthData();
-      (monthData.documents || []).forEach(doc => {
-        (doc.items || []).forEach(line => {
-          if (!line.itemId) return;
-          if (!stats[line.itemId]) stats[line.itemId] = { qty: 0, docs: new Set() };
-          stats[line.itemId].qty += Number(line.quantity) || 0;
-          stats[line.itemId].docs.add(doc.id);
-        });
-      });
-      return stats;
-    }
-
-    function openItemModal(id = null) {
-      editingItemId = id;
-      const backdrop = document.getElementById("itemModalBackdrop");
-      const titleEl = document.getElementById("itemModalTitle");
-      const delBtn = document.getElementById("deleteItemBtn");
-
-      const cats = state.categories || [];
-      const sel = document.getElementById("itemGroupModal");
-      sel.innerHTML = "";
-      cats.forEach(cat => {
-        const opt = document.createElement("option");
-        opt.value = cat;
-        opt.textContent = cat;
-        sel.appendChild(opt);
-      });
-
-      if (id) {
-        const it = (state.items || []).find(x => x.id === id);
-        if (!it) return;
-        titleEl.textContent = "עריכת פריט";
-        document.getElementById("itemNameModal").value = it.name;
-        document.getElementById("itemGroupModal").value = it.group || "לא משויך";
-        document.getElementById("itemPriceModal").value = (typeof it.price === "number" ? it.price : (Number(it.price) || 0));
-        document.getElementById("itemIsWeightModal").checked = !!it.isWeightBased;
-        delBtn.style.display = "inline-flex";
-      } else {
-        titleEl.textContent = "פריט חדש";
-        document.getElementById("itemNameModal").value = "";
-        document.getElementById("itemGroupModal").value = "מזון";
-        document.getElementById("itemPriceModal").value = 0;
-        document.getElementById("itemIsWeightModal").checked = false;
-        delBtn.style.display = "none";
-      }
-      backdrop.classList.add("show");
-    }
-
-    function closeItemModal() {
-      document.getElementById("itemModalBackdrop").classList.remove("show");
-      editingItemId = null;
-    }
-
-    function saveItemFromModal() {
-      const name = document.getElementById("itemNameModal").value.trim();
-      const group = document.getElementById("itemGroupModal").value || "לא משויך";
-      const price = Number(document.getElementById("itemPriceModal").value) || 0;
-      const isWeightBased = document.getElementById("itemIsWeightModal").checked;
-      if (!name) { showToast("חובה למלא שם פריט"); return; }
-
-      if (!state.items) state.items = [];
-      if (editingItemId) {
-        const idx = state.items.findIndex(it => it.id === editingItemId);
-        if (idx !== -1) state.items[idx] = { ...state.items[idx], name, group, price, isWeightBased };
-        showToast("פריט עודכן");
-      } else {
-        state.items.push({ id: generateId("item"), name, group, price, isWeightBased });
-        showToast("פריט נוסף");
-      }
-
-      saveState();
-      renderItemsTable();
-      renderDocItemsUI(null);
-      closeItemModal();
-    }
-
-    function deleteCurrentItem() {
-      if (!editingItemId) return;
-      if (!confirm("למחוק פריט זה?")) return;
-      const idx = (state.items || []).findIndex(it => it.id === editingItemId);
-      if (idx === -1) return;
-      const removed = state.items[idx];
-      state.items.splice(idx, 1);
-
-      Object.values(state.months || {}).forEach(m => {
-        (m.documents || []).forEach(doc => {
-          if (Array.isArray(doc.items)) doc.items = doc.items.filter(line => line.itemId !== removed.id);
-        });
-      });
-
-      saveState();
-      renderItemsTable();
-      closeItemModal();
-      showToast("פריט נמחק");
-    }
-
-    function renderItemsTable() {
-      const tbody = document.getElementById("itemsTableBody");
-      if (!tbody) return;
-
-      const search = (document.getElementById("itemSearchInput")?.value || "").toLowerCase().trim();
-      const groupFilter = document.getElementById("itemGroupFilter")?.value || "";
-      const stats = calcItemStatsForCurrentMonth();
-
-      const arr = (state.items || []).filter(it => {
-        if (search && !it.name.toLowerCase().includes(search)) return false;
-        if (groupFilter && it.group !== groupFilter) return false;
-        return true;
-      }).sort((a,b)=>a.name.localeCompare(b.name,"he"));
-
-      tbody.innerHTML = "";
-      if (arr.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="color:var(--text-muted);padding:8px;">אין פריטים לפי סינון זה</td></tr>`;
-        return;
-      }
-
-      arr.forEach((it, idx) => {
-        const st = stats[it.id] || { qty: 0, docs: new Set() };
-        const unit = it.isWeightBased ? "ק״ג" : "יחידות";
-        const qtyLabel = st.qty ? formatNumber(st.qty) + " " + unit : "-";
-        const docCount = st.docs instanceof Set ? st.docs.size : 0;
-
-        const p = Number(it.price) || 0;
-        const priceLabel = p > 0 ? `${p.toFixed(2)} ₪ / ${it.isWeightBased ? 'ק״ג' : 'יח׳'}` : "-";
-
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${idx+1}</td>
-          <td>${it.name}</td>
-          <td>${it.group || ""}</td>
-          <td>${unit}</td>
-          <td>${priceLabel}</td>
-          <td>${qtyLabel}</td>
-          <td>${docCount}</td>
-          <td><button class="btn btn-outline btn-sm" onclick="openItemModal('${it.id}')">ערוך</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function getItemsForDocCategory(docCategory) {
-      const all = state.items || [];
-      const cat = docCategory || "";
-      if (!cat) return all;
-      const filtered = all.filter(it => it.group === cat);
-      return filtered.length ? filtered : all;
-    }
-
-    function calcDocItemsTotal() {
-      let total = 0;
-      (currentDocItems || []).forEach(line => {
-        const item = (state.items || []).find(it => it.id === line.itemId);
-        const price = Number(item?.price) || 0;
-        const qty = Number(line.quantity) || 0;
-        total += price * qty;
-      });
-      return total;
-    }
-
-    function syncDocAmountWithItemsIfAuto() {
-      const auto = document.getElementById("docAutoAmount");
-      const vat = document.getElementById("docIncludeVat");
-      const amountInput = document.getElementById("docAmount");
-      if (!auto || !amountInput) return;
-
-      const includeVat = vat ? !!vat.checked : true;
-
-      if (auto.checked) {
-        const subtotal = calcDocItemsTotal();
-        const total = includeVat ? subtotal * 1.18 : subtotal;
-        amountInput.value = total ? total.toFixed(2) : "";
-        amountInput.readOnly = true;
-      } else {
-        amountInput.readOnly = false;
-      }
-    }
-
-    function renderDocItemsUI(docToInit) {
-      const container = document.getElementById("docItemsContainer");
-      const select = document.getElementById("docItemSelect");
-      const category = document.getElementById("docCategory").value || "";
-
-      if (docToInit) {
-        currentDocItems = Array.isArray(docToInit.items) ? docToInit.items.map(l => ({...l})) : [];
-      }
-
-      const available = getItemsForDocCategory(category);
-      select.innerHTML = `<option value="">בחר פריט...</option>` +
-        available.map(it => `<option value="${it.id}">${it.name}</option>`).join("");
-
-      container.innerHTML = "";
-
-      if (!currentDocItems.length) {
-        container.innerHTML = `<div style="font-size:11px;color:var(--text-muted);padding:4px 2px;">
-          לא נוספו עדיין פריטים למסמך זה.
-        </div>`;
-        syncDocAmountWithItemsIfAuto();
-        return;
-      }
-
-      currentDocItems.forEach((line, idx) => {
-        const item = (state.items || []).find(it => it.id === line.itemId);
-        const name = item ? item.name : (line.itemName || "פריט");
-        const unit = item && item.isWeightBased ? "ק״ג" : "יח׳";
-        const price = Number(item?.price) || 0;
-        const qty = Number(line.quantity) || 0;
-        const lineCost = price * qty;
-
-        const row = document.createElement("div");
-        row.className = "doc-item-row";
-        row.innerHTML = `
-          <div class="doc-item-name">${name}</div>
-          <div class="doc-item-unit">${formatNumber(qty)} ${unit}</div>
-          <div class="doc-item-linecost">${price > 0 ? (lineCost.toFixed(2) + " ₪") : "-"}</div>
-          <button type="button" class="btn btn-outline btn-sm" data-index="${idx}">מחק</button>
-        `;
-        container.appendChild(row);
-      });
-
-      // Totals (subtotal + VAT + total)
-      const subtotal = calcDocItemsTotal();
-      const includeVat = document.getElementById("docIncludeVat")?.checked ?? true;
-      const vatAmount = includeVat ? subtotal * 0.18 : 0;
-      const total = includeVat ? subtotal * 1.18 : subtotal;
-
-      const footer = document.createElement("div");
-      footer.className = "doc-items-total";
-      footer.innerHTML = `
-        <div style="display:flex;flex-direction:column;gap:2px;">
-          <div>סה״כ לפני מע״מ: <strong>${subtotal.toFixed(2)} ₪</strong></div>
-          <div style="color:var(--text-muted)">מע״מ (18%): <strong>${vatAmount.toFixed(2)} ₪</strong></div>
-        </div>
-        <div style="text-align:left;">
-          <div style="color:var(--text-muted);font-size:10px;">סה״כ לתשלום</div>
-          <div><strong>${total.toFixed(2)} ₪</strong></div>
-        </div>
-      `;
-      container.appendChild(footer);
-
-      container.querySelectorAll("button[data-index]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const idx = Number(btn.dataset.index);
-          if (!isNaN(idx)) {
-            currentDocItems.splice(idx, 1);
-            renderDocItemsUI(null);
-            syncDocAmountWithItemsIfAuto();
-          }
-        });
-      });
-
-      syncDocAmountWithItemsIfAuto();
-    }
-
-    function addDocItemFromSelect() {
-      const sel = document.getElementById("docItemSelect");
-      const qtyInput = document.getElementById("docItemQty");
-      if (!sel || !qtyInput) return;
-      const itemId = sel.value;
-      const qty = Number(qtyInput.value);
-
-      if (!itemId) { showToast("בחר פריט מהרשימה"); return; }
-      if (!qty || qty <= 0) { showToast("כמות חייבת להיות גדולה מ-0"); return; }
-
-      const item = (state.items || []).find(it => it.id === itemId);
-      const name = item ? item.name : "";
-
-      const existingIdx = currentDocItems.findIndex(l => l.itemId === itemId);
-      if (existingIdx !== -1) currentDocItems[existingIdx].quantity += qty;
-      else currentDocItems.push({ itemId, itemName: name, quantity: qty });
-
-      qtyInput.value = "";
-      renderDocItemsUI(null);
-      syncDocAmountWithItemsIfAuto();
-    }
-
-    function collectDocItemsFromUI() {
-      return currentDocItems.map(l => ({...l}));
-    }
-
-    function updateDocCategorySelect(supplierName, existingCategory) {
-      const sup = (state.suppliers || []).find(s => s.name === supplierName);
-      const catSel = document.getElementById("docCategory");
-      const cats = state.categories || [];
-      catSel.innerHTML = "";
-      cats.forEach(cat => {
-        const opt = document.createElement("option");
-        opt.value = cat;
-        opt.textContent = cat;
-        catSel.appendChild(opt);
-      });
-
-      if (existingCategory && cats.includes(existingCategory)) catSel.value = existingCategory;
-      else if (sup && sup.category && cats.includes(sup.category)) catSel.value = sup.category;
-      else catSel.value = "לא משויך";
-    }
-
-    function addNewItemFromDocModal() {
-      const cat = document.getElementById("docCategory").value || "לא משויך";
-      const name = prompt(`שם פריט חדש לקטגוריה "${cat}":`);
-      if (!name) return;
-      const trimmed = name.trim();
-      if (!trimmed) return;
-
-      const newItem = { id: generateId("item"), name: trimmed, group: cat, isWeightBased: false, price: 0 };
-      if (!state.items) state.items = [];
-      state.items.push(newItem);
-
-      saveState();
-      renderItemsTable();
-      renderDocItemsUI(null);
-      showToast("פריט חדש נוסף (מחיר: 0)");
-    }
-
-    function openDocumentModal(id = null) {
-      editingDocumentId = id;
-      const backdrop = document.getElementById("documentModalBackdrop");
-      const title = document.getElementById("documentModalTitle");
-      const delBtn = document.getElementById("deleteDocumentBtn");
-      const monthData = getCurrentMonthData();
-      const docs = monthData.documents || [];
-
-      if (id) {
-        const doc = docs.find(d => d.id === id);
-        if (!doc) return;
-        title.textContent = "עריכת מסמך";
-        document.getElementById("docType").value = doc.type || "invoice";
-        document.getElementById("docSupplierName").value = doc.supplierName || "";
-        updateDocCategorySelect(doc.supplierName, doc.category);
-        document.getElementById("docRef").value = doc.ref || "";
-        document.getElementById("docDate").value = doc.date || todayYMD();
-        document.getElementById("docAmount").value = doc.amount || "";
-        document.getElementById("docStatus").value = doc.status || "paid";
-        document.getElementById("docNotes").value = doc.notes || "";
-
-        document.getElementById("docAutoAmount").checked = true;
-        document.getElementById("docIncludeVat").checked = (doc.includeVat !== false);
-
-        renderDocItemsUI(doc);
-        syncDocAmountWithItemsIfAuto();
-        delBtn.style.display = "inline-flex";
-      } else {
-        title.textContent = "מסמך חדש";
-        document.getElementById("docType").value = "invoice";
-        document.getElementById("docSupplierName").value = "";
-        updateDocCategorySelect("", "");
-        document.getElementById("docRef").value = "";
-        document.getElementById("docDate").value = todayYMD();
-        document.getElementById("docAmount").value = "";
-        document.getElementById("docStatus").value = "paid";
-        document.getElementById("docNotes").value = "";
-
-        document.getElementById("docAutoAmount").checked = true;
-        document.getElementById("docIncludeVat").checked = true;
-
-        currentDocItems = [];
-        renderDocItemsUI(null);
-        syncDocAmountWithItemsIfAuto();
-
-        delBtn.style.display = "none";
-      }
-
-      backdrop.classList.add("show");
-    }
-
-    function closeDocumentModal() {
-      document.getElementById("documentModalBackdrop").classList.remove("show");
-      editingDocumentId = null;
-      currentDocItems = [];
-    }
-
-    function saveDocumentFromModal() {
-      const type = document.getElementById("docType").value;
-      const supplierName = document.getElementById("docSupplierName").value.trim();
-      const ref = document.getElementById("docRef").value.trim();
-      const date = document.getElementById("docDate").value || todayYMD();
-      const amount = Number(document.getElementById("docAmount").value) || 0;
-      const status = document.getElementById("docStatus").value;
-      const notes = document.getElementById("docNotes").value.trim();
-      const category = document.getElementById("docCategory").value || "לא משויך";
-      const includeVat = document.getElementById("docIncludeVat").checked;
-
-      if (!supplierName) { showToast("חובה לבחור ספק"); return; }
-      if (!amount || amount <= 0) { showToast("סכום חייב להיות גדול מ-0"); return; }
-
-      const isCredit = (type === "credit");
-
-      let supplierId = null;
-      const existing = state.suppliers.find(s => s.name === supplierName);
-      if (existing) supplierId = existing.id;
-      else {
-        const newSup = { id: generateId("sup"), name: supplierName, category: category || "לא משויך", phone: "", email: "", notes: "" };
-        state.suppliers.push(newSup);
-        supplierId = newSup.id;
-      }
-
-      const docItems = collectDocItemsFromUI();
-      const monthData = getCurrentMonthData();
-      if (!monthData.documents) monthData.documents = [];
-
-      if (editingDocumentId) {
-        const idx = monthData.documents.findIndex(d => d.id === editingDocumentId);
-        if (idx !== -1) {
-          monthData.documents[idx] = {
-            ...monthData.documents[idx],
-            type, supplierName, supplierId, category, ref, date,
-            amount, status, isCredit, notes, includeVat,
-            items: docItems
-          };
-        }
-        showToast("מסמך עודכן");
-      } else {
-        monthData.documents.push({
-          id: generateId("doc"),
-          type, supplierName, supplierId, category, ref, date,
-          amount, status, isCredit, notes, includeVat,
-          items: docItems
-        });
-        showToast("מסמך נוסף");
-      }
-
-      saveState();
-      closeDocumentModal();
-      renderSuppliersTable();
-      renderDocuments();
-      renderDashboard();
-      renderReports();
-      renderItemsTable();
-    }
-
-    function deleteCurrentDocument() {
-      if (!editingDocumentId) return;
-      if (!confirm("למחוק מסמך זה?")) return;
-      const monthData = getCurrentMonthData();
-      monthData.documents = (monthData.documents || []).filter(d => d.id !== editingDocumentId);
-      saveState();
-      closeDocumentModal();
-      renderDocuments();
-      renderDashboard();
-      renderReports();
-      renderItemsTable();
-      showToast("מסמך נמחק");
-    }
-
-    function exportJson() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
-      const a = document.createElement("a");
-      a.href = dataStr;
-      a.download = "supplier-dashboard.json";
-      a.click();
-    }
-
-    function exportCsvCurrentMonth() {
-      const monthData = getCurrentMonthData();
-      const docs = monthData.documents || [];
-      if (docs.length === 0) { showToast("אין מסמכים לחודש הנוכחי"); return; }
-
-      const headers = ["type","supplierName","category","ref","date","amount","status","isCredit","includeVat","notes"];
-      const rows = docs.map(d => headers.map(h => {
-        let v = d[h];
-        if (v == null) v = "";
-        if (typeof v === "boolean") v = v ? "true" : "false";
-        if (typeof v === "string" && (v.includes(",") || v.includes("\""))) v = '"' + v.replace(/"/g,'""') + '"';
-        return v;
-      }).join(","));
-      const csv = headers.join(",") + "\n" + rows.join("\n");
-      const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `supplier-documents-${state.currentMonth}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function importJsonFile(file) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        try {
-          const obj = JSON.parse(e.target.result);
-          if (!obj || typeof obj !== "object") throw new Error("not object");
-          if (!obj.months || !obj.suppliers) throw new Error("missing");
-          state = obj;
-
-          if (!state.items || !Array.isArray(state.items)) state.items = getDefaultItems();
-          (state.items || []).forEach(it => {
-            if (typeof it.price !== "number") it.price = Number(it.price) || 0;
-          });
-
-          if (!state.currentMonth) state.currentMonth = currentYM();
-          if (!state.months[state.currentMonth]) state.months[state.currentMonth] = { income: 0, documents: [] };
-
-          saveState();
-          initUiAfterStateLoaded();
-          showToast("JSON נטען בהצלחה");
-        } catch (err) {
-          console.error(err);
-          showToast("קובץ JSON לא תקין");
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function initUiAfterStateLoaded() {
-      document.getElementById("monthInput").value = state.currentMonth;
-      document.getElementById("incomeInput").value = getCurrentMonthData().income || "";
-      renderCategoriesTable();
-      renderSuppliersTable();
-      renderItemsTable();
-      renderDashboard();
-      renderDocuments();
-      renderReports();
-      renderMonthStrips();
-    }
-
-    window.addEventListener("DOMContentLoaded", () => {
-      initTheme();
-
-      loadState();
-      initUiAfterStateLoaded();
-
-      document.getElementById("themeToggleBtn").addEventListener("click", () => {
-        const current = document.documentElement.getAttribute("data-theme") || "dark";
-        applyTheme(current === "light" ? "dark" : "light");
-      });
-
-      document.querySelectorAll(".nav-tab").forEach(btn => {
-        btn.addEventListener("click", () => changeScreen(btn.dataset.screen));
-      });
-
-      document.getElementById("monthInput").addEventListener("change", e => {
-        const v = e.target.value;
-        if (!v) return;
-        state.currentMonth = v;
-        if (!state.months[state.currentMonth]) state.months[state.currentMonth] = { income: 0, documents: [] };
-        document.getElementById("incomeInput").value = getCurrentMonthData().income || "";
-        saveState();
-        renderDashboard();
-        renderDocuments();
-        renderReports();
-        renderItemsTable();
-        renderMonthStrips();
-      });
-
-      document.getElementById("incomeInput").addEventListener("input", e => {
-        const v = Number(e.target.value) || 0;
-        const m = getCurrentMonthData();
-        m.income = v;
-        saveState();
-        renderDashboard();
-      });
-
-      document.getElementById("docTypeFilter").addEventListener("change", renderDocuments);
-      document.getElementById("docSupplierFilter").addEventListener("input", renderDocuments);
-      document.getElementById("docCategoryFilter").addEventListener("change", renderDocuments);
-      document.getElementById("docStatusFilter").addEventListener("change", renderDocuments);
-      document.getElementById("docSearchInput").addEventListener("input", renderDocuments);
-      document.getElementById("addDocumentBtn").addEventListener("click", () => openDocumentModal(null));
-
-      document.getElementById("docSupplierName").addEventListener("change", e => {
-        updateDocCategorySelect(e.target.value, "");
-        renderDocItemsUI(null);
-      });
-
-      document.getElementById("addSupplierFromDocBtn").addEventListener("click", () => {
-        const name = document.getElementById("docSupplierName").value.trim();
-        openSupplierModal(null);
-        if (name) document.getElementById("supplierNameModal").value = name;
-      });
-
-      document.getElementById("docCategory").addEventListener("change", () => renderDocItemsUI(null));
-
-      document.getElementById("docAutoAmount").addEventListener("change", () => {
-        syncDocAmountWithItemsIfAuto();
-        renderDocItemsUI(null);
-      });
-
-      document.getElementById("docIncludeVat").addEventListener("change", () => {
-        syncDocAmountWithItemsIfAuto();
-        renderDocItemsUI(null);
-      });
-
-      document.getElementById("addDocItemBtn").addEventListener("click", addDocItemFromSelect);
-      document.getElementById("addDocItemNewBtn").addEventListener("click", addNewItemFromDocModal);
-      document.getElementById("saveDocumentBtn").addEventListener("click", saveDocumentFromModal);
-      document.getElementById("closeDocumentModal").addEventListener("click", closeDocumentModal);
-      document.getElementById("deleteDocumentBtn").addEventListener("click", deleteCurrentDocument);
-
-      document.getElementById("supplierSearchInput").addEventListener("input", renderSuppliersTable);
-      document.getElementById("supplierCategoryFilter").addEventListener("change", renderSuppliersTable);
-      document.getElementById("addSupplierBtn").addEventListener("click", () => openSupplierModal(null));
-      document.getElementById("closeSupplierModal").addEventListener("click", closeSupplierModal);
-      document.getElementById("saveSupplierModalBtn").addEventListener("click", saveSupplierFromModal);
-      document.getElementById("deleteSupplierBtn").addEventListener("click", deleteCurrentSupplier);
-
-      document.getElementById("itemSearchInput").addEventListener("input", renderItemsTable);
-      document.getElementById("itemGroupFilter").addEventListener("change", renderItemsTable);
-      document.getElementById("addItemBtn").addEventListener("click", () => openItemModal(null));
-      document.getElementById("closeItemModal").addEventListener("click", closeItemModal);
-      document.getElementById("saveItemModalBtn").addEventListener("click", saveItemFromModal);
-      document.getElementById("deleteItemBtn").addEventListener("click", deleteCurrentItem);
-
-      document.getElementById("addCategoryBtn").addEventListener("click", () => {
-        const val = document.getElementById("newCategoryInput").value.trim();
-        if (!val) { showToast("חובה למלא שם קטגוריה"); return; }
-        if (!state.categories.includes(val)) {
-          state.categories.push(val);
-          saveState();
-          document.getElementById("newCategoryInput").value = "";
-          renderCategoriesTable();
-          showToast("קטגוריה נוספה");
-        } else {
-          showToast("הקטגוריה כבר קיימת");
-        }
-      });
-
-      document.getElementById("exportJsonBtn").addEventListener("click", exportJson);
-      document.getElementById("importJsonBtn").addEventListener("click", () => document.getElementById("fileInput").click());
-      document.getElementById("fileInput").addEventListener("change", e => {
-        const file = e.target.files[0];
-        if (file) importJsonFile(file);
-        e.target.value = "";
-      });
-
-      document.getElementById("exportCsvBtn").addEventListener("click", exportCsvCurrentMonth);
-    });
-
-    window.openDocumentModal = openDocumentModal;
-    window.openSupplierModal = openSupplierModal;
-    window.openItemModal = openItemModal;
-    window.deleteCategory = deleteCategory;
-  </script>
+</section>
+
+<!-- ================= ITEMS ================= -->
+<section id="items" class="screen" style="display:none">
+  <div class="card">
+    <h2>פריטים</h2>
+    <button id="addItem">פריט חדש</button>
+
+    <table>
+      <thead>
+        <tr><th>שם</th><th>מחיר</th></tr>
+      </thead>
+      <tbody id="itemsBody"></tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<!-- ================= MODALS ================= -->
+<div class="modal" id="docModal">
+  <div class="box">
+    <h3>מסמך חדש</h3>
+    <label>תאריך</label>
+    <input type="date" id="docDate">
+
+    <label>ספק</label>
+    <input type="text" id="docSupplier">
+
+    <label>סכום</label>
+    <input type="number" id="docAmount">
+
+    <label><input type="checkbox" id="docVat" checked> להוסיף מע״מ (18%)</label>
+
+    <button onclick="saveDoc()">שמור</button>
+    <button class="outline" onclick="closeModal('docModal')">ביטול</button>
+  </div>
+</div>
+
+<div class="modal" id="supplierModal">
+  <div class="box">
+    <h3>ספק</h3>
+    <label>שם</label>
+    <input id="supName">
+    <label>קטגוריה</label>
+    <input id="supCat">
+    <button onclick="saveSupplier()">שמור</button>
+    <button class="outline" onclick="closeModal('supplierModal')">ביטול</button>
+  </div>
+</div>
+
+<div class="modal" id="itemModal">
+  <div class="box">
+    <h3>פריט</h3>
+    <label>שם</label>
+    <input id="itemName">
+    <label>מחיר</label>
+    <input type="number" id="itemPrice">
+    <button onclick="saveItem()">שמור</button>
+    <button class="outline" onclick="closeModal('itemModal')">ביטול</button>
+  </div>
+</div>
+
+<script>
+const KEY="supplier-dashboard-final";
+let state={suppliers:[],items:[],months:{},currentMonth:""};
+
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function load(){
+  const r=localStorage.getItem(KEY);
+  if(r) state=JSON.parse(r);
+  if(!state.currentMonth){
+    state.currentMonth=new Date().toISOString().slice(0,7);
+    state.months[state.currentMonth]={income:0,docs:[]}
+  }
+}
+function openModal(id){document.getElementById(id).style.display="flex"}
+function closeModal(id){document.getElementById(id).style.display="none"}
+
+function switchScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
+  document.getElementById(id).style.display="block";
+  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.screen===id));
+}
+
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>switchScreen(b.dataset.screen));
+
+document.getElementById("themeBtn").onclick=()=>{
+  const t=document.documentElement.dataset.theme==="light"?"dark":"light";
+  document.documentElement.dataset.theme=t;
+  document.getElementById("themeBtn").textContent=t==="light"?"מצב לילה":"מצב בהיר";
+};
+
+document.getElementById("exportBtn").onclick=()=>{
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="suppliers.json";
+  a.click();
+};
+
+document.getElementById("importBtn").onclick=()=>document.getElementById("fileInput").click();
+document.getElementById("fileInput").onchange=e=>{
+  const f=e.target.files[0];
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{state=JSON.parse(r.result);save();location.reload()};
+  r.readAsText(f);
+};
+
+function renderDashboard(){
+  const m=state.months[state.currentMonth];
+  let exp=0;
+  m.docs.forEach(d=>exp+=d.amount);
+  document.getElementById("expSum").textContent="₪"+exp.toFixed(2);
+  document.getElementById("netSum").textContent="₪"+(m.income-exp).toFixed(2);
+}
+
+function renderDocs(){
+  const body=document.getElementById("docsBody");
+  body.innerHTML="";
+  state.months[state.currentMonth].docs.forEach(d=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${d.date}</td>
+      <td>${d.supplier}</td>
+      <td class="${d.amount>=0?"amount-pos":"amount-neg"}">₪${d.amount.toFixed(2)}</td>
+      <td>-</td>
+      <td></td>`;
+    body.appendChild(tr);
+  });
+}
+
+function renderSuppliers(){
+  const b=document.getElementById("supBody");
+  b.innerHTML="";
+  state.suppliers.forEach(s=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${s.name}</td><td>${s.cat}</td>`;
+    b.appendChild(tr);
+  });
+}
+
+function renderItems(){
+  const b=document.getElementById("itemsBody");
+  b.innerHTML="";
+  state.items.forEach(i=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${i.name}</td><td>${i.price}</td>`;
+    b.appendChild(tr);
+  });
+}
+
+function saveDoc(){
+  const m=state.months[state.currentMonth];
+  let amt=+docAmount.value||0;
+  if(docVat.checked) amt*=1.18;
+  m.docs.push({date:docDate.value,supplier:docSupplier.value,amount:amt});
+  save();closeModal("docModal");renderDocs();renderDashboard();
+}
+
+function saveSupplier(){
+  state.suppliers.push({name:supName.value,cat:supCat.value});
+  save();closeModal("supplierModal");renderSuppliers();
+}
+
+function saveItem(){
+  state.items.push({name:itemName.value,price:+itemPrice.value});
+  save();closeModal("itemModal");renderItems();
+}
+
+addDoc.onclick=()=>openModal("docModal");
+addSupplier.onclick=()=>openModal("supplierModal");
+addItem.onclick=()=>openModal("itemModal");
+
+load();
+monthInput.value=state.currentMonth;
+incomeInput.oninput=e=>{state.months[state.currentMonth].income=+e.target.value||0;save();renderDashboard()}
+
+renderDashboard();
+renderDocs();
+renderSuppliers();
+renderItems();
+</script>
+
+</div>
 </body>
 </html>
