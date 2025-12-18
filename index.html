@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <title>דשבורד הוצאות ספקים - הצדף</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,157 +13,180 @@
 /* ================= THEME ================= */
 :root{
   --bg:#0f172a;
-  --card:#020617;
+  --card:#0b1226;
   --border:rgba(148,163,184,.28);
   --text:#e5e7eb;
-  --muted:#9ca3af;
+  --muted:#a7b0bf;
   --accent:#3b82f6;
+  --accent2:#22c55e;
   --success:#22c55e;
   --danger:#ef4444;
+  --warning:#f59e0b;
+  --chip:rgba(59,130,246,.16);
+  --shadow:rgba(0,0,0,.30);
 }
 :root[data-theme="light"]{
-  --bg:#f6f7fb;
+  --bg:#f5f7fb;
   --card:#ffffff;
-  --border:rgba(15,23,42,.18);
+  --border:rgba(15,23,42,.14);
   --text:#0f172a;
   --muted:#475569;
   --accent:#2563eb;
+  --accent2:#16a34a;
   --success:#16a34a;
   --danger:#dc2626;
+  --warning:#b45309;
+  --chip:rgba(37,99,235,.12);
+  --shadow:rgba(2,6,23,.10);
 }
 
 *{box-sizing:border-box}
-html,body{
-  margin:0;
-  font-family:Inter,system-ui;
-  background:radial-gradient(circle at top left,rgba(37,99,235,.18),var(--bg) 60%);
+html,body{margin:0;font-family:Inter,system-ui}
+body{
   color:var(--text);
+  background:
+    radial-gradient(1100px 600px at 10% 0%, rgba(59,130,246,.22), transparent 55%),
+    radial-gradient(900px 520px at 90% 0%, rgba(34,197,94,.14), transparent 55%),
+    var(--bg);
 }
 
-.app{
-  max-width:1200px;
-  margin:auto;
-  min-height:100vh;
-}
+/* layout */
+.app{max-width:1200px;margin:auto;min-height:100vh}
 
-/* ================= HEADER ================= */
+/* header */
 header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:12px 16px;
-  border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 14px;border-bottom:1px solid var(--border);
+  position:sticky;top:0;background:rgba(15,23,42,.55);backdrop-filter: blur(10px);
 }
-header h1{
-  font-size:16px;
-  margin:0;
-}
-header .actions button{
-  margin-inline-start:6px;
-}
+:root[data-theme="light"] header{background:rgba(245,247,251,.75)}
+header h1{font-size:15px;margin:0;font-weight:700;letter-spacing:.2px}
+header .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 
-/* ================= NAV ================= */
+/* nav */
 nav{
-  display:flex;
-  gap:6px;
-  padding:8px 12px;
-  border-bottom:1px solid var(--border);
-  overflow-x:auto;
+  display:flex;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border);
+  overflow-x:auto;position:sticky;top:54px;background:rgba(15,23,42,.40);backdrop-filter: blur(10px);
 }
+:root[data-theme="light"] nav{background:rgba(245,247,251,.70)}
 nav button{
-  border-radius:999px;
-  border:1px solid transparent;
-  background:none;
-  color:var(--muted);
-  padding:6px 12px;
-  cursor:pointer;
-  white-space:nowrap;
+  border-radius:999px;border:1px solid transparent;background:transparent;
+  color:var(--muted);padding:8px 12px;cursor:pointer;white-space:nowrap;
+  transition:.15s ease;
 }
 nav button.active{
-  background:rgba(59,130,246,.2);
-  color:var(--text);
-  border-color:var(--accent);
+  background:var(--chip);color:var(--text);
+  border-color:rgba(59,130,246,.45);
 }
 
-/* ================= GENERAL ================= */
+/* main */
 main{padding:14px}
 .card{
   background:var(--card);
   border:1px solid var(--border);
-  border-radius:16px;
+  border-radius:18px;
   padding:14px;
   margin-bottom:14px;
+  box-shadow:0 8px 22px var(--shadow);
 }
-h2{font-size:15px;margin:0 0 10px}
+h2{font-size:14px;margin:0 0 10px}
 label{font-size:11px;color:var(--muted)}
 input,select,textarea{
   width:100%;
-  padding:7px 9px;
-  border-radius:10px;
+  padding:9px 10px;
+  border-radius:12px;
   border:1px solid var(--border);
-  background:transparent;
+  background:rgba(255,255,255,.02);
   color:var(--text);
+  outline:none;
+}
+:root[data-theme="light"] input,:root[data-theme="light"] select,:root[data-theme="light"] textarea{
+  background:#fff;
 }
 textarea{resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:760px){.row{grid-template-columns:1fr}}
+.spacer{height:8px}
+.kpis{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;
+}
+@media(max-width:760px){.kpis{grid-template-columns:1fr}}
+.kpi{
+  border:1px solid var(--border);border-radius:16px;padding:12px;background:rgba(255,255,255,.02);
+}
+.kpi .t{font-size:11px;color:var(--muted)}
+.kpi .v{font-size:18px;font-weight:700;margin-top:6px}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 10px;border-radius:999px;border:1px solid var(--border);
+  background:rgba(255,255,255,.02);color:var(--muted);font-size:11px;
+}
+.badge b{color:var(--text)}
+hr.sep{border:none;border-top:1px solid var(--border);margin:12px 0}
+
+/* buttons */
 button{
-  background:var(--accent);
-  color:#fff;
-  border:none;
-  border-radius:999px;
-  padding:6px 12px;
-  cursor:pointer;
-  font-size:12px;
+  background:var(--accent);color:#fff;border:none;border-radius:999px;
+  padding:9px 12px;cursor:pointer;font-size:12px;font-weight:600;
+  transition:.15s ease;white-space:nowrap;
 }
+button:hover{filter:brightness(1.06)}
 button.outline{
-  background:none;
-  border:1px solid var(--border);
-  color:var(--text);
+  background:transparent;border:1px solid var(--border);color:var(--text);
 }
+button.ghost{
+  background:transparent;border:1px solid transparent;color:var(--muted);
+}
+button.danger{background:var(--danger)}
+button.green{background:var(--accent2)}
+button.small{padding:7px 10px;font-size:11px}
 
-/* ================= TABLE ================= */
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:11px;
+/* tables */
+.tableWrap{overflow:auto;border-radius:14px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:11px;min-width:680px}
+th,td{padding:10px 10px;border-bottom:1px solid var(--border);text-align:right;vertical-align:top}
+th{color:var(--muted);font-weight:600;background:rgba(255,255,255,.02)}
+tr:hover td{background:rgba(255,255,255,.02)}
+.amount-pos{color:var(--success);font-weight:700}
+.amount-neg{color:var(--danger);font-weight:700}
+td .sub{font-size:10px;color:var(--muted);margin-top:2px}
+.expander{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:7px 10px;border-radius:999px;border:1px solid var(--border);
+  background:rgba(255,255,255,.02);color:var(--text);cursor:pointer;
 }
-th,td{
-  padding:6px;
-  border-bottom:1px solid var(--border);
-  text-align:right;
-}
-.amount-pos{color:var(--success)}
-.amount-neg{color:var(--danger)}
-
 .details{
-  background:rgba(148,163,184,.08);
-  padding:8px;
-  border-radius:10px;
+  margin-top:8px;
+  padding:10px;border-radius:14px;border:1px solid var(--border);
+  background:rgba(255,255,255,.02);
 }
 
-/* ================= MODAL ================= */
+/* modal */
 .modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.5);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:50;
+  position:fixed;inset:0;background:rgba(0,0,0,.55);
+  display:none;align-items:center;justify-content:center;z-index:50;
+  padding:14px;
 }
 .modal .box{
-  background:var(--card);
-  border-radius:16px;
-  padding:14px;
-  width:100%;
-  max-width:420px;
-  border:1px solid var(--border);
+  width:100%;max-width:560px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:18px;padding:14px;
+  box-shadow:0 18px 50px rgba(0,0,0,.45);
 }
-.modal h3{margin-top:0}
+.modal h3{margin:0 0 10px;font-size:14px}
+.modal .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.toggleRow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.check{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;border-radius:14px;border:1px solid var(--border);
+  background:rgba(255,255,255,.02);cursor:pointer;
+  user-select:none;
+}
+.check input{width:auto;margin:0}
 
-/* ================= MOBILE ================= */
-@media(max-width:768px){
-  table{font-size:10px}
-}
+/* utility */
+.hide{display:none}
+.note{font-size:11px;color:var(--muted);line-height:1.5}
 </style>
 </head>
 
@@ -173,10 +196,11 @@ th,td{
 <header>
   <h1>דשבורד הוצאות ספקים - הצדף</h1>
   <div class="actions">
-    <button id="themeBtn" class="outline">מצב בהיר</button>
-    <button id="exportBtn" class="outline">ייצוא JSON</button>
-    <button id="importBtn" class="outline">ייבוא</button>
-    <input type="file" id="fileInput" hidden>
+    <span class="badge">חודש: <b id="monthBadge">—</b></span>
+    <button id="themeBtn" class="outline small">מצב בהיר</button>
+    <button id="exportBtn" class="outline small">ייצוא JSON</button>
+    <button id="importBtn" class="outline small">ייבוא</button>
+    <input type="file" id="fileInput" accept=".json" hidden>
   </div>
 </header>
 
@@ -188,240 +212,1011 @@ th,td{
 </nav>
 
 <main>
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="screen">
+    <div class="card">
+      <h2>סיכום חודשי</h2>
 
-<!-- ================= DASHBOARD ================= -->
-<section id="dashboard" class="screen">
-  <div class="card">
-    <h2>סיכום חודשי</h2>
+      <div class="row">
+        <div>
+          <label>חודש</label>
+          <input type="month" id="monthInput">
+          <div class="spacer"></div>
+          <label>מחזור (הכנסות)</label>
+          <input type="number" id="incomeInput" inputmode="decimal" placeholder="0">
+          <div class="spacer"></div>
+          <div class="note">הנתונים נשמרים בדפדפן. ייצוא/ייבוא מאפשר להעביר בין מכשירים.</div>
+        </div>
 
-    <label>חודש</label>
-    <input type="month" id="monthInput">
+        <div>
+          <div class="kpis">
+            <div class="kpi">
+              <div class="t">סה״כ הוצאות</div>
+              <div class="v" id="expSum">₪0</div>
+            </div>
+            <div class="kpi">
+              <div class="t">רווח נקי</div>
+              <div class="v" id="netSum">₪0</div>
+            </div>
+            <div class="kpi">
+              <div class="t">מס׳ מסמכים</div>
+              <div class="v" id="docsCount">0</div>
+            </div>
+          </div>
 
-    <label>מחזור (הכנסות)</label>
-    <input type="number" id="incomeInput">
+          <hr class="sep">
 
-    <p>סה״כ הוצאות: <strong id="expSum">₪0</strong></p>
-    <p>רווח נקי: <strong id="netSum">₪0</strong></p>
-  </div>
-</section>
+          <div class="toggleRow">
+            <span class="badge">זיכויים מסומנים כהוצאה שלילית</span>
+            <span class="badge">מע״מ: <b>18%</b></span>
+          </div>
+        </div>
+      </div>
+    </div>
 
-<!-- ================= DOCUMENTS ================= -->
-<section id="documents" class="screen" style="display:none">
-  <div class="card">
-    <h2>מסמכים</h2>
-    <button id="addDoc">מסמך חדש</button>
+    <div class="card">
+      <h2>תצוגה מהירה לפי קטגוריות ספקים</h2>
+      <div class="tableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th>קטגוריה</th>
+              <th>סה״כ חיובים</th>
+              <th>סה״כ זיכויים</th>
+              <th>נטו</th>
+            </tr>
+          </thead>
+          <tbody id="catSummaryBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
 
-    <table>
-      <thead>
-        <tr>
-          <th>תאריך</th>
-          <th>ספק</th>
-          <th>סכום</th>
-          <th>פריטים</th>
-          <th>הרחב</th>
-        </tr>
-      </thead>
-      <tbody id="docsBody"></tbody>
-    </table>
-  </div>
-</section>
+  <!-- DOCUMENTS -->
+  <section id="documents" class="screen hide">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <h2 style="margin:0">מסמכים</h2>
+        <button id="addDoc" class="green">מסמך חדש</button>
+      </div>
 
-<!-- ================= SUPPLIERS ================= -->
-<section id="suppliers" class="screen" style="display:none">
-  <div class="card">
-    <h2>ספקים</h2>
-    <button id="addSupplier">ספק חדש</button>
+      <div class="spacer"></div>
+      <div class="row">
+        <div>
+          <label>סינון לפי ספק</label>
+          <select id="filterSupplier"></select>
+        </div>
+        <div>
+          <label>סינון לפי קטגוריית ספק</label>
+          <select id="filterCategory"></select>
+        </div>
+      </div>
 
-    <table>
-      <thead>
-        <tr><th>שם</th><th>קטגוריה</th></tr>
-      </thead>
-      <tbody id="supBody"></tbody>
-    </table>
-  </div>
-</section>
+      <div class="spacer"></div>
+      <div class="tableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th>תאריך</th>
+              <th>סוג</th>
+              <th>ספק</th>
+              <th>קטגוריה</th>
+              <th>סכום</th>
+              <th>סטטוס</th>
+              <th>פרטים</th>
+            </tr>
+          </thead>
+          <tbody id="docsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
 
-<!-- ================= ITEMS ================= -->
-<section id="items" class="screen" style="display:none">
-  <div class="card">
-    <h2>פריטים</h2>
-    <button id="addItem">פריט חדש</button>
+  <!-- SUPPLIERS -->
+  <section id="suppliers" class="screen hide">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <h2 style="margin:0">ספקים</h2>
+        <button id="addSupplier" class="green">ספק חדש</button>
+      </div>
 
-    <table>
-      <thead>
-        <tr><th>שם</th><th>מחיר</th></tr>
-      </thead>
-      <tbody id="itemsBody"></tbody>
-    </table>
-  </div>
-</section>
+      <div class="spacer"></div>
+      <div class="row">
+        <div>
+          <label>חיפוש ספק</label>
+          <input id="supplierSearch" placeholder="הקלד כדי לסנן…">
+        </div>
+        <div>
+          <label>סינון לפי קטגוריה</label>
+          <select id="supplierCatFilter"></select>
+        </div>
+      </div>
 
+      <div class="spacer"></div>
+      <div class="tableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th>שם</th>
+              <th>קטגוריה</th>
+              <th>טלפון</th>
+              <th>אימייל</th>
+              <th>הערות</th>
+            </tr>
+          </thead>
+          <tbody id="supBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ITEMS -->
+  <section id="items" class="screen hide">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <h2 style="margin:0">פריטים</h2>
+        <button id="addItem" class="green">פריט חדש</button>
+      </div>
+
+      <div class="spacer"></div>
+      <div class="row">
+        <div>
+          <label>חיפוש פריט</label>
+          <input id="itemSearch" placeholder="הקלד כדי לסנן…">
+        </div>
+        <div>
+          <label>סינון לפי קטגוריה</label>
+          <select id="itemCatFilter"></select>
+        </div>
+      </div>
+
+      <div class="spacer"></div>
+      <div class="tableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th>שם</th>
+              <th>קטגוריה</th>
+              <th>מחיר</th>
+              <th>יחידה</th>
+            </tr>
+          </thead>
+          <tbody id="itemsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
 </main>
 
-<!-- ================= MODALS ================= -->
+<!-- MODAL: DOCUMENT -->
 <div class="modal" id="docModal">
   <div class="box">
     <h3>מסמך חדש</h3>
-    <label>תאריך</label>
-    <input type="date" id="docDate">
 
-    <label>ספק</label>
-    <input type="text" id="docSupplier">
+    <div class="row">
+      <div>
+        <label>תאריך</label>
+        <input type="date" id="docDate">
+      </div>
+      <div>
+        <label>סוג מסמך</label>
+        <select id="docType">
+          <option value="חשבונית">חשבונית</option>
+          <option value="תעודת משלוח">תעודת משלוח</option>
+          <option value="חשבונית+תעודה">שניהם</option>
+        </select>
+      </div>
+    </div>
 
-    <label>סכום</label>
-    <input type="number" id="docAmount">
+    <div class="spacer"></div>
 
-    <label><input type="checkbox" id="docVat" checked> להוסיף מע״מ (18%)</label>
+    <label>ספק (נפתח את רשימת כל הספקים)</label>
+    <select id="docSupplierSelect"></select>
+    <div class="spacer"></div>
 
-    <button onclick="saveDoc()">שמור</button>
-    <button class="outline" onclick="closeModal('docModal')">ביטול</button>
+    <div class="row">
+      <div>
+        <label>סכום</label>
+        <input type="number" id="docAmount" inputmode="decimal" placeholder="0">
+      </div>
+      <div>
+        <label>סטטוס</label>
+        <select id="docPaid">
+          <option value="שולם" selected>שולם</option>
+          <option value="לא שולם">לא שולם</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="toggleRow">
+      <label class="check"><input type="checkbox" id="docVat" checked> להוסיף מע״מ (18%)</label>
+      <label class="check"><input type="checkbox" id="docCredit"> זיכוי?</label>
+    </div>
+
+    <div class="spacer"></div>
+    <label>הערות</label>
+    <textarea id="docNotes" rows="2" placeholder="אופציונלי…"></textarea>
+
+    <div class="actions">
+      <button id="saveDocBtn">שמור</button>
+      <button class="outline" onclick="closeModal('docModal')">ביטול</button>
+    </div>
   </div>
 </div>
 
+<!-- MODAL: SUPPLIER -->
 <div class="modal" id="supplierModal">
   <div class="box">
-    <h3>ספק</h3>
-    <label>שם</label>
-    <input id="supName">
+    <h3>הוספת ספק</h3>
+
+    <label>שם ספק</label>
+    <input id="supName" placeholder="שם ספק…">
+
+    <div class="spacer"></div>
     <label>קטגוריה</label>
-    <input id="supCat">
-    <button onclick="saveSupplier()">שמור</button>
-    <button class="outline" onclick="closeModal('supplierModal')">ביטול</button>
+    <select id="supCat"></select>
+
+    <div class="spacer"></div>
+    <div class="row">
+      <div>
+        <label>טלפון</label>
+        <input id="supPhone" placeholder="050-0000000">
+      </div>
+      <div>
+        <label>אימייל</label>
+        <input id="supEmail" placeholder="name@email.com">
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <label>הערות</label>
+    <textarea id="supNotes" rows="2" placeholder="אופציונלי…"></textarea>
+
+    <div class="actions">
+      <button id="saveSupplierBtn">שמור</button>
+      <button class="outline" onclick="closeModal('supplierModal')">ביטול</button>
+    </div>
   </div>
 </div>
 
+<!-- MODAL: ITEM -->
 <div class="modal" id="itemModal">
   <div class="box">
-    <h3>פריט</h3>
-    <label>שם</label>
-    <input id="itemName">
-    <label>מחיר</label>
-    <input type="number" id="itemPrice">
-    <button onclick="saveItem()">שמור</button>
-    <button class="outline" onclick="closeModal('itemModal')">ביטול</button>
+    <h3>הוספת פריט</h3>
+
+    <label>שם פריט</label>
+    <input id="itemName" placeholder="לדוגמה: לברק">
+
+    <div class="spacer"></div>
+    <label>קטגוריה</label>
+    <select id="itemCategory"></select>
+
+    <div class="spacer"></div>
+    <div class="row">
+      <div>
+        <label>מחיר</label>
+        <input type="number" id="itemPrice" inputmode="decimal" placeholder="0">
+      </div>
+      <div>
+        <label>יחידה</label>
+        <select id="itemUnit">
+          <option value="ק״ג">ק״ג</option>
+          <option value="יחידה">יחידה</option>
+          <option value="קרטון">קרטון</option>
+          <option value="מארז">מארז</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="saveItemBtn">שמור</button>
+      <button class="outline" onclick="closeModal('itemModal')">ביטול</button>
+    </div>
   </div>
 </div>
 
 <script>
-const KEY="supplier-dashboard-final";
-let state={suppliers:[],items:[],months:{},currentMonth:""};
+/* ================= STORAGE / MIGRATION ================= */
+const KEY = "hatzeDef-supplier-dashboard-v1";
 
-function save(){localStorage.setItem(KEY,JSON.stringify(state))}
-function load(){
-  const r=localStorage.getItem(KEY);
-  if(r) state=JSON.parse(r);
-  if(!state.currentMonth){
-    state.currentMonth=new Date().toISOString().slice(0,7);
-    state.months[state.currentMonth]={income:0,docs:[]}
-  }
+/* UUID fallback (במקרה נדיר) */
+function uid(){
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return "id_" + Math.random().toString(16).slice(2) + Date.now().toString(16);
 }
-function openModal(id){document.getElementById(id).style.display="flex"}
-function closeModal(id){document.getElementById(id).style.display="none"}
+
+/* ================= DEFAULTS (נוספו עוד קטגוריות רלוונטיות) ================= */
+const DEFAULT_CATEGORIES = [
+  "מזון",
+  "שתייה קלה",
+  "אלכוהול",
+  "יין",
+  "קינוחים",
+  "קפה ותה",
+  "קרח",
+  "אריזות וחד-פעמי",
+  "נייר ומוצרי נייר",
+  "ניקיון והיגיינה",
+  "תחזוקה ותיקונים",
+  "ציוד מטבח",
+  "ציוד בר",
+  "שיווק ופרסום",
+  "משלוחים ופלטפורמות",
+  "תקשורת ואינטרנט",
+  "חשמל / מים / גז",
+  "כוח אדם",
+  "מערכות ותוכנה",
+  "עמלות וסליקה",
+  "מיחזור ופינוי",
+  "מיסים וארנונה",
+  "שירותים חיצוניים",
+  "פרחים ועיצוב",
+  "לא משויך"
+];
+
+const DEFAULT_SUPPLIERS = [
+  "מדחסקור אוניברסל",
+  "ג׳אקו שירות למטבחים",
+  "יוסי סימן טוב",
+  "י.שבי",
+  "צ.י.שיווק",
+  "קנקון",
+  "לוילן סחר ומוצרים חקלאיים בע״מ",
+  "עואודה לשיווק בע״מ",
+  "מדג סי פרוט בע״מ",
+  "אהרון שיווק",
+  "שיווק שלי א.א בע״מ",
+  "אקיפ החברה לציוד מלונאי בע״מ",
+  "דאלאס מוצרי נייר בע״מ",
+  "חברת חשמל",
+  "א.א.ר שירותי ביוב",
+  "תמי 4",
+  "בזק",
+  "היכל היין",
+  "החברה המרכזית",
+  "סוקליק",
+  "ביסקוטי",
+  "אייס דרים",
+  "ג.מ טעם הארץ בע״מ",
+  "יזמקו חברה בע״מ",
+  "אסטרטג טכנולוגיות בע״מ",
+  "אביב אש מערכות בע״מ",
+  "מניב ראשון",
+  "אודי בכור שיווק דגים בע״מ",
+  "לירי כוח אדם בע״מ",
+  "מש-נט בע״מ",
+  "זאפ גרופ בע״מ",
+  "שיא \"10\" בע״מ",
+  "קורקידי יעקב שיווק והפצה בסיטונאות",
+  "מקס עסקים",
+  "וינטר מכשירי גז בע״מ",
+  "מפעל הפרסום",
+  "וולט",
+  "אלירן פרחים",
+  "פרסום תבור בעצ",
+  "אינפיניה מחזור",
+  "ייצוגית פלוס תעשיות בע״מ",
+  "משלוחה",
+  "ביימי טכנולוגיות",
+  "ישראכרט",
+  "סוגת",
+  "אייפרקטיקום",
+  "אמישרגז",
+  "מאירוביץ שלי",
+  "לה פסטה דלה קזה בע״מ",
+  "ארנונה ראשון לציון"
+];
+
+/* פריטים + מחירים (ברירת מחדל). אתה יכול לשנות מחירים מתי שתרצה. */
+const DEFAULT_ITEMS = [
+  // דגים / מזון (הכל תחת "מזון" כדי שתוכל לשייך לכמה ספקים)
+  { name: "דניס", category: "מזון", price: 29.90, unit: "ק״ג" },
+  { name: "לברק", category: "מזון", price: 29.90, unit: "ק״ג" },
+  { name: "מושט", category: "מזון", price: 24.90, unit: "ק״ג" },
+  { name: "ברבוניה", category: "מזון", price: 39.90, unit: "ק״ג" },
+  { name: "בר ים", category: "מזון", price: 34.90, unit: "ק״ג" },
+  { name: "סלמון", category: "מזון", price: 49.90, unit: "ק״ג" },
+  { name: "לוקוס", category: "מזון", price: 89.90, unit: "ק״ג" },
+
+  // פירות ים
+  { name: "שרימפס", category: "מזון", price: 69.90, unit: "ק״ג" },
+  { name: "קלמרי", category: "מזון", price: 59.90, unit: "ק״ג" },
+  { name: "ראשי קלמרי", category: "מזון", price: 44.90, unit: "ק״ג" },
+  { name: "סרטנים", category: "מזון", price: 74.90, unit: "ק״ג" },
+  { name: "מולים", category: "מזון", price: 32.90, unit: "ק״ג" },
+
+  // בשרים
+  { name: "סטייק אנטריקוט", category: "מזון", price: 99.90, unit: "ק״ג" },
+  { name: "פילה בקר", category: "מזון", price: 119.90, unit: "ק״ג" },
+  { name: "פרגית", category: "מזון", price: 44.90, unit: "ק״ג" },
+  { name: "חזה עוף", category: "מזון", price: 32.90, unit: "ק״ג" },
+  { name: "צלעות", category: "מזון", price: 54.90, unit: "ק״ג" }
+];
+
+/* שיוך אוטומטי של ספקים לקטגוריות (היגיון סביר למסעדה) */
+function inferSupplierCategory(name){
+  const n = (name||"").toLowerCase();
+
+  if (n.includes("חברת חשמל")) return "חשמל / מים / גז";
+  if (n.includes("אמישרגז") || n.includes("גז") || n.includes("וינטר")) return "חשמל / מים / גז";
+  if (n.includes("ארנונה")) return "מיסים וארנונה";
+  if (n.includes("בזק") || n.includes("מש-נט") || n.includes("מש נט") || n.includes("אייפרקטיקום")) return "תקשורת ואינטרנט";
+
+  if (n.includes("ישראכרט") || n.includes("מקס")) return "עמלות וסליקה";
+  if (n.includes("וולט") || n.includes("משלוחה")) return "משלוחים ופלטפורמות";
+
+  if (n.includes("היכל היין") || n.includes("יין")) return "יין";
+  if (n.includes("החברה המרכזית") || n.includes("סוקליק")) return "שתייה קלה";
+  if (n.includes("אלכוהול")) return "אלכוהול";
+
+  if (n.includes("ביסקוטי") || n.includes("אייס דרים")) return "קינוחים";
+  if (n.includes("דאלאס") || n.includes("מוצרי נייר")) return "נייר ומוצרי נייר";
+  if (n.includes("אקיפ") || n.includes("ציוד מלונאי")) return "ציוד מטבח";
+  if (n.includes("ג׳אקו") || n.includes("מטבחים")) return "תחזוקה ותיקונים";
+  if (n.includes("ביוב") || n.includes("שירותי ביוב")) return "תחזוקה ותיקונים";
+  if (n.includes("מיחזור") || n.includes("מחזור") || n.includes("אינפיניה")) return "מיחזור ופינוי";
+
+  if (n.includes("כוח אדם") || n.includes("לירי")) return "כוח אדם";
+
+  if (n.includes("פרסום") || n.includes("מפעל הפרסום") || n.includes("זאפ") ) return "שיווק ופרסום";
+  if (n.includes("אלירן פרחים") || n.includes("פרחים")) return "פרחים ועיצוב";
+
+  // ספקי מזון/תוצרת/דגים - ברירת מחדל הגיונית
+  if (n.includes("שיווק") || n.includes("דגים") || n.includes("פרוט") || n.includes("חקלאיים") || n.includes("טעם הארץ") || n.includes("סוגת") || n.includes("לה פסטה")) return "מזון";
+
+  // תוכנה/טכנולוגיות
+  if (n.includes("טכנולוגיות") || n.includes("ביימי") || n.includes("אסטרטג") || n.includes("יזמקו")) return "מערכות ותוכנה";
+
+  return "לא משויך";
+}
+
+/* ================= STATE ================= */
+let state = {
+  version: 2,
+  theme: "dark",
+  categories: [],
+  suppliers: [],
+  items: [],
+  months: {},
+  currentMonth: ""
+};
+
+function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+
+function ensureMonth(month){
+  if (!state.months) state.months = {};
+  if (!state.months[month]) state.months[month] = { income: 0, docs: [] };
+}
+
+/* מיזוג ברירת מחדל בלי למחוק נתונים קיימים */
+function mergeDefaults(){
+  // categories
+  if (!Array.isArray(state.categories)) state.categories = [];
+  const catSet = new Set(state.categories);
+  DEFAULT_CATEGORIES.forEach(c => { if(!catSet.has(c)) state.categories.push(c); });
+
+  // suppliers
+  if (!Array.isArray(state.suppliers)) state.suppliers = [];
+  const supByName = new Map(state.suppliers.map(s => [String(s.name||"").trim(), s]));
+  DEFAULT_SUPPLIERS.forEach(name => {
+    const n = String(name).trim();
+    if (!supByName.has(n)){
+      state.suppliers.push({
+        id: uid(),
+        name: n,
+        category: inferSupplierCategory(n),
+        phone: "",
+        email: "",
+        notes: ""
+      });
+    } else {
+      // שדרוג עדין לשדות חסרים בלי לדרוס מידע
+      const s = supByName.get(n);
+      if (!s.id) s.id = uid();
+      if (!s.category) s.category = inferSupplierCategory(n);
+      if (s.phone === undefined) s.phone = "";
+      if (s.email === undefined) s.email = "";
+      if (s.notes === undefined) s.notes = "";
+    }
+  });
+
+  // items
+  if (!Array.isArray(state.items)) state.items = [];
+  const itemByName = new Map(state.items.map(i => [String(i.name||"").trim(), i]));
+  DEFAULT_ITEMS.forEach(it => {
+    const n = String(it.name).trim();
+    if (!itemByName.has(n)){
+      state.items.push({ id: uid(), name: n, category: it.category, price: +it.price || 0, unit: it.unit || "יחידה" });
+    } else {
+      const i = itemByName.get(n);
+      if (!i.id) i.id = uid();
+      if (!i.category) i.category = it.category;
+      if (i.price === undefined || i.price === null) i.price = +it.price || 0;
+      if (!i.unit) i.unit = it.unit || "יחידה";
+    }
+  });
+
+  // sort suppliers Alef-Bet
+  state.suppliers.sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
+  // sort categories
+  state.categories.sort((a,b)=> a.localeCompare(b,"he"));
+  // sort items
+  state.items.sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
+}
+
+/* load + migration */
+function load(){
+  const raw = localStorage.getItem(KEY);
+  if (raw){
+    try { state = JSON.parse(raw); }
+    catch(e){}
+  }
+
+  if (!state || typeof state !== "object") state = {};
+  if (!state.version) state.version = 1;
+  if (!state.theme) state.theme = "dark";
+
+  if (!state.currentMonth){
+    state.currentMonth = new Date().toISOString().slice(0,7);
+  }
+  ensureMonth(state.currentMonth);
+
+  // migrate docs shape
+  Object.keys(state.months || {}).forEach(m=>{
+    ensureMonth(m);
+    const docs = state.months[m].docs || [];
+    docs.forEach(d=>{
+      if (!d.id) d.id = uid();
+      if (!d.type) d.type = "חשבונית";
+      if (!d.status) d.status = "שולם";
+      if (d.credit === undefined) d.credit = false;
+      if (d.vatApplied === undefined) d.vatApplied = true;
+      if (d.notes === undefined) d.notes = "";
+      if (!d.date) d.date = new Date().toISOString().slice(0,10);
+      if (typeof d.amount !== "number") d.amount = +d.amount || 0;
+      if (!d.supplierId && d.supplier){
+        // try match by name
+        const s = (state.suppliers||[]).find(x => x.name === d.supplier);
+        if (s) d.supplierId = s.id;
+      }
+    });
+    state.months[m].docs = docs;
+  });
+
+  mergeDefaults();
+  save();
+}
+
+/* ================= UI helpers ================= */
+const $$ = sel => document.querySelector(sel);
+const $$$ = sel => Array.from(document.querySelectorAll(sel));
+
+function money(n){
+  const v = Number(n||0);
+  return "₪" + v.toLocaleString("he-IL", {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function openModal(id){ $$("#"+id).style.display="flex"; }
+function closeModal(id){ $$("#"+id).style.display="none"; }
 
 function switchScreen(id){
-  document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
-  document.getElementById(id).style.display="block";
-  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.screen===id));
+  $$$(".screen").forEach(s=>s.classList.add("hide"));
+  $$("#"+id).classList.remove("hide");
+  $$$(".tab").forEach(b=>b.classList.toggle("active", b.dataset.screen===id));
 }
 
-document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>switchScreen(b.dataset.screen));
+$$$("#themeBtn").addEventListener("click", ()=>{
+  state.theme = (state.theme==="light") ? "dark" : "light";
+  applyTheme();
+  save();
+});
 
-document.getElementById("themeBtn").onclick=()=>{
-  const t=document.documentElement.dataset.theme==="light"?"dark":"light";
-  document.documentElement.dataset.theme=t;
-  document.getElementById("themeBtn").textContent=t==="light"?"מצב לילה":"מצב בהיר";
-};
+function applyTheme(){
+  document.documentElement.dataset.theme = state.theme === "light" ? "light" : "";
+  $$("#themeBtn").textContent = (state.theme==="light") ? "מצב לילה" : "מצב בהיר";
+}
 
-document.getElementById("exportBtn").onclick=()=>{
-  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="suppliers.json";
-  a.click();
-};
+/* ================= Render ================= */
+function currentMonthObj(){ return state.months[state.currentMonth]; }
 
-document.getElementById("importBtn").onclick=()=>document.getElementById("fileInput").click();
-document.getElementById("fileInput").onchange=e=>{
-  const f=e.target.files[0];
-  if(!f)return;
-  const r=new FileReader();
-  r.onload=()=>{state=JSON.parse(r.result);save();location.reload()};
-  r.readAsText(f);
-};
+function supplierById(id){
+  return state.suppliers.find(s=>s.id===id) || null;
+}
+
+function refreshMonthBadge(){
+  $$("#monthBadge").textContent = state.currentMonth;
+}
 
 function renderDashboard(){
-  const m=state.months[state.currentMonth];
-  let exp=0;
-  m.docs.forEach(d=>exp+=d.amount);
-  document.getElementById("expSum").textContent="₪"+exp.toFixed(2);
-  document.getElementById("netSum").textContent="₪"+(m.income-exp).toFixed(2);
+  const m = currentMonthObj();
+  let exp = 0;
+  let docsCount = 0;
+
+  (m.docs||[]).forEach(d=>{
+    docsCount++;
+    exp += d.amount;
+  });
+
+  $$("#docsCount").textContent = String(docsCount);
+  $$("#expSum").textContent = money(exp);
+  $$("#netSum").textContent = money((+m.income||0) - exp);
 }
 
-function renderDocs(){
-  const body=document.getElementById("docsBody");
-  body.innerHTML="";
-  state.months[state.currentMonth].docs.forEach(d=>{
-    const tr=document.createElement("tr");
-    tr.innerHTML=`
-      <td>${d.date}</td>
-      <td>${d.supplier}</td>
-      <td class="${d.amount>=0?"amount-pos":"amount-neg"}">₪${d.amount.toFixed(2)}</td>
-      <td>-</td>
-      <td></td>`;
-    body.appendChild(tr);
+function renderCategorySummary(){
+  const m = currentMonthObj();
+  const map = new Map(); // cat -> {pos,neg,net}
+  (m.docs||[]).forEach(d=>{
+    const s = supplierById(d.supplierId);
+    const cat = (s && s.category) ? s.category : "לא משויך";
+    if (!map.has(cat)) map.set(cat, {pos:0, neg:0, net:0});
+    const v = map.get(cat);
+    if (d.amount >= 0) v.pos += d.amount;
+    else v.neg += d.amount;
+    v.net += d.amount;
+  });
+
+  const rows = Array.from(map.entries())
+    .sort((a,b)=> a[0].localeCompare(b[0],"he"))
+    .map(([cat,v])=>{
+      return `<tr>
+        <td>${cat}</td>
+        <td class="amount-pos">${money(v.pos)}</td>
+        <td class="amount-neg">${money(v.neg)}</td>
+        <td><b>${money(v.net)}</b></td>
+      </tr>`;
+    }).join("");
+
+  $$("#catSummaryBody").innerHTML = rows || `<tr><td colspan="4" class="note">אין נתונים לחודש זה.</td></tr>`;
+}
+
+function fillFilters(){
+  // suppliers filter
+  const supSel = $$("#filterSupplier");
+  const docSupSel = $$("#docSupplierSelect");
+  const supCatFilter = $$("#supplierCatFilter");
+  const filterCategory = $$("#filterCategory");
+  const itemCatFilter = $$("#itemCatFilter");
+  const itemCategory = $$("#itemCategory");
+  const supCat = $$("#supCat");
+
+  const supplierOptions = [`<option value="">כל הספקים</option>`]
+    .concat(state.suppliers.map(s=>`<option value="${s.id}">${s.name}</option>`))
+    .join("");
+  supSel.innerHTML = supplierOptions;
+
+  // doc supplier select: always open full list
+  docSupSel.innerHTML = state.suppliers.map(s=>`<option value="${s.id}">${s.name}</option>`).join("");
+
+  // category options
+  const cats = state.categories.slice();
+  const catOptsAll = [`<option value="">כל הקטגוריות</option>`].concat(cats.map(c=>`<option value="${c}">${c}</option>`)).join("");
+  filterCategory.innerHTML = catOptsAll;
+  supCatFilter.innerHTML = catOptsAll;
+
+  const catOptsNoAll = cats.map(c=>`<option value="${c}">${c}</option>`).join("");
+  itemCatFilter.innerHTML = [`<option value="">כל הקטגוריות</option>`].concat(cats.map(c=>`<option value="${c}">${c}</option>`)).join("");
+  itemCategory.innerHTML = catOptsNoAll;
+  supCat.innerHTML = catOptsNoAll;
+}
+
+function renderDocuments(){
+  const m = currentMonthObj();
+  const filterSup = $$("#filterSupplier").value || "";
+  const filterCat = $$("#filterCategory").value || "";
+
+  const rows = (m.docs||[])
+    .filter(d=>{
+      if (filterSup && d.supplierId !== filterSup) return false;
+      if (filterCat){
+        const s = supplierById(d.supplierId);
+        const cat = s ? s.category : "לא משויך";
+        if (cat !== filterCat) return false;
+      }
+      return true;
+    })
+    .sort((a,b)=> (b.date||"").localeCompare((a.date||""), "he"))
+    .map(d=>{
+      const s = supplierById(d.supplierId);
+      const sname = s ? s.name : (d.supplier || "—");
+      const cat = s ? s.category : "לא משויך";
+      const amtClass = d.amount >= 0 ? "amount-pos" : "amount-neg";
+
+      return `
+      <tr>
+        <td>${d.date || ""}</td>
+        <td>${d.type || ""}</td>
+        <td>${sname}</td>
+        <td>${cat}</td>
+        <td class="${amtClass}">${money(d.amount)}</td>
+        <td>
+          <select data-docstatus="${d.id}" style="min-width:110px">
+            <option value="שולם" ${d.status==="שולם"?"selected":""}>שולם</option>
+            <option value="לא שולם" ${d.status==="לא שולם"?"selected":""}>לא שולם</option>
+          </select>
+        </td>
+        <td>
+          <button class="outline small" data-expand="${d.id}">הרחב</button>
+          <div class="details hide" id="det_${d.id}">
+            <div class="note"><b>הערות:</b> ${escapeHtml(d.notes||"") || "—"}</div>
+            <div class="spacer"></div>
+            <div class="note"><b>מע״מ:</b> ${d.vatApplied ? "כן" : "לא"} | <b>זיכוי?</b> ${d.credit ? "כן" : "לא"}</div>
+          </div>
+        </td>
+      </tr>`;
+    }).join("");
+
+  $$("#docsBody").innerHTML = rows || `<tr><td colspan="7" class="note">אין מסמכים לחודש זה.</td></tr>`;
+
+  // bind expand buttons
+  $$$("[data-expand]").forEach(btn=>{
+    btn.onclick = ()=>{
+      const id = btn.getAttribute("data-expand");
+      const el = $$("#det_"+id);
+      el.classList.toggle("hide");
+      btn.textContent = el.classList.contains("hide") ? "הרחב" : "צמצם";
+    };
+  });
+
+  // bind status changes
+  $$$("[data-docstatus]").forEach(sel=>{
+    sel.onchange = ()=>{
+      const id = sel.getAttribute("data-docstatus");
+      const doc = (m.docs||[]).find(x=>x.id===id);
+      if(doc){ doc.status = sel.value; save(); }
+    };
   });
 }
 
 function renderSuppliers(){
-  const b=document.getElementById("supBody");
-  b.innerHTML="";
-  state.suppliers.forEach(s=>{
-    const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${s.name}</td><td>${s.cat}</td>`;
-    b.appendChild(tr);
-  });
+  const q = ($$("#supplierSearch").value || "").trim();
+  const filterCat = $$("#supplierCatFilter").value || "";
+
+  const rows = state.suppliers
+    .filter(s=>{
+      if (q && !s.name.includes(q)) return false;
+      if (filterCat && s.category !== filterCat) return false;
+      return true;
+    })
+    .map(s=>{
+      return `<tr>
+        <td>${s.name}</td>
+        <td>${s.category || "לא משויך"}</td>
+        <td>${escapeHtml(s.phone||"")}</td>
+        <td>${escapeHtml(s.email||"")}</td>
+        <td><div class="sub">${escapeHtml(s.notes||"")}</div></td>
+      </tr>`;
+    }).join("");
+
+  $$("#supBody").innerHTML = rows || `<tr><td colspan="5" class="note">לא נמצאו ספקים.</td></tr>`;
 }
 
 function renderItems(){
-  const b=document.getElementById("itemsBody");
-  b.innerHTML="";
-  state.items.forEach(i=>{
-    const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${i.name}</td><td>${i.price}</td>`;
-    b.appendChild(tr);
+  const q = ($$("#itemSearch").value || "").trim();
+  const filterCat = $$("#itemCatFilter").value || "";
+
+  const rows = state.items
+    .filter(i=>{
+      if (q && !i.name.includes(q)) return false;
+      if (filterCat && i.category !== filterCat) return false;
+      return true;
+    })
+    .map(i=>{
+      return `<tr>
+        <td>${i.name}</td>
+        <td>${i.category || "לא משויך"}</td>
+        <td>${money(i.price || 0)}</td>
+        <td>${i.unit || "יחידה"}</td>
+      </tr>`;
+    }).join("");
+
+  $$("#itemsBody").innerHTML = rows || `<tr><td colspan="4" class="note">אין פריטים.</td></tr>`;
+}
+
+function renderAll(){
+  refreshMonthBadge();
+  fillFilters();
+  renderDashboard();
+  renderCategorySummary();
+  renderDocuments();
+  renderSuppliers();
+  renderItems();
+}
+
+/* ================= Events ================= */
+$$$("#monthInput").addEventListener("change", (e)=>{
+  const v = e.target.value;
+  if (!v) return;
+  state.currentMonth = v;
+  ensureMonth(v);
+  save();
+  refreshMonthBadge();
+  // update income field
+  $$("#incomeInput").value = currentMonthObj().income || 0;
+  renderAll();
+});
+
+$$$("#incomeInput").addEventListener("input",(e)=>{
+  currentMonthObj().income = +e.target.value || 0;
+  save();
+  renderDashboard();
+});
+
+$$$("#filterSupplier").addEventListener("change", renderDocuments);
+$$$("#filterCategory").addEventListener("change", renderDocuments);
+$$$("#supplierSearch").addEventListener("input", renderSuppliers);
+$$$("#supplierCatFilter").addEventListener("change", renderSuppliers);
+$$$("#itemSearch").addEventListener("input", renderItems);
+$$$("#itemCatFilter").addEventListener("change", renderItems);
+
+/* tabs */
+$$$(".tab").forEach(b=>b.addEventListener("click", ()=>switchScreen(b.dataset.screen)));
+
+/* Export/Import */
+$$$("#exportBtn").addEventListener("click", ()=>{
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `hatzeDef_${state.currentMonth}.json`;
+  a.click();
+});
+$$$("#importBtn").addEventListener("click", ()=> $$("#fileInput").click());
+$$$("#fileInput").addEventListener("change", (e)=>{
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    try{
+      const incoming = JSON.parse(r.result);
+      // merge safely: replace state but re-merge defaults to keep compatibility
+      state = incoming;
+      if (!state.theme) state.theme="dark";
+      if (!state.currentMonth) state.currentMonth = new Date().toISOString().slice(0,7);
+      ensureMonth(state.currentMonth);
+      mergeDefaults();
+      save();
+      location.reload();
+    }catch(err){
+      alert("הקובץ לא תקין או לא בפורמט JSON.");
+    }
+  };
+  r.readAsText(f);
+});
+
+/* Add document */
+$$$("#addDoc").addEventListener("click", ()=>{
+  // defaults
+  const today = new Date().toISOString().slice(0,10);
+  $$("#docDate").value = today;
+  $$("#docType").value = "חשבונית";
+  $$("#docAmount").value = "";
+  $$("#docPaid").value = "שולם";
+  $$("#docVat").checked = true;
+  $$("#docCredit").checked = false;
+  $$("#docNotes").value = "";
+  // open
+  openModal("docModal");
+});
+
+$$$("#saveDocBtn").addEventListener("click", ()=>{
+  const m = currentMonthObj();
+  const date = $$("#docDate").value || new Date().toISOString().slice(0,10);
+  const type = $$("#docType").value || "חשבונית";
+  const supplierId = $$("#docSupplierSelect").value;
+  let amt = +($$("#docAmount").value || 0);
+  const vat = $$("#docVat").checked;
+  const credit = $$("#docCredit").checked;
+  const status = $$("#docPaid").value || "שולם";
+  const notes = $$("#docNotes").value || "";
+
+  if (!supplierId){
+    alert("בחר ספק.");
+    return;
+  }
+
+  if (vat) amt = amt * 1.18;
+  if (credit) amt = -Math.abs(amt); // זיכוי = שלילי
+  else amt = Math.abs(amt);
+
+  m.docs.push({
+    id: uid(),
+    date,
+    type,
+    supplierId,
+    amount: +amt,
+    status,
+    vatApplied: vat,
+    credit,
+    notes
   });
+
+  save();
+  closeModal("docModal");
+  renderAll();
+  switchScreen("documents");
+});
+
+/* Add supplier */
+$$$("#addSupplier").addEventListener("click", ()=>{
+  $$("#supName").value="";
+  $$("#supCat").value="לא משויך";
+  $$("#supPhone").value="";
+  $$("#supEmail").value="";
+  $$("#supNotes").value="";
+  openModal("supplierModal");
+});
+
+$$$("#saveSupplierBtn").addEventListener("click", ()=>{
+  const name = ($$("#supName").value||"").trim();
+  const category = $$("#supCat").value || "לא משויך";
+  const phone = ($$("#supPhone").value||"").trim();
+  const email = ($$("#supEmail").value||"").trim();
+  const notes = ($$("#supNotes").value||"").trim();
+
+  if(!name){ alert("חובה שם ספק."); return; }
+  if(state.suppliers.some(s=>s.name===name)){
+    alert("ספק כבר קיים.");
+    return;
+  }
+
+  state.suppliers.push({id:uid(), name, category, phone, email, notes});
+  state.suppliers.sort((a,b)=>a.name.localeCompare(b.name,"he"));
+  save();
+  closeModal("supplierModal");
+  renderAll();
+  switchScreen("suppliers");
+});
+
+/* Add item */
+$$$("#addItem").addEventListener("click", ()=>{
+  $$("#itemName").value="";
+  $$("#itemCategory").value="מזון";
+  $$("#itemPrice").value="";
+  $$("#itemUnit").value="ק״ג";
+  openModal("itemModal");
+});
+
+$$$("#saveItemBtn").addEventListener("click", ()=>{
+  const name = ($$("#itemName").value||"").trim();
+  const category = $$("#itemCategory").value || "לא משויך";
+  const price = +($$("#itemPrice").value||0);
+  const unit = $$("#itemUnit").value || "יחידה";
+
+  if(!name){ alert("חובה שם פריט."); return; }
+  if(state.items.some(i=>i.name===name)){
+    alert("פריט כבר קיים.");
+    return;
+  }
+  state.items.push({id:uid(), name, category, price, unit});
+  state.items.sort((a,b)=>a.name.localeCompare(b.name,"he"));
+  save();
+  closeModal("itemModal");
+  renderAll();
+  switchScreen("items");
+});
+
+/* Escape HTML for notes/fields */
+function escapeHtml(s){
+  return String(s||"")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 }
 
-function saveDoc(){
-  const m=state.months[state.currentMonth];
-  let amt=+docAmount.value||0;
-  if(docVat.checked) amt*=1.18;
-  m.docs.push({date:docDate.value,supplier:docSupplier.value,amount:amt});
-  save();closeModal("docModal");renderDocs();renderDashboard();
-}
-
-function saveSupplier(){
-  state.suppliers.push({name:supName.value,cat:supCat.value});
-  save();closeModal("supplierModal");renderSuppliers();
-}
-
-function saveItem(){
-  state.items.push({name:itemName.value,price:+itemPrice.value});
-  save();closeModal("itemModal");renderItems();
-}
-
-addDoc.onclick=()=>openModal("docModal");
-addSupplier.onclick=()=>openModal("supplierModal");
-addItem.onclick=()=>openModal("itemModal");
-
+/* ================= INIT ================= */
 load();
-monthInput.value=state.currentMonth;
-incomeInput.oninput=e=>{state.months[state.currentMonth].income=+e.target.value||0;save();renderDashboard()}
+applyTheme();
 
-renderDashboard();
-renderDocs();
-renderSuppliers();
-renderItems();
+$$("#monthInput").value = state.currentMonth;
+$$("#incomeInput").value = currentMonthObj().income || 0;
+refreshMonthBadge();
+renderAll();
+
+/* Default opening screen */
+switchScreen("dashboard");
 </script>
 
 </div>
