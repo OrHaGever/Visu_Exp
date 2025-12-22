@@ -1,2175 +1,263 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>דשבורד הוצאות ספקים - הצדף</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ניהול מסמכים – שלב A</title>
 
 <style>
+/* ========== THEME ========== */
 :root{
   --bg:#0f172a;
-  --card:#0b1226;
-  --card2:rgba(255,255,255,.03);
-  --border:rgba(148,163,184,.28);
+  --card:#111827;
+  --border:#334155;
   --text:#e5e7eb;
-  --muted:#a7b0bf;
+  --muted:#94a3b8;
   --accent:#3b82f6;
-  --accent2:#22c55e;
+  --green:#22c55e;
+  --orange:#f59e0b;
+  --blue:#38bdf8;
   --danger:#ef4444;
-  --warning:#f59e0b;
-  --chip:rgba(59,130,246,.16);
-  --shadow:rgba(0,0,0,.30);
-  --credit:#f43f5e;
-  --paid:#22c55e;
-  --unpaid:#f59e0b;
 }
-:root[data-theme="light"]{
-  --bg:#f5f7fb;
-  --card:#ffffff;
-  --card2:rgba(2,6,23,.03);
-  --border:rgba(15,23,42,.14);
-  --text:#0f172a;
-  --muted:#475569;
-  --accent:#2563eb;
-  --accent2:#16a34a;
-  --danger:#dc2626;
-  --warning:#b45309;
-  --chip:rgba(37,99,235,.12);
-  --shadow:rgba(2,6,23,.10);
-  --credit:#e11d48;
-  --paid:#16a34a;
-  --unpaid:#b45309;
-}
-
-*{box-sizing:border-box}
-html,body{margin:0;font-family:Inter,system-ui}
 body{
+  margin:0;
+  font-family:system-ui, sans-serif;
+  background:var(--bg);
   color:var(--text);
-  background:
-    radial-gradient(1100px 600px at 10% 0%, rgba(59,130,246,.22), transparent 55%),
-    radial-gradient(900px 520px at 90% 0%, rgba(34,197,94,.14), transparent 55%),
-    var(--bg);
 }
-.app{max-width:1200px;margin:auto;min-height:100vh}
-a{color:inherit}
+button{cursor:pointer}
 
-/* header */
+/* ========== LAYOUT ========== */
 header{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:12px 14px;border-bottom:1px solid var(--border);
-  position:sticky;top:0;background:rgba(15,23,42,.55);backdrop-filter: blur(10px);
-  z-index:10;
+  padding:12px;
+  border-bottom:1px solid var(--border);
+  font-weight:700;
 }
-:root[data-theme="light"] header{background:rgba(245,247,251,.80)}
-header h1{font-size:15px;margin:0;font-weight:700}
-header .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.badge{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:6px 10px;border-radius:999px;border:1px solid var(--border);
-  background:var(--card2);color:var(--muted);font-size:11px;
-}
-.badge b{color:var(--text)}
-.btnRow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-
-/* nav */
-nav{
-  display:flex;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border);
-  overflow-x:auto;position:sticky;top:54px;background:rgba(15,23,42,.40);backdrop-filter: blur(10px);
-  z-index:9;
-}
-:root[data-theme="light"] nav{background:rgba(245,247,251,.78)}
-nav button{
-  border-radius:999px;border:1px solid transparent;background:transparent;
-  color:var(--muted);padding:8px 12px;cursor:pointer;white-space:nowrap;
-  transition:.15s ease;
-}
-nav button.active{
-  background:var(--chip);color:var(--text);
-  border-color:rgba(59,130,246,.45);
-}
-
-/* main */
-main{padding:14px}
+main{padding:12px; padding-bottom:110px;}
 .card{
   background:var(--card);
   border:1px solid var(--border);
-  border-radius:18px;
-  padding:14px;
-  margin-bottom:14px;
-  box-shadow:0 8px 22px var(--shadow);
+  border-radius:14px;
+  padding:12px;
+  margin-bottom:12px;
 }
-h2{font-size:14px;margin:0 0 10px}
-label{font-size:11px;color:var(--muted)}
+.row{display:flex; gap:8px; flex-wrap:wrap}
 input,select,textarea{
   width:100%;
-  padding:9px 10px;
-  border-radius:12px;
+  padding:8px;
+  border-radius:8px;
   border:1px solid var(--border);
-  background:var(--card2);
+  background:#020617;
   color:var(--text);
-  outline:none;
 }
-:root[data-theme="light"] input,:root[data-theme="light"] select,:root[data-theme="light"] textarea{background:#fff;}
-textarea{resize:vertical}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:760px){.row{grid-template-columns:1fr}}
+label{font-size:12px; color:var(--muted)}
 .spacer{height:8px}
 
-.kpis{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
-@media(max-width:980px){.kpis{grid-template-columns:1fr 1fr}}
-@media(max-width:560px){.kpis{grid-template-columns:1fr}}
-.kpi{border:1px solid var(--border);border-radius:16px;padding:12px;background:var(--card2)}
-.kpi .t{font-size:11px;color:var(--muted)}
-.kpi .v{font-size:18px;font-weight:700;margin-top:6px}
+/* ========== NAV ========== */
+nav{
+  display:flex;
+  gap:8px;
+  padding:8px;
+}
+nav button{
+  background:none;
+  border:none;
+  color:var(--muted);
+}
+nav button.active{
+  color:var(--text);
+  border-bottom:2px solid var(--accent);
+}
 
-hr.sep{border:none;border-top:1px solid var(--border);margin:12px 0}
+/* ========== BREADCRUMBS ========== */
+#breadcrumbs{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:8px;
+}
+#breadcrumbs span{cursor:pointer}
+#breadcrumbs span:hover{text-decoration:underline}
 
-/* buttons */
-button{
-  background:var(--accent);color:#fff;border:none;border-radius:999px;
-  padding:9px 12px;cursor:pointer;font-size:12px;font-weight:600;
-  transition:.15s ease;white-space:nowrap;
+/* ========== DOCUMENT LIST ========== */
+.supplierGroup{
+  margin-bottom:12px;
 }
-button:hover{filter:brightness(1.06)}
-button.outline{background:transparent;border:1px solid var(--border);color:var(--text)}
-button.ghost{background:transparent;border:1px solid transparent;color:var(--muted)}
-button.green{background:var(--accent2)}
-button.danger{background:var(--danger)}
-button.small{padding:7px 10px;font-size:11px}
+.supplierHeader{
+  font-weight:700;
+  cursor:pointer;
+}
+.doc{
+  border-left:4px solid transparent;
+  padding:8px;
+  margin-top:6px;
+  border-radius:8px;
+  background:#020617;
+}
+.doc.ordered{border-color:var(--blue)}
+.doc.received{border-color:var(--orange)}
+.doc.paid{border-color:var(--green)}
+.docHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.docActions button{
+  background:none;
+  border:none;
+  color:var(--muted);
+}
 
-/* tables */
-.tableWrap{overflow:auto;border-radius:14px;border:1px solid var(--border)}
-table{width:100%;border-collapse:collapse;font-size:11px;min-width:820px}
-th,td{padding:10px 10px;border-bottom:1px solid var(--border);text-align:right;vertical-align:top}
-th{color:var(--muted);font-weight:600;background:var(--card2)}
-tr:hover td{background:rgba(255,255,255,.02)}
-:root[data-theme="light"] tr:hover td{background:rgba(2,6,23,.02)}
-.amount-pos{color:var(--accent2);font-weight:800}
-.amount-neg{color:var(--credit);font-weight:800}
+/* ========== MOBILE CARD ========== */
+@media (max-width:600px){
+  .doc{font-size:14px}
+}
 
-.pill{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:6px 10px;border-radius:999px;border:1px solid var(--border);
-  background:var(--card2);font-size:11px;color:var(--muted);
+/* ========== STICKY SUMMARY ========== */
+#stickyBar{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#020617;
+  border-top:1px solid var(--border);
+  padding:10px;
 }
-.pill.paid{border-color:rgba(34,197,94,.35);color:var(--paid)}
-.pill.unpaid{border-color:rgba(245,158,11,.35);color:var(--unpaid)}
-.pill.credit{border-color:rgba(244,63,94,.35);color:var(--credit)}
-.pill.info{border-color:rgba(59,130,246,.35);color:var(--accent)}
+#stickyBar strong{font-size:16px}
 
-/* details / empty */
-.details{margin-top:8px;padding:10px;border-radius:14px;border:1px solid var(--border);background:var(--card2);}
-.empty{border:1px dashed var(--border);border-radius:16px;padding:12px;color:var(--muted);background:var(--card2);font-size:12px;}
-.note{font-size:11px;color:var(--muted);line-height:1.5}
-
-/* screens */
-.hide{display:none}
-
-/* modals */
-.modal{
-  position:fixed;inset:0;background:rgba(0,0,0,.55);
-  display:none;align-items:center;justify-content:center;z-index:50;
-  padding:14px;
+/* ========== TOAST ========== */
+#toast{
+  position:fixed;
+  bottom:90px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#020617;
+  border:1px solid var(--border);
+  padding:8px 12px;
+  border-radius:8px;
+  display:none;
 }
-.modal .box{
-  width:100%;max-width:760px;
-  background:var(--card);border:1px solid var(--border);
-  border-radius:18px;padding:14px;
-  box-shadow:0 18px 50px rgba(0,0,0,.45);
-  max-height:84vh;overflow:auto;
-}
-.modal h3{margin:0 0 10px;font-size:14px}
-.modal .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.toggleRow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.check{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 10px;border-radius:14px;border:1px solid var(--border);
-  background:var(--card2);cursor:pointer;user-select:none;
-}
-.check input{width:auto;margin:0}
-
-/* lines */
-.linesWrap{border:1px solid var(--border);border-radius:16px;padding:10px;background:var(--card2);}
-.lineRow{
-  display:grid;grid-template-columns: 1.4fr .6fr .7fr .6fr auto;
-  gap:8px;align-items:end;margin-bottom:8px;
-}
-@media(max-width:760px){
-  .lineRow{grid-template-columns: 1fr 1fr; align-items:stretch}
-  .lineRow .span2{grid-column:span 2}
-}
-.lineActions{display:flex;gap:6px;justify-content:flex-end}
-.subtot{
-  font-size:12px;font-weight:800;color:var(--text);
-  padding:9px 10px;border-radius:12px;border:1px solid var(--border);
-  background:rgba(0,0,0,.12);
-}
-:root[data-theme="light"] .subtot{background:rgba(2,6,23,.03)}
-
-/* toast */
-.toast{
-  position:fixed;bottom:14px;left:14px;right:14px;
-  display:flex;justify-content:center;pointer-events:none;z-index:60;
-}
-.toast .tbox{
-  pointer-events:auto;max-width:720px;width:100%;
-  background:rgba(15,23,42,.75);
-  border:1px solid rgba(148,163,184,.35);
-  color:#fff;border-radius:16px;padding:10px 12px;
-  backdrop-filter: blur(10px);
-  display:flex;justify-content:space-between;align-items:center;gap:10px;
-}
-:root[data-theme="light"] .toast .tbox{
-  background:rgba(255,255,255,.86);color:#0f172a;border-color:rgba(15,23,42,.14);
-}
-.toast .msg{font-size:12px}
 </style>
 </head>
 
 <body>
-<div class="app">
-<header>
-  <h1>דשבורד הוצאות ספקים - הצדף</h1>
-  <div class="actions">
-    <span class="badge">חודש: <b id="monthBadge">—</b></span>
-    <div class="btnRow">
-      <button id="themeBtn" class="outline small">מצב בהיר</button>
-      <button id="exportBtn" class="outline small">ייצוא JSON</button>
-      <button id="importBtn" class="outline small">ייבוא</button>
-      <input type="file" id="fileInput" accept=".json" hidden>
-    </div>
-  </div>
-</header>
+
+<header>📄 מסמכים – שלב A</header>
 
 <nav>
-  <button class="tab active" data-screen="dashboard">דשבורד</button>
-  <button class="tab" data-screen="documents">מסמכים</button>
-  <button class="tab" data-screen="suppliers">ספקים</button>
-  <button class="tab" data-screen="categories">קטגוריות</button>
-  <button class="tab" data-screen="items">פריטים</button>
+  <button class="active">מסמכים</button>
 </nav>
 
 <main>
-  <!-- DASHBOARD -->
-  <section id="dashboard" class="screen">
-    <div class="card">
-      <h2>סיכום חודשי</h2>
-      <div class="row">
-        <div>
-          <label>חודש</label>
-          <input type="month" id="monthInput">
-          <div class="spacer"></div>
-          <label>מחזור (הכנסות)</label>
-          <input type="number" id="incomeInput" inputmode="decimal" placeholder="0">
-          <div class="spacer"></div>
-          <div class="note">טיפ: כדי לסנכרן בין מכשירים — ייצוא JSON ואז ייבוא במכשיר אחר.</div>
-        </div>
 
-        <div>
-          <div class="kpis">
-            <div class="kpi"><div class="t">סה״כ הוצאות נטו</div><div class="v" id="expSum">₪0</div></div>
-            <div class="kpi"><div class="t">זיכויים החודש</div><div class="v" id="creditSum">₪0</div></div>
-            <div class="kpi"><div class="t">חוב פתוח</div><div class="v" id="openSum">₪0</div></div>
-            <div class="kpi"><div class="t">רווח נקי</div><div class="v" id="netSum">₪0</div></div>
-          </div>
+<div id="breadcrumbs">דשבורד › מסמכים</div>
 
-          <hr class="sep">
-          <div class="toggleRow">
-            <span class="pill info">מע״מ ברירת מחדל: <b>18%</b></span>
-            <span class="pill credit">זיכוי = סכום שלילי</span>
-          </div>
-        </div>
-      </div>
-    </div>
+<button onclick="openNewDoc()">➕ מסמך חדש</button>
 
-    <div class="card">
-      <h2>סיכום לפי קטגוריות ספקים</h2>
-      <div class="tableWrap">
-        <table>
-          <thead>
-            <tr>
-              <th>קטגוריה</th>
-              <th>סה״כ חיובים</th>
-              <th>סה״כ זיכויים</th>
-              <th>נטו</th>
-            </tr>
-          </thead>
-          <tbody id="catSummaryBody"></tbody>
-        </table>
-      </div>
-    </div>
+<div id="docList"></div>
 
-    <div class="card">
-      <h2>Top ספקים החודש</h2>
-      <div class="tableWrap">
-        <table>
-          <thead>
-            <tr>
-              <th>ספק</th>
-              <th>קטגוריה</th>
-              <th>מסמכים</th>
-              <th>נטו</th>
-            </tr>
-          </thead>
-          <tbody id="topSupBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <!-- DOCUMENTS -->
-  <section id="documents" class="screen hide">
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-        <h2 style="margin:0">מסמכים</h2>
-        <button id="addDoc" class="green">מסמך חדש</button>
-      </div>
-
-      <div class="spacer"></div>
-      <div class="row">
-        <div>
-          <label>סינון לפי ספק</label>
-          <select id="filterSupplier"></select>
-        </div>
-        <div>
-          <label>סינון לפי קטגוריית ספק</label>
-          <select id="filterCategory"></select>
-        </div>
-      </div>
-
-      <div class="spacer"></div>
-      <div class="row">
-        <div>
-          <label>סינון לפי סוג מסמך</label>
-          <select id="filterDocType">
-            <option value="">הכל</option>
-            <option value="חשבונית">חשבוניות</option>
-            <option value="תעודת משלוח">תעודות משלוח</option>
-            <option value="חשבונית+תעודה">שניהם</option>
-            <option value="זיכוי">זיכויים</option>
-          </select>
-        </div>
-        <div>
-          <label>סינון לפי סטטוס</label>
-          <select id="filterDocStatus">
-            <option value="">הכל</option>
-            <option value="שולם">שולם</option>
-            <option value="לא שולם">לא שולם</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="spacer"></div>
-      <div class="tableWrap">
-        <table>
-          <thead>
-            <tr>
-              <th>תאריך</th>
-              <th>מס׳ מסמך</th>
-              <th>סוג</th>
-              <th>ספק</th>
-              <th>קטגוריה</th>
-              <th>סכום נטו</th>
-              <th>סטטוס</th>
-              <th>פעולות</th>
-            </tr>
-          </thead>
-          <tbody id="docsBody"></tbody>
-        </table>
-      </div>
-
-      <div id="docsEmpty" class="empty hide" style="margin-top:12px">
-        אין עדיין מסמכים לחודש הזה. לחץ על <b>מסמך חדש</b> כדי להתחיל.
-      </div>
-    </div>
-  </section>
-
-  <!-- SUPPLIERS -->
-  <section id="suppliers" class="screen hide">
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-        <h2 style="margin:0">ספקים</h2>
-        <button id="addSupplier" class="green">ספק חדש</button>
-      </div>
-
-      <div class="spacer"></div>
-      <div class="row">
-        <div>
-          <label>חיפוש ספק</label>
-          <input id="supplierSearch" placeholder="הקלד כדי לסנן…">
-        </div>
-        <div>
-          <label>סינון לפי קטגוריה</label>
-          <select id="supplierCatFilter"></select>
-        </div>
-      </div>
-
-      <div class="spacer"></div>
-      <div class="tableWrap">
-        <table>
-          <thead>
-            <tr>
-              <th>שם</th>
-              <th>קטגוריה</th>
-              <th>טלפון</th>
-              <th>אימייל</th>
-              <th>הערות</th>
-              <th>פעולות</th>
-            </tr>
-          </thead>
-          <tbody id="supBody"></tbody>
-        </table>
-      </div>
-
-      <div id="supEmpty" class="empty hide" style="margin-top:12px">
-        לא נמצאו ספקים. הוסף ספק חדש כדי להתחיל.
-      </div>
-    </div>
-  </section>
-
-  <!-- CATEGORIES -->
-  <section id="categories" class="screen hide">
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-        <h2 style="margin:0">קטגוריות ספקים</h2>
-        <button id="addCategory" class="green">קטגוריה חדשה</button>
-      </div>
-
-      <div class="spacer"></div>
-      <div class="row">
-        <div>
-          <label>חיפוש קטגוריה</label>
-          <input id="catSearch" placeholder="הקלד כדי לסנן…">
-        </div>
-        <div>
-          <label>הערה</label>
-          <div class="note">מחיקת קטגוריה תציע <b>מיזוג</b> לקטגוריה אחרת כדי לא לשבור ספקים/פריטים.</div>
-        </div>
-      </div>
-
-      <div class="spacer"></div>
-      <div class="tableWrap">
-        <table>
-          <thead>
-            <tr>
-              <th>קטגוריה</th>
-              <th>שימוש בספקים</th>
-              <th>שימוש בפריטים</th>
-              <th>פעולות</th>
-            </tr>
-          </thead>
-          <tbody id="catBody"></tbody>
-        </table>
-      </div>
-
-      <div id="catEmpty" class="empty hide" style="margin-top:12px">
-        אין קטגוריות (לא אמור לקרות). הוסף קטגוריה חדשה.
-      </div>
-    </div>
-  </section>
-
-  <!-- ITEMS -->
-  <section id="items" class="screen hide">
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-        <h2 style="margin:0">פריטים</h2>
-        <button id="addItem" class="green">פריט חדש</button>
-      </div>
-
-      <div class="spacer"></div>
-      <div class="row">
-        <div>
-          <label>חיפוש פריט</label>
-          <input id="itemSearch" placeholder="הקלד כדי לסנן…">
-        </div>
-        <div>
-          <label>סינון לפי קטגוריה</label>
-          <select id="itemCatFilter"></select>
-        </div>
-      </div>
-
-      <div class="spacer"></div>
-      <div class="tableWrap">
-        <table>
-          <thead>
-            <tr>
-              <th>שם</th>
-              <th>קטגוריה</th>
-              <th>מחיר</th>
-              <th>יחידה</th>
-              <th>פעולות</th>
-            </tr>
-          </thead>
-          <tbody id="itemsBody"></tbody>
-        </table>
-      </div>
-
-      <div id="itemsEmpty" class="empty hide" style="margin-top:12px">
-        אין עדיין פריטים. הוסף פריט חדש (שם + מחיר + יחידה).
-      </div>
-    </div>
-  </section>
 </main>
 
+<!-- STICKY SUMMARY -->
+<div id="stickyBar" style="display:none">
+  <div>💰 סה״כ: <strong id="sumTotal">₪0</strong></div>
+  <div>סטטוס: <span id="sumStatus"></span></div>
+</div>
+
 <!-- TOAST -->
-<div class="toast hide" id="toast">
-  <div class="tbox">
-    <div class="msg" id="toastMsg">—</div>
-    <button class="outline small" id="toastBtn">סגור</button>
-  </div>
-</div>
-
-<!-- MODAL: SUPPLIER (ADD/EDIT) -->
-<div class="modal" id="supplierModal">
-  <div class="box">
-    <h3 id="supplierModalTitle">הוספת ספק</h3>
-
-    <input type="hidden" id="supEditId" value="">
-    <label>שם ספק</label>
-    <input id="supName" placeholder="שם ספק…">
-
-    <div class="spacer"></div>
-    <label>קטגוריה</label>
-    <select id="supCat"></select>
-
-    <div class="spacer"></div>
-    <div class="row">
-      <div>
-        <label>טלפון</label>
-        <input id="supPhone" placeholder="050-0000000">
-      </div>
-      <div>
-        <label>אימייל</label>
-        <input id="supEmail" placeholder="name@email.com">
-      </div>
-    </div>
-
-    <div class="spacer"></div>
-    <label>הערות</label>
-    <textarea id="supNotes" rows="2" placeholder="אופציונלי…"></textarea>
-
-    <div class="actions">
-      <button id="saveSupplierBtn">שמור</button>
-      <button class="outline" id="cancelSupplierBtn">ביטול</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: SUPPLIER DELETE (WITH DOCS) -->
-<div class="modal" id="supplierDeleteModal">
-  <div class="box">
-    <h3>מחיקת ספק</h3>
-    <div class="note" id="supDelInfo">—</div>
-    <div class="spacer"></div>
-
-    <div class="card" style="box-shadow:none;margin:0;background:transparent;border:1px solid var(--border)">
-      <h2 style="margin:0 0 8px;font-size:12px">יש מסמכים לספק הזה. מה עושים?</h2>
-      <div class="note">מומלץ: <b>השבתה</b> — הספק לא יופיע בבחירה, אבל המסמכים נשמרים.</div>
-      <div class="spacer"></div>
-
-      <button class="outline" id="supDelDisableBtn">השבת ספק (מומלץ)</button>
-      <div class="spacer"></div>
-
-      <label>או מיזוג: להעביר את כל המסמכים לספק אחר</label>
-      <select id="supDelMergeSelect"></select>
-      <div class="spacer"></div>
-      <button class="danger" id="supDelMergeBtn">העבר מסמכים + מחק</button>
-    </div>
-
-    <div class="actions">
-      <button class="outline" id="supDelCancelBtn">ביטול</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: CATEGORY (ADD/EDIT) -->
-<div class="modal" id="catModal">
-  <div class="box">
-    <h3 id="catModalTitle">קטגוריה חדשה</h3>
-    <input type="hidden" id="catEditName" value="">
-    <label>שם קטגוריה</label>
-    <input id="catName" placeholder="לדוגמה: שיווק">
-    <div class="actions">
-      <button id="saveCatBtn">שמור</button>
-      <button class="outline" id="cancelCatBtn">ביטול</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: CATEGORY DELETE (MERGE) -->
-<div class="modal" id="catDeleteModal">
-  <div class="box">
-    <h3>מחיקת קטגוריה</h3>
-    <div class="note" id="catDelInfo">—</div>
-    <div class="spacer"></div>
-
-    <div class="card" style="box-shadow:none;margin:0;background:transparent;border:1px solid var(--border)">
-      <div class="note">כדי לא לשבור ספקים/פריטים, בחר קטגוריה ל<strong>מיזוג</strong> (החלפה בכל הספקים והפריטים).</div>
-      <div class="spacer"></div>
-      <label>מיזוג אל:</label>
-      <select id="catDelMergeSelect"></select>
-      <div class="spacer"></div>
-      <button class="danger" id="catDelMergeBtn">מזג + מחק</button>
-      <div class="spacer"></div>
-      <button class="outline" id="catDelToUnassignedBtn">העבר ל"לא משויך" + מחק</button>
-    </div>
-
-    <div class="actions">
-      <button class="outline" id="catDelCancelBtn">ביטול</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: ITEM (ADD/EDIT) -->
-<div class="modal" id="itemModal">
-  <div class="box">
-    <h3 id="itemModalTitle">הוספת פריט</h3>
-
-    <input type="hidden" id="itemEditId" value="">
-    <label>שם פריט</label>
-    <input id="itemName" placeholder="לדוגמה: לברק">
-
-    <div class="spacer"></div>
-    <label>קטגוריה (זהה לקטגוריות ספקים)</label>
-    <select id="itemCategory"></select>
-
-    <div class="spacer"></div>
-    <div class="row">
-      <div>
-        <label>מחיר</label>
-        <input type="number" id="itemPrice" inputmode="decimal" placeholder="0">
-      </div>
-      <div>
-        <label>יחידה</label>
-        <select id="itemUnit">
-          <option value="ק״ג">ק״ג</option>
-          <option value="יחידה">יחידה</option>
-          <option value="קרטון">קרטון</option>
-          <option value="מארז">מארז</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="actions">
-      <button id="saveItemBtn">שמור</button>
-      <button class="outline" id="cancelItemBtn">ביטול</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: ITEM DELETE (USED) -->
-<div class="modal" id="itemDeleteModal">
-  <div class="box">
-    <h3>מחיקת פריט</h3>
-    <div class="note" id="itemDelInfo">—</div>
-    <div class="spacer"></div>
-
-    <div class="card" style="box-shadow:none;margin:0;background:transparent;border:1px solid var(--border)">
-      <div class="note">לפריט הזה יש שימוש במסמכים. מומלץ: <b>השבתה</b> (לא יופיע בבחירה, אבל נשמר במסמכים).</div>
-      <div class="spacer"></div>
-      <button class="outline" id="itemDelDisableBtn">השבת פריט (מומלץ)</button>
-      <div class="spacer"></div>
-      <label>או מיזוג: להחליף בכל המסמכים לפריט אחר</label>
-      <select id="itemDelMergeSelect"></select>
-      <div class="spacer"></div>
-      <button class="danger" id="itemDelMergeBtn">החלף בכל המסמכים + מחק</button>
-    </div>
-
-    <div class="actions">
-      <button class="outline" id="itemDelCancelBtn">ביטול</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: DOCUMENT (ADD/EDIT) -->
-<div class="modal" id="docModal">
-  <div class="box">
-    <h3 id="docModalTitle">מסמך חדש</h3>
-    <input type="hidden" id="docEditId" value="">
-
-    <div class="row">
-      <div>
-        <label>תאריך</label>
-        <input type="date" id="docDate">
-      </div>
-      <div>
-        <label>סוג מסמך</label>
-        <select id="docType">
-          <option value="חשבונית">חשבונית</option>
-          <option value="תעודת משלוח">תעודת משלוח</option>
-          <option value="חשבונית+תעודה">שניהם</option>
-          <option value="זיכוי">זיכוי</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="spacer"></div>
-    <div class="row">
-      <div>
-        <label>מס׳ מסמך (חשבונית/תעודה)</label>
-        <input id="docNo" placeholder="לדוגמה: 12345">
-      </div>
-      <div>
-        <label>סטטוס</label>
-        <select id="docStatus">
-          <option value="שולם" selected>שולם</option>
-          <option value="לא שולם">לא שולם</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="spacer"></div>
-
-    <div class="row">
-      <div>
-        <label>בחר ספק מהרשימה</label>
-        <select id="docSupplierSelect" size="8" style="height:auto;min-height:170px"></select>
-
-        <div class="spacer"></div>
-        <button id="docAddSupplierBtn" class="outline small">+ הוסף ספק חדש</button>
-
-        <div class="spacer"></div>
-        <label>קטגוריית ספק</label>
-        <input id="docSupplierCategory" disabled>
-      </div>
-
-      <div>
-        <div class="toggleRow">
-          <label class="check"><input type="checkbox" id="docVat" checked> להוסיף מע״מ (18%)</label>
-        </div>
-
-        <div class="spacer"></div>
-        <label>הערות</label>
-        <textarea id="docNotes" rows="3" placeholder="אופציונלי…"></textarea>
-
-        <div class="spacer"></div>
-        <div class="note">
-          סכום המסמך מחושב לפי <b>פירוט הפריטים</b>. אם לא תוסיף פריטים, תוכל להזין סכום ידני:
-        </div>
-        <div class="spacer"></div>
-        <label>סכום ידני (רק אם אין פריטים)</label>
-        <input type="number" id="docManualAmount" inputmode="decimal" placeholder="0">
-      </div>
-    </div>
-
-    <hr class="sep">
-
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-      <h2 style="margin:0">פירוט פריטים</h2>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button id="addLineBtn" class="green small">+ שורה</button>
-        <button id="docAddItemBtn" class="outline small">+ פריט חדש</button>
-      </div>
-    </div>
-
-    <div class="spacer"></div>
-    <div class="linesWrap">
-      <div class="note" id="lineHint">טיפ: הפריטים שיופיעו כאן מסוננים לפי קטגוריית הספק שנבחר.</div>
-      <div class="spacer"></div>
-      <div id="linesHost"></div>
-
-      <div class="spacer"></div>
-      <div class="row">
-        <div>
-          <span class="pill">סה״כ לפני מע״מ:</span>
-          <div class="spacer"></div>
-          <div class="subtot" id="docSubtotal">₪0.00</div>
-        </div>
-        <div>
-          <span class="pill">סה״כ נטו למסמך:</span>
-          <div class="spacer"></div>
-          <div class="subtot" id="docTotal">₪0.00</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="actions">
-      <button id="saveDocBtn">שמור</button>
-      <button class="outline" id="cancelDocBtn">ביטול</button>
-    </div>
-  </div>
-</div>
+<div id="toast"></div>
 
 <script>
-/* ================= STORAGE ================= */
-const KEY = "hatzeDef-supplier-dashboard-v3";
-const $ = (sel)=>document.querySelector(sel);
-const $$ = (sel)=>Array.from(document.querySelectorAll(sel));
-
-function uid(){
-  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
-  return "id_" + Math.random().toString(16).slice(2) + Date.now().toString(16);
-}
-let toastTimer=null;
-function toast(msg){
-  $("#toastMsg").textContent = msg;
-  $("#toast").classList.remove("hide");
-  if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=> $("#toast").classList.add("hide"), 2600);
-}
-$("#toastBtn").addEventListener("click", ()=> $("#toast").classList.add("hide"));
-
-function money(n){
-  const v = Number(n||0);
-  return "₪" + v.toLocaleString("he-IL", {minimumFractionDigits:2, maximumFractionDigits:2});
-}
-function escapeHtml(s){
-  return String(s||"")
-    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
-}
-function openModal(id){ $("#"+id).style.display="flex"; }
-function closeModal(id){ $("#"+id).style.display="none"; }
-
-/* ================= DEFAULTS ================= */
-const DEFAULT_CATEGORIES = [
-  "מזון","שתייה קלה","אלכוהול","יין","קינוחים","קפה ותה","קרח","אריזות וחד-פעמי","נייר ומוצרי נייר",
-  "ניקיון והיגיינה","תחזוקה ותיקונים","ציוד מטבח","ציוד בר","שיווק ופרסום","משלוחים ופלטפורמות",
-  "תקשורת ואינטרנט","חשמל / מים / גז","כוח אדם","מערכות ותוכנה","עמלות וסליקה","מיחזור ופינוי",
-  "מיסים וארנונה","שירותים חיצוניים","פרחים ועיצוב","לא משויך"
+/* ========== DATA ========== */
+let suppliers = [
+  {id:1,name:"החברה המרכזית",items:["קולה","ספרייט"]},
+  {id:2,name:"סוקוליק",items:["מים","סודה"]}
 ];
-
-const PROTECTED_CATEGORIES = new Set(["לא משויך"]); // cannot delete
-
-const DEFAULT_SUPPLIERS = [
-  "מדחסקור אוניברסל","ג׳אקו שירות למטבחים","יוסי סימן טוב","י.שבי","צ.י.שיווק","קנקון",
-  "לוילן סחר ומוצרים חקלאיים בע״מ","עואודה לשיווק בע״מ","מדג סי פרוט בע״מ","אהרון שיווק",
-  "שיווק שלי א.א בע״מ","אקיפ החברה לציוד מלונאי בע״מ","דאלאס מוצרי נייר בע״מ","חברת חשמל",
-  "א.א.ר שירותי ביוב","תמי 4","בזק","היכל היין","החברה המרכזית","סוקליק","ביסקוטי","אייס דרים",
-  "ג.מ טעם הארץ בע״מ","יזמקו חברה בע״מ","אסטרטג טכנולוגיות בע״מ","אביב אש מערכות בע״מ","מניב ראשון",
-  "אודי בכור שיווק דגים בע״מ","לירי כוח אדם בע״מ","מש-נט בע״מ","זאפ גרופ בע״מ","שיא \"10\" בע״מ",
-  "קורקידי יעקב שיווק והפצה בסיטונאות","מקס עסקים","וינטר מכשירי גז בע״מ","מפעל הפרסום","וולט",
-  "אלירן פרחים","פרסום תבור בעצ","אינפיניה מחזור","ייצוגית פלוס תעשיות בע״מ","משלוחה",
-  "ביימי טכנולוגיות","ישראכרט","סוגת","אייפרקטיקום","אמישרגז","מאירוביץ שלי",
-  "לה פסטה דלה קזה בע״מ","ארנונה ראשון לציון"
-];
-
-const DEFAULT_ITEMS = [
-  { name: "דניס", category: "מזון", price: 29.90, unit: "ק״ג" },
-  { name: "לברק", category: "מזון", price: 29.90, unit: "ק״ג" },
-  { name: "מושט", category: "מזון", price: 24.90, unit: "ק״ג" },
-  { name: "ברבוניה", category: "מזון", price: 39.90, unit: "ק״ג" },
-  { name: "בר ים", category: "מזון", price: 34.90, unit: "ק״ג" },
-  { name: "סלמון", category: "מזון", price: 49.90, unit: "ק״ג" },
-  { name: "לוקוס", category: "מזון", price: 89.90, unit: "ק״ג" },
-  { name: "שרימפס", category: "מזון", price: 69.90, unit: "ק״ג" },
-  { name: "קלמרי", category: "מזון", price: 59.90, unit: "ק״ג" },
-  { name: "ראשי קלמרי", category: "מזון", price: 44.90, unit: "ק״ג" },
-  { name: "סרטנים", category: "מזון", price: 74.90, unit: "ק״ג" },
-  { name: "מולים", category: "מזון", price: 32.90, unit: "ק״ג" },
-  { name: "סטייק אנטריקוט", category: "מזון", price: 99.90, unit: "ק״ג" },
-  { name: "פילה בקר", category: "מזון", price: 119.90, unit: "ק״ג" },
-  { name: "פרגית", category: "מזון", price: 44.90, unit: "ק״ג" },
-  { name: "חזה עוף", category: "מזון", price: 32.90, unit: "ק״ג" },
-  { name: "צלעות", category: "מזון", price: 54.90, unit: "ק״ג" }
-];
-
-function inferSupplierCategory(name){
-  const n = (name||"").toLowerCase();
-  if (n.includes("חברת חשמל")) return "חשמל / מים / גז";
-  if (n.includes("אמישרגז") || n.includes("גז") || n.includes("וינטר")) return "חשמל / מים / גז";
-  if (n.includes("ארנונה")) return "מיסים וארנונה";
-  if (n.includes("בזק") || n.includes("מש-נט") || n.includes("מש נט") || n.includes("אייפרקטיקום")) return "תקשורת ואינטרנט";
-  if (n.includes("ישראכרט") || n.includes("מקס")) return "עמלות וסליקה";
-  if (n.includes("וולט") || n.includes("משלוחה")) return "משלוחים ופלטפורמות";
-  if (n.includes("היכל היין") || n.includes("יין")) return "יין";
-  if (n.includes("החברה המרכזית") || n.includes("סוקליק")) return "שתייה קלה";
-  if (n.includes("ביסקוטי") || n.includes("אייס דרים")) return "קינוחים";
-  if (n.includes("דאלאס") || n.includes("מוצרי נייר")) return "נייר ומוצרי נייר";
-  if (n.includes("אקיפ") || n.includes("ציוד מלונאי")) return "ציוד מטבח";
-  if (n.includes("ג׳אקו") || n.includes("מטבחים")) return "תחזוקה ותיקונים";
-  if (n.includes("ביוב") || n.includes("שירותי ביוב")) return "תחזוקה ותיקונים";
-  if (n.includes("מיחזור") || n.includes("מחזור") || n.includes("אינפיניה")) return "מיחזור ופינוי";
-  if (n.includes("כוח אדם") || n.includes("לירי")) return "כוח אדם";
-  if (n.includes("פרסום") || n.includes("מפעל הפרסום") || n.includes("זאפ")) return "שיווק ופרסום";
-  if (n.includes("אלירן פרחים") || n.includes("פרחים")) return "פרחים ועיצוב";
-  if (n.includes("שיווק") || n.includes("דגים") || n.includes("פרוט") || n.includes("חקלאיים") || n.includes("טעם הארץ") || n.includes("סוגת") || n.includes("לה פסטה")) return "מזון";
-  if (n.includes("טכנולוגיות") || n.includes("ביימי") || n.includes("אסטרטג") || n.includes("יזמקו")) return "מערכות ותוכנה";
-  return "לא משויך";
-}
-
-/* ================= STATE ================= */
-let state = {
-  version: 5,
-  theme: "dark",
-  categories: [],
-  suppliers: [],   // {id,name,category,phone,email,notes,active}
-  items: [],       // {id,name,category,price,unit,active}
-  months: {},      // month -> {income, docs:[]}
-  currentMonth: ""
+let itemPrices = {
+  "קולה":6,
+  "ספרייט":6,
+  "מים":4,
+  "סודה":4
 };
 
-function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
-function ensureMonth(month){
-  if (!state.months) state.months = {};
-  if (!state.months[month]) state.months[month] = { income: 0, docs: [] };
-}
-function currentMonthObj(){ return state.months[state.currentMonth]; }
+let documents = [];
+let undoStack = null;
 
-function supplierById(id){ return state.suppliers.find(s=>s.id===id) || null; }
-function itemById(id){ return state.items.find(i=>i.id===id) || null; }
-function activeSuppliers(){ return state.suppliers.filter(s=>s.active!==false); }
-function activeItems(){ return state.items.filter(i=>i.active!==false); }
-
-/* ================= DEFAULT MERGE ================= */
-function mergeDefaults(){
-  if (!Array.isArray(state.categories)) state.categories = [];
-  const catSet = new Set(state.categories);
-  DEFAULT_CATEGORIES.forEach(c => { if(!catSet.has(c)) state.categories.push(c); });
-  if (!state.categories.includes("לא משויך")) state.categories.push("לא משויך");
-  state.categories = Array.from(new Set(state.categories)).sort((a,b)=>a.localeCompare(b,"he"));
-
-  if (!Array.isArray(state.suppliers)) state.suppliers = [];
-  const supByName = new Map(state.suppliers.map(s => [String(s.name||"").trim(), s]));
-  DEFAULT_SUPPLIERS.forEach(name=>{
-    const n = String(name).trim();
-    if (!supByName.has(n)){
-      state.suppliers.push({ id: uid(), name: n, category: inferSupplierCategory(n), phone:"", email:"", notes:"", active:true });
-    } else {
-      const s = supByName.get(n);
-      if (!s.id) s.id = uid();
-      if (!s.category) s.category = inferSupplierCategory(n);
-      if (s.phone === undefined) s.phone = "";
-      if (s.email === undefined) s.email = "";
-      if (s.notes === undefined) s.notes = "";
-      if (s.active === undefined) s.active = true;
-    }
-  });
-  state.suppliers.forEach(s=>{
-    if (!s.id) s.id = uid();
-    if (!s.category) s.category = "לא משויך";
-    if (!state.categories.includes(s.category)) s.category = "לא משויך";
-    if (s.active === undefined) s.active = true;
-    if (s.phone === undefined) s.phone="";
-    if (s.email === undefined) s.email="";
-    if (s.notes === undefined) s.notes="";
-  });
-  state.suppliers.sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
-
-  if (!Array.isArray(state.items)) state.items = [];
-  const itemByName = new Map(state.items.map(i => [String(i.name||"").trim(), i]));
-  DEFAULT_ITEMS.forEach(it=>{
-    const n = String(it.name).trim();
-    if (!itemByName.has(n)){
-      state.items.push({ id: uid(), name:n, category:it.category, price:+it.price||0, unit:it.unit||"יחידה", active:true });
-    } else {
-      const i = itemByName.get(n);
-      if (!i.id) i.id = uid();
-      if (!i.category) i.category = it.category;
-      if (i.price === undefined || i.price === null) i.price = +it.price || 0;
-      if (!i.unit) i.unit = it.unit || "יחידה";
-      if (i.active === undefined) i.active = true;
-    }
-  });
-  state.items.forEach(i=>{
-    if (!i.id) i.id = uid();
-    if (!i.category) i.category = "לא משויך";
-    if (!state.categories.includes(i.category)) i.category = "לא משויך";
-    if (i.price === undefined || i.price === null) i.price = 0;
-    if (!i.unit) i.unit = "יחידה";
-    if (i.active === undefined) i.active = true;
-  });
-  state.items.sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
+/* ========== HELPERS ========== */
+function toast(msg){
+  const t=document.getElementById("toast");
+  t.innerText=msg;
+  t.style.display="block";
+  setTimeout(()=>t.style.display="none",3000);
 }
 
-/* ================= DOC MODEL ================= */
-function normalizeDoc(d){
-  if (!d.id) d.id = uid();
-  if (!d.type) d.type = "חשבונית";
-  if (!d.status) d.status = "שולם";
-  if (d.vatApplied === undefined) d.vatApplied = true;
-  if (d.notes === undefined) d.notes = "";
-  if (!d.date) d.date = new Date().toISOString().slice(0,10);
-  if (!d.docNo) d.docNo = "";
-  if (!Array.isArray(d.lines)) d.lines = [];
-  if (d.manualAmount === undefined) d.manualAmount = 0;
-  if (d.baseSubtotal === undefined) d.baseSubtotal = 0;
-  if (d.amount === undefined) d.amount = (+d.amount||0);
-  if (d.credit === true && d.type !== "זיכוי") d.type = "זיכוי";
-}
-
-function recomputeDocAmounts(d){
-  let base = 0;
-  if (Array.isArray(d.lines) && d.lines.length){
-    base = d.lines.reduce((sum,ln)=>{
-      const qty = +ln.qty || 0;
-      const price = +ln.unitPrice || 0;
-      return sum + (qty * price);
-    }, 0);
-  } else {
-    base = +d.manualAmount || 0;
-  }
-  d.baseSubtotal = base;
-
-  let total = base;
-  if (d.vatApplied) total *= 1.18;
-
-  const isCredit = (d.type === "זיכוי");
-  if (isCredit) total = -Math.abs(total);
-  else total = Math.abs(total);
-
-  d.amount = +total;
-  return d;
-}
-
-function load(){
-  const raw = localStorage.getItem(KEY);
-  if (raw){
-    try { state = JSON.parse(raw); } catch(e){}
-  }
-  if (!state || typeof state !== "object") state = {};
-  if (!state.theme) state.theme = "dark";
-  if (!state.currentMonth) state.currentMonth = new Date().toISOString().slice(0,7);
-
-  ensureMonth(state.currentMonth);
-
-  Object.keys(state.months || {}).forEach(m=>{
-    ensureMonth(m);
-    const docs = state.months[m].docs || [];
-    docs.forEach(d=>{
-      normalizeDoc(d);
-      (d.lines||[]).forEach(ln=>{
-        if (!ln.id) ln.id = uid();
-        if (!ln.itemId) ln.itemId = "";
-        if (ln.qty === undefined) ln.qty = 0;
-        if (ln.unitPrice === undefined) ln.unitPrice = 0;
-        if (!ln.unit) ln.unit = "";
-        if (!ln.name) ln.name = "";
-      });
-      recomputeDocAmounts(d);
-    });
-    state.months[m].docs = docs;
-    if (state.months[m].income === undefined) state.months[m].income = 0;
-  });
-
-  mergeDefaults();
-  save();
-}
-
-/* ================= THEME ================= */
-function applyTheme(){
-  document.documentElement.dataset.theme = state.theme === "light" ? "light" : "";
-  $("#themeBtn").textContent = (state.theme==="light") ? "מצב לילה" : "מצב בהיר";
-}
-$("#themeBtn").addEventListener("click", ()=>{
-  state.theme = (state.theme==="light") ? "dark" : "light";
-  applyTheme();
-  save();
-});
-
-/* ================= NAV / SCREENS ================= */
-function switchScreen(id){
-  $$(".screen").forEach(s=>s.classList.add("hide"));
-  $("#"+id).classList.remove("hide");
-  $$(".tab").forEach(b=>b.classList.toggle("active", b.dataset.screen===id));
-}
-$$(".tab").forEach(b=> b.addEventListener("click", ()=> switchScreen(b.dataset.screen)));
-
-/* ================= POPULATORS ================= */
-function refreshMonthBadge(){ $("#monthBadge").textContent = state.currentMonth; }
-
-function fillCategorySelectOptions(selectEl, includeAll=false){
-  const cats = state.categories.slice().sort((a,b)=>a.localeCompare(b,"he"));
-  const opts = [];
-  if (includeAll) opts.push(`<option value="">כל הקטגוריות</option>`);
-  cats.forEach(c=> opts.push(`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`));
-  selectEl.innerHTML = opts.join("");
-}
-
-function fillSupplierFilters(){
-  const active = activeSuppliers();
-  $("#filterSupplier").innerHTML = [`<option value="">כל הספקים</option>`]
-    .concat(active.map(s=>`<option value="${s.id}">${escapeHtml(s.name)}</option>`))
-    .join("");
-
-  fillCategorySelectOptions($("#filterCategory"), true);
-  fillCategorySelectOptions($("#supplierCatFilter"), true);
-  fillCategorySelectOptions($("#itemCatFilter"), true);
-
-  fillCategorySelectOptions($("#supCat"), false);
-  fillCategorySelectOptions($("#itemCategory"), false);
-}
-
-/* ================= DASHBOARD ================= */
-function renderDashboard(){
-  const m = currentMonthObj();
-  const docs = m.docs || [];
-
-  const exp = docs.reduce((s,d)=> s + (+d.amount||0), 0);
-  const credit = docs.filter(d=>d.type==="זיכוי").reduce((s,d)=> s + Math.abs(+d.amount||0), 0);
-  const open = docs.filter(d=>d.status==="לא שולם").reduce((s,d)=> s + (+d.amount||0), 0);
-  const net = (+m.income||0) - exp;
-
-  $("#expSum").textContent = money(exp);
-  $("#creditSum").textContent = money(credit);
-  $("#openSum").textContent = money(open);
-  $("#netSum").textContent = money(net);
-
-  renderCategorySummary();
-  renderTopSuppliers();
-}
-function renderCategorySummary(){
-  const m = currentMonthObj();
-  const map = new Map();
-  (m.docs||[]).forEach(d=>{
-    const s = supplierById(d.supplierId);
-    const cat = (s && s.category) ? s.category : "לא משויך";
-    if (!map.has(cat)) map.set(cat, {pos:0,neg:0,net:0});
-    const v = map.get(cat);
-    const amt = +d.amount||0;
-    if (amt>=0) v.pos += amt; else v.neg += amt;
-    v.net += amt;
-  });
-  const rows = Array.from(map.entries())
-    .sort((a,b)=>a[0].localeCompare(b[0],"he"))
-    .map(([cat,v])=>`
-      <tr>
-        <td>${escapeHtml(cat)}</td>
-        <td class="amount-pos">${money(v.pos)}</td>
-        <td class="amount-neg">${money(v.neg)}</td>
-        <td><b>${money(v.net)}</b></td>
-      </tr>
-    `).join("");
-  $("#catSummaryBody").innerHTML = rows || `<tr><td colspan="4" class="note">אין נתונים לחודש זה.</td></tr>`;
-}
-function renderTopSuppliers(){
-  const m = currentMonthObj();
-  const map = new Map();
-  (m.docs||[]).forEach(d=>{
-    const s = supplierById(d.supplierId);
-    const key = d.supplierId || "unknown";
-    const name = s ? s.name : "—";
-    const cat = s ? (s.category||"לא משויך") : "לא משויך";
-    if (!map.has(key)) map.set(key,{name,cat,count:0,sum:0});
-    const v = map.get(key);
-    v.count++;
-    v.sum += (+d.amount||0);
-  });
-
-  const rows = Array.from(map.values())
-    .sort((a,b)=>Math.abs(b.sum)-Math.abs(a.sum))
-    .slice(0,10)
-    .map(v=>`
-      <tr>
-        <td>${escapeHtml(v.name)}</td>
-        <td>${escapeHtml(v.cat)}</td>
-        <td>${v.count}</td>
-        <td><b>${money(v.sum)}</b></td>
-      </tr>
-    `).join("");
-  $("#topSupBody").innerHTML = rows || `<tr><td colspan="4" class="note">אין נתונים לחודש זה.</td></tr>`;
-}
-
-/* ================= DOCUMENTS ================= */
-function docKindPill(d){
-  if (d.type==="זיכוי") return `<span class="pill credit">זיכוי</span>`;
-  return ``;
-}
-function getDocsFiltered(){
-  const m = currentMonthObj();
-  const filterSup = $("#filterSupplier").value || "";
-  const filterCat = $("#filterCategory").value || "";
-  const filterType = $("#filterDocType").value || "";
-  const filterStatus = $("#filterDocStatus").value || "";
-
-  return (m.docs||[]).filter(d=>{
-    const s = supplierById(d.supplierId);
-    const cat = s ? (s.category||"לא משויך") : "לא משויך";
-
-    if (filterSup && d.supplierId !== filterSup) return false;
-    if (filterCat && cat !== filterCat) return false;
-    if (filterType && (d.type||"") !== filterType) return false;
-    if (filterStatus && (d.status||"") !== filterStatus) return false;
-
-    return true;
-  });
-}
-function renderDocuments(){
-  const docs = getDocsFiltered().sort((a,b)=>(b.date||"").localeCompare((a.date||""),"he"));
-
-  $("#docsEmpty").classList.toggle("hide", (currentMonthObj().docs||[]).length !== 0);
-
-  const rows = docs.map(d=>{
-    const s = supplierById(d.supplierId);
-    const sname = s ? s.name : (d.supplierName || "—"); // fallback
-    const cat = s ? (s.category||"לא משויך") : (d.supplierCategory || "לא משויך");
-    const amt = +d.amount||0;
-    const amtClass = amt>=0 ? "amount-pos" : "amount-neg";
-
-    return `
-      <tr>
-        <td>${escapeHtml(d.date||"")}</td>
-        <td>${escapeHtml(d.docNo||"")}</td>
-        <td>${escapeHtml(d.type||"")} ${docKindPill(d)}</td>
-        <td>${escapeHtml(sname)}</td>
-        <td>${escapeHtml(cat)}</td>
-        <td class="${amtClass}">${money(amt)}</td>
-        <td>
-          <select data-docstatus="${d.id}" style="min-width:110px">
-            <option value="שולם" ${d.status==="שולם"?"selected":""}>שולם</option>
-            <option value="לא שולם" ${d.status==="לא שולם"?"selected":""}>לא שולם</option>
-          </select>
-        </td>
-        <td>
-          <button class="outline small" data-expand="${d.id}">הרחב</button>
-          <button class="outline small" data-editdoc="${d.id}">ערוך</button>
-          <button class="danger small" data-deldoc="${d.id}">מחק</button>
-          <div class="details hide" id="det_${d.id}">
-            ${renderDocDetails(d)}
+/* ========== RENDER ========== */
+function render(){
+  const list=document.getElementById("docList");
+  list.innerHTML="";
+  suppliers.forEach(s=>{
+    const group=document.createElement("div");
+    group.className="supplierGroup";
+    group.innerHTML=`<div class="supplierHeader">${s.name}</div>`;
+    documents.filter(d=>d.supplier===s.name).forEach(d=>{
+      const div=document.createElement("div");
+      div.className=`doc ${d.status}`;
+      div.innerHTML=`
+        <div class="docHeader">
+          <div>📄 ${d.number} – ₪${d.total}</div>
+          <div class="docActions">
+            <button onclick="deleteDoc(${d.id})">🗑</button>
           </div>
-        </td>
-      </tr>
-    `;
-  }).join("");
-
-  $("#docsBody").innerHTML = rows || `<tr><td colspan="8" class="note">אין תוצאות לפי הסינון.</td></tr>`;
-
-  $$("[data-expand]").forEach(btn=>{
-    btn.onclick = ()=>{
-      const id = btn.getAttribute("data-expand");
-      const el = $("#det_"+id);
-      el.classList.toggle("hide");
-      btn.textContent = el.classList.contains("hide") ? "הרחב" : "צמצם";
-    };
-  });
-
-  $$("[data-docstatus]").forEach(sel=>{
-    sel.onchange = ()=>{
-      const id = sel.getAttribute("data-docstatus");
-      const doc = (currentMonthObj().docs||[]).find(x=>x.id===id);
-      if(doc){
-        doc.status = sel.value;
-        save();
-        toast("סטטוס עודכן");
-        renderDashboard();
-      }
-    };
-  });
-
-  $$("[data-editdoc]").forEach(btn=>{
-    btn.onclick = ()=> openDocModalForEdit(btn.getAttribute("data-editdoc"));
-  });
-
-  $$("[data-deldoc]").forEach(btn=>{
-    btn.onclick = ()=> deleteDoc(btn.getAttribute("data-deldoc"));
-  });
-}
-function renderDocDetails(d){
-  const s = supplierById(d.supplierId);
-  const sname = s ? s.name : (d.supplierName || "—");
-  const lines = (d.lines||[]);
-  const hasLines = lines.length>0;
-
-  let linesHtml = `<div class="note">אין פירוט פריטים.</div>`;
-  if (hasLines){
-    const rows = lines.map(ln=>{
-      const nm = ln.name || (ln.itemId ? (itemById(ln.itemId)?.name || "—") : "—");
-      const qty = +ln.qty||0;
-      const price = +ln.unitPrice||0;
-      const sub = qty*price;
-      const unit = ln.unit || (ln.itemId ? (itemById(ln.itemId)?.unit || "") : "");
-      return `
-        <tr>
-          <td>${escapeHtml(nm)}</td>
-          <td>${qty}</td>
-          <td>${money(price)}</td>
-          <td>${escapeHtml(unit||"")}</td>
-          <td><b>${money(sub)}</b></td>
-        </tr>
+        </div>
+        <div>סטטוס: ${d.status}</div>
+        <div>אחראי: ${d.owner}</div>
       `;
-    }).join("");
-
-    linesHtml = `
-      <div class="tableWrap" style="border-radius:12px;min-width:0">
-        <table style="min-width:560px">
-          <thead>
-            <tr><th>פריט</th><th>כמות</th><th>מחיר יח׳/ק״ג</th><th>יחידה</th><th>סה״כ</th></tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
-    `;
-  }
-
-  return `
-    <div class="note"><b>ספק:</b> ${escapeHtml(sname)} | <b>סוג:</b> ${escapeHtml(d.type||"")}</div>
-    <div class="note"><b>מע״מ:</b> ${d.vatApplied ? "כן" : "לא"} | <b>סטטוס:</b> ${escapeHtml(d.status||"")}</div>
-    <div class="spacer"></div>
-    ${linesHtml}
-    <div class="spacer"></div>
-    <div class="note"><b>הערות:</b> ${escapeHtml(d.notes||"") || "—"}</div>
-    <div class="spacer"></div>
-    <div class="note"><b>סה״כ לפני מע״מ:</b> ${money(d.baseSubtotal||0)} | <b>סה״כ נטו:</b> ${money(d.amount||0)}</div>
-  `;
+      group.appendChild(div);
+    });
+    list.appendChild(group);
+  });
 }
+
+/* ========== CRUD ========== */
+function openNewDoc(){
+  const supplier=suppliers[0];
+  const item=supplier.items[0];
+  const total=itemPrices[item];
+  const doc={
+    id:Date.now(),
+    supplier:supplier.name,
+    number:prompt("מס׳ מסמך"),
+    status:"ordered",
+    owner:prompt("אחראי הזמנה"),
+    total
+  };
+  if(!doc.number){alert("חובה מס׳ מסמך");return}
+  if(documents.some(d=>d.number===doc.number)){
+    alert("מס׳ מסמך כפול");
+    return;
+  }
+  documents.push(doc);
+  render();
+  showSummary(doc);
+}
+
 function deleteDoc(id){
-  const m = currentMonthObj();
-  const idx = (m.docs||[]).findIndex(d=>d.id===id);
-  if (idx<0) return;
-  const d = m.docs[idx];
-  if (!confirm(`למחוק מסמך "${d.docNo||""}"? הפעולה בלתי הפיכה.`)) return;
-  m.docs.splice(idx,1);
-  save();
-  toast("המסמך נמחק");
-  renderAll();
+  const idx=documents.findIndex(d=>d.id===id);
+  undoStack=documents[idx];
+  documents.splice(idx,1);
+  render();
+  toast("מסמך נמחק – בטל?");
+  setTimeout(()=>undoStack=null,10000);
 }
 
-/* ================= SUPPLIERS (EDIT/DELETE) ================= */
-function renderSuppliers(){
-  const q = ($("#supplierSearch").value || "").trim();
-  const filterCat = $("#supplierCatFilter").value || "";
-  const list = state.suppliers.filter(s=>{
-    if (s.active===false) return false;
-    if (q && !s.name.includes(q)) return false;
-    if (filterCat && s.category !== filterCat) return false;
-    return true;
-  });
-  $("#supEmpty").classList.toggle("hide", list.length!==0);
-
-  const rows = list.map(s=>`
-    <tr>
-      <td>${escapeHtml(s.name)}</td>
-      <td>${escapeHtml(s.category||"לא משויך")}</td>
-      <td>${escapeHtml(s.phone||"")}</td>
-      <td>${escapeHtml(s.email||"")}</td>
-      <td>${escapeHtml(s.notes||"")}</td>
-      <td>
-        <button class="outline small" data-editsup="${s.id}">ערוך</button>
-        <button class="danger small" data-delsup="${s.id}">מחק</button>
-      </td>
-    </tr>
-  `).join("");
-  $("#supBody").innerHTML = rows || `<tr><td colspan="6" class="note">אין תוצאות לפי הסינון.</td></tr>`;
-  $$("[data-editsup]").forEach(btn=> btn.onclick = ()=> openSupplierModalForEdit(btn.getAttribute("data-editsup")));
-  $$("[data-delsup]").forEach(btn=> btn.onclick = ()=> requestDeleteSupplier(btn.getAttribute("data-delsup")));
-}
-function countSupplierDocs(supplierId){
-  let c=0;
-  Object.values(state.months||{}).forEach(m=>{
-    (m.docs||[]).forEach(d=>{ if(d.supplierId===supplierId) c++; });
-  });
-  return c;
-}
-let pendingSupplierDeleteId = null;
-function requestDeleteSupplier(id){
-  const s = supplierById(id);
-  if (!s) return;
-  const docsCount = countSupplierDocs(id);
-  if (docsCount === 0){
-    if (!confirm(`למחוק את הספק "${s.name}"?`)) return;
-    state.suppliers = state.suppliers.filter(x=>x.id!==id);
-    save(); toast("הספק נמחק"); renderAll();
-    return;
-  }
-  pendingSupplierDeleteId = id;
-  $("#supDelInfo").innerHTML = `לספק <b>${escapeHtml(s.name)}</b> יש <b>${docsCount}</b> מסמכים.`;
-  $("#supDelMergeSelect").innerHTML =
-    activeSuppliers().filter(x=>x.id!==id)
-      .map(x=>`<option value="${x.id}">${escapeHtml(x.name)}</option>`).join("")
-    || `<option value="">אין ספק אחר</option>`;
-  openModal("supplierDeleteModal");
-}
-$("#supDelCancelBtn").addEventListener("click", ()=>{
-  pendingSupplierDeleteId=null;
-  closeModal("supplierDeleteModal");
-});
-$("#supDelDisableBtn").addEventListener("click", ()=>{
-  if (!pendingSupplierDeleteId) return;
-  const s = supplierById(pendingSupplierDeleteId);
-  if (!s) return;
-  s.active = false;
-  save();
-  toast("הספק הושבת");
-  pendingSupplierDeleteId=null;
-  closeModal("supplierDeleteModal");
-  renderAll();
-});
-$("#supDelMergeBtn").addEventListener("click", ()=>{
-  if (!pendingSupplierDeleteId) return;
-  const targetId = $("#supDelMergeSelect").value;
-  if (!targetId){ toast("בחר ספק יעד למיזוג"); return; }
-  const srcId = pendingSupplierDeleteId;
-
-  Object.values(state.months||{}).forEach(m=>{
-    (m.docs||[]).forEach(d=>{ if (d.supplierId===srcId) d.supplierId = targetId; });
-  });
-  state.suppliers = state.suppliers.filter(s=>s.id!==srcId);
-  save();
-  toast("בוצע מיזוג ומחיקה");
-  pendingSupplierDeleteId=null;
-  closeModal("supplierDeleteModal");
-  renderAll();
-});
-
-/* ================= ITEMS (EDIT/DELETE) ================= */
-function countItemUsage(itemId){
-  let c=0;
-  Object.values(state.months||{}).forEach(m=>{
-    (m.docs||[]).forEach(d=>{
-      (d.lines||[]).forEach(ln=>{ if (ln.itemId===itemId) c++; });
-    });
-  });
-  return c;
-}
-function renderItems(){
-  const q = ($("#itemSearch").value || "").trim();
-  const filterCat = $("#itemCatFilter").value || "";
-  const list = state.items.filter(i=>{
-    if (i.active===false) return false;
-    if (q && !i.name.includes(q)) return false;
-    if (filterCat && i.category !== filterCat) return false;
-    return true;
-  });
-  $("#itemsEmpty").classList.toggle("hide", list.length!==0);
-
-  const rows = list.map(i=>`
-    <tr>
-      <td>${escapeHtml(i.name)}</td>
-      <td>${escapeHtml(i.category||"לא משויך")}</td>
-      <td>${money(i.price||0)}</td>
-      <td>${escapeHtml(i.unit||"")}</td>
-      <td>
-        <button class="outline small" data-edititem="${i.id}">ערוך</button>
-        <button class="danger small" data-delitem="${i.id}">מחק</button>
-      </td>
-    </tr>
-  `).join("");
-  $("#itemsBody").innerHTML = rows || `<tr><td colspan="5" class="note">אין תוצאות לפי הסינון.</td></tr>`;
-  $$("[data-edititem]").forEach(btn=> btn.onclick = ()=> openItemModalForEdit(btn.getAttribute("data-edititem")));
-  $$("[data-delitem]").forEach(btn=> btn.onclick = ()=> requestDeleteItem(btn.getAttribute("data-delitem")));
-}
-let pendingItemDeleteId=null;
-function requestDeleteItem(id){
-  const it = itemById(id);
-  if (!it) return;
-
-  const usage = countItemUsage(id);
-  if (usage===0){
-    if (!confirm(`למחוק את הפריט "${it.name}"?`)) return;
-    state.items = state.items.filter(x=>x.id!==id);
-    save(); toast("הפריט נמחק"); renderAll();
-    return;
-  }
-
-  pendingItemDeleteId = id;
-  $("#itemDelInfo").innerHTML = `לפריט <b>${escapeHtml(it.name)}</b> יש שימוש ב-<b>${usage}</b> שורות מסמכים.`;
-  $("#itemDelMergeSelect").innerHTML =
-    activeItems().filter(x=>x.id!==id)
-      .map(x=>`<option value="${x.id}">${escapeHtml(x.name)}</option>`).join("")
-    || `<option value="">אין פריט אחר</option>`;
-  openModal("itemDeleteModal");
-}
-$("#itemDelCancelBtn").addEventListener("click", ()=>{
-  pendingItemDeleteId=null;
-  closeModal("itemDeleteModal");
-});
-$("#itemDelDisableBtn").addEventListener("click", ()=>{
-  if (!pendingItemDeleteId) return;
-  const it = itemById(pendingItemDeleteId);
-  if (!it) return;
-  it.active = false;
-  save();
-  toast("הפריט הושבת");
-  pendingItemDeleteId=null;
-  closeModal("itemDeleteModal");
-  renderAll();
-});
-$("#itemDelMergeBtn").addEventListener("click", ()=>{
-  if (!pendingItemDeleteId) return;
-  const targetId = $("#itemDelMergeSelect").value;
-  if (!targetId){ toast("בחר פריט יעד למיזוג"); return; }
-  const srcId = pendingItemDeleteId;
-
-  Object.values(state.months||{}).forEach(m=>{
-    (m.docs||[]).forEach(d=>{
-      (d.lines||[]).forEach(ln=>{
-        if (ln.itemId===srcId){
-          const target = itemById(targetId);
-          ln.itemId = targetId;
-          ln.name = target ? target.name : ln.name;
-          ln.unit = target ? target.unit : ln.unit;
-          if (!ln.unitPrice) ln.unitPrice = target ? (+target.price||0) : 0;
-        }
-      });
-      recomputeDocAmounts(d);
-    });
-  });
-
-  state.items = state.items.filter(x=>x.id!==srcId);
-  save();
-  toast("בוצע מיזוג ומחיקה");
-  pendingItemDeleteId=null;
-  closeModal("itemDeleteModal");
-  renderAll();
-});
-
-/* ================= CATEGORIES (ADD/EDIT/DELETE) ================= */
-function countCategoryUsage(cat){
-  let sup=0, items=0;
-  state.suppliers.forEach(s=>{ if (s.active!==false && (s.category||"לא משויך")===cat) sup++; });
-  state.items.forEach(i=>{ if (i.active!==false && (i.category||"לא משויך")===cat) items++; });
-  return {sup, items};
-}
-function renderCategories(){
-  const q = ($("#catSearch").value||"").trim();
-  const cats = state.categories.slice().sort((a,b)=>a.localeCompare(b,"he"))
-    .filter(c=> !q || c.includes(q));
-
-  $("#catEmpty").classList.toggle("hide", cats.length!==0);
-
-  const rows = cats.map(c=>{
-    const u = countCategoryUsage(c);
-    const disabled = PROTECTED_CATEGORIES.has(c);
-    return `
-      <tr>
-        <td>${escapeHtml(c)}</td>
-        <td>${u.sup}</td>
-        <td>${u.items}</td>
-        <td>
-          <button class="outline small" data-editcat="${escapeHtml(c)}">ערוך</button>
-          <button class="danger small" data-delcat="${escapeHtml(c)}" ${disabled?'disabled style="opacity:.5;cursor:not-allowed"':''}>מחק</button>
-        </td>
-      </tr>
-    `;
-  }).join("");
-  $("#catBody").innerHTML = rows || `<tr><td colspan="4" class="note">אין תוצאות לפי הסינון.</td></tr>`;
-
-  $$("[data-editcat]").forEach(btn=>{
-    btn.onclick = ()=> openCatModalForEdit(btn.getAttribute("data-editcat"));
-  });
-  $$("[data-delcat]").forEach(btn=>{
-    btn.onclick = ()=> requestDeleteCategory(btn.getAttribute("data-delcat"));
-  });
+function showSummary(doc){
+  document.getElementById("stickyBar").style.display="block";
+  document.getElementById("sumTotal").innerText="₪"+doc.total;
+  document.getElementById("sumStatus").innerText=doc.status;
 }
 
-function openCatModalForAdd(){
-  $("#catModalTitle").textContent = "קטגוריה חדשה";
-  $("#catEditName").value = "";
-  $("#catName").value = "";
-  openModal("catModal");
-}
-function openCatModalForEdit(name){
-  $("#catModalTitle").textContent = "עריכת קטגוריה";
-  $("#catEditName").value = name;
-  $("#catName").value = name;
-  openModal("catModal");
-}
-$("#addCategory").addEventListener("click", openCatModalForAdd);
-$("#cancelCatBtn").addEventListener("click", ()=> closeModal("catModal"));
-
-function renameCategory(oldName, newName){
-  if (oldName === newName) return;
-  state.suppliers.forEach(s=>{ if ((s.category||"לא משויך")===oldName) s.category = newName; });
-  state.items.forEach(i=>{ if ((i.category||"לא משויך")===oldName) i.category = newName; });
-  // also category list itself
-  state.categories = state.categories.filter(c=>c!==oldName);
-  if (!state.categories.includes(newName)) state.categories.push(newName);
-  state.categories = Array.from(new Set(state.categories)).sort((a,b)=>a.localeCompare(b,"he"));
-}
-
-$("#saveCatBtn").addEventListener("click", ()=>{
-  const oldName = ($("#catEditName").value||"").trim();
-  const name = ($("#catName").value||"").trim();
-  if (!name){ toast("חובה שם קטגוריה"); return; }
-  if (PROTECTED_CATEGORIES.has(oldName) && oldName !== name){
-    toast("אי אפשר לשנות שם של קטגוריה מוגנת");
-    return;
-  }
-  if (state.categories.includes(name) && oldName !== name){
-    toast("קטגוריה כזו כבר קיימת");
-    return;
-  }
-
-  if (oldName){
-    renameCategory(oldName, name);
-    toast("הקטגוריה עודכנה");
-  } else {
-    if (!state.categories.includes(name)) state.categories.push(name);
-    state.categories = Array.from(new Set(state.categories)).sort((a,b)=>a.localeCompare(b,"he"));
-    toast("נוספה קטגוריה");
-  }
-
-  closeModal("catModal");
-  save();
-  renderAll();
-});
-
-let pendingCatDeleteName = "";
-function requestDeleteCategory(name){
-  name = decodeURIComponent(name);
-  if (PROTECTED_CATEGORIES.has(name)){
-    toast("אי אפשר למחוק קטגוריה מוגנת");
-    return;
-  }
-  pendingCatDeleteName = name;
-  const u = countCategoryUsage(name);
-  $("#catDelInfo").innerHTML = `קטגוריה: <b>${escapeHtml(name)}</b> | ספקים: <b>${u.sup}</b> | פריטים: <b>${u.items}</b>`;
-  $("#catDelMergeSelect").innerHTML =
-    state.categories.filter(c=>c!==name)
-      .map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
-  openModal("catDeleteModal");
-}
-$("#catDelCancelBtn").addEventListener("click", ()=>{
-  pendingCatDeleteName="";
-  closeModal("catDeleteModal");
-});
-function mergeCategoryTo(target){
-  const src = pendingCatDeleteName;
-  if (!src) return;
-
-  state.suppliers.forEach(s=>{ if ((s.category||"לא משויך")===src) s.category = target; });
-  state.items.forEach(i=>{ if ((i.category||"לא משויך")===src) i.category = target; });
-
-  state.categories = state.categories.filter(c=>c!==src);
-  if (!state.categories.includes(target)) state.categories.push(target);
-  state.categories = Array.from(new Set(state.categories)).sort((a,b)=>a.localeCompare(b,"he"));
-
-  save();
-  toast("בוצע מיזוג ומחיקה");
-  pendingCatDeleteName="";
-  closeModal("catDeleteModal");
-  renderAll();
-}
-$("#catDelMergeBtn").addEventListener("click", ()=>{
-  const target = $("#catDelMergeSelect").value || "לא משויך";
-  mergeCategoryTo(target);
-});
-$("#catDelToUnassignedBtn").addEventListener("click", ()=> mergeCategoryTo("לא משויך"));
-
-/* ================= SUPPLIER MODAL (ADD/EDIT) ================= */
-let docModalOpen = false;
-
-function openSupplierModalForAdd(prefillName=""){
-  $("#supplierModalTitle").textContent = "הוספת ספק";
-  $("#supEditId").value = "";
-  $("#supName").value = prefillName || "";
-  $("#supCat").value = "לא משויך";
-  $("#supPhone").value = "";
-  $("#supEmail").value = "";
-  $("#supNotes").value = "";
-  openModal("supplierModal");
-}
-function openSupplierModalForEdit(id){
-  const s = supplierById(id);
-  if (!s) return;
-  $("#supplierModalTitle").textContent = "עריכת ספק";
-  $("#supEditId").value = s.id;
-  $("#supName").value = s.name || "";
-  $("#supCat").value = s.category || "לא משויך";
-  $("#supPhone").value = s.phone || "";
-  $("#supEmail").value = s.email || "";
-  $("#supNotes").value = s.notes || "";
-  openModal("supplierModal");
-}
-$("#addSupplier").addEventListener("click", ()=> openSupplierModalForAdd());
-$("#cancelSupplierBtn").addEventListener("click", ()=> closeModal("supplierModal"));
-
-$("#saveSupplierBtn").addEventListener("click", ()=>{
-  const editId = ($("#supEditId").value||"").trim();
-  const name = ($("#supName").value||"").trim();
-  let category = $("#supCat").value || "לא משויך";
-  const phone = ($("#supPhone").value||"").trim();
-  const email = ($("#supEmail").value||"").trim();
-  const notes = ($("#supNotes").value||"").trim();
-
-  if(!name){ toast("חובה שם ספק"); return; }
-  if (!state.categories.includes(category)) category = "לא משויך";
-
-  const dup = state.suppliers.find(s=> s.name===name && s.id!==editId);
-  if (dup){ toast("קיים ספק עם אותו שם"); return; }
-
-  if (editId){
-    const s = supplierById(editId);
-    if (!s) { toast("שגיאה: ספק לא נמצא"); return; }
-    s.name = name; s.category = category; s.phone = phone; s.email = email; s.notes = notes; s.active = true;
-    state.suppliers.sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
-    save(); toast("הספק עודכן");
-  } else {
-    state.suppliers.push({id:uid(), name, category, phone, email, notes, active:true});
-    state.suppliers.sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
-    save(); toast("נוסף ספק");
-  }
-
-  closeModal("supplierModal");
-
-  if (docModalOpen){
-    refreshDocSupplierList();
-    updateDocSupplierCategoryUI();
-    toast("הספק זמין במסמך");
-  } else {
-    renderAll();
-  }
-});
-
-/* ================= ITEM MODAL (ADD/EDIT) ================= */
-function openItemModalForAdd(){
-  $("#itemModalTitle").textContent = "הוספת פריט";
-  $("#itemEditId").value="";
-  $("#itemName").value="";
-  $("#itemCategory").value="מזון";
-  $("#itemPrice").value="";
-  $("#itemUnit").value="ק״ג";
-  openModal("itemModal");
-}
-function openItemModalForEdit(id){
-  const it = itemById(id);
-  if (!it) return;
-  $("#itemModalTitle").textContent = "עריכת פריט";
-  $("#itemEditId").value = it.id;
-  $("#itemName").value = it.name || "";
-  $("#itemCategory").value = it.category || "לא משויך";
-  $("#itemPrice").value = +it.price || 0;
-  $("#itemUnit").value = it.unit || "יחידה";
-  openModal("itemModal");
-}
-$("#addItem").addEventListener("click", openItemModalForAdd);
-$("#cancelItemBtn").addEventListener("click", ()=> closeModal("itemModal"));
-
-$("#saveItemBtn").addEventListener("click", ()=>{
-  const editId = ($("#itemEditId").value||"").trim();
-  const name = ($("#itemName").value||"").trim();
-  let category = $("#itemCategory").value || "לא משויך";
-  const price = +($("#itemPrice").value||0);
-  const unit = $("#itemUnit").value || "יחידה";
-
-  if(!name){ toast("חובה שם פריט"); return; }
-  if (!state.categories.includes(category)) category = "לא משויך";
-
-  const dup = state.items.find(i=> i.name===name && i.id!==editId);
-  if (dup){ toast("קיים פריט עם אותו שם"); return; }
-
-  if (editId){
-    const it = itemById(editId);
-    if (!it) { toast("שגיאה: פריט לא נמצא"); return; }
-    it.name = name; it.category = category; it.price = price; it.unit = unit; it.active = true;
-    state.items.sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
-    save(); toast("הפריט עודכן");
-  } else {
-    state.items.push({id:uid(), name, category, price, unit, active:true});
-    state.items.sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
-    save(); toast("נוסף פריט");
-  }
-
-  closeModal("itemModal");
-
-  if (docModalOpen){
-    renderLines();
-    updateDocTotalsPreview();
-    toast("הפריט נוסף וזמין במסמך");
-  } else {
-    renderAll();
-  }
-});
-
-/* ================= CATEGORY SEARCH EVENT ================= */
-$("#catSearch").addEventListener("input", renderCategories);
-
-/* ================= DOC MODAL (ADD/EDIT) ================= */
-let tempLines = [];
-
-function refreshDocSupplierList(){
-  const list = activeSuppliers().slice(0,500);
-  $("#docSupplierSelect").innerHTML =
-    list.map(s=>`<option value="${s.id}">${escapeHtml(s.name)}</option>`).join("")
-    || `<option value="">אין ספקים</option>`;
-}
-function updateDocSupplierCategoryUI(){
-  const sid = $("#docSupplierSelect").value;
-  const s = supplierById(sid);
-  $("#docSupplierCategory").value = s ? (s.category || "לא משויך") : "";
-}
-function resetDocModal(){
-  $("#docModalTitle").textContent = "מסמך חדש";
-  $("#docEditId").value = "";
-  $("#docDate").value = new Date().toISOString().slice(0,10);
-  $("#docType").value = "חשבונית";
-  $("#docNo").value = "";
-  $("#docStatus").value = "שולם";
-  $("#docVat").checked = true;
-  $("#docNotes").value = "";
-  $("#docManualAmount").value = "";
-  tempLines = [];
-  renderLines();
-  updateDocTotalsPreview();
-}
-function openDocModalForAdd(){
-  resetDocModal();
-  refreshDocSupplierList();
-  const first = $("#docSupplierSelect").querySelector("option");
-  if (first) $("#docSupplierSelect").value = first.value;
-  updateDocSupplierCategoryUI();
-  docModalOpen = true;
-  openModal("docModal");
-}
-function openDocModalForEdit(docId){
-  const m = currentMonthObj();
-  const d = (m.docs||[]).find(x=>x.id===docId);
-  if (!d) return;
-
-  $("#docModalTitle").textContent = "עריכת מסמך";
-  $("#docEditId").value = d.id;
-  $("#docDate").value = d.date || new Date().toISOString().slice(0,10);
-  $("#docType").value = d.type || "חשבונית";
-  $("#docNo").value = d.docNo || "";
-  $("#docStatus").value = d.status || "שולם";
-  $("#docVat").checked = !!d.vatApplied;
-  $("#docNotes").value = d.notes || "";
-  $("#docManualAmount").value = +d.manualAmount || 0;
-
-  refreshDocSupplierList();
-  if (d.supplierId) $("#docSupplierSelect").value = d.supplierId;
-  updateDocSupplierCategoryUI();
-
-  tempLines = (d.lines||[]).map(ln=>({
-    id: ln.id || uid(),
-    itemId: ln.itemId || "",
-    name: ln.name || "",
-    qty: +ln.qty || 0,
-    unitPrice: +ln.unitPrice || 0,
-    unit: ln.unit || ""
-  }));
-
-  renderLines();
-  updateDocTotalsPreview();
-  docModalOpen = true;
-  openModal("docModal");
-}
-$("#addDoc").addEventListener("click", openDocModalForAdd);
-$("#cancelDocBtn").addEventListener("click", ()=>{ docModalOpen=false; closeModal("docModal"); });
-
-$("#docSupplierSelect").addEventListener("change", ()=>{
-  updateDocSupplierCategoryUI();
-  renderLines();
-  updateDocTotalsPreview();
-});
-$("#docType").addEventListener("change", updateDocTotalsPreview);
-$("#docAddSupplierBtn").addEventListener("click", ()=> openSupplierModalForAdd(""));
-$("#docAddItemBtn").addEventListener("click", ()=> openItemModalForAdd());
-
-function getSelectedSupplierCategory(){
-  const sid = $("#docSupplierSelect").value;
-  const s = supplierById(sid);
-  return s ? (s.category||"לא משויך") : "";
-}
-function itemOptionsHtml(filterCategory){
-  const itemsCat = activeItems()
-    .filter(it => !filterCategory || it.category===filterCategory || filterCategory==="לא משויך")
-    .sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
-  const use = itemsCat.length ? itemsCat : activeItems().slice().sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
-
-  return `<option value="">בחר פריט…</option>` + use.map(it=>{
-    const meta = `${it.category} • ${money(it.price||0)} / ${it.unit||""}`;
-    return `<option value="${it.id}">${escapeHtml(it.name)} (${escapeHtml(meta)})</option>`;
-  }).join("");
-}
-function renderLines(){
-  const cat = getSelectedSupplierCategory();
-  $("#linesHost").innerHTML = tempLines.map(ln=>{
-    const opts = itemOptionsHtml(cat);
-    return `
-      <div class="lineRow" data-line="${ln.id}">
-        <div class="span2">
-          <label>פריט</label>
-          <select data-line-item="${ln.id}">
-            ${opts}
-          </select>
-        </div>
-
-        <div>
-          <label>כמות</label>
-          <input type="number" inputmode="decimal" data-line-qty="${ln.id}" value="${ln.qty}">
-        </div>
-
-        <div>
-          <label>מחיר</label>
-          <input type="number" inputmode="decimal" data-line-price="${ln.id}" value="${ln.unitPrice}">
-        </div>
-
-        <div>
-          <label>יחידה</label>
-          <input data-line-unit="${ln.id}" value="${escapeHtml(ln.unit||"")}" placeholder="ק״ג/יחידה" />
-        </div>
-
-        <div class="lineActions">
-          <button class="danger small" data-line-del="${ln.id}">X</button>
-        </div>
-      </div>
-    `;
-  }).join("") || `<div class="empty">אין פירוט פריטים. לחץ על <b>+ שורה</b> כדי להוסיף.</div>`;
-
-  tempLines.forEach(ln=>{
-    const sel = document.querySelector(`[data-line-item="${ln.id}"]`);
-    if (sel) sel.value = ln.itemId || "";
-  });
-
-  $$("[data-line-item]").forEach(sel=>{
-    sel.onchange = ()=>{
-      const lid = sel.getAttribute("data-line-item");
-      const ln = tempLines.find(x=>x.id===lid);
-      if (!ln) return;
-      ln.itemId = sel.value || "";
-
-      const it = itemById(ln.itemId);
-      if (it){
-        ln.name = it.name;
-        if (!ln.unitPrice) ln.unitPrice = +it.price || 0;
-        if (!ln.unit) ln.unit = it.unit || "";
-      } else ln.name = "";
-
-      const unitInp = document.querySelector(`[data-line-unit="${lid}"]`);
-      if (unitInp) unitInp.value = ln.unit || "";
-      const priceInp = document.querySelector(`[data-line-price="${lid}"]`);
-      if (priceInp) priceInp.value = ln.unitPrice || 0;
-
-      updateDocTotalsPreview();
-    };
-  });
-
-  $$("[data-line-qty]").forEach(inp=>{
-    inp.oninput = ()=>{
-      const lid = inp.getAttribute("data-line-qty");
-      const ln = tempLines.find(x=>x.id===lid);
-      if (!ln) return;
-      ln.qty = +inp.value || 0;
-      updateDocTotalsPreview();
-    };
-  });
-
-  $$("[data-line-price]").forEach(inp=>{
-    inp.oninput = ()=>{
-      const lid = inp.getAttribute("data-line-price");
-      const ln = tempLines.find(x=>x.id===lid);
-      if (!ln) return;
-      ln.unitPrice = +inp.value || 0;
-      updateDocTotalsPreview();
-    };
-  });
-
-  $$("[data-line-unit]").forEach(inp=>{
-    inp.oninput = ()=>{
-      const lid = inp.getAttribute("data-line-unit");
-      const ln = tempLines.find(x=>x.id===lid);
-      if (!ln) return;
-      ln.unit = inp.value || "";
-      updateDocTotalsPreview();
-    };
-  });
-
-  $$("[data-line-del]").forEach(btn=>{
-    btn.onclick = ()=>{
-      const lid = btn.getAttribute("data-line-del");
-      tempLines = tempLines.filter(x=>x.id!==lid);
-      renderLines();
-      updateDocTotalsPreview();
-    };
-  });
-}
-$("#addLineBtn").addEventListener("click", ()=>{
-  tempLines.push({id:uid(), itemId:"", name:"", qty:1, unitPrice:0, unit:""});
-  renderLines();
-  updateDocTotalsPreview();
-});
-
-$("#docVat").addEventListener("change", updateDocTotalsPreview);
-$("#docManualAmount").addEventListener("input", updateDocTotalsPreview);
-
-function updateDocTotalsPreview(){
-  let base = 0;
-  if (tempLines.length){
-    base = tempLines.reduce((s,ln)=> s + ((+ln.qty||0) * (+ln.unitPrice||0)), 0);
-  } else {
-    base = +($("#docManualAmount").value||0);
-  }
-  $("#docSubtotal").textContent = money(base);
-
-  let total = base;
-  if ($("#docVat").checked) total *= 1.18;
-
-  const isCredit = ($("#docType").value === "זיכוי");
-  if (isCredit) total = -Math.abs(total);
-  else total = Math.abs(total);
-
-  $("#docTotal").textContent = money(total);
-}
-function isDuplicateDocNo(supplierId, docNo, ignoreId=""){
-  docNo = (docNo||"").trim();
-  if (!docNo) return false;
-  return (currentMonthObj().docs||[]).some(d =>
-    d.id !== ignoreId && d.supplierId===supplierId && (d.docNo||"").trim()===docNo
-  );
-}
-$("#saveDocBtn").addEventListener("click", ()=>{
-  const m = currentMonthObj();
-  const editId = ($("#docEditId").value||"").trim();
-  const supplierId = $("#docSupplierSelect").value;
-
-  if (!supplierId){ toast("בחר ספק מהרשימה"); return; }
-
-  const docNo = ($("#docNo").value||"").trim();
-  if (isDuplicateDocNo(supplierId, docNo, editId)){
-    toast("מס׳ מסמך כפול לאותו ספק בחודש הזה");
-    return;
-  }
-
-  const s = supplierById(supplierId);
-  const d = {
-    id: editId || uid(),
-    date: $("#docDate").value || new Date().toISOString().slice(0,10),
-    type: $("#docType").value || "חשבונית",
-    docNo,
-    supplierId,
-    supplierName: s ? s.name : "",
-    supplierCategory: s ? (s.category||"לא משויך") : "לא משויך",
-    status: $("#docStatus").value || "שולם",
-    vatApplied: $("#docVat").checked,
-    notes: ($("#docNotes").value||"").trim(),
-    manualAmount: +($("#docManualAmount").value||0),
-    lines: tempLines.map(ln=>{
-      const it = itemById(ln.itemId);
-      return {
-        id: ln.id || uid(),
-        itemId: ln.itemId || "",
-        name: (it ? it.name : (ln.name||"")),
-        qty: +ln.qty || 0,
-        unitPrice: +ln.unitPrice || 0,
-        unit: (ln.unit || (it ? it.unit : "")) || ""
-      };
-    })
-  };
-
-  normalizeDoc(d);
-  recomputeDocAmounts(d);
-
-  if (editId){
-    const idx = (m.docs||[]).findIndex(x=>x.id===editId);
-    if (idx<0){ toast("שגיאה: מסמך לא נמצא"); return; }
-    m.docs[idx] = d;
-    toast("המסמך עודכן");
-  } else {
-    m.docs.push(d);
-    toast("נוסף מסמך");
-  }
-
-  save();
-  docModalOpen = false;
-  closeModal("docModal");
-  renderAll();
-  switchScreen("documents");
-});
-
-/* ================= MONTH / INCOME ================= */
-$("#monthInput").addEventListener("change", (e)=>{
-  const v = e.target.value;
-  if (!v) return;
-  state.currentMonth = v;
-  ensureMonth(v);
-  save();
-  refreshMonthBadge();
-  $("#incomeInput").value = currentMonthObj().income || 0;
-  renderAll();
-});
-$("#incomeInput").addEventListener("input", (e)=>{
-  currentMonthObj().income = +e.target.value || 0;
-  save();
-  renderDashboard();
-});
-
-/* ================= EXPORT/IMPORT ================= */
-$("#exportBtn").addEventListener("click", ()=>{
-  const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `hatzeDef_${state.currentMonth}.json`;
-  a.click();
-  toast("בוצע ייצוא JSON");
-});
-$("#importBtn").addEventListener("click", ()=> $("#fileInput").click());
-$("#fileInput").addEventListener("change", (e)=>{
-  const f = e.target.files && e.target.files[0];
-  if(!f) return;
-  const r = new FileReader();
-  r.onload = ()=>{
-    try{
-      const incoming = JSON.parse(r.result);
-      state = incoming;
-
-      if (!state.theme) state.theme = "dark";
-      if (!state.currentMonth) state.currentMonth = new Date().toISOString().slice(0,7);
-      ensureMonth(state.currentMonth);
-
-      Object.keys(state.months || {}).forEach(m=>{
-        ensureMonth(m);
-        (state.months[m].docs||[]).forEach(d=>{
-          normalizeDoc(d);
-          (d.lines||[]).forEach(ln=>{
-            if (!ln.id) ln.id = uid();
-            if (ln.qty === undefined) ln.qty = 0;
-            if (ln.unitPrice === undefined) ln.unitPrice = 0;
-            if (!ln.name) ln.name = "";
-            if (!ln.unit) ln.unit = "";
-          });
-          recomputeDocAmounts(d);
-        });
-      });
-
-      mergeDefaults();
-      save();
-      applyTheme();
-      $("#monthInput").value = state.currentMonth;
-      $("#incomeInput").value = currentMonthObj().income || 0;
-      renderAll();
-      toast("ייבוא הצליח");
-    }catch(err){
-      alert("הקובץ לא תקין או לא בפורמט JSON.");
-    }
-  };
-  r.readAsText(f);
-});
-
-/* ================= FILTER EVENTS ================= */
-$("#filterSupplier").addEventListener("change", renderDocuments);
-$("#filterCategory").addEventListener("change", renderDocuments);
-$("#filterDocType").addEventListener("change", renderDocuments);
-$("#filterDocStatus").addEventListener("change", renderDocuments);
-
-$("#supplierSearch").addEventListener("input", renderSuppliers);
-$("#supplierCatFilter").addEventListener("change", renderSuppliers);
-
-$("#itemSearch").addEventListener("input", renderItems);
-$("#itemCatFilter").addEventListener("change", renderItems);
-
-$("#catSearch").addEventListener("input", renderCategories);
-
-/* ================= UI BUTTONS ================= */
-$("#toastBtn").addEventListener("click", ()=> $("#toast").classList.add("hide"));
-
-/* ================= RENDER ALL ================= */
-function renderAll(){
-  refreshMonthBadge();
-  fillSupplierFilters();
-  renderDashboard();
-  renderDocuments();
-  renderSuppliers();
-  renderCategories();
-  renderItems();
-}
-
-/* ================= INIT ================= */
-load();
-applyTheme();
-
-$("#monthInput").value = state.currentMonth;
-$("#incomeInput").value = currentMonthObj().income || 0;
-
-refreshMonthBadge();
-fillSupplierFilters();
-renderAll();
-switchScreen("dashboard");
+/* INIT */
+render();
 </script>
-</div>
+
 </body>
 </html>
