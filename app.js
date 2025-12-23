@@ -1,10 +1,4 @@
-import {
-  filterReportDocuments,
-  calcReportSummary,
-  calcReportBySupplier
-} from './calculations.js';
-
-import { $, $$, money, toast } from './utils.js';
+import { $, $$, money } from './utils.js';
 import { calcMonthlySummary } from './calculations.js';
 import { store, addDocument } from './state.js';
 
@@ -34,33 +28,35 @@ import { store, addDocument } from './state.js';
   /* ================= DASHBOARD ================= */
 
   function renderDashboard() {
-    const f = getFilters();
-    const data = store.state.documents.filter(inv => byFilters(inv, f));
+    const filters = getFilters();
+    const docs = store.state.documents.filter(d => byFilters(d, filters));
 
-    const summary = calcMonthlySummary(
-      data.map(d => ({
-        amount: d.amount,
-        type: d.type,
-        status: d.paid ? 'שולם' : 'לא שולם'
-      }))
-    );
+    const summary = calcMonthlySummary(docs);
 
     $('#kpiTotal').textContent = money(summary.expenses);
-    $('#kpiCount').textContent = data.length + ' רשומות';
+    $('#kpiCount').textContent = docs.length + ' רשומות';
     $('#kpiRecurring').textContent = money(
-      data.filter(i => i.type === 'recurring')
-          .reduce((s, i) => s + i.amount, 0)
+      docs.filter(d => d.type === 'recurring')
+          .reduce((s, d) => s + d.amount, 0)
     );
+    $('#kpiRecurringCount').textContent =
+      docs.filter(d => d.type === 'recurring').length + ' חשבוניות';
+
     $('#kpiOneoff').textContent = money(
-      data.filter(i => i.type === 'oneoff')
-          .reduce((s, i) => s + i.amount, 0)
+      docs.filter(d => d.type === 'oneoff')
+          .reduce((s, d) => s + d.amount, 0)
     );
+    $('#kpiOneoffCount').textContent =
+      docs.filter(d => d.type === 'oneoff').length + ' חשבוניות';
+
     $('#kpiAvg').textContent = money(
-      data.length ? summary.expenses / data.length : 0
+      docs.length ? summary.expenses / docs.length : 0
     );
 
-    const ob = $('.onboarding');
-    if (ob) ob.style.display = store.state.documents.length ? 'none' : 'flex';
+    const onboarding = $('.onboarding');
+    if (onboarding) {
+      onboarding.style.display = store.state.documents.length ? 'none' : 'flex';
+    }
   }
 
   /* ================= INVOICES ================= */
@@ -71,18 +67,33 @@ import { store, addDocument } from './state.js';
 
     const data = store.state.documents
       .slice()
-      .sort((a, b) => a.date.localeCompare(b.date));
+      .sort((a, b) => (a.date || '').localeCompare(b.date || ''));
 
     tbody.innerHTML = data.map(i => `
       <tr>
-        <td>${i.date}</td>
-        <td>${i.supplier}</td>
+        <td>${i.date || ''}</td>
+        <td>${i.supplier || ''}</td>
         <td>${i.number || ''}</td>
-        <td>${money(i.amount)}</td>
-        <td>${i.type === 'recurring' ? 'קבוע' : 'חד־פעמי'}</td>
-        <td>${i.paid ? 'שולם' : 'לא שולם'}</td>
+        <td>${money(i.amount || 0)}</td>
+        <td>
+          <span class="badge ${i.type === 'recurring' ? 'badge-rec' : 'badge-one'}">
+            ${i.type === 'recurring' ? 'קבוע' : 'חד־פעמי'}
+          </span>
+        </td>
+        <td>
+          <span class="badge ${i.paid ? 'badge-paid' : 'badge-unpaid'}">
+            ${i.paid ? 'שולם' : 'לא שולם'}
+          </span>
+        </td>
       </tr>
     `).join('');
+
+    const total = data.reduce((s, i) => s + Number(i.amount || 0), 0);
+    const totalCell = $('#tblTotal');
+    if (totalCell) totalCell.textContent = money(total);
+
+    const empty = $('#invoicesEmpty');
+    if (empty) empty.style.display = data.length ? 'none' : 'block';
   }
 
   /* ================= FORMS ================= */
@@ -92,13 +103,13 @@ import { store, addDocument } from './state.js';
       e.preventDefault();
 
       const doc = {
-        date: $('#invDate').value,
-        supplier: $('#invSupplier').value,
-        number: $('#invNumber').value,
-        amount: Number($('#invAmount').value || 0),
-        type: $('#invType').value,
-        paid: $('#invPaid').checked,
-        desc: $('#invDesc')?.value || ''
+        date: $('#invDate')?.value || '',
+        supplier: ($('#invSupplier')?.value || '').trim(),
+        number: ($('#invNumber')?.value || '').trim(),
+        amount: Number($('#invAmount')?.value || 0),
+        type: $('#invType')?.value || 'recurring',
+        paid: $('#invPaid')?.checked || false,
+        desc: ($('#invDesc')?.value || '').trim()
       };
 
       if (!doc.supplier || !doc.date) {
@@ -118,6 +129,12 @@ import { store, addDocument } from './state.js';
   function wireFilters() {
     ['filterFrom', 'filterTo', 'filterSupplier', 'filterType']
       .forEach(id => on($('#' + id), 'change', renderDashboard));
+
+    on($('#clearFilters'), 'click', () => {
+      ['filterFrom', 'filterTo', 'filterSupplier', 'filterType']
+        .forEach(id => { const el = $('#' + id); if (el) el.value = ''; });
+      renderDashboard();
+    });
   }
 
   /* ================= INIT ================= */
