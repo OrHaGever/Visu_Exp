@@ -1,5 +1,5 @@
 import { $, $$, money } from './utils.js';
-import { store, addSupplier } from './state.js';
+import { store, addItem } from './state.js';
 
 (function () {
 
@@ -20,18 +20,18 @@ import { store, addSupplier } from './state.js';
     );
   }
 
-  /* ================= SUPPLIERS (TABLE) ================= */
+  /* ================= ITEMS (TABLE) ================= */
 
-  function renderSuppliers() {
-    const tbody = $('#suppliersTable tbody');
+  function renderItems() {
+    const tbody = $('#itemsTable tbody');
     if (!tbody) return;
 
-    tbody.innerHTML = store.state.suppliers.map(s => `
-      <tr data-id="${s.id}">
-        <td><input value="${s.name}" disabled></td>
-        <td><input value="${s.category || ''}" disabled></td>
-        <td><input value="${s.phone || ''}" disabled></td>
-        <td><input value="${s.notes || ''}" disabled></td>
+    tbody.innerHTML = store.state.items.map(it => `
+      <tr data-id="${it.id}">
+        <td><input value="${it.name}" disabled></td>
+        <td><input value="${it.category || ''}" disabled></td>
+        <td><input type="number" value="${it.price || 0}" disabled></td>
+        <td><input value="${it.unit || ''}" disabled></td>
         <td class="actions">
           <button data-act="edit">✏️</button>
           <button data-act="save" class="hide">💾</button>
@@ -41,15 +41,15 @@ import { store, addSupplier } from './state.js';
     `).join('');
   }
 
-  function wireSuppliersTable() {
-    on($('#suppliersTable'), 'click', e => {
+  function wireItemsTable() {
+    on($('#itemsTable'), 'click', e => {
       const btn = e.target.closest('button');
       if (!btn) return;
 
       const row = btn.closest('tr');
       const id = row.dataset.id;
-      const supplier = store.state.suppliers.find(s => s.id === id);
-      if (!supplier) return;
+      const item = store.state.items.find(i => i.id === id);
+      if (!item) return;
 
       const inputs = row.querySelectorAll('input');
 
@@ -61,37 +61,37 @@ import { store, addSupplier } from './state.js';
 
       if (btn.dataset.act === 'save') {
         store.commit(() => {
-          supplier.name = inputs[0].value.trim();
-          supplier.category = inputs[1].value.trim();
-          supplier.phone = inputs[2].value.trim();
-          supplier.notes = inputs[3].value.trim();
+          item.name = inputs[0].value.trim();
+          item.category = inputs[1].value.trim();
+          item.price = Number(inputs[2].value || 0);
+          item.unit = inputs[3].value.trim();
         });
-        renderSuppliers();
+        renderItems();
       }
 
       if (btn.dataset.act === 'del') {
-        if (!confirm('למחוק ספק?')) return;
+        if (!confirm('למחוק פריט?')) return;
         store.commit(state => {
-          state.suppliers = state.suppliers.filter(s => s.id !== id);
+          state.items = state.items.filter(i => i.id !== id);
         });
-        renderSuppliers();
+        renderItems();
       }
     });
   }
 
-  function wireSupplierForm() {
-    on($('#supplierForm'), 'submit', e => {
+  function wireItemForm() {
+    on($('#itemForm'), 'submit', e => {
       e.preventDefault();
 
-      const name = $('#supName').value.trim();
-      const category = $('#supCategory').value.trim();
-      const phone = $('#supPhone').value.trim();
-      const notes = $('#supNotes').value.trim();
+      const name = $('#itemName').value.trim();
+      const category = $('#itemCategory').value.trim();
+      const price = Number($('#itemPrice').value || 0);
+      const unit = $('#itemUnit').value.trim();
 
-      if (!name) return alert('שם ספק חובה');
+      if (!name) return alert('שם פריט חובה');
 
-      addSupplier({ name, category, phone, notes });
-      renderSuppliers();
+      addItem({ name, category, price, unit });
+      renderItems();
       e.target.reset();
     });
   }
@@ -100,10 +100,10 @@ import { store, addSupplier } from './state.js';
 
   function init() {
     wireNavigation();
-    wireSupplierForm();
-    wireSuppliersTable();
-    renderSuppliers();
-    showScreen('suppliers');
+    wireItemForm();
+    wireItemsTable();
+    renderItems();
+    showScreen('items');
   }
 
   document.addEventListener('DOMContentLoaded', init);
