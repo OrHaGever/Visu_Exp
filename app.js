@@ -31,9 +31,22 @@ import { PROTECTED_CATEGORIES } from './constants.js';
     select.innerHTML = opts;
   }
 
+  function renderSupplierOptions(select, selected = '') {
+    if (!select) return;
+    const opts =
+      `<option value="">— בחר ספק —</option>` +
+      store.state.suppliers
+        .slice()
+        .sort((a, b) => (a.name || '').localeCompare(b.name || '', 'he'))
+        .map(s => `<option value="${s.name}" ${s.name === selected ? 'selected' : ''}>${s.name}</option>`)
+        .join('');
+    select.innerHTML = opts;
+  }
+
   function refreshFormSelects() {
     renderCategoryOptions($('#supCategory'), $('#supCategory')?.value || '');
     renderCategoryOptions($('#itemCategory'), $('#itemCategory')?.value || '');
+    renderSupplierOptions($('#invSupplier'), $('#invSupplier')?.value || '');
   }
 
   /* ================= DASHBOARD ================= */
@@ -72,24 +85,30 @@ import { PROTECTED_CATEGORIES } from './constants.js';
   }
 
   function wireInvoiceForm() {
+    refreshFormSelects();
+
     on($('#invoiceForm'), 'submit', e => {
       e.preventDefault();
 
+      const supplier = $('#invSupplier').value;
+
       const doc = {
         date: $('#invDate').value,
-        supplier: $('#invSupplier').value.trim(),
+        supplier,
         number: $('#invNumber').value.trim(),
         amount: Number($('#invAmount').value || 0),
         type: $('#invType').value,
         paid: $('#invPaid').checked
       };
 
-      if (!doc.date || !doc.supplier) return alert('חובה תאריך וספק');
+      if (!doc.date) return alert('חובה תאריך');
+      if (!doc.supplier) return alert('בחר ספק');
 
       addDocument(doc);
       renderDashboard();
       renderInvoices();
       e.target.reset();
+      refreshFormSelects();
     });
   }
 
@@ -107,6 +126,11 @@ import { PROTECTED_CATEGORIES } from './constants.js';
       .slice()
       .sort((a, b) => (a.name || '').localeCompare(b.name || '', 'he'));
 
+    const catOptions = store.state.categories
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name, 'he'))
+      .map(c => c.name);
+
     tbody.innerHTML = suppliers
       .map(s => `
         <tr data-id="${s.id}" data-old-name="${s.name}">
@@ -114,11 +138,7 @@ import { PROTECTED_CATEGORIES } from './constants.js';
           <td>
             <select disabled>
               <option value="">—</option>
-              ${store.state.categories
-                .slice()
-                .sort((a, b) => a.name.localeCompare(b.name, 'he'))
-                .map(c => `<option value="${c.name}" ${c.name === (s.category || '') ? 'selected' : ''}>${c.name}</option>`)
-                .join('')}
+              ${catOptions.map(name => `<option value="${name}" ${name === (s.category || '') ? 'selected' : ''}>${name}</option>`).join('')}
             </select>
           </td>
           <td><input value="${s.phone || ''}" disabled></td>
@@ -163,8 +183,8 @@ import { PROTECTED_CATEGORIES } from './constants.js';
         const newNotes = fields[3].value.trim();
 
         if (!newName) return alert('שם ספק חובה');
+        if (!newCategory) return alert('בחר קטגוריה');
 
-        // אם משנים שם ספק ויש מסמכים, נעדכן גם מסמכים
         store.commit(state => {
           supplier.name = newName;
           supplier.category = newCategory;
@@ -180,6 +200,7 @@ import { PROTECTED_CATEGORIES } from './constants.js';
 
         renderSuppliers();
         renderInvoices();
+        refreshFormSelects();
         return;
       }
 
@@ -195,6 +216,7 @@ import { PROTECTED_CATEGORIES } from './constants.js';
         });
 
         renderSuppliers();
+        refreshFormSelects();
       }
     });
   }
@@ -215,6 +237,7 @@ import { PROTECTED_CATEGORIES } from './constants.js';
 
       addSupplier({ name, category, phone, notes });
       renderSuppliers();
+      refreshFormSelects();
       e.target.reset();
     });
   }
@@ -229,6 +252,11 @@ import { PROTECTED_CATEGORIES } from './constants.js';
       .slice()
       .sort((a, b) => (a.name || '').localeCompare(b.name || '', 'he'));
 
+    const catOptions = store.state.categories
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name, 'he'))
+      .map(c => c.name);
+
     tbody.innerHTML = items
       .map(it => `
         <tr data-id="${it.id}">
@@ -236,11 +264,7 @@ import { PROTECTED_CATEGORIES } from './constants.js';
           <td>
             <select disabled>
               <option value="">—</option>
-              ${store.state.categories
-                .slice()
-                .sort((a, b) => a.name.localeCompare(b.name, 'he'))
-                .map(c => `<option value="${c.name}" ${c.name === (it.category || '') ? 'selected' : ''}>${c.name}</option>`)
-                .join('')}
+              ${catOptions.map(name => `<option value="${name}" ${name === (it.category || '') ? 'selected' : ''}>${name}</option>`).join('')}
             </select>
           </td>
           <td><input type="number" value="${Number(it.price || 0)}" disabled></td>
