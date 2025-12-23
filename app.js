@@ -7,23 +7,21 @@ import { PROTECTED_CATEGORIES } from './constants.js';
 
   const on = (el, ev, fn) => el && el.addEventListener(ev, fn);
 
-  /* ================= NAVIGATION ================= */
+  /* ================= NAVIGATION (FIXED) ================= */
 
-  function showScreen(name) {
-    $$('.screen').forEach(s => {
-      s.classList.toggle('hide', s.id !== name);
+  function showScreen(id) {
+    $$('.screen').forEach(sec => {
+      sec.style.display = sec.id === id ? 'block' : 'none';
     });
 
-    $$('nav button').forEach(b => {
-      b.classList.toggle('active', b.dataset.tab === name);
+    $$('nav button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === id);
     });
   }
 
   function wireNavigation() {
     $$('nav button').forEach(btn => {
-      on(btn, 'click', () => {
-        showScreen(btn.dataset.tab);
-      });
+      on(btn, 'click', () => showScreen(btn.dataset.tab));
     });
   }
 
@@ -34,12 +32,12 @@ import { PROTECTED_CATEGORIES } from './constants.js';
     const summary = calcMonthlySummary(docs);
 
     $('#kpiTotal').textContent = money(summary.expenses);
-    $('#kpiCount').textContent = docs.length + ' רשומות';
+    $('#kpiCount').textContent = docs.length;
     $('#kpiAvg').textContent =
       money(docs.length ? summary.expenses / docs.length : 0);
   }
 
-  /* ================= INVOICES ================= */
+  /* ================= DOCUMENTS ================= */
 
   function renderInvoices() {
     const tbody = $('#invoicesTable tbody');
@@ -47,26 +45,48 @@ import { PROTECTED_CATEGORIES } from './constants.js';
 
     tbody.innerHTML = store.state.documents.map(d => `
       <tr>
-        <td>${d.date || ''}</td>
-        <td>${d.supplier || ''}</td>
+        <td>${d.date}</td>
+        <td>${d.supplier}</td>
         <td>${d.number || ''}</td>
-        <td>${money(d.amount || 0)}</td>
+        <td>${money(d.amount)}</td>
         <td>${d.type === 'recurring' ? 'קבוע' : 'חד־פעמי'}</td>
         <td>${d.paid ? 'שולם' : 'לא שולם'}</td>
       </tr>
     `).join('');
   }
 
+  function wireInvoiceForm() {
+    on($('#invoiceForm'), 'submit', e => {
+      e.preventDefault();
+
+      const doc = {
+        date: $('#invDate').value,
+        supplier: $('#invSupplier').value,
+        number: $('#invNumber').value,
+        amount: Number($('#invAmount').value || 0),
+        type: $('#invType').value,
+        paid: $('#invPaid').checked
+      };
+
+      if (!doc.date || !doc.supplier) return alert('חסר תאריך או ספק');
+
+      addDocument(doc);
+      renderDashboard();
+      renderInvoices();
+      e.target.reset();
+    });
+  }
+
   /* ================= SUPPLIERS ================= */
 
   function renderSuppliers() {
-    const list = $('#suppliersList');
-    if (!list) return;
+    const box = $('#suppliersList');
+    if (!box) return;
 
-    list.innerHTML = store.state.suppliers.map(s => `
+    box.innerHTML = store.state.suppliers.map(s => `
       <div class="row">
         <strong>${s.name}</strong>
-        <span class="muted">${s.category || ''}</span>
+        <span>${s.category || ''}</span>
       </div>
     `).join('');
   }
@@ -88,13 +108,13 @@ import { PROTECTED_CATEGORIES } from './constants.js';
   /* ================= ITEMS ================= */
 
   function renderItems() {
-    const list = $('#itemsList');
-    if (!list) return;
+    const box = $('#itemsList');
+    if (!box) return;
 
-    list.innerHTML = store.state.items.map(i => `
+    box.innerHTML = store.state.items.map(i => `
       <div class="row">
         <strong>${i.name}</strong>
-        <span class="muted">${money(i.price || 0)}</span>
+        <span>${money(i.price || 0)}</span>
       </div>
     `).join('');
   }
@@ -117,13 +137,13 @@ import { PROTECTED_CATEGORIES } from './constants.js';
   /* ================= CATEGORIES ================= */
 
   function renderCategories() {
-    const list = $('#categoriesList');
-    if (!list) return;
+    const box = $('#categoriesList');
+    if (!box) return;
 
-    list.innerHTML = store.state.categories.map(c => `
+    box.innerHTML = store.state.categories.map(c => `
       <div class="row">
         <strong>${c.name}</strong>
-        ${PROTECTED_CATEGORIES.has(c.name) ? '<span class="muted">מוגנת</span>' : ''}
+        ${PROTECTED_CATEGORIES.has(c.name) ? '<span>(מוגנת)</span>' : ''}
       </div>
     `).join('');
   }
@@ -135,38 +155,8 @@ import { PROTECTED_CATEGORIES } from './constants.js';
       const name = $('#catName').value.trim();
       if (!name) return alert('שם קטגוריה חובה');
 
-      store.commit(state => {
-        state.categories.push({ name });
-      });
-
+      store.commit(s => s.categories.push({ name }));
       renderCategories();
-      e.target.reset();
-    });
-  }
-
-  /* ================= INVOICE FORM ================= */
-
-  function wireInvoiceForm() {
-    on($('#invoiceForm'), 'submit', e => {
-      e.preventDefault();
-
-      const doc = {
-        date: $('#invDate').value,
-        supplier: $('#invSupplier').value,
-        number: $('#invNumber').value,
-        amount: Number($('#invAmount').value || 0),
-        type: $('#invType').value,
-        paid: $('#invPaid').checked
-      };
-
-      if (!doc.date || !doc.supplier) {
-        alert('חובה תאריך וספק');
-        return;
-      }
-
-      addDocument(doc);
-      renderDashboard();
-      renderInvoices();
       e.target.reset();
     });
   }
@@ -187,7 +177,7 @@ import { PROTECTED_CATEGORIES } from './constants.js';
     renderItems();
     renderCategories();
 
-    showScreen('dashboard'); // מסך פתיחה
+    showScreen('dashboard'); // חשוב!
   }
 
   document.addEventListener('DOMContentLoaded', init);
