@@ -4,206 +4,314 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ניהול הוצאות</title>
-  <link rel="stylesheet" href="styles.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-
-<div class="app">
-
-  <header>
-    <h1>ניהול הוצאות</h1>
-  </header>
-
-  <nav class="tabs">
-    <button data-tab="dashboard" class="active">דשבורד</button>
-    <button data-tab="documents">מסמכים</button>
-    <button data-tab="suppliers">ספקים</button>
-    <button data-tab="items">פריטים</button>
-    <button data-tab="categories">קטגוריות</button>
-  </nav>
-
-  <main>
-
-    <!-- DASHBOARD -->
-    <section id="dashboard" class="screen">
-      <div class="cards">
-        <div class="card">
-          <div class="label">סה״כ הוצאות</div>
-          <div class="value" id="kpiTotal">₪0.00</div>
-        </div>
-        <div class="card">
-          <div class="label">מספר רשומות</div>
-          <div class="value" id="kpiCount">0</div>
-        </div>
-        <div class="card">
-          <div class="label">ממוצע</div>
-          <div class="value" id="kpiAvg">₪0.00</div>
-        </div>
+  <div class="app">
+    <header class="header">
+      <div class="header__title">
+        <h1>ניהול הוצאות</h1>
+        <div class="muted">דשבורד • מסמכים • ספקים • פריטים • קטגוריות</div>
       </div>
-    </section>
+    </header>
 
-    <!-- DOCUMENTS -->
-    <section id="documents" class="screen hide">
+    <nav class="tabs" aria-label="ניווט">
+      <button type="button" data-tab="dashboard" class="active">דשבורד</button>
+      <button type="button" data-tab="documents">מסמכים</button>
+      <button type="button" data-tab="suppliers">ספקים</button>
+      <button type="button" data-tab="items">פריטים</button>
+      <button type="button" data-tab="categories">קטגוריות</button>
+    </nav>
 
-      <form id="invoiceForm" class="form">
-        <h3>הוספת מסמך</h3>
+    <main>
+      <!-- DASHBOARD -->
+      <section id="dashboard" class="screen">
+        <div class="cards">
+          <div class="card">
+            <div class="label">סה״כ הוצאות</div>
+            <div class="value" id="kpiTotal">₪0</div>
+          </div>
+          <div class="card">
+            <div class="label">מספר מסמכים</div>
+            <div class="value" id="kpiCount">0</div>
+          </div>
+          <div class="card">
+            <div class="label">ממוצע למסמך</div>
+            <div class="value" id="kpiAvg">₪0</div>
+          </div>
+        </div>
+      </section>
 
-        <label>תאריך
-          <input type="date" id="invDate" required>
-        </label>
+      <!-- DOCUMENTS -->
+      <section id="documents" class="screen">
+        <div class="grid2">
+          <form id="invoiceForm" class="panel">
+            <div class="panel__head">
+              <h2>הוספת מסמך</h2>
+              <div class="muted">הספק נבחר מהרשימה</div>
+            </div>
 
-        <label>ספק
-          <select id="invSupplier" required></select>
-        </label>
+            <div class="formgrid">
+              <label>
+                <span>תאריך</span>
+                <input type="date" id="invDate" required>
+              </label>
 
-        <label>מספר מסמך
-          <input type="text" id="invNumber">
-        </label>
+              <label class="colspan2">
+                <span>ספק</span>
+                <select id="invSupplier" required></select>
+              </label>
 
-        <label>סכום
-          <input type="number" id="invAmount" step="0.01" required>
-        </label>
+              <label>
+                <span>מס׳ מסמך</span>
+                <input type="text" id="invNumber" inputmode="text">
+              </label>
 
-        <label>סוג
-          <select id="invType">
-            <option value="recurring">קבוע</option>
-            <option value="oneoff">חד־פעמי</option>
-          </select>
-        </label>
+              <label>
+                <span>סכום</span>
+                <input type="number" id="invAmount" step="0.01" inputmode="decimal" required>
+              </label>
 
-        <label>
-          <input type="checkbox" id="invPaid">
-          שולם
-        </label>
+              <label>
+                <span>סוג</span>
+                <select id="invType">
+                  <option value="recurring">קבוע</option>
+                  <option value="oneoff">חד־פעמי</option>
+                </select>
+              </label>
 
-        <button type="submit">הוסף</button>
-      </form>
+              <label class="check">
+                <input type="checkbox" id="invPaid">
+                <span>שולם</span>
+              </label>
+            </div>
 
-      <table id="invoicesTable">
-        <thead>
-          <tr>
-            <th>תאריך</th>
-            <th>ספק</th>
-            <th>מס׳</th>
-            <th>סכום</th>
-            <th>סוג</th>
-            <th>סטטוס</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+            <button class="btn primary" type="submit">שמור מסמך</button>
+          </form>
 
-    </section>
+          <div class="panel">
+            <div class="panel__head">
+              <h2>מסמכים</h2>
+              <div class="muted">תצוגה בטבלה</div>
+            </div>
 
-    <!-- SUPPLIERS -->
-    <section id="suppliers" class="screen hide">
+            <div class="tablewrap">
+              <table id="invoicesTable">
+                <thead>
+                  <tr>
+                    <th>תאריך</th>
+                    <th>ספק</th>
+                    <th>מס׳</th>
+                    <th>סכום</th>
+                    <th>סוג</th>
+                    <th>שולם</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
 
-      <form id="supplierForm" class="form">
-        <h3>ספק חדש</h3>
+            <div class="empty muted" id="docsEmpty">אין מסמכים עדיין.</div>
+          </div>
+        </div>
+      </section>
 
-        <label>שם
-          <input type="text" id="supName" required>
-        </label>
+      <!-- SUPPLIERS -->
+      <section id="suppliers" class="screen">
+        <div class="grid2">
+          <form id="supplierForm" class="panel">
+            <div class="panel__head">
+              <h2>ספק חדש</h2>
+              <div class="muted">מופיע מיד בטבלה ובמסמכים</div>
+            </div>
 
-        <label>קטגוריה
-          <select id="supCategory"></select>
-        </label>
+            <div class="formgrid">
+              <label class="colspan2">
+                <span>שם ספק</span>
+                <input type="text" id="supName" required>
+              </label>
 
-        <label>טלפון
-          <input type="text" id="supPhone" placeholder="אופציונלי">
-        </label>
+              <label class="colspan2">
+                <span>קטגוריה</span>
+                <select id="supCategory" required></select>
+              </label>
 
-        <label>הערות
-          <input type="text" id="supNotes" placeholder="אופציונלי">
-        </label>
+              <label>
+                <span>טלפון</span>
+                <input type="tel" id="supPhone" inputmode="tel" placeholder="אופציונלי">
+              </label>
 
-        <button type="submit">שמור</button>
-      </form>
+              <label>
+                <span>אימייל</span>
+                <input type="email" id="supEmail" inputmode="email" placeholder="אופציונלי">
+              </label>
 
-      <table id="suppliersTable">
-        <thead>
-          <tr>
-            <th>שם ספק</th>
-            <th>קטגוריה</th>
-            <th>טלפון</th>
-            <th>הערות</th>
-            <th>פעולות</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+              <label class="colspan2">
+                <span>הערות</span>
+                <input type="text" id="supNotes" placeholder="אופציונלי">
+              </label>
 
-    </section>
+              <label class="check">
+                <input type="checkbox" id="supActive" checked>
+                <span>פעיל</span>
+              </label>
+            </div>
 
-    <!-- ITEMS -->
-    <section id="items" class="screen hide">
+            <button class="btn primary" type="submit">שמור ספק</button>
+          </form>
 
-      <form id="itemForm" class="form">
-        <h3>פריט חדש</h3>
+          <div class="panel">
+            <div class="panel__head">
+              <h2>ספקים</h2>
+              <div class="muted">עריכה בשורה ✏️ ושמירה 💾</div>
+            </div>
 
-        <label>שם
-          <input type="text" id="itemName" required>
-        </label>
+            <div class="tablewrap">
+              <table id="suppliersTable">
+                <thead>
+                  <tr>
+                    <th>שם</th>
+                    <th>קטגוריה</th>
+                    <th>טלפון</th>
+                    <th>אימייל</th>
+                    <th>הערות</th>
+                    <th>פעיל</th>
+                    <th>פעולות</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
 
-        <label>קטגוריה
-          <select id="itemCategory"></select>
-        </label>
+            <div class="empty muted" id="supEmpty">אין ספקים עדיין.</div>
+          </div>
+        </div>
+      </section>
 
-        <label>מחיר
-          <input type="number" id="itemPrice" step="0.01">
-        </label>
+      <!-- ITEMS -->
+      <section id="items" class="screen">
+        <div class="grid2">
+          <form id="itemForm" class="panel">
+            <div class="panel__head">
+              <h2>פריט חדש</h2>
+              <div class="muted">קטגוריה נבחרת מהרשימה</div>
+            </div>
 
-        <label>יחידה
-          <input type="text" id="itemUnit" placeholder='למשל: ק״ג / יח׳'>
-        </label>
+            <div class="formgrid">
+              <label class="colspan2">
+                <span>שם פריט</span>
+                <input type="text" id="itemName" required>
+              </label>
 
-        <button type="submit">שמור</button>
-      </form>
+              <label class="colspan2">
+                <span>קטגוריה</span>
+                <select id="itemCategory" required></select>
+              </label>
 
-      <table id="itemsTable">
-        <thead>
-          <tr>
-            <th>שם פריט</th>
-            <th>קטגוריה</th>
-            <th>מחיר</th>
-            <th>יחידה</th>
-            <th>פעולות</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+              <label>
+                <span>מחיר</span>
+                <input type="number" id="itemPrice" step="0.01" inputmode="decimal">
+              </label>
 
-    </section>
+              <label>
+                <span>יחידה</span>
+                <input type="text" id="itemUnit" placeholder="למשל: יח׳ / ק״ג">
+              </label>
 
-    <!-- CATEGORIES -->
-    <section id="categories" class="screen hide">
+              <label class="check">
+                <input type="checkbox" id="itemActive" checked>
+                <span>פעיל</span>
+              </label>
+            </div>
 
-      <form id="categoryForm" class="form">
-        <h3>קטגוריה חדשה</h3>
+            <button class="btn primary" type="submit">שמור פריט</button>
+          </form>
 
-        <label>שם
-          <input type="text" id="catName" required>
-        </label>
+          <div class="panel">
+            <div class="panel__head">
+              <h2>פריטים</h2>
+              <div class="muted">עריכה בשורה</div>
+            </div>
 
-        <button type="submit">שמור</button>
-      </form>
+            <div class="tablewrap">
+              <table id="itemsTable">
+                <thead>
+                  <tr>
+                    <th>שם</th>
+                    <th>קטגוריה</th>
+                    <th>מחיר</th>
+                    <th>יחידה</th>
+                    <th>פעיל</th>
+                    <th>פעולות</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
 
-      <table id="categoriesTable">
-        <thead>
-          <tr>
-            <th>שם קטגוריה</th>
-            <th>פעולות</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+            <div class="empty muted" id="itemsEmpty">אין פריטים עדיין.</div>
+          </div>
+        </div>
+      </section>
 
-    </section>
+      <!-- CATEGORIES -->
+      <section id="categories" class="screen">
+        <div class="grid2">
+          <form id="categoryForm" class="panel">
+            <div class="panel__head">
+              <h2>קטגוריה חדשה</h2>
+              <div class="muted">שינוי שם יעדכן ספקים/פריטים</div>
+            </div>
 
-  </main>
-</div>
+            <div class="formgrid">
+              <label class="colspan2">
+                <span>שם קטגוריה</span>
+                <input type="text" id="catName" required>
+              </label>
+            </div>
 
-<script type="module" src="app.js"></script>
+            <button class="btn primary" type="submit">שמור קטגוריה</button>
+          </form>
+
+          <div class="panel">
+            <div class="panel__head">
+              <h2>קטגוריות</h2>
+              <div class="muted">מוגנות לא ניתנות למחיקה</div>
+            </div>
+
+            <div class="tablewrap">
+              <table id="categoriesTable">
+                <thead>
+                  <tr>
+                    <th>שם</th>
+                    <th>סטטוס</th>
+                    <th>פעולות</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+
+            <div class="empty muted" id="catsEmpty">אין קטגוריות.</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast hide">
+    <div class="toast__box">
+      <div id="toastMsg" class="toast__msg">—</div>
+      <button id="toastBtn" class="btn ghost" type="button">סגור</button>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
 </body>
 </html>
