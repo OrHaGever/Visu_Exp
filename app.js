@@ -1,6 +1,6 @@
 import { $, $$, money } from './utils.js';
 import { calcMonthlySummary } from './calculations.js';
-import { store, addDocument } from './state.js';
+import { store, addDocument, addSupplier } from './state.js';
 
 (function () {
 
@@ -35,6 +35,7 @@ import { store, addDocument } from './state.js';
 
     $('#kpiTotal').textContent = money(summary.expenses);
     $('#kpiCount').textContent = docs.length + ' רשומות';
+
     $('#kpiRecurring').textContent = money(
       docs.filter(d => d.type === 'recurring')
           .reduce((s, d) => s + d.amount, 0)
@@ -96,7 +97,109 @@ import { store, addDocument } from './state.js';
     if (empty) empty.style.display = data.length ? 'none' : 'block';
   }
 
-  /* ================= FORMS ================= */
+  /* ================= SUPPLIERS ================= */
+
+  function renderSuppliers() {
+    const list = $('#suppliersList');
+    if (!list) return;
+
+    const items = store.state.suppliers
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name, 'he'));
+
+    list.innerHTML = items.map(s => `
+      <div class="supplier-item">
+        <div class="info">
+          <div class="name">${s.name}</div>
+          <div class="meta muted">
+            ${(s.category || 'ללא קטגוריה')}
+            ${s.notes ? ' • ' + s.notes : ''}
+          </div>
+        </div>
+        <div class="row-actions">
+          <button class="ghost" data-act="edit" data-id="${s.id}">עריכה</button>
+          <button class="danger" data-act="del" data-id="${s.id}">מחיקה</button>
+        </div>
+      </div>
+    `).join('');
+
+    const empty = $('#suppliersEmpty');
+    if (empty) empty.style.display = items.length ? 'none' : 'block';
+  }
+
+  function wireSupplierForm() {
+    on($('#supplierForm'), 'submit', e => {
+      e.preventDefault();
+
+      const name = ($('#supName')?.value || '').trim();
+      const category = ($('#supCategory')?.value || '').trim();
+      const notes = ($('#supNotes')?.value || '').trim();
+
+      if (!name) {
+        alert('שם ספק חובה');
+        return;
+      }
+
+      const existing = store.state.suppliers.find(s => s.name === name);
+
+      if (existing) {
+        store.commit(state => {
+          existing.category = category;
+          existing.notes = notes;
+        });
+      } else {
+        addSupplier({ name, category, notes });
+      }
+
+      renderSuppliers();
+      e.target.reset();
+    });
+
+    on($('#suppliersList'), 'click', e => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+
+      const id = btn.dataset.id;
+      const act = btn.dataset.act;
+      const supplier = store.state.suppliers.find(s => s.id === id);
+      if (!supplier) return;
+
+      if (act === 'edit') {
+        $('#supName').value = supplier.name;
+        $('#supCategory').value = supplier.category || '';
+        $('#supNotes').value = supplier.notes || '';
+      }
+
+      if (act === 'del') {
+        const used = store.state.documents.some(d => d.supplier === supplier.name);
+        if (used) {
+          alert('לא ניתן למחוק ספק שיש לו מסמכים');
+          return;
+        }
+
+        if (!confirm('למחוק ספק?')) return;
+
+        store.commit(state => {
+          state.suppliers = state.suppliers.filter(s => s.id !== id);
+        });
+
+        renderSuppliers();
+      }
+    });
+  }
+
+  /* ================= WIRES ================= */
+
+  function wireFilters() {
+    ['filterFrom', 'filterTo', 'filterSupplier', 'filterType']
+      .forEach(id => on($('#' + id), 'change', renderDashboard));
+
+    on($('#clearFilters'), 'click', () => {
+      ['filterFrom', 'filterTo', 'filterSupplier', 'filterType']
+        .forEach(id => { const el = $('#' + id); if (el) el.value = ''; });
+      renderDashboard();
+    });
+  }
 
   function wireInvoiceForm() {
     on($('#invoiceForm'), 'submit', e => {
@@ -124,26 +227,15 @@ import { store, addDocument } from './state.js';
     });
   }
 
-  /* ================= WIRES ================= */
-
-  function wireFilters() {
-    ['filterFrom', 'filterTo', 'filterSupplier', 'filterType']
-      .forEach(id => on($('#' + id), 'change', renderDashboard));
-
-    on($('#clearFilters'), 'click', () => {
-      ['filterFrom', 'filterTo', 'filterSupplier', 'filterType']
-        .forEach(id => { const el = $('#' + id); if (el) el.value = ''; });
-      renderDashboard();
-    });
-  }
-
   /* ================= INIT ================= */
 
   function init() {
     wireFilters();
     wireInvoiceForm();
+    wireSupplierForm();
     renderDashboard();
     renderInvoices();
+    renderSuppliers();
   }
 
   document.addEventListener('DOMContentLoaded', init);
