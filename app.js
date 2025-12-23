@@ -7,29 +7,30 @@ import { PROTECTED_CATEGORIES } from './constants.js';
 
   const on = (el, ev, fn) => el && el.addEventListener(ev, fn);
 
-  /* ================= FILTERS ================= */
+  /* ================= NAVIGATION ================= */
 
-  function getFilters() {
-    return {
-      from: $('#filterFrom')?.value || null,
-      to: $('#filterTo')?.value || null,
-      supplier: $('#filterSupplier')?.value || '',
-      type: $('#filterType')?.value || ''
-    };
+  function showScreen(name) {
+    $$('.screen').forEach(s => {
+      s.classList.toggle('hide', s.id !== name);
+    });
+
+    $$('nav button').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === name);
+    });
   }
 
-  function byFilters(inv, f) {
-    if (f.from && inv.date < f.from) return false;
-    if (f.to && inv.date > f.to) return false;
-    if (f.supplier && inv.supplier !== f.supplier) return false;
-    if (f.type && inv.type !== f.type) return false;
-    return true;
+  function wireNavigation() {
+    $$('nav button').forEach(btn => {
+      on(btn, 'click', () => {
+        showScreen(btn.dataset.tab);
+      });
+    });
   }
 
   /* ================= DASHBOARD ================= */
 
   function renderDashboard() {
-    const docs = store.state.documents.filter(d => byFilters(d, getFilters()));
+    const docs = store.state.documents;
     const summary = calcMonthlySummary(docs);
 
     $('#kpiTotal').textContent = money(summary.expenses);
@@ -44,11 +45,7 @@ import { PROTECTED_CATEGORIES } from './constants.js';
     const tbody = $('#invoicesTable tbody');
     if (!tbody) return;
 
-    const data = store.state.documents
-      .slice()
-      .sort((a, b) => (a.date || '').localeCompare(b.date || ''));
-
-    tbody.innerHTML = data.map(d => `
+    tbody.innerHTML = store.state.documents.map(d => `
       <tr>
         <td>${d.date || ''}</td>
         <td>${d.supplier || ''}</td>
@@ -66,19 +63,12 @@ import { PROTECTED_CATEGORIES } from './constants.js';
     const list = $('#suppliersList');
     if (!list) return;
 
-    list.innerHTML = store.state.suppliers
-      .slice()
-      .sort((a, b) => a.name.localeCompare(b.name, 'he'))
-      .map(s => `
-        <div class="supplier-item">
-          <strong>${s.name}</strong>
-          <span class="muted">${s.category || 'ללא קטגוריה'}</span>
-          <div>
-            <button data-act="edit" data-id="${s.id}">עריכה</button>
-            <button data-act="del" data-id="${s.id}">מחיקה</button>
-          </div>
-        </div>
-      `).join('');
+    list.innerHTML = store.state.suppliers.map(s => `
+      <div class="row">
+        <strong>${s.name}</strong>
+        <span class="muted">${s.category || ''}</span>
+      </div>
+    `).join('');
   }
 
   function wireSupplierForm() {
@@ -87,7 +77,6 @@ import { PROTECTED_CATEGORIES } from './constants.js';
 
       const name = $('#supName').value.trim();
       const category = $('#supCategory').value.trim();
-
       if (!name) return alert('שם ספק חובה');
 
       addSupplier({ name, category });
@@ -102,21 +91,12 @@ import { PROTECTED_CATEGORIES } from './constants.js';
     const list = $('#itemsList');
     if (!list) return;
 
-    list.innerHTML = store.state.items
-      .slice()
-      .sort((a, b) => a.name.localeCompare(b.name, 'he'))
-      .map(i => `
-        <div class="item-row">
-          <strong>${i.name}</strong>
-          <span class="muted">
-            ${i.category || 'ללא קטגוריה'} • ${money(i.price || 0)}
-          </span>
-          <div>
-            <button data-act="edit" data-id="${i.id}">עריכה</button>
-            <button data-act="del" data-id="${i.id}">מחיקה</button>
-          </div>
-        </div>
-      `).join('');
+    list.innerHTML = store.state.items.map(i => `
+      <div class="row">
+        <strong>${i.name}</strong>
+        <span class="muted">${money(i.price || 0)}</span>
+      </div>
+    `).join('');
   }
 
   function wireItemForm() {
@@ -126,7 +106,6 @@ import { PROTECTED_CATEGORIES } from './constants.js';
       const name = $('#itemName').value.trim();
       const category = $('#itemCategory').value.trim();
       const price = Number($('#itemPrice').value || 0);
-
       if (!name) return alert('שם פריט חובה');
 
       addItem({ name, category, price });
@@ -141,18 +120,12 @@ import { PROTECTED_CATEGORIES } from './constants.js';
     const list = $('#categoriesList');
     if (!list) return;
 
-    list.innerHTML = store.state.categories
-      .slice()
-      .sort((a, b) => a.name.localeCompare(b.name, 'he'))
-      .map(c => `
-        <div class="category-row">
-          <strong>${c.name}</strong>
-          ${PROTECTED_CATEGORIES.has(c.name)
-            ? '<span class="badge">מוגנת</span>'
-            : `<button data-act="del" data-name="${c.name}">מחיקה</button>`
-          }
-        </div>
-      `).join('');
+    list.innerHTML = store.state.categories.map(c => `
+      <div class="row">
+        <strong>${c.name}</strong>
+        ${PROTECTED_CATEGORIES.has(c.name) ? '<span class="muted">מוגנת</span>' : ''}
+      </div>
+    `).join('');
   }
 
   function wireCategoryForm() {
@@ -162,10 +135,6 @@ import { PROTECTED_CATEGORIES } from './constants.js';
       const name = $('#catName').value.trim();
       if (!name) return alert('שם קטגוריה חובה');
 
-      if (store.state.categories.some(c => c.name === name)) {
-        return alert('קטגוריה כבר קיימת');
-      }
-
       store.commit(state => {
         state.categories.push({ name });
       });
@@ -173,45 +142,52 @@ import { PROTECTED_CATEGORIES } from './constants.js';
       renderCategories();
       e.target.reset();
     });
+  }
 
-    on($('#categoriesList'), 'click', e => {
-      const btn = e.target.closest('button');
-      if (!btn) return;
+  /* ================= INVOICE FORM ================= */
 
-      const name = btn.dataset.name;
-      if (PROTECTED_CATEGORIES.has(name)) return;
+  function wireInvoiceForm() {
+    on($('#invoiceForm'), 'submit', e => {
+      e.preventDefault();
 
-      const used =
-        store.state.suppliers.some(s => s.category === name) ||
-        store.state.items.some(i => i.category === name);
+      const doc = {
+        date: $('#invDate').value,
+        supplier: $('#invSupplier').value,
+        number: $('#invNumber').value,
+        amount: Number($('#invAmount').value || 0),
+        type: $('#invType').value,
+        paid: $('#invPaid').checked
+      };
 
-      if (used) {
-        alert('לא ניתן למחוק קטגוריה שבשימוש');
+      if (!doc.date || !doc.supplier) {
+        alert('חובה תאריך וספק');
         return;
       }
 
-      if (!confirm('למחוק קטגוריה?')) return;
-
-      store.commit(state => {
-        state.categories = state.categories.filter(c => c.name !== name);
-      });
-
-      renderCategories();
+      addDocument(doc);
+      renderDashboard();
+      renderInvoices();
+      e.target.reset();
     });
   }
 
   /* ================= INIT ================= */
 
   function init() {
+    wireNavigation();
+
+    wireInvoiceForm();
+    wireSupplierForm();
+    wireItemForm();
+    wireCategoryForm();
+
     renderDashboard();
     renderInvoices();
     renderSuppliers();
     renderItems();
     renderCategories();
 
-    wireSupplierForm();
-    wireItemForm();
-    wireCategoryForm();
+    showScreen('dashboard'); // מסך פתיחה
   }
 
   document.addEventListener('DOMContentLoaded', init);
