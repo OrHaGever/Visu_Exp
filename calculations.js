@@ -2,21 +2,18 @@
 
 import { VAT_RATE } from './utils.js';
 
-/**
- * סכום לפני מע״מ
- */
+/* -------- מסמך -------- */
+
 export function calcDocumentSubtotal(doc) {
   if (Array.isArray(doc.lines) && doc.lines.length > 0) {
-    return doc.lines.reduce((sum, line) => {
-      return sum + Number(line.price || 0) * Number(line.qty || 0);
-    }, 0);
+    return doc.lines.reduce(
+      (sum, line) => sum + Number(line.price || 0) * Number(line.qty || 0),
+      0
+    );
   }
-  return Number(doc.manualAmount || 0);
+  return Number(doc.amount || doc.manualAmount || 0);
 }
 
-/**
- * סכום מסמך סופי (כולל מע״מ, זיכוי)
- */
 export function calcDocumentTotal(doc) {
   let total = calcDocumentSubtotal(doc);
 
@@ -31,22 +28,21 @@ export function calcDocumentTotal(doc) {
   return total;
 }
 
-/**
- * סיכום חודשי
- */
+/* -------- Dashboard -------- */
+
 export function calcMonthlySummary(documents) {
   let expenses = 0;
   let credits = 0;
   let open = 0;
 
   documents.forEach(doc => {
-    const value = calcDocumentTotal(doc);
+    const val = calcDocumentTotal(doc);
 
-    if (value < 0) credits += Math.abs(value);
-    else expenses += value;
+    if (val < 0) credits += Math.abs(val);
+    else expenses += val;
 
-    if (doc.status === 'לא שולם') {
-      open += value;
+    if (doc.paid === false) {
+      open += val;
     }
   });
 
@@ -58,25 +54,60 @@ export function calcMonthlySummary(documents) {
   };
 }
 
+/* -------- Reports -------- */
+
 /**
- * סיכום לפי קטגוריה
+ * סינון מסמכים לדוח
  */
-export function calcByCategory(documents, suppliersMap) {
-  const result = {};
+export function filterReportDocuments(documents, options) {
+  const { month, supplier, type } = options;
 
-  documents.forEach(doc => {
-    const supplier = suppliersMap[doc.supplierId];
-    const cat = supplier?.category || 'לא משויך';
+  const first = month ? month + '-01' : null;
+  const last = month ? month + '-31' : null;
 
-    const val = calcDocumentTotal(doc);
+  return documents.filter(d => {
+    if (month) {
+      if (!d.date || d.date < first || d.date > last) return false;
+    }
+    if (supplier && d.supplier !== supplier) return false;
+    if (type && d.type !== type) return false;
+    return true;
+  });
+}
 
-    result[cat] ||= { charges: 0, credits: 0, net: 0 };
+/**
+ * סיכום דוח הוצאות
+ */
+export function calcReportSummary(documents) {
+  let total = 0;
+  let recurring = 0;
+  let oneoff = 0;
 
-    if (val < 0) result[cat].credits += Math.abs(val);
-    else result[cat].charges += val;
+  documents.forEach(d => {
+    const val = calcDocumentTotal(d);
+    total += val;
 
-    result[cat].net += val;
+    if (d.type === 'recurring') recurring += val;
+    if (d.type === 'oneoff') oneoff += val;
   });
 
-  return result;
+  return {
+    total,
+    recurring,
+    oneoff
+  };
+}
+
+/**
+ * סיכום לפי ספק לדוח
+ */
+export function calcReportBySupplier(documents) {
+  const map = {};
+
+  documents.forEach(d => {
+    const val = calcDocumentTotal(d);
+    map[d.supplier] = (map[d.supplier] || 0) + val;
+  });
+
+  return map;
 }
