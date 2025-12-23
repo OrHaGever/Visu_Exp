@@ -1,5 +1,6 @@
 import { $, $$, money } from './utils.js';
 import { store, addItem } from './state.js';
+import { PROTECTED_CATEGORIES } from './constants.js';
 
 (function () {
 
@@ -20,7 +21,18 @@ import { store, addItem } from './state.js';
     );
   }
 
-  /* ================= ITEMS (TABLE) ================= */
+  /* ================= HELPERS ================= */
+
+  function renderCategoryOptions(select) {
+    if (!select) return;
+    select.innerHTML =
+      `<option value="">— בחר קטגוריה —</option>` +
+      store.state.categories.map(c =>
+        `<option value="${c.name}">${c.name}</option>`
+      ).join('');
+  }
+
+  /* ================= ITEMS (TABLE + DROPDOWN) ================= */
 
   function renderItems() {
     const tbody = $('#itemsTable tbody');
@@ -29,7 +41,13 @@ import { store, addItem } from './state.js';
     tbody.innerHTML = store.state.items.map(it => `
       <tr data-id="${it.id}">
         <td><input value="${it.name}" disabled></td>
-        <td><input value="${it.category || ''}" disabled></td>
+        <td>
+          <select disabled>
+            ${store.state.categories.map(c =>
+              `<option value="${c.name}" ${c.name === it.category ? 'selected' : ''}>${c.name}</option>`
+            ).join('')}
+          </select>
+        </td>
         <td><input type="number" value="${it.price || 0}" disabled></td>
         <td><input value="${it.unit || ''}" disabled></td>
         <td class="actions">
@@ -51,7 +69,7 @@ import { store, addItem } from './state.js';
       const item = store.state.items.find(i => i.id === id);
       if (!item) return;
 
-      const inputs = row.querySelectorAll('input');
+      const inputs = row.querySelectorAll('input,select');
 
       if (btn.dataset.act === 'edit') {
         inputs.forEach(i => i.disabled = false);
@@ -62,7 +80,7 @@ import { store, addItem } from './state.js';
       if (btn.dataset.act === 'save') {
         store.commit(() => {
           item.name = inputs[0].value.trim();
-          item.category = inputs[1].value.trim();
+          item.category = inputs[1].value;
           item.price = Number(inputs[2].value || 0);
           item.unit = inputs[3].value.trim();
         });
@@ -71,8 +89,8 @@ import { store, addItem } from './state.js';
 
       if (btn.dataset.act === 'del') {
         if (!confirm('למחוק פריט?')) return;
-        store.commit(state => {
-          state.items = state.items.filter(i => i.id !== id);
+        store.commit(s => {
+          s.items = s.items.filter(i => i.id !== id);
         });
         renderItems();
       }
@@ -80,15 +98,19 @@ import { store, addItem } from './state.js';
   }
 
   function wireItemForm() {
+    const catSelect = $('#itemCategory');
+    renderCategoryOptions(catSelect);
+
     on($('#itemForm'), 'submit', e => {
       e.preventDefault();
 
       const name = $('#itemName').value.trim();
-      const category = $('#itemCategory').value.trim();
+      const category = catSelect.value;
       const price = Number($('#itemPrice').value || 0);
       const unit = $('#itemUnit').value.trim();
 
       if (!name) return alert('שם פריט חובה');
+      if (!category) return alert('יש לבחור קטגוריה');
 
       addItem({ name, category, price, unit });
       renderItems();
@@ -96,16 +118,43 @@ import { store, addItem } from './state.js';
     });
   }
 
-  /* ================= INIT ================= */
+  /* ================= CATEGORIES (TABLE + EDIT) ================= */
 
-  function init() {
-    wireNavigation();
-    wireItemForm();
-    wireItemsTable();
-    renderItems();
-    showScreen('items');
+  function renderCategories() {
+    const tbody = $('#categoriesTable tbody');
+    if (!tbody) return;
+
+    tbody.innerHTML = store.state.categories.map(c => `
+      <tr data-name="${c.name}">
+        <td><input value="${c.name}" ${PROTECTED_CATEGORIES.has(c.name) ? 'disabled' : ''}></td>
+        <td class="actions">
+          ${PROTECTED_CATEGORIES.has(c.name)
+            ? '<span class="muted">מוגנת</span>'
+            : `
+              <button data-act="save">💾</button>
+              <button data-act="del">🗑️</button>
+            `
+          }
+        </td>
+      </tr>
+    `).join('');
   }
 
-  document.addEventListener('DOMContentLoaded', init);
+  function wireCategoriesTable() {
+    on($('#categoriesTable'), 'click', e => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
 
-})();
+      const row = btn.closest('tr');
+      const oldName = row.dataset.name;
+      if (PROTECTED_CATEGORIES.has(oldName)) return;
+
+      if (btn.dataset.act === 'save') {
+        const newName = row.querySelector('input').value.trim();
+        if (!newName) return alert('שם קטגוריה חובה');
+
+        const used =
+          store.state.items.some(i => i.category === oldName);
+
+        store.commit(state => {
+          state.categories.find(c => c.name === o
