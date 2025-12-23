@@ -1,3 +1,9 @@
+import {
+  filterReportDocuments,
+  calcReportSummary,
+  calcReportBySupplier
+} from './calculations.js';
+
 import { $, $$, money, toast } from './utils.js';
 import { calcMonthlySummary } from './calculations.js';
 import { store, addDocument } from './state.js';
