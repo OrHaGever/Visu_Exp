@@ -11,12 +11,10 @@
 
 <div class="app">
 
-  <!-- HEADER -->
   <header>
     <h1>ניהול הוצאות</h1>
   </header>
 
-  <!-- NAV -->
   <nav class="tabs">
     <button data-tab="dashboard" class="active">דשבורד</button>
     <button data-tab="documents">מסמכים</button>
@@ -25,7 +23,6 @@
     <button data-tab="categories">קטגוריות</button>
   </nav>
 
-  <!-- MAIN -->
   <main>
 
     <!-- DASHBOARD -->
@@ -101,6 +98,7 @@
 
     <!-- SUPPLIERS -->
     <section id="suppliers" class="screen hide">
+
       <form id="supplierForm" class="form">
         <h3>ספק חדש</h3>
 
@@ -109,17 +107,38 @@
         </label>
 
         <label>קטגוריה
-          <input type="text" id="supCategory">
+          <select id="supCategory"></select>
+        </label>
+
+        <label>טלפון
+          <input type="text" id="supPhone" placeholder="אופציונלי">
+        </label>
+
+        <label>הערות
+          <input type="text" id="supNotes" placeholder="אופציונלי">
         </label>
 
         <button type="submit">שמור</button>
       </form>
 
-      <div id="suppliersList"></div>
+      <table id="suppliersTable">
+        <thead>
+          <tr>
+            <th>שם ספק</th>
+            <th>קטגוריה</th>
+            <th>טלפון</th>
+            <th>הערות</th>
+            <th>פעולות</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
     </section>
 
     <!-- ITEMS -->
     <section id="items" class="screen hide">
+
       <form id="itemForm" class="form">
         <h3>פריט חדש</h3>
 
@@ -128,21 +147,38 @@
         </label>
 
         <label>קטגוריה
-          <input type="text" id="itemCategory">
+          <select id="itemCategory"></select>
         </label>
 
         <label>מחיר
           <input type="number" id="itemPrice" step="0.01">
         </label>
 
+        <label>יחידה
+          <input type="text" id="itemUnit" placeholder='למשל: ק״ג / יח׳'>
+        </label>
+
         <button type="submit">שמור</button>
       </form>
 
-      <div id="itemsList"></div>
+      <table id="itemsTable">
+        <thead>
+          <tr>
+            <th>שם פריט</th>
+            <th>קטגוריה</th>
+            <th>מחיר</th>
+            <th>יחידה</th>
+            <th>פעולות</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
     </section>
 
     <!-- CATEGORIES -->
     <section id="categories" class="screen hide">
+
       <form id="categoryForm" class="form">
         <h3>קטגוריה חדשה</h3>
 
@@ -153,14 +189,21 @@
         <button type="submit">שמור</button>
       </form>
 
-      <div id="categoriesList"></div>
+      <table id="categoriesTable">
+        <thead>
+          <tr>
+            <th>שם קטגוריה</th>
+            <th>פעולות</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
     </section>
 
   </main>
 </div>
 
-<!-- SCRIPT -->
 <script type="module" src="app.js"></script>
-
 </body>
 </html>
