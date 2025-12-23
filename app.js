@@ -1,6 +1,6 @@
 import { $, $$, money } from './utils.js';
 import { calcMonthlySummary } from './calculations.js';
-import { store, addDocument, addSupplier } from './state.js';
+import { store, addDocument, addSupplier, addItem } from './state.js';
 
 (function () {
 
@@ -30,22 +30,19 @@ import { store, addDocument, addSupplier } from './state.js';
   function renderDashboard() {
     const filters = getFilters();
     const docs = store.state.documents.filter(d => byFilters(d, filters));
-
     const summary = calcMonthlySummary(docs);
 
     $('#kpiTotal').textContent = money(summary.expenses);
     $('#kpiCount').textContent = docs.length + ' רשומות';
 
     $('#kpiRecurring').textContent = money(
-      docs.filter(d => d.type === 'recurring')
-          .reduce((s, d) => s + d.amount, 0)
+      docs.filter(d => d.type === 'recurring').reduce((s, d) => s + d.amount, 0)
     );
     $('#kpiRecurringCount').textContent =
       docs.filter(d => d.type === 'recurring').length + ' חשבוניות';
 
     $('#kpiOneoff').textContent = money(
-      docs.filter(d => d.type === 'oneoff')
-          .reduce((s, d) => s + d.amount, 0)
+      docs.filter(d => d.type === 'oneoff').reduce((s, d) => s + d.amount, 0)
     );
     $('#kpiOneoffCount').textContent =
       docs.filter(d => d.type === 'oneoff').length + ' חשבוניות';
@@ -143,7 +140,7 @@ import { store, addDocument, addSupplier } from './state.js';
       const existing = store.state.suppliers.find(s => s.name === name);
 
       if (existing) {
-        store.commit(state => {
+        store.commit(() => {
           existing.category = category;
           existing.notes = notes;
         });
@@ -184,6 +181,93 @@ import { store, addDocument, addSupplier } from './state.js';
         });
 
         renderSuppliers();
+      }
+    });
+  }
+
+  /* ================= ITEMS ================= */
+
+  function renderItems() {
+    const list = $('#itemsList');
+    if (!list) return;
+
+    const items = store.state.items
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name, 'he'));
+
+    list.innerHTML = items.map(it => `
+      <div class="item-row">
+        <div>
+          <strong>${it.name}</strong>
+          <div class="muted">
+            ${it.category || 'ללא קטגוריה'} • ${money(it.price || 0)} / ${it.unit || ''}
+          </div>
+        </div>
+        <div class="row-actions">
+          <button class="ghost" data-act="edit" data-id="${it.id}">עריכה</button>
+          <button class="danger" data-act="del" data-id="${it.id}">מחיקה</button>
+        </div>
+      </div>
+    `).join('');
+
+    const empty = $('#itemsEmpty');
+    if (empty) empty.style.display = items.length ? 'none' : 'block';
+  }
+
+  function wireItemForm() {
+    on($('#itemForm'), 'submit', e => {
+      e.preventDefault();
+
+      const name = ($('#itemName')?.value || '').trim();
+      const category = ($('#itemCategory')?.value || '').trim();
+      const price = Number($('#itemPrice')?.value || 0);
+      const unit = ($('#itemUnit')?.value || '').trim();
+
+      if (!name) {
+        alert('שם פריט חובה');
+        return;
+      }
+
+      const existing = store.state.items.find(i => i.name === name);
+
+      if (existing) {
+        store.commit(() => {
+          existing.category = category;
+          existing.price = price;
+          existing.unit = unit;
+        });
+      } else {
+        addItem({ name, category, price, unit });
+      }
+
+      renderItems();
+      e.target.reset();
+    });
+
+    on($('#itemsList'), 'click', e => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+
+      const id = btn.dataset.id;
+      const act = btn.dataset.act;
+      const item = store.state.items.find(i => i.id === id);
+      if (!item) return;
+
+      if (act === 'edit') {
+        $('#itemName').value = item.name;
+        $('#itemCategory').value = item.category || '';
+        $('#itemPrice').value = item.price || 0;
+        $('#itemUnit').value = item.unit || '';
+      }
+
+      if (act === 'del') {
+        if (!confirm('למחוק פריט?')) return;
+
+        store.commit(state => {
+          state.items = state.items.filter(i => i.id !== id);
+        });
+
+        renderItems();
       }
     });
   }
@@ -233,9 +317,11 @@ import { store, addDocument, addSupplier } from './state.js';
     wireFilters();
     wireInvoiceForm();
     wireSupplierForm();
+    wireItemForm();
     renderDashboard();
     renderInvoices();
     renderSuppliers();
+    renderItems();
   }
 
   document.addEventListener('DOMContentLoaded', init);
