@@ -1,137 +1,8 @@
-/* ================= RESET ================= */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #0f1115;
-  color: #eaeaf0;
-}
-
-/* ================= LAYOUT ================= */
-.app {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px;
-}
-
-header {
-  margin-bottom: 24px;
-}
-
-header h1 {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 700;
-}
-
-/* ================= NAV ================= */
-nav.tabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 24px;
-}
-
-nav.tabs button {
-  background: #1b1e26;
-  color: #cfd2ff;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-nav.tabs button.active {
-  background: linear-gradient(135deg, #6c7bff, #9b8cff);
-  color: #0f1115;
-}
-
-/* ================= SCREENS ================= */
-.screen {
-  display: block;
-}
-
-.hide {
-  display: none;
-}
-
-/* ================= DASHBOARD ================= */
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-}
-
-.card {
-  background: #1b1e26;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-}
-
-.card .label {
-  font-size: 14px;
-  color: #aab0ff;
-  margin-bottom: 8px;
-}
-
-.card .value {
-  font-size: 26px;
-  font-weight: 700;
-}
-
-/* ================= FORMS ================= */
-.form {
-  background: #1b1e26;
-  padding: 20px;
-  border-radius: 16px;
-  margin-bottom: 24px;
-}
-
-.form h3 {
-  margin-top: 0;
-  margin-bottom: 16px;
-}
-
-.form label {
-  display: flex;
-  flex-direction: column;
-  font-size: 14px;
-  margin-bottom: 12px;
-  gap: 6px;
-}
-
-.form input,
-.form select {
-  background: #0f1115;
-  border: 1px solid #2a2f3a;
-  color: #eaeaf0;
-  padding: 10px 12px;
-  border-radius: 10px;
-}
-
-.form button {
-  margin-top: 12px;
-  background: linear-gradient(135deg, #6c7bff, #9b8cff);
-  color: #0f1115;
-  border: none;
-  padding: 12px;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* ================= TABLE ================= */
 table {
   width: 100%;
   border-collapse: collapse;
   background: #1b1e26;
-  border-radius: 16px;
+  border-radius: 14px;
   overflow: hidden;
 }
 
@@ -139,8 +10,7 @@ thead {
   background: #222636;
 }
 
-th,
-td {
+th, td {
   padding: 12px 14px;
   text-align: right;
   font-size: 14px;
@@ -155,25 +25,24 @@ tbody tr:nth-child(even) {
   background: #171a21;
 }
 
-/* ================= LISTS ================= */
-#suppliersList,
-#itemsList,
-#categoriesList {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+td input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #eaeaf0;
 }
 
-.row {
-  background: #1b1e26;
-  padding: 14px 16px;
-  border-radius: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+td input:disabled {
+  opacity: 0.7;
 }
 
-.muted {
-  color: #9aa0ff;
-  font-size: 13px;
+.actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.hide {
+  display: none;
 }
