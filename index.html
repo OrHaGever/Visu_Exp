@@ -3,76 +3,164 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>דשבורד הוצאות ספקים - הצדף</title>
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Styles -->
+  <title>ניהול הוצאות</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-  <div class="app">
 
-    <!-- HEADER -->
-    <header>
-      <h1>דשבורד הוצאות ספקים - הצדף</h1>
-      <div class="actions">
-        <span class="badge">חודש: <b id="monthBadge">—</b></span>
-        <div class="btnRow">
-          <button id="themeBtn" class="outline small">מצב בהיר</button>
-          <button id="exportBtn" class="outline small">ייצוא JSON</button>
-          <button id="importBtn" class="outline small">ייבוא</button>
-          <input type="file" id="fileInput" accept=".json" hidden>
+<div class="app">
+
+  <!-- HEADER -->
+  <header>
+    <h1>ניהול הוצאות</h1>
+  </header>
+
+  <!-- NAV -->
+  <nav class="tabs">
+    <button data-tab="dashboard" class="active">דשבורד</button>
+    <button data-tab="documents">מסמכים</button>
+    <button data-tab="suppliers">ספקים</button>
+    <button data-tab="items">פריטים</button>
+    <button data-tab="categories">קטגוריות</button>
+  </nav>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="screen">
+      <div class="cards">
+        <div class="card">
+          <div class="label">סה״כ הוצאות</div>
+          <div class="value" id="kpiTotal">₪0.00</div>
+        </div>
+        <div class="card">
+          <div class="label">מספר רשומות</div>
+          <div class="value" id="kpiCount">0</div>
+        </div>
+        <div class="card">
+          <div class="label">ממוצע</div>
+          <div class="value" id="kpiAvg">₪0.00</div>
         </div>
       </div>
-    </header>
+    </section>
 
-    <!-- NAV -->
-    <nav>
-      <button class="tab active" data-screen="dashboard">דשבורד</button>
-      <button class="tab" data-screen="documents">מסמכים</button>
-      <button class="tab" data-screen="suppliers">ספקים</button>
-      <button class="tab" data-screen="categories">קטגוריות</button>
-      <button class="tab" data-screen="items">פריטים</button>
-    </nav>
+    <!-- DOCUMENTS -->
+    <section id="documents" class="screen hide">
 
-    <!-- MAIN -->
-    <main>
+      <form id="invoiceForm" class="form">
+        <h3>הוספת מסמך</h3>
 
-      <!-- DASHBOARD -->
-      <section id="dashboard" class="screen">
-        <!-- התוכן נשאר בדיוק כמו שהיה אצלך -->
-      </section>
+        <label>תאריך
+          <input type="date" id="invDate" required>
+        </label>
 
-      <!-- DOCUMENTS -->
-      <section id="documents" class="screen hide"></section>
+        <label>ספק
+          <input type="text" id="invSupplier" required>
+        </label>
 
-      <!-- SUPPLIERS -->
-      <section id="suppliers" class="screen hide"></section>
+        <label>מספר מסמך
+          <input type="text" id="invNumber">
+        </label>
 
-      <!-- CATEGORIES -->
-      <section id="categories" class="screen hide"></section>
+        <label>סכום
+          <input type="number" id="invAmount" step="0.01" required>
+        </label>
 
-      <!-- ITEMS -->
-      <section id="items" class="screen hide"></section>
+        <label>סוג
+          <select id="invType">
+            <option value="recurring">קבוע</option>
+            <option value="oneoff">חד־פעמי</option>
+          </select>
+        </label>
 
-    </main>
-  </div>
+        <label>
+          <input type="checkbox" id="invPaid">
+          שולם
+        </label>
 
-  <!-- TOAST -->
-  <div class="toast hide" id="toast">
-    <div class="tbox">
-      <div class="msg" id="toastMsg">—</div>
-      <button class="outline small" id="toastBtn">סגור</button>
-    </div>
-  </div>
+        <button type="submit">הוסף</button>
+      </form>
 
-  <!-- 🔑 SCRIPT: JS ENTRY POINT -->
-  <!-- שים לב: אין שום <script> אחר בקובץ -->
-  <script type="module" src="app.js"></script>
+      <table id="invoicesTable">
+        <thead>
+          <tr>
+            <th>תאריך</th>
+            <th>ספק</th>
+            <th>מס׳</th>
+            <th>סכום</th>
+            <th>סוג</th>
+            <th>סטטוס</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+    </section>
+
+    <!-- SUPPLIERS -->
+    <section id="suppliers" class="screen hide">
+      <form id="supplierForm" class="form">
+        <h3>ספק חדש</h3>
+
+        <label>שם
+          <input type="text" id="supName" required>
+        </label>
+
+        <label>קטגוריה
+          <input type="text" id="supCategory">
+        </label>
+
+        <button type="submit">שמור</button>
+      </form>
+
+      <div id="suppliersList"></div>
+    </section>
+
+    <!-- ITEMS -->
+    <section id="items" class="screen hide">
+      <form id="itemForm" class="form">
+        <h3>פריט חדש</h3>
+
+        <label>שם
+          <input type="text" id="itemName" required>
+        </label>
+
+        <label>קטגוריה
+          <input type="text" id="itemCategory">
+        </label>
+
+        <label>מחיר
+          <input type="number" id="itemPrice" step="0.01">
+        </label>
+
+        <button type="submit">שמור</button>
+      </form>
+
+      <div id="itemsList"></div>
+    </section>
+
+    <!-- CATEGORIES -->
+    <section id="categories" class="screen hide">
+      <form id="categoryForm" class="form">
+        <h3>קטגוריה חדשה</h3>
+
+        <label>שם
+          <input type="text" id="catName" required>
+        </label>
+
+        <button type="submit">שמור</button>
+      </form>
+
+      <div id="categoriesList"></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- SCRIPT -->
+<script type="module" src="app.js"></script>
+
 </body>
 </html>
