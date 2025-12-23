@@ -1,217 +1,317 @@
-/* ================= RESET ================= */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ניהול הוצאות</title>
 
-body {
-  margin: 0;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #0f1115;
-  color: #eaeaf0;
-}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-/* ================= LAYOUT ================= */
-.app {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px;
-}
+  <link rel="stylesheet" href="styles.css" />
+</head>
 
-header {
-  margin-bottom: 20px;
-}
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header__title">
+        <h1>ניהול הוצאות</h1>
+        <div class="muted">דשבורד • מסמכים • ספקים • פריטים • קטגוריות</div>
+      </div>
+    </header>
 
-header h1 {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 700;
-}
+    <nav class="tabs" aria-label="ניווט">
+      <button type="button" data-tab="dashboard" class="active">דשבורד</button>
+      <button type="button" data-tab="documents">מסמכים</button>
+      <button type="button" data-tab="suppliers">ספקים</button>
+      <button type="button" data-tab="items">פריטים</button>
+      <button type="button" data-tab="categories">קטגוריות</button>
+    </nav>
 
-/* ================= NAV ================= */
-nav.tabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 24px;
-}
+    <main>
+      <!-- DASHBOARD -->
+      <section id="dashboard" class="screen">
+        <div class="cards">
+          <div class="card">
+            <div class="label">סה״כ הוצאות</div>
+            <div class="value" id="kpiTotal">₪0</div>
+          </div>
+          <div class="card">
+            <div class="label">מספר מסמכים</div>
+            <div class="value" id="kpiCount">0</div>
+          </div>
+          <div class="card">
+            <div class="label">ממוצע למסמך</div>
+            <div class="value" id="kpiAvg">₪0</div>
+          </div>
+        </div>
+      </section>
 
-nav.tabs button {
-  background: #1b1e26;
-  color: #cfd2ff;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 500;
-}
+      <!-- DOCUMENTS -->
+      <section id="documents" class="screen">
+        <div class="grid2">
+          <form id="invoiceForm" class="panel">
+            <div class="panel__head">
+              <h2>הוספת מסמך</h2>
+              <div class="muted">הספק נבחר מהרשימה</div>
+            </div>
 
-nav.tabs button.active {
-  background: linear-gradient(135deg, #6c7bff, #9b8cff);
-  color: #0f1115;
-}
+            <div class="formgrid">
+              <label>
+                <span>תאריך</span>
+                <input type="date" id="invDate" required>
+              </label>
 
-/* ================= SCREENS ================= */
-.screen {
-  display: block;
-}
+              <label class="colspan2">
+                <span>ספק</span>
+                <select id="invSupplier" required></select>
+              </label>
 
-.hide {
-  display: none;
-}
+              <label>
+                <span>מס׳ מסמך</span>
+                <input type="text" id="invNumber" inputmode="text">
+              </label>
 
-/* ================= DASHBOARD ================= */
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-}
+              <label>
+                <span>סכום</span>
+                <input type="number" id="invAmount" step="0.01" inputmode="decimal" required>
+              </label>
 
-.card {
-  background: #1b1e26;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-}
+              <label>
+                <span>סוג</span>
+                <select id="invType">
+                  <option value="recurring">קבוע</option>
+                  <option value="oneoff">חד־פעמי</option>
+                </select>
+              </label>
 
-.card .label {
-  font-size: 14px;
-  color: #aab0ff;
-  margin-bottom: 6px;
-}
+              <label class="check">
+                <input type="checkbox" id="invPaid">
+                <span>שולם</span>
+              </label>
+            </div>
 
-.card .value {
-  font-size: 26px;
-  font-weight: 700;
-}
+            <button class="btn primary" type="submit">שמור מסמך</button>
+          </form>
 
-/* ================= FORMS ================= */
-.form {
-  background: #1b1e26;
-  padding: 20px;
-  border-radius: 16px;
-  margin-bottom: 24px;
-  max-width: 520px;
-}
+          <div class="panel">
+            <div class="panel__head">
+              <h2>מסמכים</h2>
+              <div class="muted">תצוגה בטבלה</div>
+            </div>
 
-.form h3 {
-  margin: 0 0 16px;
-}
+            <div class="tablewrap">
+              <table id="invoicesTable">
+                <thead>
+                  <tr>
+                    <th>תאריך</th>
+                    <th>ספק</th>
+                    <th>מס׳</th>
+                    <th>סכום</th>
+                    <th>סוג</th>
+                    <th>שולם</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
 
-.form label {
-  display: flex;
-  flex-direction: column;
-  font-size: 13px;
-  margin-bottom: 12px;
-  gap: 6px;
-}
+            <div class="empty muted" id="docsEmpty">אין מסמכים עדיין.</div>
+          </div>
+        </div>
+      </section>
 
-.form input,
-.form select {
-  background: #0f1115;
-  border: 1px solid #2a2f3a;
-  color: #eaeaf0;
-  padding: 10px 12px;
-  border-radius: 10px;
-}
+      <!-- SUPPLIERS -->
+      <section id="suppliers" class="screen">
+        <div class="grid2">
+          <form id="supplierForm" class="panel">
+            <div class="panel__head">
+              <h2>ספק חדש</h2>
+              <div class="muted">מופיע מיד בטבלה ובמסמכים</div>
+            </div>
 
-.form button {
-  margin-top: 12px;
-  background: linear-gradient(135deg, #6c7bff, #9b8cff);
-  color: #0f1115;
-  border: none;
-  padding: 12px;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-}
+            <div class="formgrid">
+              <label class="colspan2">
+                <span>שם ספק</span>
+                <input type="text" id="supName" required>
+              </label>
 
-/* ================= TABLES (CORE UX) ================= */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #1b1e26;
-  border-radius: 16px;
-  overflow: hidden;
-  margin-top: 16px;
-}
+              <label class="colspan2">
+                <span>קטגוריה</span>
+                <select id="supCategory" required></select>
+              </label>
 
-thead {
-  background: #222636;
-}
+              <label>
+                <span>טלפון</span>
+                <input type="tel" id="supPhone" inputmode="tel" placeholder="אופציונלי">
+              </label>
 
-th,
-td {
-  padding: 12px 14px;
-  text-align: right;
-  font-size: 14px;
-}
+              <label>
+                <span>אימייל</span>
+                <input type="email" id="supEmail" inputmode="email" placeholder="אופציונלי">
+              </label>
 
-th {
-  color: #aab0ff;
-  font-weight: 600;
-}
+              <label class="colspan2">
+                <span>הערות</span>
+                <input type="text" id="supNotes" placeholder="אופציונלי">
+              </label>
 
-tbody tr {
-  border-bottom: 1px solid #222636;
-}
+              <label class="check">
+                <input type="checkbox" id="supActive" checked>
+                <span>פעיל</span>
+              </label>
+            </div>
 
-tbody tr:last-child {
-  border-bottom: none;
-}
+            <button class="btn primary" type="submit">שמור ספק</button>
+          </form>
 
-tbody tr:nth-child(even) {
-  background: #171a21;
-}
+          <div class="panel">
+            <div class="panel__head">
+              <h2>ספקים</h2>
+              <div class="muted">עריכה בשורה ✏️ ושמירה 💾</div>
+            </div>
 
-/* ================= INLINE EDIT ================= */
-td input,
-td select {
-  width: 100%;
-  background: transparent;
-  border: none;
-  color: #eaeaf0;
-  font-size: 14px;
-  padding: 6px 4px;
-}
+            <div class="tablewrap">
+              <table id="suppliersTable">
+                <thead>
+                  <tr>
+                    <th>שם</th>
+                    <th>קטגוריה</th>
+                    <th>טלפון</th>
+                    <th>אימייל</th>
+                    <th>הערות</th>
+                    <th>פעיל</th>
+                    <th>פעולות</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
 
-td input:disabled,
-td select:disabled {
-  opacity: 0.65;
-}
+            <div class="empty muted" id="supEmpty">אין ספקים עדיין.</div>
+          </div>
+        </div>
+      </section>
 
-td input:focus,
-td select:focus {
-  outline: none;
-  background: #0f1115;
-  border-radius: 6px;
-}
+      <!-- ITEMS -->
+      <section id="items" class="screen">
+        <div class="grid2">
+          <form id="itemForm" class="panel">
+            <div class="panel__head">
+              <h2>פריט חדש</h2>
+              <div class="muted">קטגוריה נבחרת מהרשימה</div>
+            </div>
 
-/* ================= ACTIONS ================= */
-.actions {
-  white-space: nowrap;
-  text-align: left;
-}
+            <div class="formgrid">
+              <label class="colspan2">
+                <span>שם פריט</span>
+                <input type="text" id="itemName" required>
+              </label>
 
-.actions button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  margin-left: 6px;
-  opacity: 0.75;
-}
+              <label class="colspan2">
+                <span>קטגוריה</span>
+                <select id="itemCategory" required></select>
+              </label>
 
-.actions button:hover {
-  opacity: 1;
-}
+              <label>
+                <span>מחיר</span>
+                <input type="number" id="itemPrice" step="0.01" inputmode="decimal">
+              </label>
 
-.hide {
-  display: none;
-}
+              <label>
+                <span>יחידה</span>
+                <input type="text" id="itemUnit" placeholder="למשל: יח׳ / ק״ג">
+              </label>
 
-/* ================= UTIL ================= */
-.muted {
-  color: #9aa0ff;
-  font-size: 13px;
-}
+              <label class="check">
+                <input type="checkbox" id="itemActive" checked>
+                <span>פעיל</span>
+              </label>
+            </div>
+
+            <button class="btn primary" type="submit">שמור פריט</button>
+          </form>
+
+          <div class="panel">
+            <div class="panel__head">
+              <h2>פריטים</h2>
+              <div class="muted">עריכה בשורה</div>
+            </div>
+
+            <div class="tablewrap">
+              <table id="itemsTable">
+                <thead>
+                  <tr>
+                    <th>שם</th>
+                    <th>קטגוריה</th>
+                    <th>מחיר</th>
+                    <th>יחידה</th>
+                    <th>פעיל</th>
+                    <th>פעולות</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+
+            <div class="empty muted" id="itemsEmpty">אין פריטים עדיין.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CATEGORIES -->
+      <section id="categories" class="screen">
+        <div class="grid2">
+          <form id="categoryForm" class="panel">
+            <div class="panel__head">
+              <h2>קטגוריה חדשה</h2>
+              <div class="muted">שינוי שם יעדכן ספקים/פריטים</div>
+            </div>
+
+            <div class="formgrid">
+              <label class="colspan2">
+                <span>שם קטגוריה</span>
+                <input type="text" id="catName" required>
+              </label>
+            </div>
+
+            <button class="btn primary" type="submit">שמור קטגוריה</button>
+          </form>
+
+          <div class="panel">
+            <div class="panel__head">
+              <h2>קטגוריות</h2>
+              <div class="muted">מוגנות לא ניתנות למחיקה</div>
+            </div>
+
+            <div class="tablewrap">
+              <table id="categoriesTable">
+                <thead>
+                  <tr>
+                    <th>שם</th>
+                    <th>סטטוס</th>
+                    <th>פעולות</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+
+            <div class="empty muted" id="catsEmpty">אין קטגוריות.</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast hide">
+    <div class="toast__box">
+      <div id="toastMsg" class="toast__msg">—</div>
+      <button id="toastBtn" class="btn ghost" type="button">סגור</button>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
