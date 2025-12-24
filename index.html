@@ -135,7 +135,7 @@ nav button.active{
 
 /* tables */
 .tableWrap{overflow:auto;border-radius:14px;border:1px solid var(--border)}
-table{width:100%;border-collapse:collapse;font-size:11px;min-width:820px}
+table{width:100%;border-collapse:collapse;font-size:11px;min-width:860px}
 th,td{padding:10px 10px;border-bottom:1px solid var(--border);text-align:right;vertical-align:top}
 th{color:var(--muted);font-weight:600;background:var(--card2)}
 tr:hover td{background:rgba(255,255,255,.02)}
@@ -235,7 +235,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="btnRow">
         <button id="addDoc" class="green">מסמך חדש</button>
         <button id="addSupplier" class="green">ספק חדש</button>
-        <button id="addCategory" class="green">קטגוריה חדשה</button>
+        <button id="addSubcategory" class="green">תת־קטגוריה חדשה</button>
         <button id="addItem" class="green">פריט חדש</button>
         <button id="exportJson" class="ghost">ייצוא JSON</button>
         <button id="importJson" class="ghost">ייבוא JSON</button>
@@ -262,8 +262,12 @@ tr:hover td{background:rgba(255,255,255,.02)}
           <select id="filterSupplier"></select>
         </div>
         <div>
-          <label>סינון לפי קטגוריית ספק</label>
-          <select id="filterCategory"></select>
+          <label>קטגוריה ראשית</label>
+          <select id="filterMain"></select>
+        </div>
+        <div>
+          <label>תת־קטגוריה</label>
+          <select id="filterSub"></select>
         </div>
         <div>
           <label>סינון לפי סוג</label>
@@ -323,7 +327,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
           <thead>
             <tr>
               <th>שם</th>
-              <th>קטגוריה</th>
+              <th>קטגוריה ראשית</th>
+              <th>תת־קטגוריה</th>
               <th>טלפון</th>
               <th>אימייל</th>
               <th>הערות</th>
@@ -345,7 +350,14 @@ tr:hover td{background:rgba(255,255,255,.02)}
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
         <h2 style="margin:0">קטגוריות</h2>
-        <button class="green" id="addCategory2">קטגוריה חדשה</button>
+        <button class="green" id="addSubcategory2">תת־קטגוריה חדשה</button>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="note">
+        קטגוריות ראשיות קבועות: <b>מזון, שתייה, שירותים חיצוניים, תחזוקה, חשמל וגז, ארנונה, אחר</b>.
+        כאן מנהלים תתי־קטגוריות תחתיהן.
       </div>
 
       <div class="spacer"></div>
@@ -354,18 +366,18 @@ tr:hover td{background:rgba(255,255,255,.02)}
         <table>
           <thead>
             <tr>
-              <th>שם</th>
-              <th>סטטוס</th>
+              <th>קטגוריה ראשית</th>
+              <th>תת־קטגוריה</th>
               <th>בשימוש</th>
               <th>פעולות</th>
             </tr>
           </thead>
-          <tbody id="categoriesBody"></tbody>
+          <tbody id="subcategoriesBody"></tbody>
         </table>
       </div>
 
-      <div id="categoriesEmpty" class="empty hide" style="margin-top:12px">
-        אין קטגוריות. הוסף קטגוריה חדשה.
+      <div id="subcategoriesEmpty" class="empty hide" style="margin-top:12px">
+        אין עדיין תתי־קטגוריות. הוסף אחת.
       </div>
     </div>
   </section>
@@ -384,7 +396,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
           <thead>
             <tr>
               <th>שם</th>
-              <th>קטגוריה</th>
+              <th>קטגוריה ראשית</th>
+              <th>תת־קטגוריה</th>
               <th>מחיר</th>
               <th>יחידה</th>
               <th>פעיל</th>
@@ -396,7 +409,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
 
       <div id="itemsEmpty" class="empty hide" style="margin-top:12px">
-        אין עדיין פריטים. הוסף פריט חדש (שם + מחיר + יחידה).
+        אין עדיין פריטים. הוסף פריט חדש.
       </div>
     </div>
   </section>
