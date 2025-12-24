@@ -1,14 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>דשבורד הוצאות ספקים - הצדף</title>
+<title>Visual Expense - דשבורד הוצאות ספקים</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 :root{
@@ -38,7 +37,6 @@
   --chip:rgba(37,99,235,.10);
   --shadow:rgba(2,6,23,.08);
 }
-
 *{box-sizing:border-box}
 html,body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial; background:var(--bg); color:var(--text)}
 a{color:inherit}
@@ -81,6 +79,7 @@ button.ghost{background:transparent;border:1px solid transparent;color:var(--mut
 button.green{background:var(--accent2)}
 button.danger{background:var(--danger)}
 button.small{padding:7px 10px;font-size:11px}
+button:disabled{opacity:.55;cursor:not-allowed;filter:none!important}
 
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:760px){.row{grid-template-columns:1fr}}
@@ -108,19 +107,11 @@ button.small{padding:7px 10px;font-size:11px}
 }
 
 .note{font-size:11px;color:var(--muted);line-height:1.5}
-
-.badge{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:6px 10px;border-radius:999px;border:1px solid var(--border);
-  background:var(--card2);color:var(--muted);font-size:11px;
-}
-.badge b{color:var(--text)}
 .btnRow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 
-/* nav */
 nav{
   display:flex;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border);
-  overflow-x:auto;position:sticky;top:54px;background:rgba(15,23,42,.40);backdrop-filter: blur(10px);
+  overflow-x:auto;position:sticky;top:62px;background:rgba(15,23,42,.40);backdrop-filter: blur(10px);
   z-index:9;
 }
 :root[data-theme="light"] nav{background:rgba(245,247,251,.78)}
@@ -142,18 +133,20 @@ th{color:var(--muted);font-weight:600;background:var(--card2)}
 tr:hover td{background:rgba(255,255,255,.02)}
 :root[data-theme="light"] tr:hover td{background:rgba(2,6,23,.02)}
 
+.empty{border:1px dashed var(--border);border-radius:16px;padding:12px;color:var(--muted);background:var(--card2);font-size:12px}
+
+/* screens */
+.hide{display:none}
+
+/* pills / amounts */
+.amount-pos{color:var(--paid);font-weight:700}
+.amount-neg{color:var(--credit);font-weight:700}
 .pill{
   display:inline-flex;align-items:center;gap:6px;
   padding:6px 10px;border-radius:999px;border:1px solid var(--border);
   background:var(--card2);font-size:11px;color:var(--muted);
 }
-.pill.paid{border-color:rgba(22,163,74,.35);color:var(--paid)}
-.pill.unpaid{border-color:rgba(180,83,9,.35);color:var(--unpaid)}
-
-.empty{border:1px dashed var(--border);border-radius:16px;padding:12px;color:var(--muted);background:var(--card2);font-size:12px}
-
-/* screens */
-.hide{display:none}
+.pill.credit{border-color:rgba(225,29,72,.35);color:var(--credit)}
 
 /* modals */
 .modal{
@@ -162,7 +155,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
   padding:14px;
 }
 .modal .box{
-  width:100%;max-width:760px;
+  width:100%;max-width:820px;
   background:var(--card);border:1px solid var(--border);
   border-radius:18px;padding:14px;
   box-shadow:0 18px 50px rgba(0,0,0,.45);
@@ -170,7 +163,6 @@ tr:hover td{background:rgba(255,255,255,.02)}
 }
 .modal h3{margin:0 0 10px;font-size:14px}
 .modal .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.toggleRow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .check{
   display:flex;align-items:center;gap:8px;
   padding:8px 10px;border-radius:14px;border:1px solid var(--border);
@@ -178,62 +170,51 @@ tr:hover td{background:rgba(255,255,255,.02)}
 }
 .check input{width:auto;margin:0}
 
-/* toast */
-.toast{position:fixed;bottom:14px;left:0;right:0;display:flex;justify-content:center;pointer-events:none;z-index:60;padding:0 14px}
-.toast .tbox{
-  pointer-events:auto;max-width:720px;width:100%;
-  background:rgba(15,23,42,.75);
-  border:1px solid rgba(148,163,184,.35);
-  color:#fff;border-radius:16px;padding:10px 12px;
-  backdrop-filter: blur(10px);
-  display:flex;justify-content:space-between;align-items:center;gap:10px;
+/* doc lines */
+.lineRow{
+  display:grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap:10px;
+  border:1px solid var(--border);
+  background:var(--card2);
+  border-radius:14px;
+  padding:10px;
+  margin-bottom:10px;
 }
-:root[data-theme="light"] .toast .tbox{
-  background:rgba(255,255,255,.86);color:#0f172a;border-color:rgba(15,23,42,.14);
+@media(max-width:900px){
+  .lineRow{grid-template-columns:1fr 1fr; }
+  .lineRow .span2{grid-column: span 2;}
 }
-.toast .msg{font-size:12px}
-  /* ---------- UI safety / contrast fixes ---------- */
-button:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-  filter:none !important;
-}
-select optgroup{
-  color:var(--muted);
-  font-weight:700;
-}
-select option{
-  color:var(--text);
-}
-
+.lineActions{display:flex;align-items:end;justify-content:flex-end}
 </style>
 </head>
 
 <body>
+
 <header class="topbar">
   <div class="app">
     <div class="kpis">
       <div class="kpi">
+        <div class="k">חודש</div>
+        <div id="monthBadge" class="v">—</div>
+      </div>
+      <div class="kpi">
         <div class="k">סה״כ הוצאות</div>
-        <div id="kpiTotal" class="v">₪0</div>
+        <div id="expSum" class="v">₪0</div>
       </div>
       <div class="kpi">
-        <div class="k">מסמכים</div>
-        <div id="kpiDocs" class="v">0</div>
+        <div class="k">זיכויים</div>
+        <div id="creditSum" class="v">₪0</div>
       </div>
       <div class="kpi">
-        <div class="k">לא שולמו</div>
-        <div id="kpiUnpaid" class="v">0</div>
-      </div>
-      <div class="kpi">
-        <div class="k">חודש נוכחי</div>
-        <div id="kpiMonth" class="v">—</div>
+        <div class="k">פתוח (לא שולם)</div>
+        <div id="openSum" class="v">₪0</div>
       </div>
     </div>
   </div>
 </header>
 
-<nav>
+<nav class="app">
   <button class="tab active" data-screen="dashboard">דשבורד</button>
   <button class="tab" data-screen="documents">מסמכים</button>
   <button class="tab" data-screen="suppliers">ספקים</button>
@@ -245,20 +226,70 @@ select option{
 
   <section id="dashboard" class="screen">
     <div class="card">
-      <h2>תקציר</h2>
-      <div class="spacer"></div>
-      <div class="btnRow">
-        <button id="addDoc" class="green">מסמך חדש</button>
-        <button id="addSupplier" class="green">ספק חדש</button>
-        <button id="addSubcategory" class="green">תת־קטגוריה חדשה</button>
-        <button id="addItem" class="green">פריט חדש</button>
-        <button id="exportJson" class="ghost">ייצוא JSON</button>
-        <button id="importJson" class="ghost">ייבוא JSON</button>
-        <button id="clearAll" class="danger">איפוס הכל</button>
+      <h2>שליטה</h2>
+
+      <div class="row">
+        <div>
+          <label>בחר חודש</label>
+          <input id="monthInput" type="month">
+        </div>
+        <div>
+          <label>הכנסות לחודש</label>
+          <input id="incomeInput" type="number" inputmode="decimal" placeholder="0">
+        </div>
       </div>
 
       <div class="spacer"></div>
-      <div id="supplierCards" class="kpis"></div>
+
+      <div class="btnRow">
+        <button id="addDoc" class="green">מסמך חדש</button>
+        <button id="addSupplier" class="green">ספק חדש</button>
+        <button id="addItem" class="green">פריט חדש</button>
+        <button id="themeBtn" class="ghost">מצב בהיר/לילה</button>
+        <button id="exportBtn" class="ghost">ייצוא JSON</button>
+        <button id="importBtn" class="ghost">ייבוא JSON</button>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="row">
+        <div class="card" style="padding:12px">
+          <h2 style="margin:0 0 10px">סיכום לפי קטגוריה</h2>
+          <div class="tableWrap">
+            <table style="min-width:640px">
+              <thead>
+                <tr>
+                  <th>קטגוריה</th>
+                  <th>חיובים</th>
+                  <th>זיכויים</th>
+                  <th>נטו</th>
+                </tr>
+              </thead>
+              <tbody id="catSummaryBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" style="padding:12px">
+          <h2 style="margin:0 0 10px">טופ ספקים (לפי סכום)</h2>
+          <div class="tableWrap">
+            <table style="min-width:640px">
+              <thead>
+                <tr>
+                  <th>ספק</th>
+                  <th>קטגוריה</th>
+                  <th>מסמכים</th>
+                  <th>סה״כ</th>
+                </tr>
+              </thead>
+              <tbody id="topSupBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="spacer"></div>
+      <div class="note">המערכת שומרת נתונים בדפדפן (LocalStorage). ייצוא JSON מומלץ לגיבוי.</div>
     </div>
   </section>
 
@@ -266,7 +297,7 @@ select option{
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
         <h2 style="margin:0">מסמכים</h2>
-        <button class="green" id="addDoc2">מסמך חדש</button>
+        <button class="green">מסמך חדש</button>
       </div>
 
       <div class="spacer"></div>
@@ -277,27 +308,25 @@ select option{
           <select id="filterSupplier"></select>
         </div>
         <div>
-          <label>קטגוריה ראשית</label>
-          <select id="filterMain"></select>
-        </div>
-        <div>
-          <label>תת־קטגוריה</label>
-          <select id="filterSub"></select>
+          <label>סינון לפי קטגוריה</label>
+          <select id="filterCategory"></select>
         </div>
         <div>
           <label>סינון לפי סוג</label>
-          <select id="filterType"></select>
+          <select id="filterDocType">
+            <option value="">כל הסוגים</option>
+            <option value="חשבונית">חשבונית</option>
+            <option value="קבלה">קבלה</option>
+            <option value="זיכוי">זיכוי</option>
+          </select>
         </div>
         <div>
-          <label>מתאריך</label>
-          <input id="filterFrom" type="date" />
-        </div>
-        <div>
-          <label>עד תאריך</label>
-          <input id="filterTo" type="date" />
-        </div>
-        <div style="display:flex;align-items:end;gap:8px">
-          <button id="clearFilters" class="ghost">נקה סינונים</button>
+          <label>סינון לפי סטטוס</label>
+          <select id="filterDocStatus">
+            <option value="">הכל</option>
+            <option value="שולם">שולם</option>
+            <option value="לא שולם">לא שולם</option>
+          </select>
         </div>
       </div>
 
@@ -308,12 +337,11 @@ select option{
           <thead>
             <tr>
               <th>תאריך</th>
+              <th>מס׳</th>
+              <th>סוג</th>
               <th>ספק</th>
               <th>קטגוריה</th>
-              <th>תיאור</th>
-              <th>מס׳</th>
-              <th>סכום נטו</th>
-              <th>סוג</th>
+              <th>סכום</th>
               <th>סטטוס</th>
               <th>פעולות</th>
             </tr>
@@ -323,7 +351,7 @@ select option{
       </div>
 
       <div id="docsEmpty" class="empty hide" style="margin-top:12px">
-        אין עדיין מסמכים. לחץ על <b>מסמך חדש</b> כדי להתחיל.
+        אין עדיין מסמכים לחודש הזה.
       </div>
     </div>
   </section>
@@ -332,116 +360,135 @@ select option{
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
         <h2 style="margin:0">ספקים</h2>
-        <button class="green" id="addSupplier2">ספק חדש</button>
+        <button class="green">ספק חדש</button>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="row">
+        <div>
+          <label>חיפוש ספק</label>
+          <input id="supplierSearch" placeholder="הקלד כדי לסנן…">
+        </div>
+        <div>
+          <label>סינון לפי קטגוריה</label>
+          <select id="supplierCatFilter"></select>
+        </div>
       </div>
 
       <div class="spacer"></div>
 
       <div class="tableWrap">
-        <table>
+        <table style="min-width:900px">
           <thead>
             <tr>
               <th>שם</th>
-              <th>קטגוריה ראשית</th>
-              <th>תת־קטגוריה</th>
+              <th>קטגוריה</th>
               <th>טלפון</th>
               <th>אימייל</th>
               <th>הערות</th>
-              <th>פעיל</th>
               <th>פעולות</th>
             </tr>
           </thead>
-          <tbody id="suppliersBody"></tbody>
+          <tbody id="supBody"></tbody>
         </table>
       </div>
 
-      <div id="suppliersEmpty" class="empty hide" style="margin-top:12px">
-        אין עדיין ספקים. הוסף ספק חדש.
+      <div id="supEmpty" class="empty hide" style="margin-top:12px">
+        אין תוצאות.
       </div>
     </div>
   </section>
 
   <section id="categories" class="screen hide">
-  <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-      <h2 style="margin:0">קטגוריות</h2>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button id="addPrimaryCategory" class="green">קטגוריה ראשית חדשה</button>
-        <button id="addSubCategory" class="green">תת קטגוריה חדשה</button>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <h2 style="margin:0">קטגוריות</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button id="addPrimaryCategory" class="green">קטגוריה ראשית חדשה</button>
+          <button id="addSubCategory" class="green">תת קטגוריה חדשה</button>
+        </div>
       </div>
-    </div>
 
-    <div class="spacer"></div>
-    <div class="row">
-      <div>
-        <label>חיפוש (ראשיות/משניות)</label>
-        <input id="catSearch" placeholder="הקלד כדי לסנן…">
-      </div>
-      <div>
+      <div class="spacer"></div>
+      <div class="row">
+        <div>
+          <label>חיפוש (ראשיות/משניות)</label>
+          <input id="catSearch" placeholder="הקלד כדי לסנן…">
+        </div>
         <div class="note">
           מחיקה תדרוש <b>מיזוג</b> כדי לא לשבור ספקים/פריטים קיימים.
         </div>
       </div>
+
+      <div class="spacer"></div>
+
+      <h2 style="margin:0 0 10px;font-size:13px">קטגוריות ראשיות</h2>
+      <div class="tableWrap">
+        <table style="min-width:760px">
+          <thead>
+            <tr>
+              <th>שם</th>
+              <th>תתי קטגוריות</th>
+              <th>ספקים</th>
+              <th>פריטים</th>
+              <th>פעולות</th>
+            </tr>
+          </thead>
+          <tbody id="primaryCatBody"></tbody>
+        </table>
+      </div>
+
+      <div class="spacer"></div>
+
+      <h2 style="margin:0 0 10px;font-size:13px">תתי קטגוריות</h2>
+      <div class="tableWrap">
+        <table style="min-width:820px">
+          <thead>
+            <tr>
+              <th>ראשית</th>
+              <th>תת קטגוריה</th>
+              <th>ספקים</th>
+              <th>פריטים</th>
+              <th>פעולות</th>
+            </tr>
+          </thead>
+          <tbody id="subCatBody"></tbody>
+        </table>
+      </div>
     </div>
-
-    <div class="spacer"></div>
-
-    <h2 style="margin:0 0 10px;font-size:13px">קטגוריות ראשיות</h2>
-    <div class="tableWrap">
-      <table style="min-width:760px">
-        <thead>
-          <tr>
-            <th>שם</th>
-            <th>תתי קטגוריות</th>
-            <th>ספקים</th>
-            <th>פריטים</th>
-            <th>פעולות</th>
-          </tr>
-        </thead>
-        <tbody id="primaryCatBody"></tbody>
-      </table>
-    </div>
-
-    <div class="spacer"></div>
-
-    <h2 style="margin:0 0 10px;font-size:13px">תתי קטגוריות</h2>
-    <div class="tableWrap">
-      <table style="min-width:820px">
-        <thead>
-          <tr>
-            <th>ראשית</th>
-            <th>תת קטגוריה</th>
-            <th>ספקים</th>
-            <th>פריטים</th>
-            <th>פעולות</th>
-          </tr>
-        </thead>
-        <tbody id="subCatBody"></tbody>
-      </table>
-    </div>
-  </div>
-</section>
-
+  </section>
 
   <section id="items" class="screen hide">
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
         <h2 style="margin:0">פריטים</h2>
-        <button class="green" id="addItem2">פריט חדש</button>
+        <button class="green">פריט חדש</button>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="row">
+        <div>
+          <label>חיפוש פריט</label>
+          <input id="itemSearch" placeholder="הקלד כדי לסנן…">
+        </div>
+        <div>
+          <label>סינון לפי קטגוריה</label>
+          <select id="itemCatFilter"></select>
+        </div>
       </div>
 
       <div class="spacer"></div>
 
       <div class="tableWrap">
-        <table>
+        <table style="min-width:860px">
           <thead>
             <tr>
               <th>שם</th>
-              <th>קטגוריה ראשית</th>
-              <th>תת־קטגוריה</th>
+              <th>קטגוריה</th>
               <th>מחיר</th>
               <th>יחידה</th>
-              <th>פעיל</th>
               <th>פעולות</th>
             </tr>
           </thead>
@@ -450,14 +497,203 @@ select option{
       </div>
 
       <div id="itemsEmpty" class="empty hide" style="margin-top:12px">
-        אין עדיין פריטים. הוסף פריט חדש.
+        אין תוצאות.
       </div>
     </div>
   </section>
 
 </main>
 
-<!-- MODAL: PRIMARY CATEGORY (ADD/EDIT) -->
+<!-- ================= MODALS ================= -->
+
+<!-- SUPPLIER MODAL -->
+<div class="modal" id="supplierModal">
+  <div class="box">
+    <h3 id="supplierModalTitle">הוספת ספק</h3>
+    <input type="hidden" id="supEditId" value="">
+    <div class="row">
+      <div>
+        <label>שם ספק</label>
+        <input id="supName" placeholder="לדוגמה: החברה המרכזית">
+      </div>
+      <div>
+        <label>קטגוריה</label>
+        <select id="supCat"></select>
+      </div>
+      <div>
+        <label>טלפון</label>
+        <input id="supPhone" placeholder="05x-xxxxxxx">
+      </div>
+      <div>
+        <label>אימייל</label>
+        <input id="supEmail" placeholder="name@example.com">
+      </div>
+      <div style="grid-column:1/-1">
+        <label>הערות</label>
+        <textarea id="supNotes" rows="3"></textarea>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="saveSupplierBtn">שמור</button>
+      <button class="outline" id="cancelSupplierBtn">ביטול</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="supplierDeleteModal">
+  <div class="box">
+    <h3>מחיקת ספק</h3>
+    <div class="note" id="supDelInfo">—</div>
+    <div class="spacer"></div>
+    <label>מזג אל:</label>
+    <select id="supDelMergeSelect"></select>
+    <div class="spacer"></div>
+    <div class="btnRow">
+      <button class="danger" id="supDelMergeBtn">מזג + מחק</button>
+      <button class="outline" id="supDelDisableBtn">השבת ספק</button>
+      <button class="outline" id="supDelCancelBtn">ביטול</button>
+    </div>
+  </div>
+</div>
+
+<!-- ITEM MODAL -->
+<div class="modal" id="itemModal">
+  <div class="box">
+    <h3 id="itemModalTitle">הוספת פריט</h3>
+    <input type="hidden" id="itemEditId" value="">
+    <div class="row">
+      <div>
+        <label>שם פריט</label>
+        <input id="itemName" placeholder="לדוגמה: סלמון">
+      </div>
+      <div>
+        <label>קטגוריה</label>
+        <select id="itemCategory"></select>
+      </div>
+      <div>
+        <label>מחיר</label>
+        <input id="itemPrice" type="number" inputmode="decimal" placeholder="0">
+      </div>
+      <div>
+        <label>יחידה</label>
+        <input id="itemUnit" placeholder="ק״ג/יחידה">
+      </div>
+    </div>
+    <div class="actions">
+      <button id="saveItemBtn">שמור</button>
+      <button class="outline" id="cancelItemBtn">ביטול</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="itemDeleteModal">
+  <div class="box">
+    <h3>מחיקת פריט</h3>
+    <div class="note" id="itemDelInfo">—</div>
+    <div class="spacer"></div>
+    <label>מזג אל:</label>
+    <select id="itemDelMergeSelect"></select>
+    <div class="spacer"></div>
+    <div class="btnRow">
+      <button class="danger" id="itemDelMergeBtn">מזג + מחק</button>
+      <button class="outline" id="itemDelDisableBtn">השבת פריט</button>
+      <button class="outline" id="itemDelCancelBtn">ביטול</button>
+    </div>
+  </div>
+</div>
+
+<!-- DOC MODAL -->
+<div class="modal" id="docModal">
+  <div class="box">
+    <h3 id="docModalTitle">מסמך חדש</h3>
+    <input type="hidden" id="docEditId" value="">
+
+    <div class="row">
+      <div>
+        <label>ספק</label>
+        <select id="docSupplierSelect"></select>
+        <div class="spacer"></div>
+        <button class="outline small" id="docAddSupplierBtn">+ ספק</button>
+      </div>
+
+      <div>
+        <label>קטגוריה (לפי ספק)</label>
+        <input id="docSupplierCategory" disabled>
+      </div>
+
+      <div>
+        <label>תאריך</label>
+        <input id="docDate" type="date">
+      </div>
+
+      <div>
+        <label>סוג</label>
+        <select id="docType">
+          <option value="חשבונית">חשבונית</option>
+          <option value="קבלה">קבלה</option>
+          <option value="זיכוי">זיכוי</option>
+        </select>
+      </div>
+
+      <div>
+        <label>מס׳ מסמך</label>
+        <input id="docNo" placeholder="אופציונלי">
+      </div>
+
+      <div>
+        <label>סטטוס</label>
+        <select id="docStatus">
+          <option value="שולם">שולם</option>
+          <option value="לא שולם">לא שולם</option>
+        </select>
+      </div>
+
+      <div class="check" style="grid-column:1/-1">
+        <input id="docVat" type="checkbox" checked>
+        <label for="docVat" style="margin:0">כולל מע״מ</label>
+      </div>
+
+      <div style="grid-column:1/-1">
+        <label>הערות</label>
+        <textarea id="docNotes" rows="3"></textarea>
+      </div>
+
+      <div style="grid-column:1/-1">
+        <label>סכום ידני (אם אין פירוט שורות)</label>
+        <input id="docManualAmount" type="number" inputmode="decimal" placeholder="0">
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="btnRow">
+      <button class="outline small" id="docAddItemBtn">+ פריט</button>
+      <button class="green small" id="addLineBtn">+ שורה</button>
+    </div>
+
+    <div class="spacer"></div>
+    <div id="linesHost"></div>
+
+    <div class="spacer"></div>
+    <div class="row">
+      <div class="kpi">
+        <div class="k">סה״כ לפני מע״מ</div>
+        <div id="docSubtotal" class="v">₪0</div>
+      </div>
+      <div class="kpi">
+        <div class="k">סה״כ לתשלום</div>
+        <div id="docTotal" class="v">₪0</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="saveDocBtn">שמור</button>
+      <button class="outline" id="cancelDocBtn">ביטול</button>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORY MODALS -->
 <div class="modal" id="primaryCatModal">
   <div class="box">
     <h3 id="primaryCatModalTitle">קטגוריה ראשית חדשה</h3>
@@ -471,7 +707,6 @@ select option{
   </div>
 </div>
 
-<!-- MODAL: SUB CATEGORY (ADD/EDIT) -->
 <div class="modal" id="subCatModal">
   <div class="box">
     <h3 id="subCatModalTitle">תת קטגוריה חדשה</h3>
@@ -488,7 +723,6 @@ select option{
   </div>
 </div>
 
-<!-- MODAL: DELETE PRIMARY CATEGORY (MERGE) -->
 <div class="modal" id="primaryDeleteModal">
   <div class="box">
     <h3>מחיקת קטגוריה ראשית</h3>
@@ -504,13 +738,12 @@ select option{
   </div>
 </div>
 
-<!-- MODAL: DELETE SUB CATEGORY (MERGE) -->
 <div class="modal" id="subDeleteModal">
   <div class="box">
     <h3>מחיקת תת קטגוריה</h3>
     <div class="note" id="subDelInfo">—</div>
     <div class="spacer"></div>
-    <label>מזג אל (תת קטגוריה אחרת):</label>
+    <label>מזג אל:</label>
     <select id="subDelMergeSelect"></select>
     <div class="spacer"></div>
     <button class="danger" id="subDelMergeBtn">מזג + מחק</button>
@@ -522,15 +755,16 @@ select option{
   </div>
 </div>
 
-
-<div class="toast">
-  <div id="toastBox" class="tbox" style="display:none">
-    <div id="toastMsg" class="msg">—</div>
-    <button id="toastClose" class="ghost small">סגור</button>
+<!-- TOAST -->
+<div id="toast" class="hide" style="position:fixed;bottom:14px;left:0;right:0;display:flex;justify-content:center;z-index:60;padding:0 14px">
+  <div style="max-width:720px;width:100%;background:rgba(15,23,42,.75);border:1px solid rgba(148,163,184,.35);color:#fff;border-radius:16px;padding:10px 12px;backdrop-filter: blur(10px);display:flex;justify-content:space-between;align-items:center;gap:10px;">
+    <div id="toastMsg" style="font-size:12px">—</div>
+    <button id="toastBtn" class="ghost small" style="border:1px solid transparent">סגור</button>
   </div>
 </div>
 
 <input id="fileInput" type="file" accept="application/json" class="hide" />
+
 <script src="app.js"></script>
 </body>
 </html>
