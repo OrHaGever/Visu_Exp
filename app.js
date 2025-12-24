@@ -218,9 +218,11 @@ function catDisplay(subName){
 
 /* ---------- Docs ---------- */
 function normalizeDoc(d){
+  function normalizeDoc(d){
   if (!d.id) d.id = uid();
   if (!d.date) d.date = new Date().toISOString().slice(0,10);
   if (!d.type) d.type = "חשבונית";
+  if (d.type === "קבלה") d.type = "תעודת משלוח"; // מיגרציה לנתונים קיימים
   if (!d.status) d.status = "שולם";
   if (d.vatApplied === undefined) d.vatApplied = true;
   if (d.notes === undefined) d.notes = "";
