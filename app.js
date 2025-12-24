@@ -1,9 +1,53 @@
 
 /* ================= STORAGE ================= */
 const KEY = "hatzeDef-supplier-dashboard-v3";
-const $ = (sel)=>document.querySelector(sel);
-const $$ = (sel)=>Array.from(document.querySelectorAll(sel));
-const on = (sel, ev, fn)=>{ const el = $(sel); if(el) el.addEventListener(ev, fn); };
+// ---------- Safe DOM helpers (prevents crashes when an element id is missing) ----------
+function byId(id){ return document.getElementById(id); }
+function setHTML(id, html){ const el = byId(id); if(el) el.innerHTML = html; }
+function setText(id, text){ const el = byId(id); if(el) el.textContent = text; }
+function setVal(id, val){ const el = byId(id); if(el) el.value = val; }
+function getVal(id, fallback=""){ const el = byId(id); return el ? (el.value ?? fallback) : fallback; }
+function showIf(id, cond){ const el = byId(id); if(el) el.classList.toggle("hide", !cond); }
+function hideIf(id, cond){ const el = byId(id); if(el) el.classList.toggle("hide", !!cond); }
+
+// ---------- Tabs compatibility: some HTML uses onclick="switchTab('documents')" ----------
+window.switchTab = function(screenId){
+  try { switchScreen(screenId); } catch(e){ /* ignore */ }
+};
+// also expose for inline onclick if exists
+window.switchScreen = window.switchScreen || function(screenId){
+  // fallback if called before defined
+  const screens = document.querySelectorAll(".screen");
+  screens.forEach(s=>s.classList.add("hide"));
+  const target = document.getElementById(screenId);
+  if (target) target.classList.remove("hide");
+};
+
+// ---------- Button fallback (if your buttons don't have the exact IDs) ----------
+document.addEventListener("click", (e)=>{
+  const btn = e.target.closest("button");
+  if(!btn) return;
+  const t = (btn.textContent || "").trim();
+
+  // Tabs (buttons/links with data-screen)
+  const tab = e.target.closest("[data-screen]");
+  if (tab && tab.classList.contains("tab")){
+    const screen = tab.getAttribute("data-screen");
+    if (screen) window.switchTab(screen);
+    return;
+  }
+
+  // Supplier / Item / Doc generic labels (works even if id differs)
+  if (t === "ספק חדש" || t === "הוסף ספק"){
+    if (typeof openSupplierModalForAdd === "function") openSupplierModalForAdd();
+  }
+  if (t === "פריט חדש" || t === "הוסף פריט"){
+    if (typeof openItemModalForAdd === "function") openItemModalForAdd();
+  }
+  if (t === "מסמך חדש" || t === "הוסף מסמך"){
+    if (typeof openDocModalForAdd === "function") openDocModalForAdd();
+  }
+});
 
 function uid(){
   if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
