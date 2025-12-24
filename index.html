@@ -187,6 +187,31 @@ tr:hover td{background:rgba(255,255,255,.02)}
   .lineRow .span2{grid-column: span 2;}
 }
 .lineActions{display:flex;align-items:end;justify-content:flex-end}
+  /* Fix: option list colors (avoid white on white) */
+select, option{
+  color: var(--text);
+}
+:root[data-theme="light"] select,
+:root[data-theme="light"] option{
+  color:#0f172a;
+  background:#fff;
+}
+:root:not([data-theme="light"]) select,
+:root:not([data-theme="light"]) option{
+  background: var(--card);
+}
+
+/* Disabled inputs readable */
+input:disabled, select:disabled, textarea:disabled{
+  opacity: 1;
+  color: var(--text);
+}
+:root[data-theme="light"] input:disabled,
+:root[data-theme="light"] select:disabled,
+:root[data-theme="light"] textarea:disabled{
+  color:#0f172a;
+}
+
 </style>
 </head>
 
