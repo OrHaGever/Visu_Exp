@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -191,6 +192,20 @@ tr:hover td{background:rgba(255,255,255,.02)}
   background:rgba(255,255,255,.86);color:#0f172a;border-color:rgba(15,23,42,.14);
 }
 .toast .msg{font-size:12px}
+  /* ---------- UI safety / contrast fixes ---------- */
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+  filter:none !important;
+}
+select optgroup{
+  color:var(--muted);
+  font-weight:700;
+}
+select option{
+  color:var(--text);
+}
+
 </style>
 </head>
 
@@ -347,40 +362,66 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </section>
 
   <section id="categories" class="screen hide">
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-        <h2 style="margin:0">קטגוריות</h2>
-        <button class="green" id="addSubcategory2">תת־קטגוריה חדשה</button>
-      </div>
-
-      <div class="spacer"></div>
-
-      <div class="note">
-        קטגוריות ראשיות קבועות: <b>מזון, שתייה, שירותים חיצוניים, תחזוקה, חשמל וגז, ארנונה, אחר</b>.
-        כאן מנהלים תתי־קטגוריות תחתיהן.
-      </div>
-
-      <div class="spacer"></div>
-
-      <div class="tableWrap">
-        <table>
-          <thead>
-            <tr>
-              <th>קטגוריה ראשית</th>
-              <th>תת־קטגוריה</th>
-              <th>בשימוש</th>
-              <th>פעולות</th>
-            </tr>
-          </thead>
-          <tbody id="subcategoriesBody"></tbody>
-        </table>
-      </div>
-
-      <div id="subcategoriesEmpty" class="empty hide" style="margin-top:12px">
-        אין עדיין תתי־קטגוריות. הוסף אחת.
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+      <h2 style="margin:0">קטגוריות</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button id="addPrimaryCategory" class="green">קטגוריה ראשית חדשה</button>
+        <button id="addSubCategory" class="green">תת קטגוריה חדשה</button>
       </div>
     </div>
-  </section>
+
+    <div class="spacer"></div>
+    <div class="row">
+      <div>
+        <label>חיפוש (ראשיות/משניות)</label>
+        <input id="catSearch" placeholder="הקלד כדי לסנן…">
+      </div>
+      <div>
+        <div class="note">
+          מחיקה תדרוש <b>מיזוג</b> כדי לא לשבור ספקים/פריטים קיימים.
+        </div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <h2 style="margin:0 0 10px;font-size:13px">קטגוריות ראשיות</h2>
+    <div class="tableWrap">
+      <table style="min-width:760px">
+        <thead>
+          <tr>
+            <th>שם</th>
+            <th>תתי קטגוריות</th>
+            <th>ספקים</th>
+            <th>פריטים</th>
+            <th>פעולות</th>
+          </tr>
+        </thead>
+        <tbody id="primaryCatBody"></tbody>
+      </table>
+    </div>
+
+    <div class="spacer"></div>
+
+    <h2 style="margin:0 0 10px;font-size:13px">תתי קטגוריות</h2>
+    <div class="tableWrap">
+      <table style="min-width:820px">
+        <thead>
+          <tr>
+            <th>ראשית</th>
+            <th>תת קטגוריה</th>
+            <th>ספקים</th>
+            <th>פריטים</th>
+            <th>פעולות</th>
+          </tr>
+        </thead>
+        <tbody id="subCatBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
 
   <section id="items" class="screen hide">
     <div class="card">
@@ -416,16 +457,71 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 </main>
 
-<div id="modal" class="modal" aria-hidden="true">
+<!-- MODAL: PRIMARY CATEGORY (ADD/EDIT) -->
+<div class="modal" id="primaryCatModal">
   <div class="box">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-      <h3 id="modalTitle" style="margin:0">—</h3>
-      <button id="modalClose" class="ghost small">סגור</button>
+    <h3 id="primaryCatModalTitle">קטגוריה ראשית חדשה</h3>
+    <input type="hidden" id="primaryEditName" value="">
+    <label>שם קטגוריה ראשית</label>
+    <input id="primaryCatName" placeholder="לדוגמה: מזון">
+    <div class="actions">
+      <button id="savePrimaryCatBtn">שמור</button>
+      <button class="outline" id="cancelPrimaryCatBtn">ביטול</button>
     </div>
-    <div class="spacer"></div>
-    <div id="modalBody"></div>
   </div>
 </div>
+
+<!-- MODAL: SUB CATEGORY (ADD/EDIT) -->
+<div class="modal" id="subCatModal">
+  <div class="box">
+    <h3 id="subCatModalTitle">תת קטגוריה חדשה</h3>
+    <input type="hidden" id="subEditName" value="">
+    <label>קטגוריה ראשית</label>
+    <select id="subCatPrimary"></select>
+    <div class="spacer"></div>
+    <label>שם תת קטגוריה</label>
+    <input id="subCatName" placeholder="לדוגמה: דגים">
+    <div class="actions">
+      <button id="saveSubCatBtn">שמור</button>
+      <button class="outline" id="cancelSubCatBtn">ביטול</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: DELETE PRIMARY CATEGORY (MERGE) -->
+<div class="modal" id="primaryDeleteModal">
+  <div class="box">
+    <h3>מחיקת קטגוריה ראשית</h3>
+    <div class="note" id="primaryDelInfo">—</div>
+    <div class="spacer"></div>
+    <label>מזג אל:</label>
+    <select id="primaryDelMergeSelect"></select>
+    <div class="spacer"></div>
+    <button class="danger" id="primaryDelMergeBtn">מזג + מחק</button>
+    <div class="actions">
+      <button class="outline" id="primaryDelCancelBtn">ביטול</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: DELETE SUB CATEGORY (MERGE) -->
+<div class="modal" id="subDeleteModal">
+  <div class="box">
+    <h3>מחיקת תת קטגוריה</h3>
+    <div class="note" id="subDelInfo">—</div>
+    <div class="spacer"></div>
+    <label>מזג אל (תת קטגוריה אחרת):</label>
+    <select id="subDelMergeSelect"></select>
+    <div class="spacer"></div>
+    <button class="danger" id="subDelMergeBtn">מזג + מחק</button>
+    <div class="spacer"></div>
+    <button class="outline" id="subDelToUnassignedBtn">העבר ל"לא משויך" + מחק</button>
+    <div class="actions">
+      <button class="outline" id="subDelCancelBtn">ביטול</button>
+    </div>
+  </div>
+</div>
+
 
 <div class="toast">
   <div id="toastBox" class="tbox" style="display:none">
