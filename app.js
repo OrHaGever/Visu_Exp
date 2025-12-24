@@ -1,1494 +1,1708 @@
-/* app.js - main categories + subcategories */
 
-(function () {
-  'use strict';
+/* ================= STORAGE ================= */
+const KEY = "hatzeDef-supplier-dashboard-v3";
+const $ = (sel)=>document.querySelector(sel);
+const $$ = (sel)=>Array.from(document.querySelectorAll(sel));
+const on = (sel, ev, fn)=>{ const el = $(sel); if(el) el.addEventListener(ev, fn); };
 
-  /* ================= constants ================= */
+function uid(){
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return "id_" + Math.random().toString(16).slice(2) + Date.now().toString(16);
+}
+let toastTimer=null;
+function toast(msg){
+  $("#toastMsg").textContent = msg;
+  $("#toast").classList.remove("hide");
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> $("#toast").classList.add("hide"), 2600);
+}
+on("#toastBtn","click", ()=> $("#toast").classList.add("hide"));
 
-  const MAIN_CATEGORIES = [
-    "מזון",
-    "שתייה",
-    "שירותים חיצוניים",
-    "תחזוקה",
-    "חשמל וגז",
-    "ארנונה",
-    "אחר",
-  ];
+function money(n){
+  const v = Number(n||0);
+  return "₪" + v.toLocaleString("he-IL", {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function escapeHtml(s){
+  return String(s||"")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+function openModal(id){ const el=$("#"+id); if(el) el.style.display="flex"; }
+function closeModal(id){ const el=$("#"+id); if(el) el.style.display="none"; }
 
-  const DEFAULT_SUBCATEGORIES = [
-    { main: "מזון", name: "בשר" },
-    { main: "מזון", name: "דגים" },
-    { main: "מזון", name: "ירקות" },
-    { main: "מזון", name: "קינוחים" },
+/* ================= DEFAULTS ================= */
+const DEFAULT_CATEGORIES = [
+  "מזון","שתייה קלה","אלכוהול","יין","קינוחים","קפה ותה","קרח","אריזות וחד-פעמי","נייר ומוצרי נייר",
+  "ניקיון והיגיינה","תחזוקה ותיקונים","ציוד מטבח","ציוד בר","שיווק ופרסום","משלוחים ופלטפורמות",
+  "תקשורת ואינטרנט","חשמל / מים / גז","כוח אדם","מערכות ותוכנה","עמלות וסליקה","מיחזור ופינוי",
+  "מיסים וארנונה","שירותים חיצוניים","פרחים ועיצוב","לא משויך"
+];
 
-    { main: "שתייה", name: "שתייה קלה" },
-    { main: "שתייה", name: "אלכוהול" },
-    { main: "שתייה", name: "יין" },
-    { main: "שתייה", name: "קפה ותה" },
-    { main: "שתייה", name: "קרח" },
+const DEFAULT_PRIMARY_CATEGORIES = ["מזון","שתייה","שירותים חיצוניים","תחזוקה","חשמל וגז","ארנונה","אחר"];
+const DEFAULT_SUBCATEGORIES = [
+  { primary:"אחר", name:"לא משויך" },
 
-    { main: "שירותים חיצוניים", name: "משלוחים ופלטפורמות" },
-    { main: "שירותים חיצוניים", name: "שיווק ופרסום" },
-    { main: "שירותים חיצוניים", name: "עמלות וסליקה" },
-    { main: "שירותים חיצוניים", name: "מערכות ותוכנה" },
-    { main: "שירותים חיצוניים", name: "תקשורת ואינטרנט" },
+  { primary:"מזון", name:"מזון" },
+  { primary:"מזון", name:"דגים" },
+  { primary:"מזון", name:"בשר" },
+  { primary:"מזון", name:"קינוחים" },
+  { primary:"מזון", name:"קרח" },
 
-    { main: "תחזוקה", name: "ניקיון והיגיינה" },
-    { main: "תחזוקה", name: "ציוד מטבח" },
-    { main: "תחזוקה", name: "ציוד בר" },
-    { main: "תחזוקה", name: "תחזוקה ותיקונים" },
+  { primary:"שתייה", name:"שתייה קלה" },
+  { primary:"שתייה", name:"אלכוהול" },
+  { primary:"שתייה", name:"יין" },
+  { primary:"שתייה", name:"קפה ותה" },
 
-    { main: "חשמל וגז", name: "חברת חשמל" },
-    { main: "חשמל וגז", name: "מים" },
-    { main: "חשמל וגז", name: "גז" },
+  { primary:"תחזוקה", name:"אריזות וחד-פעמי" },
+  { primary:"תחזוקה", name:"נייר ומוצרי נייר" },
+  { primary:"תחזוקה", name:"ניקיון והיגיינה" },
+  { primary:"תחזוקה", name:"תחזוקה ותיקונים" },
+  { primary:"תחזוקה", name:"ציוד מטבח" },
+  { primary:"תחזוקה", name:"ציוד בר" },
 
-    { main: "ארנונה", name: "ארנונה" },
+  { primary:"שירותים חיצוניים", name:"שיווק ופרסום" },
+  { primary:"שירותים חיצוניים", name:"משלוחים ופלטפורמות" },
+  { primary:"שירותים חיצוניים", name:"תקשורת ואינטרנט" },
+  { primary:"שירותים חיצוניים", name:"מערכות ותוכנה" },
+  { primary:"שירותים חיצוניים", name:"כוח אדם" },
+  { primary:"שירותים חיצוניים", name:"עמלות וסליקה" },
+  { primary:"שירותים חיצוניים", name:"מיחזור ופינוי" },
+  { primary:"שירותים חיצוניים", name:"פרחים ועיצוב" },
+  { primary:"שירותים חיצוניים", name:"שירותים חיצוניים" },
 
-    { main: "אחר", name: "אחר" },
-  ];
+  { primary:"חשמל וגז", name:"חשמל / מים / גז" },
+  { primary:"ארנונה", name:"מיסים וארנונה" }
+];
 
-  const DEFAULT_SUPPLIERS = [
-    "וולט",
-    "תן ביס",
-    "מקס",
-    "ישראכרט",
-    "סלקום",
-    "פרטנר",
-    "הוט",
-    "אמישרגז",
-    "תאגיד המים",
-    "שיווק שלי א.א בע״מ",
-    "אקיפ החברה לציוד מלונאי בע״מ",
-    "דאלאס מוצרי נייר בע״מ",
-    "חברת חשמל",
-    "א.א.ר שירותי ביוב",
-    "תמי 4",
-    "בזק",
-    "היכל היין",
-    "החברה המרכזית",
-    "סוקליק",
-    "ביסקוטי",
-    "אייס דרים",
-    "ג.מ טעם הארץ בע״מ",
-    "יזמקו חברה בע״מ"
-  ];
+const PROTECTED_PRIMARY = new Set(["אחר"]);
+const PROTECTED_SUB = new Set(["לא משויך"]);
 
-  const DEFAULT_ITEMS = [
-    { name: "קולה", mainCategory: "שתייה", subcategory: "שתייה קלה", price: 0, unit: "יח׳" },
-    { name: "מים מינרלים", mainCategory: "שתייה", subcategory: "שתייה קלה", price: 0, unit: "יח׳" },
-    { name: "קרח", mainCategory: "שתייה", subcategory: "קרח", price: 0, unit: "שק" },
-    { name: "בירה", mainCategory: "שתייה", subcategory: "אלכוהול", price: 0, unit: "יח׳" },
-    { name: "יין אדום", mainCategory: "שתייה", subcategory: "יין", price: 0, unit: "בקבוק" },
-    { name: "יין לבן", mainCategory: "שתייה", subcategory: "יין", price: 0, unit: "בקבוק" },
-    { name: "נייר טואלט", mainCategory: "תחזוקה", subcategory: "ניקיון והיגיינה", price: 0, unit: "חבילה" },
-    { name: "מגבות נייר", mainCategory: "תחזוקה", subcategory: "ניקיון והיגיינה", price: 0, unit: "חבילה" },
-    { name: "סבון כלים", mainCategory: "תחזוקה", subcategory: "ניקיון והיגיינה", price: 0, unit: "בקבוק" },
-    { name: "אקונומיקה", mainCategory: "תחזוקה", subcategory: "ניקיון והיגיינה", price: 0, unit: "בקבוק" },
-  ];
+const DEFAULT_SUPPLIERS = [
+  "מדחסקור אוניברסל","ג׳אקו שירות למטבחים","יוסי סימן טוב","י.שבי","צ.י.שיווק","קנקון",
+  "לוילן סחר ומוצרים חקלאיים בע״מ","עואודה לשיווק בע״מ","מדג סי פרוט בע״מ","אהרון שיווק",
+  "שיווק שלי א.א בע״מ","אקיפ החברה לציוד מלונאי בע״מ","דאלאס מוצרי נייר בע״מ","חברת חשמל",
+  "א.א.ר שירותי ביוב","תמי 4","בזק","היכל היין","החברה המרכזית","סוקליק","ביסקוטי","אייס דרים",
+  "ג.מ טעם הארץ בע״מ","יזמקו חברה בע״מ","אסטרטג טכנולוגיות בע״מ","אביב אש מערכות בע״מ","מניב ראשון",
+  "אודי בכור שיווק דגים בע״מ","לירי כוח אדם בע״מ","מש-נט בע״מ","זאפ גרופ בע״מ","שיא \"10\" בע״מ",
+  "קורקידי יעקב שיווק והפצה בסיטונאות","מקס עסקים","וינטר מכשירי גז בע״מ","מפעל הפרסום","וולט",
+  "אלירן פרחים","פרסום תבור בעצ","אינפיניה מחזור","ייצוגית פלוס תעשיות בע״מ","משלוחה",
+  "ביימי טכנולוגיות","ישראכרט","סוגת","אייפרקטיקום","אמישרגז","מאירוביץ שלי",
+  "לה פסטה דלה קזה בע״מ","ארנונה ראשון לציון"
+];
 
-  function inferSupplierCategory(name = "") {
-    const n = name.toLowerCase();
+const DEFAULT_ITEMS = [
+  { name: "דניס", category: "מזון", price: 29.90, unit: "ק״ג" },
+  { name: "לברק", category: "מזון", price: 29.90, unit: "ק״ג" },
+  { name: "מושט", category: "מזון", price: 24.90, unit: "ק״ג" },
+  { name: "ברבוניה", category: "מזון", price: 39.90, unit: "ק״ג" },
+  { name: "בר ים", category: "מזון", price: 34.90, unit: "ק״ג" },
+  { name: "סלמון", category: "מזון", price: 49.90, unit: "ק״ג" },
+  { name: "לוקוס", category: "מזון", price: 89.90, unit: "ק״ג" },
+  { name: "שרימפס", category: "מזון", price: 69.90, unit: "ק״ג" },
+  { name: "קלמרי", category: "מזון", price: 59.90, unit: "ק״ג" },
+  { name: "ראשי קלמרי", category: "מזון", price: 44.90, unit: "ק״ג" },
+  { name: "סרטנים", category: "מזון", price: 74.90, unit: "ק״ג" },
+  { name: "מולים", category: "מזון", price: 32.90, unit: "ק״ג" },
+  { name: "סטייק אנטריקוט", category: "מזון", price: 99.90, unit: "ק״ג" },
+  { name: "פילה בקר", category: "מזון", price: 119.90, unit: "ק״ג" },
+  { name: "פרגית", category: "מזון", price: 44.90, unit: "ק״ג" },
+  { name: "חזה עוף", category: "מזון", price: 32.90, unit: "ק״ג" },
+  { name: "צלעות", category: "מזון", price: 54.90, unit: "ק״ג" }
+];
 
-    if (n.includes("חשמל") || n.includes("גז") || n.includes("אמישרגז")) return { main: "חשמל וגז", sub: "גז" };
-    if (n.includes("מים") || n.includes("תאגיד")) return { main: "חשמל וגז", sub: "מים" };
-    if (n.includes("ארנונה")) return { main: "ארנונה", sub: "ארנונה" };
-    if (n.includes("בזק") || n.includes("אינטרנט") || n.includes("סלקום") || n.includes("פרטנר") || n.includes("הוט")) {
-      return { main: "שירותים חיצוניים", sub: "תקשורת ואינטרנט" };
+function inferSupplierCategory(name){
+  const n = (name||"").toLowerCase();
+  if (n.includes("חברת חשמל")) return "חשמל / מים / גז";
+  if (n.includes("אמישרגז") || n.includes("גז") || n.includes("וינטר")) return "חשמל / מים / גז";
+  if (n.includes("ארנונה")) return "מיסים וארנונה";
+  if (n.includes("בזק") || n.includes("מש-נט") || n.includes("מש נט") || n.includes("אייפרקטיקום")) return "תקשורת ואינטרנט";
+  if (n.includes("ישראכרט") || n.includes("מקס")) return "עמלות וסליקה";
+  if (n.includes("וולט") || n.includes("משלוחה")) return "משלוחים ופלטפורמות";
+  if (n.includes("היכל היין") || n.includes("יין")) return "יין";
+  if (n.includes("החברה המרכזית") || n.includes("סוקליק")) return "שתייה קלה";
+  if (n.includes("ביסקוטי") || n.includes("אייס דרים")) return "קינוחים";
+  if (n.includes("דאלאס") || n.includes("מוצרי נייר")) return "נייר ומוצרי נייר";
+  if (n.includes("אקיפ") || n.includes("ציוד מלונאי")) return "ציוד מטבח";
+  if (n.includes("ג׳אקו") || n.includes("מטבחים")) return "תחזוקה ותיקונים";
+  if (n.includes("ביוב") || n.includes("שירותי ביוב")) return "תחזוקה ותיקונים";
+  if (n.includes("מיחזור") || n.includes("מחזור") || n.includes("אינפיניה")) return "מיחזור ופינוי";
+  if (n.includes("כוח אדם") || n.includes("לירי")) return "כוח אדם";
+  if (n.includes("פרסום") || n.includes("מפעל הפרסום") || n.includes("זאפ")) return "שיווק ופרסום";
+  if (n.includes("אלירן פרחים") || n.includes("פרחים")) return "פרחים ועיצוב";
+  if (n.includes("שיווק") || n.includes("דגים") || n.includes("פרוט") || n.includes("חקלאיים") || n.includes("טעם הארץ") || n.includes("סוגת") || n.includes("לה פסטה")) return "מזון";
+  if (n.includes("טכנולוגיות") || n.includes("ביימי") || n.includes("אסטרטג") || n.includes("יזמקו")) return "מערכות ותוכנה";
+  return "לא משויך";
+}
+
+/* oldSub -> primary */
+function mapOldCategoryToPrimary(subName){
+  const n = String(subName||"").trim();
+
+  if (["מזון","דגים","בשר","קינוחים","קרח"].includes(n)) return "מזון";
+  if (["שתייה קלה","אלכוהול","יין","קפה ותה"].includes(n)) return "שתייה";
+
+  if (["חשמל / מים / גז"].includes(n)) return "חשמל וגז";
+  if (["מיסים וארנונה"].includes(n)) return "ארנונה";
+
+  if ([
+    "שירותים חיצוניים","שיווק ופרסום","משלוחים ופלטפורמות","תקשורת ואינטרנט",
+    "מערכות ותוכנה","כוח אדם","עמלות וסליקה","מיחזור ופינוי","פרחים ועיצוב"
+  ].includes(n)) return "שירותים חיצוניים";
+
+  if ([
+    "תחזוקה ותיקונים","ציוד מטבח","ציוד בר","ניקיון והיגיינה",
+    "נייר ומוצרי נייר","אריזות וחד-פעמי"
+  ].includes(n)) return "תחזוקה";
+
+  return "אחר";
+}
+
+function ensureCategoryModel(){
+  if (!Array.isArray(state.primaryCategories)) state.primaryCategories = [];
+  if (!Array.isArray(state.subCategories)) state.subCategories = [];
+
+  const pSet = new Set(state.primaryCategories);
+  DEFAULT_PRIMARY_CATEGORIES.forEach(p=>{ if(!pSet.has(p)) state.primaryCategories.push(p); });
+
+  const key = (p,n)=> `${p}@@${n}`;
+  const sSet = new Set(state.subCategories.map(x=>key(x.primary,x.name)));
+  DEFAULT_SUBCATEGORIES.forEach(sc=>{
+    if(!sSet.has(key(sc.primary, sc.name))){
+      state.subCategories.push({ primary: sc.primary, name: sc.name });
+      sSet.add(key(sc.primary, sc.name));
     }
-    if (n.includes("ישראכרט") || n.includes("מקס")) return { main: "שירותים חיצוניים", sub: "עמלות וסליקה" };
-    if (n.includes("וולט") || n.includes("תן ביס")) return { main: "שירותים חיצוניים", sub: "משלוחים ופלטפורמות" };
-    if (n.includes("יין") || n.includes("היכל")) return { main: "שתייה", sub: "יין" };
-    if (n.includes("החברה המרכזית") || n.includes("שתייה")) return { main: "שתייה", sub: "שתייה קלה" };
-    if (n.includes("ביסקוטי") || n.includes("אייס")) return { main: "מזון", sub: "קינוחים" };
-    if (n.includes("שיווק") || n.includes("טעם") || n.includes("דגים") || n.includes("בשר")) return { main: "מזון", sub: "" };
+  });
 
-    return { main: "אחר", sub: "" };
-  }
-
-  function mapLegacyFlatCategoryToMainSub(cat) {
-    const c = String(cat || "").trim();
-    if (!c) return { main: "אחר", sub: "" };
-    if (MAIN_CATEGORIES.includes(c)) return { main: c, sub: "" };
-
-    const lc = c.toLowerCase();
-
-    if (lc.includes("יין")) return { main: "שתייה", sub: "יין" };
-    if (lc.includes("אלכוהול") || lc.includes("בירה")) return { main: "שתייה", sub: "אלכוהול" };
-    if (lc.includes("קפה") || lc.includes("תה")) return { main: "שתייה", sub: "קפה ותה" };
-    if (lc.includes("קרח")) return { main: "שתייה", sub: "קרח" };
-    if (lc.includes("שתייה")) return { main: "שתייה", sub: "שתייה קלה" };
-
-    if (lc.includes("ניקיון") || lc.includes("היגיינה") || lc.includes("נייר")) return { main: "תחזוקה", sub: "ניקיון והיגיינה" };
-    if (lc.includes("תחזוקה") || lc.includes("תיקונים") || lc.includes("ציוד")) return { main: "תחזוקה", sub: c };
-
-    if (lc.includes("חשמל") || lc.includes("גז") || lc.includes("מים")) return { main: "חשמל וגז", sub: c };
-    if (lc.includes("ארנונה")) return { main: "ארנונה", sub: "ארנונה" };
-
-    if (lc.includes("שיווק") || lc.includes("פרסום") || lc.includes("סליקה") || lc.includes("עמלות") || lc.includes("תקשורת") || lc.includes("אינטרנט")) {
-      return { main: "שירותים חיצוניים", sub: c };
-    }
-
-    if (lc.includes("מזון") || lc.includes("קינוחים") || lc.includes("דגים") || lc.includes("בשר") || lc.includes("ירקות")) {
-      return { main: "מזון", sub: c };
-    }
-
-    return { main: "אחר", sub: c };
-  }
-
-  /* ================= infra ================= */
-
-  const STORE_KEYS = ['visual-expense-app-v5', 'hatzeDef-supplier-dashboard-v3', 'visual-expense-app-v4'];
-  const storeKey = 'visual-expense-app-v5';
-
-  const $ = (sel) => document.querySelector(sel);
-  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
-  const on = (el, ev, fn) => el && el.addEventListener(ev, fn);
-  const uid = () => Math.random().toString(36).slice(2, 10);
-
-  const money = (n) => {
-    const v = Number(n || 0);
-    return '₪' + v.toLocaleString('he-IL', { maximumFractionDigits: 2 });
-  };
-
-  function toast(msg) {
-    const box = $('#toastBox');
-    const tmsg = $('#toastMsg');
-    if (!box || !tmsg) return;
-    tmsg.textContent = msg;
-    box.style.display = 'flex';
-  }
-
-  function toastHide() {
-    const box = $('#toastBox');
-    if (box) box.style.display = 'none';
-  }
-
-  function loadRawState() {
-    for (const k of STORE_KEYS) {
-      try {
-        const raw = localStorage.getItem(k);
-        if (raw) return { key: k, data: JSON.parse(raw) };
-      } catch {}
-    }
-    return null;
-  }
-
-  function normalizeSubcategories(list) {
-    const seen = new Set();
-    const out = [];
-    for (const x of list || []) {
-      const main = String(x?.main || '').trim();
-      const name = String(x?.name || '').trim();
-      if (!main || !MAIN_CATEGORIES.includes(main)) continue;
-      if (!name) continue;
-      const key = `${main}::${name}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
-      out.push({ id: x.id || uid(), main, name });
-    }
-    out.sort((a, b) => (a.main === b.main ? a.name.localeCompare(b.name, 'he') : a.main.localeCompare(b.main, 'he')));
-    return out;
-  }
-
-  function ensureSubcategoryExists(state, main, sub) {
-    const m = String(main || '').trim();
-    const s = String(sub || '').trim();
-    if (!m || !s) return;
-    if (!MAIN_CATEGORIES.includes(m)) return;
-    const exists = state.subcategories.some(x => x.main === m && x.name === s);
-    if (!exists) state.subcategories.push({ id: uid(), main: m, name: s });
-  }
-
-  function migrateState(any) {
-    const base = {
-      version: 2,
-      mainCategories: MAIN_CATEGORIES.slice(),
-      subcategories: normalizeSubcategories(DEFAULT_SUBCATEGORIES.map(x => ({ id: uid(), ...x }))),
-      suppliers: [],
-      items: [],
-      documents: [],
-    };
-
-    const s = any && typeof any === 'object' ? any : {};
-
-    const legacySuppliers = Array.isArray(s.suppliers) ? s.suppliers : [];
-    const legacyInvoices = Array.isArray(s.invoices)
-      ? s.invoices
-      : (Array.isArray(s.documents) ? s.documents : []);
-    const legacyItems = Array.isArray(s.items) ? s.items : [];
-    const legacySubcats = Array.isArray(s.subcategories) ? s.subcategories : [];
-
-    // Subcategories from old state (if already exists)
-    base.subcategories = normalizeSubcategories([
-      ...base.subcategories,
-      ...legacySubcats.map(x => ({ id: x.id || uid(), main: x.main, name: x.name })),
-    ]);
-
-    const suppliers = legacySuppliers
-      .map((x) => {
-        if (typeof x === 'string') {
-          const name = x.trim();
-          const inf = inferSupplierCategory(name);
-          return {
-            id: uid(),
-            name,
-            mainCategory: inf.main,
-            subcategory: inf.sub || '',
-            phone: '',
-            email: '',
-            notes: '',
-            active: true,
-          };
-        }
-
-        const name = String(x.name || x.supplier || '').trim();
-        const legacyMain = String(x.mainCategory || x.main || '').trim();
-        const legacySub = String(x.subcategory || x.sub || '').trim();
-
-        let mainCategory = legacyMain;
-        let subcategory = legacySub;
-
-        if (!mainCategory) {
-          const flat = x.category || x.cat || '';
-          const mapped = mapLegacyFlatCategoryToMainSub(flat);
-          mainCategory = mapped.main;
-          subcategory = mapped.sub;
-        }
-
-        if (!MAIN_CATEGORIES.includes(mainCategory)) {
-          const mapped = mapLegacyFlatCategoryToMainSub(mainCategory);
-          mainCategory = mapped.main;
-          subcategory = subcategory || mapped.sub;
-        }
-
-        if (!name) return null;
-
-        return {
-          id: x.id || uid(),
-          name,
-          mainCategory,
-          subcategory: subcategory || '',
-          phone: String(x.phone || '').trim(),
-          email: String(x.email || '').trim(),
-          notes: String(x.notes || '').trim(),
-          active: typeof x.active === 'boolean' ? x.active : true,
-        };
-      })
-      .filter(Boolean);
-
-    const items = legacyItems
-      .map((x) => {
-        const name = typeof x === 'string' ? x.trim() : String(x.name || '').trim();
-        if (!name) return null;
-
-        const legacyMain = typeof x === 'object' ? String(x.mainCategory || x.main || '').trim() : '';
-        const legacySub = typeof x === 'object' ? String(x.subcategory || x.sub || '').trim() : '';
-
-        let mainCategory = legacyMain;
-        let subcategory = legacySub;
-
-        if (!mainCategory) {
-          const flat = (typeof x === 'object' ? x.category : '') || '';
-          const mapped = mapLegacyFlatCategoryToMainSub(flat);
-          mainCategory = mapped.main;
-          subcategory = mapped.sub;
-        }
-
-        if (!MAIN_CATEGORIES.includes(mainCategory)) {
-          const mapped = mapLegacyFlatCategoryToMainSub(mainCategory);
-          mainCategory = mapped.main;
-          subcategory = subcategory || mapped.sub;
-        }
-
-        return {
-          id: (typeof x === 'object' && x.id) ? x.id : uid(),
-          name,
-          mainCategory,
-          subcategory: subcategory || '',
-          price: Number((typeof x === 'object' ? x.price : 0) || 0),
-          unit: typeof x === 'object' ? String(x.unit || '').trim() : '',
-          active: typeof x === 'object' && typeof x.active === 'boolean' ? x.active : true,
-        };
-      })
-      .filter(Boolean);
-
-    const documents = legacyInvoices
-      .map((x) => {
-        const date = String(x.date || x.createdAt || '').slice(0, 10);
-        const supplier = String(x.supplier || x.vendor || '').trim();
-        const amount = Number(x.amount ?? x.total ?? 0);
-        const type = String(x.type || 'oneoff');
-        const paid = !!(x.paid ?? x.isPaid);
-        return {
-          id: x.id || uid(),
-          date,
-          supplier,
-          desc: String(x.desc || x.description || '').trim(),
-          number: String(x.number || x.invoiceNumber || '').trim(),
-          amount,
-          type: (type === 'recurring' || type === 'קבוע') ? 'recurring' : 'oneoff',
-          paid,
-        };
-      })
-      .filter((d) => d.date && d.supplier);
-
-    const seededSuppliers = suppliers.length
-      ? suppliers
-      : DEFAULT_SUPPLIERS.map((name) => {
-          const n = String(name || '').trim();
-          if (!n) return null;
-          const inf = inferSupplierCategory(n);
-          return {
-            id: uid(),
-            name: n,
-            mainCategory: inf.main,
-            subcategory: inf.sub || '',
-            phone: '',
-            email: '',
-            notes: '',
-            active: true,
-          };
-        }).filter(Boolean);
-
-    const seededItems = items.length
-      ? items
-      : DEFAULT_ITEMS.map((it) => ({
-          id: uid(),
-          name: String(it.name || '').trim(),
-          mainCategory: it.mainCategory || "אחר",
-          subcategory: it.subcategory || "",
-          price: Number(it.price || 0),
-          unit: String(it.unit || '').trim(),
-          active: true,
-        })).filter((it) => it.name);
-
-    const next = {
-      ...base,
-      suppliers: seededSuppliers,
-      items: seededItems,
-      documents,
-    };
-
-    // Ensure used subcategories exist
-    for (const su of next.suppliers) ensureSubcategoryExists(next, su.mainCategory, su.subcategory);
-    for (const it of next.items) ensureSubcategoryExists(next, it.mainCategory, it.subcategory);
-
-    next.subcategories = normalizeSubcategories(next.subcategories);
-
-    return next;
-  }
-
-  let state = migrateState(loadRawState()?.data || null);
-
-  function save() {
-    localStorage.setItem(storeKey, JSON.stringify(state));
-  }
-
-  /* ================= UI helpers ================= */
-
-  function showScreen(id) {
-    $$('.screen').forEach((s) => s.classList.add('hide'));
-    const target = $('#' + id);
-    if (target) target.classList.remove('hide');
-    $$('nav .tab').forEach((b) => b.classList.toggle('active', b.dataset.screen === id));
-  }
-
-  function wireNav() {
-    on(document, 'click', (e) => {
-      const btn = e.target.closest('nav .tab');
-      if (!btn) return;
-      showScreen(btn.dataset.screen);
+  // migrate flat categories -> subs
+  if (Array.isArray(state.categories) && state.categories.length){
+    state.categories.forEach(oldSub=>{
+      const sub = String(oldSub||"").trim();
+      if(!sub) return;
+      const primary = mapOldCategoryToPrimary(sub);
+      if(!state.primaryCategories.includes(primary)) state.primaryCategories.push(primary);
+      if(!state.subCategories.some(x=>x.name===sub)){
+        state.subCategories.push({ primary, name: sub });
+      }
     });
   }
 
-  function openModal(title, bodyEl) {
-    const t = $('#modalTitle');
-    if (t) t.textContent = title;
-    const body = $('#modalBody');
-    body.innerHTML = '';
-    body.appendChild(bodyEl);
-    const modal = $('#modal');
-    modal.style.display = 'flex';
-    modal.setAttribute('aria-hidden', 'false');
-  }
+  // ensure primaries exist
+  state.subCategories.forEach(sc=>{
+    if(!state.primaryCategories.includes(sc.primary)) sc.primary = "אחר";
+  });
 
-  function closeModal() {
-    const modal = $('#modal');
-    modal.style.display = 'none';
-    modal.setAttribute('aria-hidden', 'true');
-    $('#modalBody').innerHTML = '';
-  }
-
-  function wireModal() {
-    on($('#modalClose'), 'click', closeModal);
-    on($('#modal'), 'click', (e) => {
-      if (e.target && e.target.id === 'modal') closeModal();
-    });
-    on($('#toastClose'), 'click', () => toastHide());
-  }
-
-  function escAttr(s) {
-    return String(s ?? '').replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
-  }
-
-  function mainOptions(selected) {
-    return MAIN_CATEGORIES
-      .map((m) => `<option value="${escAttr(m)}" ${m === selected ? 'selected' : ''}>${m}</option>`)
-      .join('');
-  }
-
-  function subcategoryNames(main) {
-    const m = String(main || '').trim();
-    return state.subcategories
-      .filter((x) => x.main === m)
-      .map((x) => x.name)
-      .sort((a, b) => a.localeCompare(b, 'he'));
-  }
-
-  function subOptions(main, selected, includeSelected) {
-    const m = String(main || '').trim();
-    const set = new Set(subcategoryNames(m));
-    const sel = String(selected || '').trim();
-    if (includeSelected && sel) set.add(sel);
-    const list = Array.from(set).sort((a, b) => a.localeCompare(b, 'he'));
-
-    const opts = [`<option value="">—</option>`].concat(
-      list.map((n) => `<option value="${escAttr(n)}" ${n === sel ? 'selected' : ''}>${n}</option>`)
-    );
-    return opts.join('');
-  }
-
-  function supplierCategoryLabelByName(name) {
-    const s = state.suppliers.find(x => x.name === name);
-    if (!s) return { main: "אחר", sub: "" };
-    return { main: s.mainCategory || "אחר", sub: s.subcategory || "" };
-  }
-
-  function supplierOptions(selected, include) {
-    const activeNames = state.suppliers.filter((s) => s.active !== false).map((s) => s.name);
-    const set = new Set(activeNames);
-    const inc = String(include || '').trim();
-    if (inc) set.add(inc);
-    const names = Array.from(set).sort((a, b) => a.localeCompare(b, 'he'));
-    return names.map((n) => `<option value="${escAttr(n)}" ${n === selected ? 'selected' : ''}>${n}</option>`).join('');
-  }
-
-  /* ================= dashboard ================= */
-
-  function renderDashboard() {
-    const month = new Date().toISOString().slice(0, 7);
-    const monthDocs = state.documents.filter((d) => (d.date || '').slice(0, 7) === month);
-
-    const total = monthDocs.reduce((sum, d) => sum + Number(d.amount || 0), 0);
-    const unpaid = monthDocs.filter((d) => !d.paid).length;
-
-    $('#kpiMonth').textContent = month;
-    $('#kpiTotal').textContent = money(total);
-    $('#kpiDocs').textContent = String(monthDocs.length);
-    $('#kpiUnpaid').textContent = String(unpaid);
-
-    const bySupplier = new Map();
-    for (const d of monthDocs) {
-      const key = d.supplier || '—';
-      bySupplier.set(key, (bySupplier.get(key) || 0) + Number(d.amount || 0));
-    }
-
-    const cards = $('#supplierCards');
-    if (cards) {
-      const top = Array.from(bySupplier.entries())
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 8);
-
-      cards.innerHTML =
-        top
-          .map(([name, sum]) => `
-            <div class="kpi">
-              <div class="k">${escAttr(name)}</div>
-              <div class="v">${money(sum)}</div>
-            </div>
-          `)
-          .join('') || '<div class="note">אין נתונים לחודש הנוכחי.</div>';
-    }
-  }
-
-  /* ================= filters ================= */
-
-  const filters = { supplier: '', main: '', sub: '', type: '', from: '', to: '' };
-
-  function renderFilters() {
-    const supplierSel = $('#filterSupplier');
-    const mainSel = $('#filterMain');
-    const subSel = $('#filterSub');
-    const typeSel = $('#filterType');
-
-    if (supplierSel) {
-      const names = ['הכל', ...state.suppliers.map((s) => s.name).sort((a, b) => a.localeCompare(b, 'he'))];
-      supplierSel.innerHTML = names
-        .map((n) => `<option value="${n === 'הכל' ? '' : escAttr(n)}" ${filters.supplier === (n === 'הכל' ? '' : n) ? 'selected' : ''}>${escAttr(n)}</option>`)
-        .join('');
-    }
-
-    if (mainSel) {
-      const names = ['הכל', ...MAIN_CATEGORIES];
-      mainSel.innerHTML = names
-        .map((n) => `<option value="${n === 'הכל' ? '' : escAttr(n)}" ${filters.main === (n === 'הכל' ? '' : n) ? 'selected' : ''}>${escAttr(n)}</option>`)
-        .join('');
-    }
-
-    if (subSel) {
-      const subs = filters.main ? subcategoryNames(filters.main) : Array.from(new Set(state.subcategories.map(x => x.name))).sort((a, b) => a.localeCompare(b, 'he'));
-      const names = ['הכל', ...subs];
-      subSel.innerHTML = names
-        .map((n) => `<option value="${n === 'הכל' ? '' : escAttr(n)}" ${filters.sub === (n === 'הכל' ? '' : n) ? 'selected' : ''}>${escAttr(n)}</option>`)
-        .join('');
-    }
-
-    if (typeSel) {
-      const types = [
-        { value: '', label: 'הכל' },
-        { value: 'oneoff', label: 'חד־פעמי' },
-        { value: 'recurring', label: 'קבוע' },
-      ];
-      typeSel.innerHTML = types
-        .map((t) => `<option value="${t.value}" ${filters.type === t.value ? 'selected' : ''}>${t.label}</option>`)
-        .join('');
-    }
-
-    if ($('#filterFrom')) $('#filterFrom').value = filters.from;
-    if ($('#filterTo')) $('#filterTo').value = filters.to;
-  }
-
-  function wireFilters() {
-    on($('#filterSupplier'), 'change', (e) => { filters.supplier = e.target.value; renderDocuments(); });
-    on($('#filterMain'), 'change', (e) => { filters.main = e.target.value; filters.sub = ''; renderFilters(); renderDocuments(); });
-    on($('#filterSub'), 'change', (e) => { filters.sub = e.target.value; renderDocuments(); });
-    on($('#filterType'), 'change', (e) => { filters.type = e.target.value; renderDocuments(); });
-    on($('#filterFrom'), 'change', (e) => { filters.from = e.target.value; renderDocuments(); });
-    on($('#filterTo'), 'change', (e) => { filters.to = e.target.value; renderDocuments(); });
-
-    on($('#clearFilters'), 'click', () => {
-      filters.supplier = '';
-      filters.main = '';
-      filters.sub = '';
-      filters.type = '';
-      filters.from = '';
-      filters.to = '';
-      renderFilters();
-      renderDocuments();
-    });
-  }
-
-  function passesFilters(d) {
-    if (filters.supplier && d.supplier !== filters.supplier) return false;
-
-    const cat = supplierCategoryLabelByName(d.supplier);
-    if (filters.main && cat.main !== filters.main) return false;
-    if (filters.sub && (cat.sub || '') !== filters.sub) return false;
-
-    if (filters.type && d.type !== filters.type) return false;
-    if (filters.from && (d.date || '') < filters.from) return false;
-    if (filters.to && (d.date || '') > filters.to) return false;
+  // unique sub names
+  const seen = new Set();
+  state.subCategories = state.subCategories.filter(sc=>{
+    if(seen.has(sc.name)) return false;
+    seen.add(sc.name);
     return true;
+  });
+
+  // ensure special
+  if(!state.primaryCategories.includes("אחר")) state.primaryCategories.push("אחר");
+  if(!state.subCategories.some(x=>x.name==="לא משויך")) state.subCategories.push({primary:"אחר", name:"לא משויך"});
+
+  // suppliers/items: add primaryCategory if missing
+  (state.suppliers||[]).forEach(s=>{
+    if(!s) return;
+    const sub = (s.category || "לא משויך");
+    if(!s.primaryCategory){
+      const sc = state.subCategories.find(x=>x.name===sub);
+      s.primaryCategory = sc ? sc.primary : mapOldCategoryToPrimary(sub);
+    }
+    if(!state.subCategories.some(x=>x.name===sub)){
+      state.subCategories.push({ primary: s.primaryCategory || "אחר", name: sub });
+    }
+  });
+
+  (state.items||[]).forEach(i=>{
+    if(!i) return;
+    const sub = (i.category || "לא משויך");
+    if(!i.primaryCategory){
+      const sc = state.subCategories.find(x=>x.name===sub);
+      i.primaryCategory = sc ? sc.primary : mapOldCategoryToPrimary(sub);
+    }
+    if(!state.subCategories.some(x=>x.name===sub)){
+      state.subCategories.push({ primary: i.primaryCategory || "אחר", name: sub });
+    }
+  });
+
+  // rebuild flat categories (compat)
+  state.primaryCategories = Array.from(new Set(state.primaryCategories)).sort((a,b)=>a.localeCompare(b,"he"));
+  state.subCategories.sort((a,b)=>{
+    const ap=a.primary.localeCompare(b.primary,"he");
+    if(ap!==0) return ap;
+    return a.name.localeCompare(b.name,"he");
+  });
+
+  state.categories = state.subCategories.map(sc=>sc.name);
+  if (!state.categories.includes("לא משויך")) state.categories.push("לא משויך");
+  state.categories = Array.from(new Set(state.categories)).sort((a,b)=>a.localeCompare(b,"he"));
+}
+
+function getPrimaryForSub(subName){
+  ensureCategoryModel();
+  const sc = (state.subCategories||[]).find(x=>x.name===subName);
+  return sc ? sc.primary : mapOldCategoryToPrimary(subName);
+}
+function ensureSubExists(primary, subName){
+  ensureCategoryModel();
+  if(!subName) return;
+  if(!state.primaryCategories.includes(primary)) primary="אחר";
+  if(!state.subCategories.some(x=>x.name===subName)){
+    state.subCategories.push({ primary, name: subName });
+    ensureCategoryModel();
   }
+}
+function catDisplay(subName){
+  const p = getPrimaryForSub(subName);
+  return p + " › " + (subName || "לא משויך");
+}
 
-  /* ================= documents ================= */
+/* ================= STATE ================= */
+let state = {
+  version: 5,
+  theme: "dark",
+  categories: [],
+  primaryCategories: [],
+  subCategories: [],
+  suppliers: [],   // {id,name,category(primary sub), primaryCategory, phone,email,notes,active}
+  items: [],       // {id,name,category(sub), primaryCategory, price,unit,active}
+  months: {},      // month -> {income, docs:[]}
+  currentMonth: ""
+};
 
-  function renderDocuments() {
-    const body = $('#docsBody');
-    const empty = $('#docsEmpty');
-    if (!body) return;
+function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+function ensureMonth(month){
+  if (!state.months) state.months = {};
+  if (!state.months[month]) state.months[month] = { income: 0, docs: [] };
+}
+function currentMonthObj(){ return state.months[state.currentMonth]; }
 
-    const rows = state.documents
-      .slice()
-      .sort((a, b) => (b.date || '').localeCompare(a.date || ''))
-      .filter(passesFilters);
+function supplierById(id){ return state.suppliers.find(s=>s.id===id) || null; }
+function itemById(id){ return state.items.find(i=>i.id===id) || null; }
+function activeSuppliers(){ return state.suppliers.filter(s=>s.active!==false); }
+function activeItems(){ return state.items.filter(i=>i.active!==false); }
 
-    body.innerHTML = rows.map((d) => {
-      const cat = supplierCategoryLabelByName(d.supplier);
-      const catLabel = cat.sub ? `${cat.main} / ${cat.sub}` : cat.main;
+/* ================= DEFAULT MERGE ================= */
+function mergeDefaults(){
+  if (!Array.isArray(state.categories)) state.categories = [];
+  const catSet = new Set(state.categories);
+  DEFAULT_CATEGORIES.forEach(c => { if(!catSet.has(c)) state.categories.push(c); });
+  if (!state.categories.includes("לא משויך")) state.categories.push("לא משויך");
+  state.categories = Array.from(new Set(state.categories)).sort((a,b)=>a.localeCompare(b,"he"));
 
-      const statusClass = d.paid ? 'paid' : 'unpaid';
-      const statusText = d.paid ? 'שולם' : 'לא שולם';
+  if (!Array.isArray(state.suppliers)) state.suppliers = [];
+  const supByName = new Map(state.suppliers.map(s => [String(s.name||"").trim(), s]));
+  DEFAULT_SUPPLIERS.forEach(name=>{
+    const n = String(name).trim();
+    if (!supByName.has(n)){
+      state.suppliers.push({ id: uid(), name: n, category: inferSupplierCategory(n), phone:"", email:"", notes:"", active:true });
+    } else {
+      const s = supByName.get(n);
+      if (!s.id) s.id = uid();
+      if (!s.category) s.category = inferSupplierCategory(n);
+      if (s.phone === undefined) s.phone = "";
+      if (s.email === undefined) s.email = "";
+      if (s.notes === undefined) s.notes = "";
+      if (s.active === undefined) s.active = true;
+    }
+  });
+  state.suppliers.forEach(s=>{
+    if (!s.id) s.id = uid();
+    if (!s.category) s.category = "לא משויך";
+    if (s.active === undefined) s.active = true;
+    if (s.phone === undefined) s.phone="";
+    if (s.email === undefined) s.email="";
+    if (s.notes === undefined) s.notes="";
+  });
+  state.suppliers.sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
 
-      return `
-        <tr data-id="${escAttr(d.id)}">
-          <td><input class="small" type="date" value="${escAttr(d.date || '')}" disabled></td>
-          <td>
-            <select class="small" disabled>
-              <option value="">—</option>
-              ${supplierOptions(d.supplier, d.supplier)}
-            </select>
-          </td>
-          <td><span class="badge"><b>${escAttr(catLabel)}</b></span></td>
-          <td><input class="small" value="${escAttr(d.desc || '')}" disabled></td>
-          <td><input class="small" value="${escAttr(d.number || '')}" disabled></td>
-          <td><input class="small" type="number" step="0.01" value="${Number(d.amount || 0)}" disabled></td>
-          <td>
-            <select class="small" disabled>
-              <option value="oneoff" ${d.type === 'oneoff' ? 'selected' : ''}>חד־פעמי</option>
-              <option value="recurring" ${d.type === 'recurring' ? 'selected' : ''}>קבוע</option>
-            </select>
-          </td>
-          <td>
-            <label class="check"><input type="checkbox" ${d.paid ? 'checked' : ''} disabled><span class="pill ${statusClass}">${statusText}</span></label>
-          </td>
-          <td>
-            <div class="btnRow">
-              <button class="small ghost" data-act="edit">✏️</button>
-              <button class="small green hide" data-act="save">💾</button>
-              <button class="small danger" data-act="del">🗑️</button>
-            </div>
-          </td>
-        </tr>
-      `;
-    }).join('');
+  if (!Array.isArray(state.items)) state.items = [];
+  const itemByName = new Map(state.items.map(i => [String(i.name||"").trim(), i]));
+  DEFAULT_ITEMS.forEach(it=>{
+    const n = String(it.name).trim();
+    if (!itemByName.has(n)){
+      state.items.push({ id: uid(), name:n, category:it.category, price:+it.price||0, unit:it.unit||"יחידה", active:true });
+    } else {
+      const i = itemByName.get(n);
+      if (!i.id) i.id = uid();
+      if (!i.category) i.category = it.category;
+      if (i.price === undefined || i.price === null) i.price = +it.price || 0;
+      if (!i.unit) i.unit = it.unit || "יחידה";
+      if (i.active === undefined) i.active = true;
+    }
+  });
+  state.items.forEach(i=>{
+    if (!i.id) i.id = uid();
+    if (!i.category) i.category = "לא משויך";
+    if (i.price === undefined || i.price === null) i.price = 0;
+    if (!i.unit) i.unit = "יחידה";
+    if (i.active === undefined) i.active = true;
+  });
+  state.items.sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
+}
 
-    if (empty) empty.classList.toggle('hide', rows.length !== 0);
+/* ================= DOC MODEL ================= */
+function normalizeDoc(d){
+  if (!d.id) d.id = uid();
+  if (!d.type) d.type = "חשבונית";
+  if (!d.status) d.status = "שולם";
+  if (d.vatApplied === undefined) d.vatApplied = true;
+  if (d.notes === undefined) d.notes = "";
+  if (!d.date) d.date = new Date().toISOString().slice(0,10);
+  if (!d.docNo) d.docNo = "";
+  if (!Array.isArray(d.lines)) d.lines = [];
+  if (d.manualAmount === undefined) d.manualAmount = 0;
+  if (d.baseSubtotal === undefined) d.baseSubtotal = 0;
+  if (d.amount === undefined) d.amount = (+d.amount||0);
+  if (d.credit === true && d.type !== "זיכוי") d.type = "זיכוי";
+}
+
+function recomputeDocAmounts(d){
+  let base = 0;
+  if (Array.isArray(d.lines) && d.lines.length){
+    base = d.lines.reduce((sum,ln)=>{
+      const qty = +ln.qty || 0;
+      const price = +ln.unitPrice || 0;
+      return sum + (qty * price);
+    }, 0);
+  } else {
+    base = +d.manualAmount || 0;
   }
+  d.baseSubtotal = base;
 
-  function wireDocumentsTable() {
-    const body = $('#docsBody');
-    if (!body) return;
+  let total = base;
+  if (d.vatApplied) total *= 1.18;
 
-    on(body, 'click', (e) => {
-      const btn = e.target.closest('button[data-act]');
-      if (!btn) return;
+  const isCredit = (d.type === "זיכוי");
+  if (isCredit) total = -Math.abs(total);
+  else total = Math.abs(total);
 
-      const tr = e.target.closest('tr');
-      const id = tr?.dataset?.id;
-      const doc = state.documents.find((x) => x.id === id);
-      if (!doc) return;
+  d.amount = +total;
+  return d;
+}
 
-      const act = btn.dataset.act;
-      const editBtn = tr.querySelector('button[data-act="edit"]');
-      const saveBtn = tr.querySelector('button[data-act="save"]');
+function load(){
+  const raw = localStorage.getItem(KEY);
+  if (raw){
+    try { state = JSON.parse(raw); } catch(e){}
+  }
+  if (!state || typeof state !== "object") state = {};
+  if (!state.theme) state.theme = "dark";
+  if (!state.currentMonth) state.currentMonth = new Date().toISOString().slice(0,7);
 
-      const dateEl = tr.querySelector('input[type="date"]');
-      const supplierEl = tr.querySelector('td:nth-child(2) select');
-      const descEl = tr.querySelector('td:nth-child(4) input');
-      const numberEl = tr.querySelector('td:nth-child(5) input');
-      const amountEl = tr.querySelector('td:nth-child(6) input');
-      const typeEl = tr.querySelector('td:nth-child(7) select');
-      const paidEl = tr.querySelector('td:nth-child(8) input[type="checkbox"]');
+  ensureMonth(state.currentMonth);
 
-      const editables = [dateEl, supplierEl, descEl, numberEl, amountEl, typeEl, paidEl].filter(Boolean);
-
-      if (act === 'edit') {
-        editables.forEach((el) => (el.disabled = false));
-        if (editBtn) editBtn.classList.add('hide');
-        if (saveBtn) saveBtn.classList.remove('hide');
-        return;
-      }
-
-      if (act === 'save') {
-        const date = dateEl?.value || '';
-        const supplier = supplierEl?.value || '';
-        const amount = Number(amountEl?.value || 0);
-
-        if (!date) return alert('חובה תאריך');
-        if (!supplier) return alert('בחר ספק');
-        if (!Number.isFinite(amount)) return alert('סכום לא תקין');
-
-        doc.date = date;
-        doc.supplier = supplier;
-        doc.desc = (descEl?.value || '').trim();
-        doc.number = (numberEl?.value || '').trim();
-        doc.amount = amount;
-        doc.type = typeEl?.value || 'oneoff';
-        doc.paid = !!paidEl?.checked;
-
-        save();
-        renderDashboard();
-        renderFilters();
-        renderDocuments();
-        toast('מסמך עודכן');
-        return;
-      }
-
-      if (act === 'del') {
-        if (!confirm('למחוק מסמך?')) return;
-        state.documents = state.documents.filter((x) => x.id !== id);
-        save();
-        renderDashboard();
-        renderDocuments();
-        toast('מסמך נמחק');
-      }
+  Object.keys(state.months || {}).forEach(m=>{
+    ensureMonth(m);
+    const docs = state.months[m].docs || [];
+    docs.forEach(d=>{
+      normalizeDoc(d);
+      (d.lines||[]).forEach(ln=>{
+        if (!ln.id) ln.id = uid();
+        if (!ln.itemId) ln.itemId = "";
+        if (ln.qty === undefined) ln.qty = 0;
+        if (ln.unitPrice === undefined) ln.unitPrice = 0;
+        if (!ln.unit) ln.unit = "";
+        if (!ln.name) ln.name = "";
+      });
+      recomputeDocAmounts(d);
     });
-  }
+    state.months[m].docs = docs;
+    if (state.months[m].income === undefined) state.months[m].income = 0;
+  });
 
-  /* ================= suppliers ================= */
+  mergeDefaults();
+  ensureCategoryModel();
+  save();
+}
 
-  function renderSuppliers() {
-    const body = $('#suppliersBody');
-    const empty = $('#suppliersEmpty');
-    if (!body) return;
+/* ================= THEME ================= */
+function applyTheme(){
+  document.documentElement.dataset.theme = state.theme === "light" ? "light" : "";
+  $("#themeBtn").textContent = (state.theme==="light") ? "מצב לילה" : "מצב בהיר";
+}
+on("#themeBtn","click", ()=>{
+  state.theme = (state.theme==="light") ? "dark" : "light";
+  applyTheme();
+  save();
+});
 
-    const rows = state.suppliers.slice().sort((a, b) => (a.name || '').localeCompare(b.name || '', 'he'));
+/* ================= NAV / SCREENS ================= */
+function switchScreen(id){
+  $$(".screen").forEach(s=>s.classList.add("hide"));
+  $("#"+id).classList.remove("hide");
+  $$(".tab").forEach(b=>b.classList.toggle("active", b.dataset.screen===id));
+}
+$$(".tab").forEach(b=> b.addEventListener("click", ()=> switchScreen(b.dataset.screen)));
 
-    body.innerHTML = rows.map((s) => `
-      <tr data-id="${escAttr(s.id)}">
-        <td><input class="small" value="${escAttr(s.name || '')}" disabled></td>
+/* ================= POPULATORS ================= */
+function refreshMonthBadge(){ $("#monthBadge").textContent = state.currentMonth; }
 
+function fillCategorySelectOptions(selectEl, includeAll=false){
+  ensureCategoryModel();
+
+  const subs = (state.subCategories || []).slice();
+  let html = "";
+  if (includeAll) html += `<option value="">כל הקטגוריות</option>`;
+
+  const byP = new Map();
+  subs.forEach(sc=>{
+    if(!byP.has(sc.primary)) byP.set(sc.primary, []);
+    byP.get(sc.primary).push(sc.name);
+  });
+
+  const primaries = (state.primaryCategories || []).slice().sort((a,b)=>a.localeCompare(b,"he"));
+  primaries.forEach(p=>{
+    const list = (byP.get(p) || []).slice().sort((a,b)=>a.localeCompare(b,"he"));
+    if(!list.length) return;
+    html += `<optgroup label="${escapeHtml(p)}">`;
+    list.forEach(name=>{
+      html += `<option value="${escapeHtml(name)}">${escapeHtml(p + " › " + name)}</option>`;
+    });
+    html += `</optgroup>`;
+  });
+
+  selectEl.innerHTML = html;
+}
+
+function fillSupplierFilters(){
+  ensureCategoryModel();
+
+  const active = activeSuppliers();
+  $("#filterSupplier").innerHTML = [`<option value="">כל הספקים</option>`]
+    .concat(active.map(s=>`<option value="${s.id}">${escapeHtml(s.name)}</option>`))
+    .join("");
+
+  fillCategorySelectOptions($("#filterCategory"), true);
+  fillCategorySelectOptions($("#supplierCatFilter"), true);
+  fillCategorySelectOptions($("#itemCatFilter"), true);
+
+  fillCategorySelectOptions($("#supCat"), false);
+  fillCategorySelectOptions($("#itemCategory"), false);
+}
+
+/* ================= DASHBOARD ================= */
+function renderDashboard(){
+  const m = currentMonthObj();
+  const docs = m.docs || [];
+
+  const exp = docs.reduce((s,d)=> s + (+d.amount||0), 0);
+  const credit = docs.filter(d=>d.type==="זיכוי").reduce((s,d)=> s + Math.abs(+d.amount||0), 0);
+  const open = docs.filter(d=>d.status==="לא שולם").reduce((s,d)=> s + (+d.amount||0), 0);
+  const net = (+m.income||0) - exp;
+
+  $("#expSum").textContent = money(exp);
+  $("#creditSum").textContent = money(credit);
+  $("#openSum").textContent = money(open);
+  $("#netSum").textContent = money(net);
+
+  renderCategorySummary();
+  renderTopSuppliers();
+}
+function renderCategorySummary(){
+  const m = currentMonthObj();
+  const map = new Map();
+  (m.docs||[]).forEach(d=>{
+    const s = supplierById(d.supplierId);
+    const cat = (s && s.category) ? s.category : "לא משויך";
+    if (!map.has(cat)) map.set(cat, {pos:0,neg:0,net:0});
+    const v = map.get(cat);
+    const amt = +d.amount||0;
+    if (amt>=0) v.pos += amt; else v.neg += amt;
+    v.net += amt;
+  });
+  const rows = Array.from(map.entries())
+    .sort((a,b)=>a[0].localeCompare(b[0],"he"))
+    .map(([cat,v])=>`
+      <tr>
+        <td>${escapeHtml(catDisplay(cat))}</td>
+        <td class="amount-pos">${money(v.pos)}</td>
+        <td class="amount-neg">${money(v.neg)}</td>
+        <td><b>${money(v.net)}</b></td>
+      </tr>
+    `).join("");
+  $("#catSummaryBody").innerHTML = rows || `<tr><td colspan="4" class="note">אין נתונים לחודש זה.</td></tr>`;
+}
+function renderTopSuppliers(){
+  const m = currentMonthObj();
+  const map = new Map();
+  (m.docs||[]).forEach(d=>{
+    const s = supplierById(d.supplierId);
+    const key = d.supplierId || "unknown";
+    const name = s ? s.name : "—";
+    const cat = s ? (s.category||"לא משויך") : "לא משויך";
+    if (!map.has(key)) map.set(key,{name,cat,count:0,sum:0});
+    const v = map.get(key);
+    v.count++;
+    v.sum += (+d.amount||0);
+  });
+
+  const rows = Array.from(map.values())
+    .sort((a,b)=>Math.abs(b.sum)-Math.abs(a.sum))
+    .slice(0,10)
+    .map(v=>`
+      <tr>
+        <td>${escapeHtml(v.name)}</td>
+        <td>${escapeHtml(catDisplay(v.cat))}</td>
+        <td>${v.count}</td>
+        <td><b>${money(v.sum)}</b></td>
+      </tr>
+    `).join("");
+  $("#topSupBody").innerHTML = rows || `<tr><td colspan="4" class="note">אין נתונים לחודש זה.</td></tr>`;
+}
+
+/* ================= DOCUMENTS ================= */
+function docKindPill(d){
+  if (d.type==="זיכוי") return `<span class="pill credit">זיכוי</span>`;
+  return ``;
+}
+function getDocsFiltered(){
+  const m = currentMonthObj();
+  const filterSup = $("#filterSupplier").value || "";
+  const filterCat = $("#filterCategory").value || "";
+  const filterType = $("#filterDocType").value || "";
+  const filterStatus = $("#filterDocStatus").value || "";
+
+  return (m.docs||[]).filter(d=>{
+    const s = supplierById(d.supplierId);
+    const cat = s ? (s.category||"לא משויך") : "לא משויך";
+
+    if (filterSup && d.supplierId !== filterSup) return false;
+    if (filterCat && cat !== filterCat) return false;
+    if (filterType && (d.type||"") !== filterType) return false;
+    if (filterStatus && (d.status||"") !== filterStatus) return false;
+
+    return true;
+  });
+}
+function renderDocuments(){
+  const docs = getDocsFiltered().sort((a,b)=>(b.date||"").localeCompare((a.date||""),"he"));
+
+  $("#docsEmpty").classList.toggle("hide", (currentMonthObj().docs||[]).length !== 0);
+
+  const rows = docs.map(d=>{
+    const s = supplierById(d.supplierId);
+    const sname = s ? s.name : (d.supplierName || "—");
+    const cat = s ? (s.category||"לא משויך") : (d.supplierCategory || "לא משויך");
+    const amt = +d.amount||0;
+    const amtClass = amt>=0 ? "amount-pos" : "amount-neg";
+
+    return `
+      <tr>
+        <td>${escapeHtml(d.date||"")}</td>
+        <td>${escapeHtml(d.docNo||"")}</td>
+        <td>${escapeHtml(d.type||"")} ${docKindPill(d)}</td>
+        <td>${escapeHtml(sname)}</td>
+        <td>${escapeHtml(catDisplay(cat))}</td>
+        <td class="${amtClass}">${money(amt)}</td>
         <td>
-          <select class="small" data-role="main" disabled>
-            ${mainOptions(s.mainCategory || "אחר")}
+          <select data-docstatus="${d.id}" style="min-width:110px">
+            <option value="שולם" ${d.status==="שולם"?"selected":""}>שולם</option>
+            <option value="לא שולם" ${d.status==="לא שולם"?"selected":""}>לא שולם</option>
           </select>
         </td>
-
         <td>
-          <select class="small" data-role="sub" disabled>
-            ${subOptions(s.mainCategory || "אחר", s.subcategory || "", true)}
-          </select>
-        </td>
-
-        <td><input class="small" value="${escAttr(s.phone || '')}" disabled></td>
-        <td><input class="small" value="${escAttr(s.email || '')}" disabled></td>
-        <td><input class="small" value="${escAttr(s.notes || '')}" disabled></td>
-        <td style="text-align:center"><input type="checkbox" ${s.active !== false ? 'checked' : ''} disabled></td>
-
-        <td>
-          <div class="btnRow">
-            <button class="small ghost" data-act="edit">✏️</button>
-            <button class="small green hide" data-act="save">💾</button>
-            <button class="small danger" data-act="del">🗑️</button>
+          <button class="outline small" data-expand="${d.id}">הרחב</button>
+          <button class="outline small" data-editdoc="${d.id}">ערוך</button>
+          <button class="danger small" data-deldoc="${d.id}">מחק</button>
+          <div class="details hide" id="det_${d.id}">
+            ${renderDocDetails(d)}
           </div>
         </td>
       </tr>
-    `).join('');
+    `;
+  }).join("");
 
-    if (empty) empty.classList.toggle('hide', rows.length !== 0);
-  }
+  $("#docsBody").innerHTML = rows || `<tr><td colspan="8" class="note">אין תוצאות לפי הסינון.</td></tr>`;
 
-  function supplierUsed(name) {
-    return state.documents.some((d) => d.supplier === name);
-  }
+  $$("[data-expand]").forEach(btn=>{
+    btn.onclick = ()=>{
+      const id = btn.getAttribute("data-expand");
+      const el = $("#det_"+id);
+      el.classList.toggle("hide");
+      btn.textContent = el.classList.contains("hide") ? "הרחב" : "צמצם";
+    };
+  });
 
-  function wireSuppliersTable() {
-    const body = $('#suppliersBody');
-    if (!body) return;
-
-    on(body, 'change', (e) => {
-      const sel = e.target.closest('select[data-role="main"]');
-      if (!sel) return;
-      const tr = e.target.closest('tr');
-      const sub = tr.querySelector('select[data-role="sub"]');
-      if (!sub) return;
-      sub.innerHTML = subOptions(sel.value, '', false);
-    });
-
-    on(body, 'click', (e) => {
-      const btn = e.target.closest('button[data-act]');
-      if (!btn) return;
-
-      const tr = e.target.closest('tr');
-      const id = tr?.dataset?.id;
-      const sup = state.suppliers.find((x) => x.id === id);
-      if (!sup) return;
-
-      const act = btn.dataset.act;
-      const editBtn = tr.querySelector('button[data-act="edit"]');
-      const saveBtn = tr.querySelector('button[data-act="save"]');
-
-      const nameEl = tr.querySelector('td:nth-child(1) input');
-      const mainEl = tr.querySelector('select[data-role="main"]');
-      const subEl = tr.querySelector('select[data-role="sub"]');
-      const phoneEl = tr.querySelector('td:nth-child(4) input');
-      const emailEl = tr.querySelector('td:nth-child(5) input');
-      const notesEl = tr.querySelector('td:nth-child(6) input');
-      const activeEl = tr.querySelector('td:nth-child(7) input[type="checkbox"]');
-
-      const editables = [nameEl, mainEl, subEl, phoneEl, emailEl, notesEl, activeEl].filter(Boolean);
-
-      if (act === 'edit') {
-        editables.forEach((el) => (el.disabled = false));
-        if (editBtn) editBtn.classList.add('hide');
-        if (saveBtn) saveBtn.classList.remove('hide');
-        return;
+  $$("[data-docstatus]").forEach(sel=>{
+    sel.onchange = ()=>{
+      const id = sel.getAttribute("data-docstatus");
+      const doc = (currentMonthObj().docs||[]).find(x=>x.id===id);
+      if(doc){
+        doc.status = sel.value;
+        save();
+        toast("סטטוס עודכן");
+        renderDashboard();
       }
+    };
+  });
 
-      if (act === 'save') {
-        const oldName = sup.name;
-        const name = (nameEl?.value || '').trim();
-        const mainCategory = mainEl?.value || "אחר";
-        const subcategory = (subEl?.value || '').trim();
+  $$("[data-editdoc]").forEach(btn=>{
+    btn.onclick = ()=> openDocModalForEdit(btn.getAttribute("data-editdoc"));
+  });
 
-        if (!name) return alert('שם ספק חובה');
-        if (!MAIN_CATEGORIES.includes(mainCategory)) return alert('קטגוריה ראשית לא תקינה');
+  $$("[data-deldoc]").forEach(btn=>{
+    btn.onclick = ()=> deleteDoc(btn.getAttribute("data-deldoc"));
+  });
+}
+function renderDocDetails(d){
+  const s = supplierById(d.supplierId);
+  const sname = s ? s.name : (d.supplierName || "—");
+  const lines = (d.lines||[]);
+  const hasLines = lines.length>0;
 
-        sup.name = name;
-        sup.mainCategory = mainCategory;
-        sup.subcategory = subcategory;
-        sup.phone = (phoneEl?.value || '').trim();
-        sup.email = (emailEl?.value || '').trim();
-        sup.notes = (notesEl?.value || '').trim();
-        sup.active = !!activeEl?.checked;
+  let linesHtml = `<div class="note">אין פירוט פריטים.</div>`;
+  if (hasLines){
+    const rows = lines.map(ln=>{
+      const nm = ln.name || (ln.itemId ? (itemById(ln.itemId)?.name || "—") : "—");
+      const qty = +ln.qty||0;
+      const price = +ln.unitPrice||0;
+      const sub = qty*price;
+      const unit = ln.unit || (ln.itemId ? (itemById(ln.itemId)?.unit || "") : "");
+      return `
+        <tr>
+          <td>${escapeHtml(nm)}</td>
+          <td>${qty}</td>
+          <td>${money(price)}</td>
+          <td>${escapeHtml(unit||"")}</td>
+          <td><b>${money(sub)}</b></td>
+        </tr>
+      `;
+    }).join("");
 
-        ensureSubcategoryExists(state, mainCategory, subcategory);
-        state.subcategories = normalizeSubcategories(state.subcategories);
+    linesHtml = `
+      <div class="tableWrap" style="border-radius:12px;min-width:0">
+        <table style="min-width:560px">
+          <thead>
+            <tr><th>פריט</th><th>כמות</th><th>מחיר יח׳/ק״ג</th><th>יחידה</th><th>סה״כ</th></tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    `;
+  }
 
-        if (oldName && oldName !== name) {
-          state.documents.forEach((d) => { if (d.supplier === oldName) d.supplier = name; });
+  return `
+    <div class="note"><b>ספק:</b> ${escapeHtml(sname)} | <b>סוג:</b> ${escapeHtml(d.type||"")}</div>
+    <div class="note"><b>מע״מ:</b> ${d.vatApplied ? "כן" : "לא"} | <b>סטטוס:</b> ${escapeHtml(d.status||"")}</div>
+    <div class="spacer"></div>
+    ${linesHtml}
+    <div class="spacer"></div>
+    <div class="note"><b>הערות:</b> ${escapeHtml(d.notes||"") || "—"}</div>
+    <div class="spacer"></div>
+    <div class="note"><b>סה״כ לפני מע״מ:</b> ${money(d.baseSubtotal||0)} | <b>סה״כ נטו:</b> ${money(d.amount||0)}</div>
+  `;
+}
+function deleteDoc(id){
+  const m = currentMonthObj();
+  const idx = (m.docs||[]).findIndex(d=>d.id===id);
+  if (idx<0) return;
+  const d = m.docs[idx];
+  if (!confirm(`למחוק מסמך "${d.docNo||""}"? הפעולה בלתי הפיכה.`)) return;
+  m.docs.splice(idx,1);
+  save();
+  toast("המסמך נמחק");
+  renderAll();
+}
+
+/* ================= SUPPLIERS (EDIT/DELETE) ================= */
+function renderSuppliers(){
+  const q = ($("#supplierSearch").value || "").trim();
+  const filterCat = $("#supplierCatFilter").value || "";
+  const list = state.suppliers.filter(s=>{
+    if (s.active===false) return false;
+    if (q && !s.name.includes(q)) return false;
+    if (filterCat && s.category !== filterCat) return false;
+    return true;
+  });
+  $("#supEmpty").classList.toggle("hide", list.length!==0);
+
+  const rows = list.map(s=>`
+    <tr>
+      <td>${escapeHtml(s.name)}</td>
+      <td>${escapeHtml(catDisplay(s.category||"לא משויך"))}</td>
+      <td>${escapeHtml(s.phone||"")}</td>
+      <td>${escapeHtml(s.email||"")}</td>
+      <td>${escapeHtml(s.notes||"")}</td>
+      <td>
+        <button class="outline small" data-editsup="${s.id}">ערוך</button>
+        <button class="danger small" data-delsup="${s.id}">מחק</button>
+      </td>
+    </tr>
+  `).join("");
+  $("#supBody").innerHTML = rows || `<tr><td colspan="6" class="note">אין תוצאות לפי הסינון.</td></tr>`;
+  $$("[data-editsup]").forEach(btn=> btn.onclick = ()=> openSupplierModalForEdit(btn.getAttribute("data-editsup")));
+  $$("[data-delsup]").forEach(btn=> btn.onclick = ()=> requestDeleteSupplier(btn.getAttribute("data-delsup")));
+}
+function countSupplierDocs(supplierId){
+  let c=0;
+  Object.values(state.months||{}).forEach(m=>{
+    (m.docs||[]).forEach(d=>{ if(d.supplierId===supplierId) c++; });
+  });
+  return c;
+}
+let pendingSupplierDeleteId = null;
+function requestDeleteSupplier(id){
+  const s = supplierById(id);
+  if (!s) return;
+  const docsCount = countSupplierDocs(id);
+  if (docsCount === 0){
+    if (!confirm(`למחוק את הספק "${s.name}"?`)) return;
+    state.suppliers = state.suppliers.filter(x=>x.id!==id);
+    save(); toast("הספק נמחק"); renderAll();
+    return;
+  }
+  pendingSupplierDeleteId = id;
+  $("#supDelInfo").innerHTML = `לספק <b>${escapeHtml(s.name)}</b> יש <b>${docsCount}</b> מסמכים.`;
+  $("#supDelMergeSelect").innerHTML =
+    activeSuppliers().filter(x=>x.id!==id)
+      .map(x=>`<option value="${x.id}">${escapeHtml(x.name)}</option>`).join("")
+    || `<option value="">אין ספק אחר</option>`;
+  openModal("supplierDeleteModal");
+}
+on("#supDelCancelBtn","click", ()=>{
+  pendingSupplierDeleteId=null;
+  closeModal("supplierDeleteModal");
+});
+on("#supDelDisableBtn","click", ()=>{
+  if (!pendingSupplierDeleteId) return;
+  const s = supplierById(pendingSupplierDeleteId);
+  if (!s) return;
+  s.active = false;
+  save();
+  toast("הספק הושבת");
+  pendingSupplierDeleteId=null;
+  closeModal("supplierDeleteModal");
+  renderAll();
+});
+on("#supDelMergeBtn","click", ()=>{
+  if (!pendingSupplierDeleteId) return;
+  const targetId = $("#supDelMergeSelect").value;
+  if (!targetId){ toast("בחר ספק יעד למיזוג"); return; }
+  const srcId = pendingSupplierDeleteId;
+
+  Object.values(state.months||{}).forEach(m=>{
+    (m.docs||[]).forEach(d=>{ if (d.supplierId===srcId) d.supplierId = targetId; });
+  });
+  state.suppliers = state.suppliers.filter(s=>s.id!==srcId);
+  save();
+  toast("בוצע מיזוג ומחיקה");
+  pendingSupplierDeleteId=null;
+  closeModal("supplierDeleteModal");
+  renderAll();
+});
+
+/* ================= ITEMS (EDIT/DELETE) ================= */
+function countItemUsage(itemId){
+  let c=0;
+  Object.values(state.months||{}).forEach(m=>{
+    (m.docs||[]).forEach(d=>{
+      (d.lines||[]).forEach(ln=>{ if (ln.itemId===itemId) c++; });
+    });
+  });
+  return c;
+}
+function renderItems(){
+  const q = ($("#itemSearch").value || "").trim();
+  const filterCat = $("#itemCatFilter").value || "";
+  const list = state.items.filter(i=>{
+    if (i.active===false) return false;
+    if (q && !i.name.includes(q)) return false;
+    if (filterCat && i.category !== filterCat) return false;
+    return true;
+  });
+  $("#itemsEmpty").classList.toggle("hide", list.length!==0);
+
+  const rows = list.map(i=>`
+    <tr>
+      <td>${escapeHtml(i.name)}</td>
+      <td>${escapeHtml(catDisplay(i.category||"לא משויך"))}</td>
+      <td>${money(i.price||0)}</td>
+      <td>${escapeHtml(i.unit||"")}</td>
+      <td>
+        <button class="outline small" data-edititem="${i.id}">ערוך</button>
+        <button class="danger small" data-delitem="${i.id}">מחק</button>
+      </td>
+    </tr>
+  `).join("");
+  $("#itemsBody").innerHTML = rows || `<tr><td colspan="5" class="note">אין תוצאות לפי הסינון.</td></tr>`;
+  $$("[data-edititem]").forEach(btn=> btn.onclick = ()=> openItemModalForEdit(btn.getAttribute("data-edititem")));
+  $$("[data-delitem]").forEach(btn=> btn.onclick = ()=> requestDeleteItem(btn.getAttribute("data-delitem")));
+}
+let pendingItemDeleteId=null;
+function requestDeleteItem(id){
+  const it = itemById(id);
+  if (!it) return;
+
+  const usage = countItemUsage(id);
+  if (usage===0){
+    if (!confirm(`למחוק את הפריט "${it.name}"?`)) return;
+    state.items = state.items.filter(x=>x.id!==id);
+    save(); toast("הפריט נמחק"); renderAll();
+    return;
+  }
+
+  pendingItemDeleteId = id;
+  $("#itemDelInfo").innerHTML = `לפריט <b>${escapeHtml(it.name)}</b> יש שימוש ב-<b>${usage}</b> שורות מסמכים.`;
+  $("#itemDelMergeSelect").innerHTML =
+    activeItems().filter(x=>x.id!==id)
+      .map(x=>`<option value="${x.id}">${escapeHtml(x.name)}</option>`).join("")
+    || `<option value="">אין פריט אחר</option>`;
+  openModal("itemDeleteModal");
+}
+on("#itemDelCancelBtn","click", ()=>{
+  pendingItemDeleteId=null;
+  closeModal("itemDeleteModal");
+});
+on("#itemDelDisableBtn","click", ()=>{
+  if (!pendingItemDeleteId) return;
+  const it = itemById(pendingItemDeleteId);
+  if (!it) return;
+  it.active = false;
+  save();
+  toast("הפריט הושבת");
+  pendingItemDeleteId=null;
+  closeModal("itemDeleteModal");
+  renderAll();
+});
+on("#itemDelMergeBtn","click", ()=>{
+  if (!pendingItemDeleteId) return;
+  const targetId = $("#itemDelMergeSelect").value;
+  if (!targetId){ toast("בחר פריט יעד למיזוג"); return; }
+  const srcId = pendingItemDeleteId;
+
+  Object.values(state.months||{}).forEach(m=>{
+    (m.docs||[]).forEach(d=>{
+      (d.lines||[]).forEach(ln=>{
+        if (ln.itemId===srcId){
+          const target = itemById(targetId);
+          ln.itemId = targetId;
+          ln.name = target ? target.name : ln.name;
+          ln.unit = target ? target.unit : ln.unit;
+          if (!ln.unitPrice) ln.unitPrice = target ? (+target.price||0) : 0;
         }
-
-        save();
-        renderFilters();
-        renderDocuments();
-        renderSuppliers();
-        renderSubcategories();
-        renderDashboard();
-        toast('ספק עודכן');
-        return;
-      }
-
-      if (act === 'del') {
-        if (supplierUsed(sup.name)) return alert('לא ניתן למחוק ספק שיש לו מסמכים');
-        if (!confirm('למחוק ספק?')) return;
-        state.suppliers = state.suppliers.filter((x) => x.id !== id);
-        save();
-        renderFilters();
-        renderSuppliers();
-        renderDashboard();
-        toast('ספק נמחק');
-      }
+      });
+      recomputeDocAmounts(d);
     });
-  }
+  });
 
-  /* ================= items ================= */
+  state.items = state.items.filter(x=>x.id!==srcId);
+  save();
+  toast("בוצע מיזוג ומחיקה");
+  pendingItemDeleteId=null;
+  closeModal("itemDeleteModal");
+  renderAll();
+});
 
-  function renderItems() {
-    const body = $('#itemsBody');
-    const empty = $('#itemsEmpty');
-    if (!body) return;
+/* ================= CATEGORIES (PRIMARY + SUB CRUD) ================= */
+function countUsageForSub(subName){
+  let sup=0, items=0;
+  (state.suppliers||[]).forEach(s=>{ if (s.active!==false && (s.category||"לא משויך")===subName) sup++; });
+  (state.items||[]).forEach(i=>{ if (i.active!==false && (i.category||"לא משויך")===subName) items++; });
+  return {sup, items};
+}
+function countUsageForPrimary(primary){
+  const subs = (state.subCategories||[]).filter(sc=>sc.primary===primary).map(sc=>sc.name);
+  let sup=0, items=0;
+  (state.suppliers||[]).forEach(s=>{
+    const p = s.primaryCategory || getPrimaryForSub(s.category);
+    if (s.active!==false && p===primary) sup++;
+  });
+  (state.items||[]).forEach(i=>{
+    const p = i.primaryCategory || getPrimaryForSub(i.category);
+    if (i.active!==false && p===primary) items++;
+  });
+  return {subsCount: subs.length, sup, items};
+}
 
-    const rows = state.items.slice().sort((a, b) => (a.name || '').localeCompare(b.name || '', 'he'));
+function fillPrimarySelectForSubModal(selected=""){
+  const opts = (state.primaryCategories||[]).slice().sort((a,b)=>a.localeCompare(b,"he"))
+    .map(p=>`<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join("");
+  $("#subCatPrimary").innerHTML = opts || `<option value="אחר">אחר</option>`;
+  if (selected) $("#subCatPrimary").value = selected;
+}
 
-    body.innerHTML = rows.map((it) => `
-      <tr data-id="${escAttr(it.id)}">
-        <td><input class="small" value="${escAttr(it.name || '')}" disabled></td>
+function renderCategories(){
+  ensureCategoryModel();
+  const q = ($("#catSearch").value||"").trim();
 
+  const primaries = (state.primaryCategories||[])
+    .filter(p=> !q || p.includes(q))
+    .sort((a,b)=>a.localeCompare(b,"he"));
+
+  $("#primaryCatBody").innerHTML = primaries.map(p=>{
+    const u = countUsageForPrimary(p);
+    const disabled = PROTECTED_PRIMARY.has(p);
+    return `
+      <tr>
+        <td>${escapeHtml(p)}</td>
+        <td>${u.subsCount}</td>
+        <td>${u.sup}</td>
+        <td>${u.items}</td>
         <td>
-          <select class="small" data-role="main" disabled>
-            ${mainOptions(it.mainCategory || "אחר")}
-          </select>
-        </td>
-
-        <td>
-          <select class="small" data-role="sub" disabled>
-            ${subOptions(it.mainCategory || "אחר", it.subcategory || "", true)}
-          </select>
-        </td>
-
-        <td><input class="small" type="number" step="0.01" value="${Number(it.price || 0)}" disabled></td>
-        <td><input class="small" value="${escAttr(it.unit || '')}" disabled></td>
-        <td style="text-align:center"><input type="checkbox" ${it.active !== false ? 'checked' : ''} disabled></td>
-
-        <td>
-          <div class="btnRow">
-            <button class="small ghost" data-act="edit">✏️</button>
-            <button class="small green hide" data-act="save">💾</button>
-            <button class="small danger" data-act="del">🗑️</button>
-          </div>
+          <button class="outline small" data-edit-primary="${escapeHtml(p)}">ערוך</button>
+          <button class="danger small" data-del-primary="${escapeHtml(p)}" ${disabled?'disabled':''}>מחק</button>
         </td>
       </tr>
-    `).join('');
-
-    if (empty) empty.classList.toggle('hide', rows.length !== 0);
-  }
-
-  function wireItemsTable() {
-    const body = $('#itemsBody');
-    if (!body) return;
-
-    on(body, 'change', (e) => {
-      const sel = e.target.closest('select[data-role="main"]');
-      if (!sel) return;
-      const tr = e.target.closest('tr');
-      const sub = tr.querySelector('select[data-role="sub"]');
-      if (!sub) return;
-      sub.innerHTML = subOptions(sel.value, '', false);
-    });
-
-    on(body, 'click', (e) => {
-      const btn = e.target.closest('button[data-act]');
-      if (!btn) return;
-
-      const tr = e.target.closest('tr');
-      const id = tr?.dataset?.id;
-      const it = state.items.find((x) => x.id === id);
-      if (!it) return;
-
-      const act = btn.dataset.act;
-      const editBtn = tr.querySelector('button[data-act="edit"]');
-      const saveBtn = tr.querySelector('button[data-act="save"]');
-
-      const nameEl = tr.querySelector('td:nth-child(1) input');
-      const mainEl = tr.querySelector('select[data-role="main"]');
-      const subEl = tr.querySelector('select[data-role="sub"]');
-      const priceEl = tr.querySelector('td:nth-child(4) input');
-      const unitEl = tr.querySelector('td:nth-child(5) input');
-      const activeEl = tr.querySelector('td:nth-child(6) input[type="checkbox"]');
-
-      const editables = [nameEl, mainEl, subEl, priceEl, unitEl, activeEl].filter(Boolean);
-
-      if (act === 'edit') {
-        editables.forEach((el) => (el.disabled = false));
-        if (editBtn) editBtn.classList.add('hide');
-        if (saveBtn) saveBtn.classList.remove('hide');
-        return;
-      }
-
-      if (act === 'save') {
-        const name = (nameEl?.value || '').trim();
-        const mainCategory = mainEl?.value || "אחר";
-        const subcategory = (subEl?.value || '').trim();
-        const price = Number(priceEl?.value || 0);
-
-        if (!name) return alert('שם פריט חובה');
-        if (!MAIN_CATEGORIES.includes(mainCategory)) return alert('קטגוריה ראשית לא תקינה');
-        if (!Number.isFinite(price) || price < 0) return alert('מחיר לא תקין');
-
-        it.name = name;
-        it.mainCategory = mainCategory;
-        it.subcategory = subcategory;
-        it.price = price;
-        it.unit = (unitEl?.value || '').trim();
-        it.active = !!activeEl?.checked;
-
-        ensureSubcategoryExists(state, mainCategory, subcategory);
-        state.subcategories = normalizeSubcategories(state.subcategories);
-
-        save();
-        renderItems();
-        renderSubcategories();
-        renderDashboard();
-        toast('פריט עודכן');
-        return;
-      }
-
-      if (act === 'del') {
-        if (!confirm('למחוק פריט?')) return;
-        state.items = state.items.filter((x) => x.id !== id);
-        save();
-        renderItems();
-        renderSubcategories();
-        toast('פריט נמחק');
-      }
-    });
-  }
-
-  /* ================= subcategories management ================= */
-
-  function subcategoryUsage(main, sub) {
-    const m = String(main || '').trim();
-    const s = String(sub || '').trim();
-    const fromSuppliers = state.suppliers.filter(x => (x.mainCategory || '') === m && (x.subcategory || '') === s).length;
-    const fromItems = state.items.filter(x => (x.mainCategory || '') === m && (x.subcategory || '') === s).length;
-    return fromSuppliers + fromItems;
-  }
-
-  function renderSubcategories() {
-    const body = $('#subcategoriesBody');
-    const empty = $('#subcategoriesEmpty');
-    if (!body) return;
-
-    const rows = state.subcategories
-      .slice()
-      .sort((a, b) => (a.main === b.main ? a.name.localeCompare(b.name, 'he') : a.main.localeCompare(b.main, 'he')));
-
-    body.innerHTML = rows.map((sc) => {
-      const used = subcategoryUsage(sc.main, sc.name);
-      return `
-        <tr data-id="${escAttr(sc.id)}">
-          <td>
-            <select class="small" data-role="main" disabled>
-              ${mainOptions(sc.main)}
-            </select>
-          </td>
-          <td><input class="small" value="${escAttr(sc.name)}" disabled></td>
-          <td><span class="badge"><b>${used}</b></span></td>
-          <td>
-            <div class="btnRow">
-              <button class="small ghost" data-act="edit">✏️</button>
-              <button class="small green hide" data-act="save">💾</button>
-              <button class="small danger" data-act="del">🗑️</button>
-            </div>
-          </td>
-        </tr>
-      `;
-    }).join('');
-
-    if (empty) empty.classList.toggle('hide', rows.length !== 0);
-  }
-
-  function wireSubcategoriesTable() {
-    const body = $('#subcategoriesBody');
-    if (!body) return;
-
-    on(body, 'click', (e) => {
-      const btn = e.target.closest('button[data-act]');
-      if (!btn) return;
-
-      const tr = e.target.closest('tr');
-      const id = tr?.dataset?.id;
-      const sc = state.subcategories.find(x => x.id === id);
-      if (!sc) return;
-
-      const act = btn.dataset.act;
-      const editBtn = tr.querySelector('button[data-act="edit"]');
-      const saveBtn = tr.querySelector('button[data-act="save"]');
-
-      const mainEl = tr.querySelector('select[data-role="main"]');
-      const nameEl = tr.querySelector('td:nth-child(2) input');
-
-      if (act === 'edit') {
-        mainEl.disabled = false;
-        nameEl.disabled = false;
-        editBtn.classList.add('hide');
-        saveBtn.classList.remove('hide');
-        return;
-      }
-
-      if (act === 'save') {
-        const oldMain = sc.main;
-        const oldName = sc.name;
-        const newMain = mainEl.value;
-        const newName = (nameEl.value || '').trim();
-
-        if (!MAIN_CATEGORIES.includes(newMain)) return alert('קטגוריה ראשית לא תקינה');
-        if (!newName) return alert('שם תת־קטגוריה חובה');
-
-        // prevent dup
-        const dup = state.subcategories.some(x => x.id !== sc.id && x.main === newMain && x.name === newName);
-        if (dup) return alert('תת־קטגוריה כבר קיימת תחת הקטגוריה הראשית הזו');
-
-        sc.main = newMain;
-        sc.name = newName;
-
-        // update suppliers/items referencing old
-        state.suppliers.forEach(su => {
-          if ((su.mainCategory || '') === oldMain && (su.subcategory || '') === oldName) {
-            su.mainCategory = newMain;
-            su.subcategory = newName;
-          }
-        });
-        state.items.forEach(it => {
-          if ((it.mainCategory || '') === oldMain && (it.subcategory || '') === oldName) {
-            it.mainCategory = newMain;
-            it.subcategory = newName;
-          }
-        });
-
-        state.subcategories = normalizeSubcategories(state.subcategories);
-
-        save();
-        renderSubcategories();
-        renderSuppliers();
-        renderItems();
-        renderFilters();
-        renderDocuments();
-        toast('תת־קטגוריה עודכנה');
-        return;
-      }
-
-      if (act === 'del') {
-        const used = subcategoryUsage(sc.main, sc.name);
-        if (used > 0) return alert('לא ניתן למחוק תת־קטגוריה שבשימוש');
-        if (!confirm('למחוק תת־קטגוריה?')) return;
-
-        state.subcategories = state.subcategories.filter(x => x.id !== sc.id);
-        save();
-        renderSubcategories();
-        renderFilters();
-        renderDocuments();
-        toast('תת־קטגוריה נמחקה');
-      }
-    });
-  }
-
-  /* ================= modal forms ================= */
-
-  function docForm() {
-    const wrap = document.createElement('div');
-    wrap.innerHTML = `
-      <div class="row">
-        <div>
-          <label>תאריך</label>
-          <input id="fDocDate" type="date" />
-        </div>
-        <div>
-          <label>ספק</label>
-          <select id="fDocSupplier">
-            <option value="">בחר ספק…</option>
-            ${supplierOptions('', '')}
-          </select>
-        </div>
-        <div>
-          <label>תיאור</label>
-          <input id="fDocDesc" placeholder="למשל: אספקה שבועית" />
-        </div>
-        <div>
-          <label>מס׳ מסמך</label>
-          <input id="fDocNumber" placeholder="אופציונלי" />
-        </div>
-        <div>
-          <label>סכום נטו</label>
-          <input id="fDocAmount" type="number" step="0.01" />
-        </div>
-        <div>
-          <label>סוג</label>
-          <select id="fDocType">
-            <option value="oneoff">חד־פעמי</option>
-            <option value="recurring">קבוע</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="spacer"></div>
-
-      <div class="toggleRow">
-        <label class="check"><input id="fDocPaid" type="checkbox" /><span>שולם</span></label>
-      </div>
-
-      <div class="actions">
-        <button id="fDocSave" class="green">שמור</button>
-        <button id="fDocCancel" class="ghost">ביטול</button>
-      </div>
     `;
+  }).join("") || `<tr><td colspan="5" class="note">אין תוצאות.</td></tr>`;
 
-    on(wrap.querySelector('#fDocCancel'), 'click', closeModal);
-    on(wrap.querySelector('#fDocSave'), 'click', () => {
-      const date = wrap.querySelector('#fDocDate').value;
-      const supplier = wrap.querySelector('#fDocSupplier').value;
-      const amount = Number(wrap.querySelector('#fDocAmount').value || 0);
-      if (!date) return alert('חובה תאריך');
-      if (!supplier) return alert('בחר ספק');
-
-      state.documents.push({
-        id: uid(),
-        date,
-        supplier,
-        desc: (wrap.querySelector('#fDocDesc').value || '').trim(),
-        number: (wrap.querySelector('#fDocNumber').value || '').trim(),
-        amount,
-        type: wrap.querySelector('#fDocType').value,
-        paid: !!wrap.querySelector('#fDocPaid').checked,
-      });
-
-      save();
-      closeModal();
-      renderDashboard();
-      renderFilters();
-      renderDocuments();
-      toast('מסמך נשמר');
+  const subs = (state.subCategories||[])
+    .filter(sc=> !q || sc.name.includes(q) || sc.primary.includes(q))
+    .sort((a,b)=>{
+      const ap=a.primary.localeCompare(b.primary,"he");
+      if(ap!==0) return ap;
+      return a.name.localeCompare(b.name,"he");
     });
 
-    wrap.querySelector('#fDocDate').value = new Date().toISOString().slice(0, 10);
-    return wrap;
+  $("#subCatBody").innerHTML = subs.map(sc=>{
+    const u = countUsageForSub(sc.name);
+    const disabled = PROTECTED_SUB.has(sc.name);
+    return `
+      <tr>
+        <td>${escapeHtml(sc.primary)}</td>
+        <td>${escapeHtml(sc.name)}</td>
+        <td>${u.sup}</td>
+        <td>${u.items}</td>
+        <td>
+          <button class="outline small" data-edit-sub="${escapeHtml(sc.name)}">ערוך</button>
+          <button class="danger small" data-del-sub="${escapeHtml(sc.name)}" ${disabled?'disabled':''}>מחק</button>
+        </td>
+      </tr>
+    `;
+  }).join("") || `<tr><td colspan="5" class="note">אין תוצאות.</td></tr>`;
+
+  $$("[data-edit-primary]").forEach(btn=> btn.onclick = ()=> openPrimaryForEdit(btn.getAttribute("data-edit-primary")));
+  $$("[data-del-primary]").forEach(btn=> btn.onclick = ()=> requestDeletePrimary(btn.getAttribute("data-del-primary")));
+  $$("[data-edit-sub]").forEach(btn=> btn.onclick = ()=> openSubForEdit(btn.getAttribute("data-edit-sub")));
+  $$("[data-del-sub]").forEach(btn=> btn.onclick = ()=> requestDeleteSub(btn.getAttribute("data-del-sub")));
+}
+
+/* primary add/edit */
+function openPrimaryForAdd(){
+  $("#primaryCatModalTitle").textContent = "קטגוריה ראשית חדשה";
+  $("#primaryEditName").value = "";
+  $("#primaryCatName").value = "";
+  openModal("primaryCatModal");
+}
+function openPrimaryForEdit(name){
+  ensureCategoryModel();
+  $("#primaryCatModalTitle").textContent = "עריכת קטגוריה ראשית";
+  $("#primaryEditName").value = name;
+  $("#primaryCatName").value = name;
+  openModal("primaryCatModal");
+}
+on("#addPrimaryCategory","click", openPrimaryForAdd);
+on("#cancelPrimaryCatBtn","click", ()=> closeModal("primaryCatModal"));
+
+on("#savePrimaryCatBtn","click", ()=>{
+  ensureCategoryModel();
+  const oldName = ($("#primaryEditName").value||"").trim();
+  const name = ($("#primaryCatName").value||"").trim();
+  if(!name){ toast("חובה שם לקטגוריה ראשית"); return; }
+  if (PROTECTED_PRIMARY.has(oldName) && oldName !== name){ toast("אי אפשר לשנות שם של קטגוריה ראשית מוגנת"); return; }
+  if ((state.primaryCategories||[]).includes(name) && oldName !== name){ toast("קטגוריה ראשית כזו כבר קיימת"); return; }
+
+  if (oldName){
+    (state.subCategories||[]).forEach(sc=>{ if(sc.primary===oldName) sc.primary=name; });
+    (state.suppliers||[]).forEach(s=>{ if((s.primaryCategory||"")==oldName) s.primaryCategory=name; });
+    (state.items||[]).forEach(i=>{ if((i.primaryCategory||"")==oldName) i.primaryCategory=name; });
+    state.primaryCategories = (state.primaryCategories||[]).filter(p=>p!==oldName);
   }
 
-  function supplierForm() {
-    const wrap = document.createElement('div');
-    wrap.innerHTML = `
-      <div class="row">
-        <div>
-          <label>שם ספק</label>
-          <input id="fSupName" placeholder="למשל: חברת חשמל" />
-        </div>
-        <div>
-          <label>קטגוריה ראשית</label>
-          <select id="fSupMain">
-            ${mainOptions("אחר")}
-          </select>
-        </div>
-        <div>
-          <label>תת־קטגוריה</label>
-          <select id="fSupSub">
-            ${subOptions("אחר", "", false)}
-          </select>
-        </div>
-        <div>
-          <label>טלפון</label>
-          <input id="fSupPhone" placeholder="אופציונלי" />
-        </div>
-        <div>
-          <label>אימייל</label>
-          <input id="fSupEmail" placeholder="אופציונלי" />
-        </div>
+  if (!(state.primaryCategories||[]).includes(name)) state.primaryCategories.push(name);
+  ensureCategoryModel();
+  save();
+  closeModal("primaryCatModal");
+  toast(oldName ? "קטגוריה ראשית עודכנה" : "קטגוריה ראשית נוספה");
+  renderAll();
+});
+
+/* sub add/edit */
+function openSubForAdd(){
+  ensureCategoryModel();
+  $("#subCatModalTitle").textContent = "תת קטגוריה חדשה";
+  $("#subEditName").value = "";
+  fillPrimarySelectForSubModal(state.primaryCategories.includes("מזון") ? "מזון" : (state.primaryCategories[0]||"אחר"));
+  $("#subCatName").value = "";
+  openModal("subCatModal");
+}
+function openSubForEdit(subName){
+  ensureCategoryModel();
+  const sc = (state.subCategories||[]).find(x=>x.name===subName);
+  if(!sc) return;
+  $("#subCatModalTitle").textContent = "עריכת תת קטגוריה";
+  $("#subEditName").value = sc.name;
+  fillPrimarySelectForSubModal(sc.primary);
+  $("#subCatName").value = sc.name;
+  openModal("subCatModal");
+}
+on("#addSubCategory","click", openSubForAdd);
+on("#cancelSubCatBtn","click", ()=> closeModal("subCatModal"));
+
+on("#saveSubCatBtn","click", ()=>{
+  ensureCategoryModel();
+  const oldName = ($("#subEditName").value||"").trim();
+  const primary = $("#subCatPrimary").value || "אחר";
+  const name = ($("#subCatName").value||"").trim();
+  if(!name){ toast("חובה שם לתת קטגוריה"); return; }
+  if (PROTECTED_SUB.has(oldName) && oldName !== name){ toast("אי אפשר לשנות שם של תת קטגוריה מוגנת"); return; }
+  if ((state.subCategories||[]).some(x=>x.name===name) && oldName !== name){ toast("תת קטגוריה כזו כבר קיימת"); return; }
+
+  if (oldName){
+    (state.suppliers||[]).forEach(s=>{ if((s.category||"")==oldName) s.category=name; });
+    (state.items||[]).forEach(i=>{ if((i.category||"")==oldName) i.category=name; });
+    const sc = (state.subCategories||[]).find(x=>x.name===oldName);
+    if(sc){ sc.name=name; sc.primary=primary; }
+  } else {
+    state.subCategories.push({ primary, name });
+  }
+
+  const p = getPrimaryForSub(name);
+  (state.suppliers||[]).forEach(s=>{ if(s.category===name) s.primaryCategory=p; });
+  (state.items||[]).forEach(i=>{ if(i.category===name) i.primaryCategory=p; });
+
+  ensureCategoryModel();
+  save();
+  closeModal("subCatModal");
+  toast(oldName ? "תת קטגוריה עודכנה" : "תת קטגוריה נוספה");
+  renderAll();
+});
+
+/* delete primary */
+let pendingPrimaryDelete = "";
+function requestDeletePrimary(primary){
+  primary = decodeURIComponent(primary);
+  if(PROTECTED_PRIMARY.has(primary)){ toast("אי אפשר למחוק קטגוריה ראשית מוגנת"); return; }
+  ensureCategoryModel();
+  pendingPrimaryDelete = primary;
+
+  const u = countUsageForPrimary(primary);
+  $("#primaryDelInfo").innerHTML = `קטגוריה ראשית: <b>${escapeHtml(primary)}</b> | תתי: <b>${u.subsCount}</b> | ספקים: <b>${u.sup}</b> | פריטים: <b>${u.items}</b>`;
+
+  $("#primaryDelMergeSelect").innerHTML =
+    (state.primaryCategories||[]).filter(p=>p!==primary)
+      .map(p=>`<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join("")
+    || `<option value="אחר">אחר</option>`;
+
+  openModal("primaryDeleteModal");
+}
+on("#primaryDelCancelBtn","click", ()=>{ pendingPrimaryDelete=""; closeModal("primaryDeleteModal"); });
+on("#primaryDelMergeBtn","click", ()=>{
+  const src = pendingPrimaryDelete;
+  if(!src) return;
+  const target = $("#primaryDelMergeSelect").value || "אחר";
+  if(!target || target===src){ toast("בחר יעד מיזוג"); return; }
+
+  (state.subCategories||[]).forEach(sc=>{ if(sc.primary===src) sc.primary=target; });
+
+  (state.suppliers||[]).forEach(s=>{
+    const p = s.primaryCategory || getPrimaryForSub(s.category);
+    if(p===src) s.primaryCategory=target;
+  });
+  (state.items||[]).forEach(i=>{
+    const p = i.primaryCategory || getPrimaryForSub(i.category);
+    if(p===src) i.primaryCategory=target;
+  });
+
+  state.primaryCategories = (state.primaryCategories||[]).filter(p=>p!==src);
+
+  ensureCategoryModel();
+  save();
+  closeModal("primaryDeleteModal");
+  pendingPrimaryDelete="";
+  toast("בוצע מיזוג ומחיקה");
+  renderAll();
+});
+
+/* delete sub */
+let pendingSubDelete = "";
+function requestDeleteSub(subName){
+  subName = decodeURIComponent(subName);
+  if(PROTECTED_SUB.has(subName)){ toast("אי אפשר למחוק תת קטגוריה מוגנת"); return; }
+  ensureCategoryModel();
+  pendingSubDelete = subName;
+
+  const u = countUsageForSub(subName);
+  $("#subDelInfo").innerHTML = `תת קטגוריה: <b>${escapeHtml(catDisplay(subName))}</b> | ספקים: <b>${u.sup}</b> | פריטים: <b>${u.items}</b>`;
+
+  $("#subDelMergeSelect").innerHTML =
+    (state.subCategories||[]).filter(x=>x.name!==subName)
+      .map(x=>`<option value="${escapeHtml(x.name)}">${escapeHtml(x.primary + " › " + x.name)}</option>`).join("")
+    || `<option value="לא משויך">אחר › לא משויך</option>`;
+
+  openModal("subDeleteModal");
+}
+on("#subDelCancelBtn","click", ()=>{ pendingSubDelete=""; closeModal("subDeleteModal"); });
+
+function mergeSubTo(targetSub){
+  const src = pendingSubDelete;
+  if(!src) return;
+
+  (state.suppliers||[]).forEach(s=>{ if((s.category||"")==src) s.category=targetSub; });
+  (state.items||[]).forEach(i=>{ if((i.category||"")==src) i.category=targetSub; });
+
+  const tp = getPrimaryForSub(targetSub);
+  (state.suppliers||[]).forEach(s=>{ if(s.category===targetSub) s.primaryCategory=tp; });
+  (state.items||[]).forEach(i=>{ if(i.category===targetSub) i.primaryCategory=tp; });
+
+  state.subCategories = (state.subCategories||[]).filter(x=>x.name!==src);
+
+  ensureCategoryModel();
+  save();
+  pendingSubDelete="";
+  closeModal("subDeleteModal");
+  toast("בוצע מיזוג ומחיקה");
+  renderAll();
+}
+on("#subDelMergeBtn","click", ()=>{
+  const target = $("#subDelMergeSelect").value || "";
+  if(!target || target===pendingSubDelete){ toast("בחר יעד מיזוג"); return; }
+  mergeSubTo(target);
+});
+on("#subDelToUnassignedBtn","click", ()=>{
+  ensureSubExists("אחר","לא משויך");
+  mergeSubTo("לא משויך");
+});
+
+/* ================= SUPPLIER MODAL (ADD/EDIT) ================= */
+let docModalOpen = false;
+
+function openSupplierModalForAdd(prefillName=""){
+  $("#supplierModalTitle").textContent = "הוספת ספק";
+  $("#supEditId").value = "";
+  $("#supName").value = prefillName || "";
+  $("#supCat").value = "לא משויך";
+  $("#supPhone").value = "";
+  $("#supEmail").value = "";
+  $("#supNotes").value = "";
+  openModal("supplierModal");
+}
+function openSupplierModalForEdit(id){
+  const s = supplierById(id);
+  if (!s) return;
+  $("#supplierModalTitle").textContent = "עריכת ספק";
+  $("#supEditId").value = s.id;
+  $("#supName").value = s.name || "";
+  $("#supCat").value = s.category || "לא משויך";
+  $("#supPhone").value = s.phone || "";
+  $("#supEmail").value = s.email || "";
+  $("#supNotes").value = s.notes || "";
+  openModal("supplierModal");
+}
+on("#addSupplier","click", ()=> openSupplierModalForAdd());
+on("#cancelSupplierBtn","click", ()=> closeModal("supplierModal"));
+
+on("#saveSupplierBtn","click", ()=>{
+  const editId = ($("#supEditId").value||"").trim();
+  const name = ($("#supName").value||"").trim();
+  let category = $("#supCat").value || "לא משויך";
+  const phone = ($("#supPhone").value||"").trim();
+  const email = ($("#supEmail").value||"").trim();
+  const notes = ($("#supNotes").value||"").trim();
+
+  if(!name){ toast("חובה שם ספק"); return; }
+
+  ensureCategoryModel();
+  const primary = getPrimaryForSub(category);
+  ensureSubExists(primary, category);
+
+  const dup = state.suppliers.find(s=> s.name===name && s.id!==editId);
+  if (dup){ toast("קיים ספק עם אותו שם"); return; }
+
+  if (editId){
+    const s = supplierById(editId);
+    if (!s) { toast("שגיאה: ספק לא נמצא"); return; }
+    s.name = name;
+    s.category = category;
+    s.primaryCategory = primary;
+    s.phone = phone; s.email = email; s.notes = notes; s.active = true;
+    state.suppliers.sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
+    save(); toast("הספק עודכן");
+  } else {
+    state.suppliers.push({id:uid(), name, category, primaryCategory: primary, phone, email, notes, active:true});
+    state.suppliers.sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
+    save(); toast("נוסף ספק");
+  }
+
+  closeModal("supplierModal");
+
+  if (docModalOpen){
+    refreshDocSupplierList();
+    updateDocSupplierCategoryUI();
+    toast("הספק זמין במסמך");
+  } else {
+    renderAll();
+  }
+});
+
+/* ================= ITEM MODAL (ADD/EDIT) ================= */
+function openItemModalForAdd(){
+  $("#itemModalTitle").textContent = "הוספת פריט";
+  $("#itemEditId").value="";
+  $("#itemName").value="";
+  $("#itemCategory").value="מזון";
+  $("#itemPrice").value="";
+  $("#itemUnit").value="ק״ג";
+  openModal("itemModal");
+}
+function openItemModalForEdit(id){
+  const it = itemById(id);
+  if (!it) return;
+  $("#itemModalTitle").textContent = "עריכת פריט";
+  $("#itemEditId").value = it.id;
+  $("#itemName").value = it.name || "";
+  $("#itemCategory").value = it.category || "לא משויך";
+  $("#itemPrice").value = +it.price || 0;
+  $("#itemUnit").value = it.unit || "יחידה";
+  openModal("itemModal");
+}
+on("#addItem","click", openItemModalForAdd);
+on("#cancelItemBtn","click", ()=> closeModal("itemModal"));
+
+on("#saveItemBtn","click", ()=>{
+  const editId = ($("#itemEditId").value||"").trim();
+  const name = ($("#itemName").value||"").trim();
+  let category = $("#itemCategory").value || "לא משויך";
+  const price = +($("#itemPrice").value||0);
+  const unit = $("#itemUnit").value || "יחידה";
+
+  if(!name){ toast("חובה שם פריט"); return; }
+
+  ensureCategoryModel();
+  const primary = getPrimaryForSub(category);
+  ensureSubExists(primary, category);
+
+  const dup = state.items.find(i=> i.name===name && i.id!==editId);
+  if (dup){ toast("קיים פריט עם אותו שם"); return; }
+
+  if (editId){
+    const it = itemById(editId);
+    if (!it) { toast("שגיאה: פריט לא נמצא"); return; }
+    it.name = name;
+    it.category = category;
+    it.primaryCategory = primary;
+    it.price = price; it.unit = unit; it.active = true;
+    state.items.sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
+    save(); toast("הפריט עודכן");
+  } else {
+    state.items.push({id:uid(), name, category, primaryCategory: primary, price, unit, active:true});
+    state.items.sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
+    save(); toast("נוסף פריט");
+  }
+
+  closeModal("itemModal");
+
+  if (docModalOpen){
+    renderLines();
+    updateDocTotalsPreview();
+    toast("הפריט נוסף וזמין במסמך");
+  } else {
+    renderAll();
+  }
+});
+
+/* ================= DOC MODAL (ADD/EDIT) ================= */
+let tempLines = [];
+
+function refreshDocSupplierList(){
+  const list = activeSuppliers().slice(0,500);
+  $("#docSupplierSelect").innerHTML =
+    list.map(s=>`<option value="${s.id}">${escapeHtml(s.name)}</option>`).join("")
+    || `<option value="">אין ספקים</option>`;
+}
+function updateDocSupplierCategoryUI(){
+  const sid = $("#docSupplierSelect").value;
+  const s = supplierById(sid);
+  const cat = s ? (s.category || "לא משויך") : "";
+  $("#docSupplierCategory").value = cat ? catDisplay(cat) : "";
+}
+function resetDocModal(){
+  $("#docModalTitle").textContent = "מסמך חדש";
+  $("#docEditId").value = "";
+  $("#docDate").value = new Date().toISOString().slice(0,10);
+  $("#docType").value = "חשבונית";
+  $("#docNo").value = "";
+  $("#docStatus").value = "שולם";
+  $("#docVat").checked = true;
+  $("#docNotes").value = "";
+  $("#docManualAmount").value = "";
+  tempLines = [];
+  renderLines();
+  updateDocTotalsPreview();
+}
+function openDocModalForAdd(){
+  resetDocModal();
+  refreshDocSupplierList();
+  const first = $("#docSupplierSelect").querySelector("option");
+  if (first) $("#docSupplierSelect").value = first.value;
+  updateDocSupplierCategoryUI();
+  docModalOpen = true;
+  openModal("docModal");
+}
+function openDocModalForEdit(docId){
+  const m = currentMonthObj();
+  const d = (m.docs||[]).find(x=>x.id===docId);
+  if (!d) return;
+
+  $("#docModalTitle").textContent = "עריכת מסמך";
+  $("#docEditId").value = d.id;
+  $("#docDate").value = d.date || new Date().toISOString().slice(0,10);
+  $("#docType").value = d.type || "חשבונית";
+  $("#docNo").value = d.docNo || "";
+  $("#docStatus").value = d.status || "שולם";
+  $("#docVat").checked = !!d.vatApplied;
+  $("#docNotes").value = d.notes || "";
+  $("#docManualAmount").value = +d.manualAmount || 0;
+
+  refreshDocSupplierList();
+  if (d.supplierId) $("#docSupplierSelect").value = d.supplierId;
+  updateDocSupplierCategoryUI();
+
+  tempLines = (d.lines||[]).map(ln=>({
+    id: ln.id || uid(),
+    itemId: ln.itemId || "",
+    name: ln.name || "",
+    qty: +ln.qty || 0,
+    unitPrice: +ln.unitPrice || 0,
+    unit: ln.unit || ""
+  }));
+
+  renderLines();
+  updateDocTotalsPreview();
+  docModalOpen = true;
+  openModal("docModal");
+}
+on("#addDoc","click", openDocModalForAdd);
+on("#cancelDocBtn","click", ()=>{ docModalOpen=false; closeModal("docModal"); });
+
+on("#docSupplierSelect","change", ()=>{
+  updateDocSupplierCategoryUI();
+  renderLines();
+  updateDocTotalsPreview();
+});
+on("#docType","change", updateDocTotalsPreview);
+on("#docAddSupplierBtn","click", ()=> openSupplierModalForAdd(""));
+on("#docAddItemBtn","click", ()=> openItemModalForAdd());
+
+function getSelectedSupplierCategory(){
+  const sid = $("#docSupplierSelect").value;
+  const s = supplierById(sid);
+  return s ? (s.category||"לא משויך") : "";
+}
+function itemOptionsHtml(filterCategory){
+  const itemsCat = activeItems()
+    .filter(it => !filterCategory || it.category===filterCategory || filterCategory==="לא משויך")
+    .sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
+  const use = itemsCat.length ? itemsCat : activeItems().slice().sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
+
+  return `<option value="">בחר פריט…</option>` + use.map(it=>{
+    const meta = `${catDisplay(it.category)} • ${money(it.price||0)} / ${it.unit||""}`;
+    return `<option value="${it.id}">${escapeHtml(it.name)} (${escapeHtml(meta)})</option>`;
+  }).join("");
+}
+function renderLines(){
+  const cat = getSelectedSupplierCategory();
+  $("#linesHost").innerHTML = tempLines.map(ln=>{
+    const opts = itemOptionsHtml(cat);
+    return `
+      <div class="lineRow" data-line="${ln.id}">
         <div class="span2">
-          <label>הערות</label>
-          <input id="fSupNotes" placeholder="אופציונלי" />
-        </div>
-      </div>
-
-      <div class="spacer"></div>
-
-      <div class="toggleRow">
-        <label class="check"><input id="fSupActive" type="checkbox" checked /><span>פעיל</span></label>
-      </div>
-
-      <div class="actions">
-        <button id="fSupSave" class="green">שמור</button>
-        <button id="fSupCancel" class="ghost">ביטול</button>
-      </div>
-    `;
-
-    const mainEl = wrap.querySelector('#fSupMain');
-    const subEl = wrap.querySelector('#fSupSub');
-
-    on(mainEl, 'change', () => {
-      subEl.innerHTML = subOptions(mainEl.value, '', false);
-    });
-
-    on(wrap.querySelector('#fSupCancel'), 'click', closeModal);
-    on(wrap.querySelector('#fSupSave'), 'click', () => {
-      const name = (wrap.querySelector('#fSupName').value || '').trim();
-      const mainCategory = mainEl.value;
-      const subcategory = (subEl.value || '').trim();
-
-      if (!name) return alert('שם ספק חובה');
-      if (!MAIN_CATEGORIES.includes(mainCategory)) return alert('קטגוריה ראשית לא תקינה');
-
-      state.suppliers.push({
-        id: uid(),
-        name,
-        mainCategory,
-        subcategory,
-        phone: (wrap.querySelector('#fSupPhone').value || '').trim(),
-        email: (wrap.querySelector('#fSupEmail').value || '').trim(),
-        notes: (wrap.querySelector('#fSupNotes').value || '').trim(),
-        active: !!wrap.querySelector('#fSupActive').checked,
-      });
-
-      ensureSubcategoryExists(state, mainCategory, subcategory);
-      state.subcategories = normalizeSubcategories(state.subcategories);
-
-      save();
-      closeModal();
-      renderFilters();
-      renderSuppliers();
-      renderDocuments();
-      renderSubcategories();
-      renderDashboard();
-      toast('ספק נוסף');
-    });
-
-    return wrap;
-  }
-
-  function subcategoryForm() {
-    const wrap = document.createElement('div');
-    wrap.innerHTML = `
-      <div class="row">
-        <div>
-          <label>קטגוריה ראשית</label>
-          <select id="fSubMain">
-            ${mainOptions("מזון")}
+          <label>פריט</label>
+          <select data-line-item="${ln.id}">
+            ${opts}
           </select>
         </div>
+
         <div>
-          <label>שם תת־קטגוריה</label>
-          <input id="fSubName" placeholder="למשל: דגים / בשר / קינוחים" />
+          <label>כמות</label>
+          <input type="number" inputmode="decimal" data-line-qty="${ln.id}" value="${ln.qty}">
         </div>
-      </div>
 
-      <div class="actions">
-        <button id="fSubSave" class="green">שמור</button>
-        <button id="fSubCancel" class="ghost">ביטול</button>
-      </div>
-    `;
-
-    on(wrap.querySelector('#fSubCancel'), 'click', closeModal);
-    on(wrap.querySelector('#fSubSave'), 'click', () => {
-      const main = wrap.querySelector('#fSubMain').value;
-      const name = (wrap.querySelector('#fSubName').value || '').trim();
-      if (!MAIN_CATEGORIES.includes(main)) return alert('קטגוריה ראשית לא תקינה');
-      if (!name) return alert('שם תת־קטגוריה חובה');
-
-      const dup = state.subcategories.some(x => x.main === main && x.name === name);
-      if (dup) return alert('תת־קטגוריה כבר קיימת');
-
-      state.subcategories.push({ id: uid(), main, name });
-      state.subcategories = normalizeSubcategories(state.subcategories);
-
-      save();
-      closeModal();
-      renderSubcategories();
-      renderSuppliers();
-      renderItems();
-      renderFilters();
-      renderDocuments();
-      toast('תת־קטגוריה נוספה');
-    });
-
-    return wrap;
-  }
-
-  function itemForm() {
-    const wrap = document.createElement('div');
-    wrap.innerHTML = `
-      <div class="row">
-        <div>
-          <label>שם פריט</label>
-          <input id="fItemName" placeholder="למשל: קולה" />
-        </div>
-        <div>
-          <label>קטגוריה ראשית</label>
-          <select id="fItemMain">
-            ${mainOptions("אחר")}
-          </select>
-        </div>
-        <div>
-          <label>תת־קטגוריה</label>
-          <select id="fItemSub">
-            ${subOptions("אחר", "", false)}
-          </select>
-        </div>
         <div>
           <label>מחיר</label>
-          <input id="fItemPrice" type="number" step="0.01" />
+          <input type="number" inputmode="decimal" data-line-price="${ln.id}" value="${ln.unitPrice}">
         </div>
+
         <div>
           <label>יחידה</label>
-          <input id="fItemUnit" placeholder="למשל: יח׳ / ק״ג" />
+          <input data-line-unit="${ln.id}" value="${escapeHtml(ln.unit||"")}" placeholder="ק״ג/יחידה" />
+        </div>
+
+        <div class="lineActions">
+          <button class="danger small" data-line-del="${ln.id}">X</button>
         </div>
       </div>
-
-      <div class="spacer"></div>
-
-      <div class="toggleRow">
-        <label class="check"><input id="fItemActive" type="checkbox" checked /><span>פעיל</span></label>
-      </div>
-
-      <div class="actions">
-        <button id="fItemSave" class="green">שמור</button>
-        <button id="fItemCancel" class="ghost">ביטול</button>
-      </div>
     `;
+  }).join("") || `<div class="empty">אין פירוט פריטים. לחץ על <b>+ שורה</b> כדי להוסיף.</div>`;
 
-    const mainEl = wrap.querySelector('#fItemMain');
-    const subEl = wrap.querySelector('#fItemSub');
+  tempLines.forEach(ln=>{
+    const sel = document.querySelector(`[data-line-item="${ln.id}"]`);
+    if (sel) sel.value = ln.itemId || "";
+  });
 
-    on(mainEl, 'change', () => {
-      subEl.innerHTML = subOptions(mainEl.value, '', false);
-    });
+  $$("[data-line-item]").forEach(sel=>{
+    sel.onchange = ()=>{
+      const lid = sel.getAttribute("data-line-item");
+      const ln = tempLines.find(x=>x.id===lid);
+      if (!ln) return;
+      ln.itemId = sel.value || "";
 
-    on(wrap.querySelector('#fItemCancel'), 'click', closeModal);
-    on(wrap.querySelector('#fItemSave'), 'click', () => {
-      const name = (wrap.querySelector('#fItemName').value || '').trim();
-      const mainCategory = mainEl.value;
-      const subcategory = (subEl.value || '').trim();
-      const price = Number(wrap.querySelector('#fItemPrice').value || 0);
+      const it = itemById(ln.itemId);
+      if (it){
+        ln.name = it.name;
+        if (!ln.unitPrice) ln.unitPrice = +it.price || 0;
+        if (!ln.unit) ln.unit = it.unit || "";
+      } else ln.name = "";
 
-      if (!name) return alert('שם פריט חובה');
-      if (!MAIN_CATEGORIES.includes(mainCategory)) return alert('קטגוריה ראשית לא תקינה');
-      if (!Number.isFinite(price) || price < 0) return alert('מחיר לא תקין');
+      const unitInp = document.querySelector(`[data-line-unit="${lid}"]`);
+      if (unitInp) unitInp.value = ln.unit || "";
+      const priceInp = document.querySelector(`[data-line-price="${lid}"]`);
+      if (priceInp) priceInp.value = ln.unitPrice || 0;
 
-      state.items.push({
-        id: uid(),
-        name,
-        mainCategory,
-        subcategory,
-        price,
-        unit: (wrap.querySelector('#fItemUnit').value || '').trim(),
-        active: !!wrap.querySelector('#fItemActive').checked,
+      updateDocTotalsPreview();
+    };
+  });
+
+  $$("[data-line-qty]").forEach(inp=>{
+    inp.oninput = ()=>{
+      const lid = inp.getAttribute("data-line-qty");
+      const ln = tempLines.find(x=>x.id===lid);
+      if (!ln) return;
+      ln.qty = +inp.value || 0;
+      updateDocTotalsPreview();
+    };
+  });
+
+  $$("[data-line-price]").forEach(inp=>{
+    inp.oninput = ()=>{
+      const lid = inp.getAttribute("data-line-price");
+      const ln = tempLines.find(x=>x.id===lid);
+      if (!ln) return;
+      ln.unitPrice = +inp.value || 0;
+      updateDocTotalsPreview();
+    };
+  });
+
+  $$("[data-line-unit]").forEach(inp=>{
+    inp.oninput = ()=>{
+      const lid = inp.getAttribute("data-line-unit");
+      const ln = tempLines.find(x=>x.id===lid);
+      if (!ln) return;
+      ln.unit = inp.value || "";
+      updateDocTotalsPreview();
+    };
+  });
+
+  $$("[data-line-del]").forEach(btn=>{
+    btn.onclick = ()=>{
+      const lid = btn.getAttribute("data-line-del");
+      tempLines = tempLines.filter(x=>x.id!==lid);
+      renderLines();
+      updateDocTotalsPreview();
+    };
+  });
+}
+on("#addLineBtn","click", ()=>{
+  tempLines.push({id:uid(), itemId:"", name:"", qty:1, unitPrice:0, unit:""});
+  renderLines();
+  updateDocTotalsPreview();
+});
+
+on("#docVat","change", updateDocTotalsPreview);
+on("#docManualAmount","input", updateDocTotalsPreview);
+
+function updateDocTotalsPreview(){
+  let base = 0;
+  if (tempLines.length){
+    base = tempLines.reduce((s,ln)=> s + ((+ln.qty||0) * (+ln.unitPrice||0)), 0);
+  } else {
+    base = +($("#docManualAmount").value||0);
+  }
+  $("#docSubtotal").textContent = money(base);
+
+  let total = base;
+  if ($("#docVat").checked) total *= 1.18;
+
+  const isCredit = ($("#docType").value === "זיכוי");
+  if (isCredit) total = -Math.abs(total);
+  else total = Math.abs(total);
+
+  $("#docTotal").textContent = money(total);
+}
+function isDuplicateDocNo(supplierId, docNo, ignoreId=""){
+  docNo = (docNo||"").trim();
+  if (!docNo) return false;
+  return (currentMonthObj().docs||[]).some(d =>
+    d.id !== ignoreId && d.supplierId===supplierId && (d.docNo||"").trim()===docNo
+  );
+}
+on("#saveDocBtn","click", ()=>{
+  const m = currentMonthObj();
+  const editId = ($("#docEditId").value||"").trim();
+  const supplierId = $("#docSupplierSelect").value;
+
+  if (!supplierId){ toast("בחר ספק מהרשימה"); return; }
+
+  const docNo = ($("#docNo").value||"").trim();
+  if (isDuplicateDocNo(supplierId, docNo, editId)){
+    toast("מס׳ מסמך כפול לאותו ספק בחודש הזה");
+    return;
+  }
+
+  const s = supplierById(supplierId);
+  const d = {
+    id: editId || uid(),
+    date: $("#docDate").value || new Date().toISOString().slice(0,10),
+    type: $("#docType").value || "חשבונית",
+    docNo,
+    supplierId,
+    supplierName: s ? s.name : "",
+    supplierCategory: s ? (s.category||"לא משויך") : "לא משויך",
+    status: $("#docStatus").value || "שולם",
+    vatApplied: $("#docVat").checked,
+    notes: ($("#docNotes").value||"").trim(),
+    manualAmount: +($("#docManualAmount").value||0),
+    lines: tempLines.map(ln=>{
+      const it = itemById(ln.itemId);
+      return {
+        id: ln.id || uid(),
+        itemId: ln.itemId || "",
+        name: (it ? it.name : (ln.name||"")),
+        qty: +ln.qty || 0,
+        unitPrice: +ln.unitPrice || 0,
+        unit: (ln.unit || (it ? it.unit : "")) || ""
+      };
+    })
+  };
+
+  normalizeDoc(d);
+  recomputeDocAmounts(d);
+
+  if (editId){
+    const idx = (m.docs||[]).findIndex(x=>x.id===editId);
+    if (idx<0){ toast("שגיאה: מסמך לא נמצא"); return; }
+    m.docs[idx] = d;
+    toast("המסמך עודכן");
+  } else {
+    m.docs.push(d);
+    toast("נוסף מסמך");
+  }
+
+  save();
+  docModalOpen = false;
+  closeModal("docModal");
+  renderAll();
+  switchScreen("documents");
+});
+
+/* ================= MONTH / INCOME ================= */
+on("#monthInput","change", (e)=>{
+  const v = e.target.value;
+  if (!v) return;
+  state.currentMonth = v;
+  ensureMonth(v);
+  save();
+  refreshMonthBadge();
+  $("#incomeInput").value = currentMonthObj().income || 0;
+  renderAll();
+});
+on("#incomeInput","input", (e)=>{
+  currentMonthObj().income = +e.target.value || 0;
+  save();
+  renderDashboard();
+});
+
+/* ================= EXPORT/IMPORT ================= */
+on("#exportBtn","click", ()=>{
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `hatzeDef_${state.currentMonth}.json`;
+  a.click();
+  toast("בוצע ייצוא JSON");
+});
+on("#importBtn","click", ()=> $("#fileInput").click());
+on("#fileInput","change", (e)=>{
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    try{
+      const incoming = JSON.parse(r.result);
+      state = incoming;
+
+      if (!state.theme) state.theme = "dark";
+      if (!state.currentMonth) state.currentMonth = new Date().toISOString().slice(0,7);
+      ensureMonth(state.currentMonth);
+
+      Object.keys(state.months || {}).forEach(m=>{
+        ensureMonth(m);
+        (state.months[m].docs||[]).forEach(d=>{
+          normalizeDoc(d);
+          (d.lines||[]).forEach(ln=>{
+            if (!ln.id) ln.id = uid();
+            if (ln.qty === undefined) ln.qty = 0;
+            if (ln.unitPrice === undefined) ln.unitPrice = 0;
+            if (!ln.name) ln.name = "";
+            if (!ln.unit) ln.unit = "";
+          });
+          recomputeDocAmounts(d);
+        });
       });
 
-      ensureSubcategoryExists(state, mainCategory, subcategory);
-      state.subcategories = normalizeSubcategories(state.subcategories);
-
+      mergeDefaults();
+      ensureCategoryModel();
       save();
-      closeModal();
-      renderItems();
-      renderSubcategories();
-      renderDashboard();
-      toast('פריט נוסף');
-    });
-
-    return wrap;
-  }
-
-  /* ================= export/import ================= */
-
-  function wireExportImport() {
-    on($('#exportJson'), 'click', () => {
-      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'expenses-export.json';
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(a.href), 500);
-    });
-
-    const fileInput = $('#fileInput');
-
-    on($('#importJson'), 'click', () => {
-      fileInput.value = '';
-      fileInput.click();
-    });
-
-    on(fileInput, 'change', () => {
-      const file = fileInput.files && fileInput.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const parsed = JSON.parse(String(reader.result || ''));
-          state = migrateState(parsed);
-          save();
-          renderAll();
-          toast('ייבוא הצליח');
-        } catch {
-          alert('קובץ JSON לא תקין');
-        }
-      };
-      reader.readAsText(file);
-    });
-
-    on($('#clearAll'), 'click', () => {
-      if (!confirm('לאפס הכל? פעולה זו מוחקת מסמכים/ספקים/פריטים מהדפדפן.')) return;
-      state = migrateState(null);
-      save();
+      applyTheme();
+      $("#monthInput").value = state.currentMonth;
+      $("#incomeInput").value = currentMonthObj().income || 0;
       renderAll();
-      toast('אופס');
-    });
-  }
+      toast("ייבוא הצליח");
+    }catch(err){
+      alert("הקובץ לא תקין או לא בפורמט JSON.");
+    }
+  };
+  r.readAsText(f);
+});
 
-  function wireAddButtons() {
-    on($('#addDoc'), 'click', () => openModal('מסמך חדש', docForm()));
-    on($('#addDoc2'), 'click', () => openModal('מסמך חדש', docForm()));
-    on($('#addSupplier'), 'click', () => openModal('ספק חדש', supplierForm()));
-    on($('#addSupplier2'), 'click', () => openModal('ספק חדש', supplierForm()));
-    on($('#addSubcategory'), 'click', () => openModal('תת־קטגוריה חדשה', subcategoryForm()));
-    on($('#addSubcategory2'), 'click', () => openModal('תת־קטגוריה חדשה', subcategoryForm()));
-    on($('#addItem'), 'click', () => openModal('פריט חדש', itemForm()));
-    on($('#addItem2'), 'click', () => openModal('פריט חדש', itemForm()));
-  }
+/* ================= FILTER EVENTS ================= */
+on("#filterSupplier","change", renderDocuments);
+on("#filterCategory","change", renderDocuments);
+on("#filterDocType","change", renderDocuments);
+on("#filterDocStatus","change", renderDocuments);
 
-  function renderAll() {
-    renderDashboard();
-    renderFilters();
-    renderDocuments();
-    renderSuppliers();
-    renderSubcategories();
-    renderItems();
-  }
+on("#supplierSearch","input", renderSuppliers);
+on("#supplierCatFilter","change", renderSuppliers);
 
-  function init() {
-    wireNav();
-    wireModal();
-    wireAddButtons();
-    wireExportImport();
-    wireFilters();
+on("#itemSearch","input", renderItems);
+on("#itemCatFilter","change", renderItems);
 
-    wireDocumentsTable();
-    wireSuppliersTable();
-    wireSubcategoriesTable();
-    wireItemsTable();
+on("#catSearch","input", renderCategories);
 
-    renderAll();
-    showScreen('dashboard');
-  }
+/* ================= RENDER ALL ================= */
+function renderAll(){
+  refreshMonthBadge();
+  fillSupplierFilters();
+  renderDashboard();
+  renderDocuments();
+  renderSuppliers();
+  renderCategories();
+  renderItems();
+}
 
-  document.addEventListener('DOMContentLoaded', init);
-})();
+/* ================= INIT ================= */
+load();
+applyTheme();
+
+$("#monthInput").value = state.currentMonth;
+$("#incomeInput").value = currentMonthObj().income || 0;
+
+refreshMonthBadge();
+fillSupplierFilters();
+renderAll();
+switchScreen("dashboard");
+
