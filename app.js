@@ -1104,4 +1104,466 @@ on("#saveSupplierBtn","click", ()=>{
   renderAll();
 });
 
-/* ---------- Item modal -----*
+/* ---------- Item modal ---------- */
+function openItemModalForAdd(){
+  $("#itemModalTitle").textContent = "הוספת פריט";
+  $("#itemEditId").value="";
+  $("#itemName").value="";
+  $("#itemCategory").value="לא משויך";
+  $("#itemPrice").value="";
+  $("#itemUnit").value="יחידה";
+  openModal("itemModal");
+}
+function openItemModalForEdit(id){
+  const it = itemById(id);
+  if (!it) return;
+  $("#itemModalTitle").textContent = "עריכת פריט";
+  $("#itemEditId").value = it.id;
+  $("#itemName").value = it.name || "";
+  $("#itemCategory").value = it.category || "לא משויך";
+  $("#itemPrice").value = +it.price || 0;
+  $("#itemUnit").value = it.unit || "יחידה";
+  openModal("itemModal");
+}
+on("#addItem","click", openItemModalForAdd);
+on("#cancelItemBtn","click", ()=> closeModal("itemModal"));
+
+on("#saveItemBtn","click", ()=>{
+  const editId = ($("#itemEditId").value||"").trim();
+  const name = ($("#itemName").value||"").trim();
+  const category = $("#itemCategory").value || "לא משויך";
+  const price = +($("#itemPrice").value||0);
+  const unit = ($("#itemUnit").value||"יחידה").trim() || "יחידה";
+
+  if(!name){ toast("חובה שם פריט"); return; }
+
+  ensureCategoryModel();
+  const primary = getPrimaryForSub(category);
+  ensureSubExists(primary, category);
+
+  const dup = (state.items||[]).find(i=> i.name===name && i.id!==editId);
+  if (dup){ toast("קיים פריט עם אותו שם"); return; }
+
+  if (editId){
+    const it = itemById(editId);
+    if (!it) { toast("שגיאה: פריט לא נמצא"); return; }
+    it.name = name;
+    it.category = category;
+    it.primaryCategory = primary;
+    it.price = price; it.unit = unit; it.active = true;
+    state.items.sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
+    save(); toast("הפריט עודכן");
+  } else {
+    state.items.push({id:uid(), name, category, primaryCategory: primary, price, unit, active:true});
+    state.items.sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
+    save(); toast("נוסף פריט");
+  }
+
+  closeModal("itemModal");
+  fillSupplierFilters();
+  renderAll();
+});
+
+/* ---------- Doc modal ---------- */
+let docModalOpen = false;
+let tempLines = [];
+
+function refreshDocSupplierList(){
+  const list = activeSuppliers().slice(0,1000);
+  $("#docSupplierSelect").innerHTML =
+    list.map(s=>`<option value="${s.id}">${escapeHtml(s.name)}</option>`).join("")
+    || `<option value="">אין ספקים</option>`;
+}
+function updateDocSupplierCategoryUI(){
+  const sid = $("#docSupplierSelect").value;
+  const s = supplierById(sid);
+  const cat = s ? (s.category || "לא משויך") : "";
+  $("#docSupplierCategory").value = cat ? catDisplay(cat) : "";
+}
+function resetDocModal(){
+  $("#docModalTitle").textContent = "מסמך חדש";
+  $("#docEditId").value = "";
+  $("#docDate").value = new Date().toISOString().slice(0,10);
+  $("#docType").value = "חשבונית";
+  $("#docNo").value = "";
+  $("#docStatus").value = "שולם";
+  $("#docVat").checked = true;
+  $("#docNotes").value = "";
+  $("#docManualAmount").value = "";
+  tempLines = [];
+  renderLines();
+  updateDocTotalsPreview();
+}
+function openDocModalForAdd(){
+  resetDocModal();
+  refreshDocSupplierList();
+  const first = $("#docSupplierSelect")?.querySelector("option");
+  if (first) $("#docSupplierSelect").value = first.value;
+  updateDocSupplierCategoryUI();
+  docModalOpen = true;
+  openModal("docModal");
+}
+function openDocModalForEdit(docId){
+  const m = currentMonthObj();
+  const d = (m.docs||[]).find(x=>x.id===docId);
+  if (!d) return;
+
+  $("#docModalTitle").textContent = "עריכת מסמך";
+  $("#docEditId").value = d.id;
+  $("#docDate").value = d.date || new Date().toISOString().slice(0,10);
+  $("#docType").value = d.type || "חשבונית";
+  $("#docNo").value = d.docNo || "";
+  $("#docStatus").value = d.status || "שולם";
+  $("#docVat").checked = !!d.vatApplied;
+  $("#docNotes").value = d.notes || "";
+  $("#docManualAmount").value = +d.manualAmount || 0;
+
+  refreshDocSupplierList();
+  if (d.supplierId) $("#docSupplierSelect").value = d.supplierId;
+  updateDocSupplierCategoryUI();
+
+  tempLines = (d.lines||[]).map(ln=>({
+    id: ln.id || uid(),
+    itemId: ln.itemId || "",
+    name: ln.name || "",
+    qty: +ln.qty || 0,
+    unitPrice: +ln.unitPrice || 0,
+    unit: ln.unit || ""
+  }));
+
+  renderLines();
+  updateDocTotalsPreview();
+  docModalOpen = true;
+  openModal("docModal");
+}
+
+on("#addDoc","click", openDocModalForAdd);
+on("#cancelDocBtn","click", ()=>{ docModalOpen=false; closeModal("docModal"); });
+on("#docSupplierSelect","change", ()=>{ updateDocSupplierCategoryUI(); renderLines(); updateDocTotalsPreview(); });
+on("#docType","change", updateDocTotalsPreview);
+on("#docVat","change", updateDocTotalsPreview);
+on("#docManualAmount","input", updateDocTotalsPreview);
+on("#docAddSupplierBtn","click", ()=> openSupplierModalForAdd(""));
+on("#docAddItemBtn","click", ()=> openItemModalForAdd());
+
+function getSelectedSupplierCategory(){
+  const sid = $("#docSupplierSelect").value;
+  const s = supplierById(sid);
+  return s ? (s.category||"לא משויך") : "לא משויך";
+}
+function itemOptionsHtml(filterCategory){
+  const list = activeItems()
+    .filter(it => !filterCategory || it.category===filterCategory)
+    .sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
+  const use = list.length ? list : activeItems().slice().sort((a,b)=> (a.name||"").localeCompare((b.name||""), "he"));
+
+  return `<option value="">בחר פריט…</option>` + use.map(it=>{
+    const meta = `${catDisplay(it.category)} • ${money(it.price||0)} / ${it.unit||""}`;
+    return `<option value="${it.id}">${escapeHtml(it.name)} (${escapeHtml(meta)})</option>`;
+  }).join("");
+}
+function renderLines(){
+  const cat = getSelectedSupplierCategory();
+  const host = $("#linesHost");
+  if (!host) return;
+
+  host.innerHTML = tempLines.map(ln=>{
+    const opts = itemOptionsHtml(cat);
+    return `
+      <div class="lineRow" data-line="${ln.id}">
+        <div class="span2">
+          <label>פריט</label>
+          <select data-line-item="${ln.id}">
+            ${opts}
+          </select>
+        </div>
+
+        <div>
+          <label>כמות</label>
+          <input type="number" inputmode="decimal" data-line-qty="${ln.id}" value="${ln.qty}">
+        </div>
+
+        <div>
+          <label>מחיר</label>
+          <input type="number" inputmode="decimal" data-line-price="${ln.id}" value="${ln.unitPrice}">
+        </div>
+
+        <div>
+          <label>יחידה</label>
+          <input data-line-unit="${ln.id}" value="${escapeHtml(ln.unit||"")}" placeholder="ק״ג/יחידה">
+        </div>
+
+        <div class="lineActions">
+          <button class="danger small" data-line-del="${ln.id}">X</button>
+        </div>
+      </div>
+    `;
+  }).join("") || `<div class="empty">אין פירוט פריטים. לחץ על <b>+ שורה</b> כדי להוסיף.</div>`;
+
+  // set selects to current values
+  tempLines.forEach(ln=>{
+    const sel = document.querySelector(`[data-line-item="${ln.id}"]`);
+    if (sel) sel.value = ln.itemId || "";
+  });
+
+  $$("[data-line-item]").forEach(sel=>{
+    sel.onchange = ()=>{
+      const lid = sel.getAttribute("data-line-item");
+      const ln = tempLines.find(x=>x.id===lid);
+      if (!ln) return;
+      ln.itemId = sel.value || "";
+
+      const it = itemById(ln.itemId);
+      if (it){
+        ln.name = it.name;
+        if (!ln.unitPrice) ln.unitPrice = +it.price || 0;
+        if (!ln.unit) ln.unit = it.unit || "";
+      } else ln.name = "";
+
+      const unitInp = document.querySelector(`[data-line-unit="${lid}"]`);
+      if (unitInp) unitInp.value = ln.unit || "";
+      const priceInp = document.querySelector(`[data-line-price="${lid}"]`);
+      if (priceInp) priceInp.value = ln.unitPrice || 0;
+
+      updateDocTotalsPreview();
+    };
+  });
+
+  $$("[data-line-qty]").forEach(inp=>{
+    inp.oninput = ()=>{
+      const lid = inp.getAttribute("data-line-qty");
+      const ln = tempLines.find(x=>x.id===lid);
+      if (!ln) return;
+      ln.qty = +inp.value || 0;
+      updateDocTotalsPreview();
+    };
+  });
+
+  $$("[data-line-price]").forEach(inp=>{
+    inp.oninput = ()=>{
+      const lid = inp.getAttribute("data-line-price");
+      const ln = tempLines.find(x=>x.id===lid);
+      if (!ln) return;
+      ln.unitPrice = +inp.value || 0;
+      updateDocTotalsPreview();
+    };
+  });
+
+  $$("[data-line-unit]").forEach(inp=>{
+    inp.oninput = ()=>{
+      const lid = inp.getAttribute("data-line-unit");
+      const ln = tempLines.find(x=>x.id===lid);
+      if (!ln) return;
+      ln.unit = inp.value || "";
+      updateDocTotalsPreview();
+    };
+  });
+
+  $$("[data-line-del]").forEach(btn=>{
+    btn.onclick = ()=>{
+      const lid = btn.getAttribute("data-line-del");
+      tempLines = tempLines.filter(x=>x.id!==lid);
+      renderLines();
+      updateDocTotalsPreview();
+    };
+  });
+}
+on("#addLineBtn","click", ()=>{
+  tempLines.push({id:uid(), itemId:"", name:"", qty:1, unitPrice:0, unit:""});
+  renderLines();
+  updateDocTotalsPreview();
+});
+
+function updateDocTotalsPreview(){
+  let base = 0;
+  if (tempLines.length){
+    base = tempLines.reduce((s,ln)=> s + ((+ln.qty||0) * (+ln.unitPrice||0)), 0);
+  } else {
+    base = +($("#docManualAmount").value||0);
+  }
+  $("#docSubtotal").textContent = money(base);
+
+  let total = base;
+  if ($("#docVat").checked) total *= 1.18;
+
+  const isCredit = ($("#docType").value === "זיכוי");
+  total = isCredit ? -Math.abs(total) : Math.abs(total);
+
+  $("#docTotal").textContent = money(total);
+}
+function isDuplicateDocNo(supplierId, docNo, ignoreId=""){
+  docNo = (docNo||"").trim();
+  if (!docNo) return false;
+  return (currentMonthObj().docs||[]).some(d =>
+    d.id !== ignoreId && d.supplierId===supplierId && (d.docNo||"").trim()===docNo
+  );
+}
+on("#saveDocBtn","click", ()=>{
+  const m = currentMonthObj();
+  const editId = ($("#docEditId").value||"").trim();
+  const supplierId = $("#docSupplierSelect").value;
+
+  if (!supplierId){ toast("בחר ספק מהרשימה"); return; }
+
+  const docNo = ($("#docNo").value||"").trim();
+  if (isDuplicateDocNo(supplierId, docNo, editId)){
+    toast("מס׳ מסמך כפול לאותו ספק בחודש הזה");
+    return;
+  }
+
+  const s = supplierById(supplierId);
+  const d = {
+    id: editId || uid(),
+    date: $("#docDate").value || new Date().toISOString().slice(0,10),
+    type: $("#docType").value || "חשבונית",
+    docNo,
+    supplierId,
+    status: $("#docStatus").value || "שולם",
+    vatApplied: $("#docVat").checked,
+    notes: ($("#docNotes").value||"").trim(),
+    manualAmount: +($("#docManualAmount").value||0),
+    lines: tempLines.map(ln=>{
+      const it = itemById(ln.itemId);
+      return {
+        id: ln.id || uid(),
+        itemId: ln.itemId || "",
+        name: (it ? it.name : (ln.name||"")),
+        qty: +ln.qty || 0,
+        unitPrice: +ln.unitPrice || 0,
+        unit: (ln.unit || (it ? it.unit : "")) || ""
+      };
+    })
+  };
+
+  normalizeDoc(d);
+  recomputeDocAmounts(d);
+
+  if (editId){
+    const idx = (m.docs||[]).findIndex(x=>x.id===editId);
+    if (idx<0){ toast("שגיאה: מסמך לא נמצא"); return; }
+    m.docs[idx] = d;
+    toast("המסמך עודכן");
+  } else {
+    m.docs.push(d);
+    toast("נוסף מסמך");
+  }
+
+  save();
+  docModalOpen = false;
+  closeModal("docModal");
+  renderAll();
+  switchScreen("documents");
+});
+
+/* ---------- Month + income ---------- */
+on("#monthInput","change", (e)=>{
+  const v = e.target.value;
+  if (!v) return;
+  state.currentMonth = v;
+  ensureMonth(v);
+  save();
+  refreshMonthBadge();
+  $("#incomeInput").value = currentMonthObj().income || 0;
+  renderAll();
+});
+on("#incomeInput","input", (e)=>{
+  currentMonthObj().income = +e.target.value || 0;
+  save();
+  toast("הכנסות עודכנו");
+});
+
+/* ---------- Export/Import ---------- */
+on("#exportBtn","click", ()=>{
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `hatzeDef_${state.currentMonth}.json`;
+  a.click();
+  toast("בוצע ייצוא JSON");
+});
+on("#importBtn","click", ()=> $("#fileInput")?.click());
+on("#fileInput","change", (e)=>{
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    try{
+      const incoming = JSON.parse(r.result);
+      state = incoming;
+
+      if (!state.theme) state.theme = "dark";
+      if (!state.currentMonth) state.currentMonth = new Date().toISOString().slice(0,7);
+      ensureMonth(state.currentMonth);
+
+      Object.keys(state.months || {}).forEach(m=>{
+        ensureMonth(m);
+        (state.months[m].docs||[]).forEach(d=>{
+          normalizeDoc(d);
+          (d.lines||[]).forEach(ln=>{
+            if (!ln.id) ln.id = uid();
+            if (ln.qty === undefined) ln.qty = 0;
+            if (ln.unitPrice === undefined) ln.unitPrice = 0;
+            if (!ln.name) ln.name = "";
+            if (!ln.unit) ln.unit = "";
+          });
+          recomputeDocAmounts(d);
+        });
+      });
+
+      mergeDefaults();
+      ensureCategoryModel();
+      save();
+      applyTheme();
+      $("#monthInput").value = state.currentMonth;
+      $("#incomeInput").value = currentMonthObj().income || 0;
+      renderAll();
+      toast("ייבוא הצליח");
+    }catch(err){
+      alert("הקובץ לא תקין או לא בפורמט JSON.");
+    }
+  };
+  r.readAsText(f);
+});
+
+/* ---------- Filters events ---------- */
+on("#filterSupplier","change", renderDocuments);
+on("#filterCategory","change", renderDocuments);
+on("#filterDocType","change", renderDocuments);
+on("#filterDocStatus","change", renderDocuments);
+
+on("#supplierSearch","input", renderSuppliers);
+on("#supplierCatFilter","change", renderSuppliers);
+
+on("#itemSearch","input", renderItems);
+on("#itemCatFilter","change", renderItems);
+
+on("#catSearch","input", renderCategories);
+
+/* ---------- Render all ---------- */
+function renderAll(){
+  refreshMonthBadge();
+  fillSupplierFilters();
+  renderDashboard();
+  renderDocuments();
+  renderSuppliers();
+  renderCategories();
+  renderItems();
+}
+
+/* ---------- Init ---------- */
+function initApp(){
+  load();
+  applyTheme();
+
+  $("#monthInput") && ($("#monthInput").value = state.currentMonth);
+  $("#incomeInput") && ($("#incomeInput").value = currentMonthObj().income || 0);
+
+  renderAll();
+  switchScreen("dashboard");
+}
+
+if (document.readyState === "loading"){
+  document.addEventListener("DOMContentLoaded", initApp);
+} else {
+  initApp();
+}
