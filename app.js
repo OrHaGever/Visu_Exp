@@ -1739,14 +1739,34 @@ function renderAll(){
 }
 
 /* ================= INIT ================= */
-load();
-applyTheme();
+function initApp(){
+  load();
 
-$("#monthInput").value = state.currentMonth;
-$("#incomeInput").value = currentMonthObj().income || 0;
+  // theme
+  try { applyTheme(); } catch(e){}
 
-refreshMonthBadge();
-fillSupplierFilters();
-renderAll();
-switchScreen("dashboard");
+  // set month/income inputs only if exist
+  setVal("monthInput", state.currentMonth);
+  try { setVal("incomeInput", currentMonthObj().income || 0); } catch(e){}
+
+  // render only what exists in the page (prevents crash)
+  try { refreshMonthBadge(); } catch(e){}
+  try { fillSupplierFilters(); } catch(e){}
+  try { renderAll(); } catch(e){}
+
+  // try to show dashboard if exists, else first available screen
+  try { switchScreen("dashboard"); }
+  catch(e){
+    const first = document.querySelector(".screen");
+    if (first && first.id) window.switchTab(first.id);
+  }
+}
+
+// IMPORTANT: run only after DOM exists (fixes "tabs/buttons don't work" when script is in <head>)
+if (document.readyState === "loading"){
+  document.addEventListener("DOMContentLoaded", initApp);
+} else {
+  initApp();
+}
+
 
