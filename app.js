@@ -647,7 +647,15 @@ function saveDoc() {
   const vatApplied = $('#docVat').checked;
   const paid = $('#docPaid').checked;
   const notes = ($('#docNotes').value || '').trim();
+const modal = document.getElementById('docModal');
+const items = Array.isArray(modal._items) ? modal._items : [];
 
+const doc = {
+  // ...
+  items,
+  amount: calcDocItemsSum(items),
+  // ...
+};
   if (!supplierId) return toast('חובה לבחור ספק');
   if (!sub) return toast('חובה לבחור תת־קטגוריה');
 
