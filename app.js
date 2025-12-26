@@ -603,6 +603,13 @@ function openDocForEdit(id) {
   const d = store.state.documents.find(x => x.id === id);
   if (!d) return;
 
+const modal = document.getElementById('docModal');
+modal._items = structuredClone(d.items || []);
+renderDocItems(modal._items);
+
+// עדכון סכום לפי פריטים (מומלץ כדי לא להסתנכרן לא נכון)
+document.getElementById('docAmount').value = calcDocItemsSum(modal._items);
+
   $('#docModalTitle').textContent = 'עריכת מסמך';
   $('#docEditId').value = d.id;
   $('#docDate').value = d.date || new Date().toISOString().slice(0, 10);
