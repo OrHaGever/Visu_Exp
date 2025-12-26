@@ -591,6 +591,12 @@ function openDocForAdd() {
   $('#docNotes').value = '';
 
   openModal('docModal');
+  const modal = document.getElementById('docModal');
+modal._items = [];
+renderDocItems(modal._items);
+
+// אם אתה רוצה שסכום ייגזר רק מפריטים:
+document.getElementById('docAmount').value = 0;
 }
 
 function openDocForEdit(id) {
