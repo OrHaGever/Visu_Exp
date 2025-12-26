@@ -346,7 +346,28 @@
       <div class="spacer"></div>
       <label>הערות</label>
       <textarea id="docNotes" rows="3" placeholder="אופציונלי…"></textarea>
+<div class="spacer"></div>
 
+<h4 style="margin:6px 0;font-size:13px">פריטים במסמך</h4>
+
+<div class="tableWrap">
+  <table style="min-width:600px">
+    <thead>
+      <tr>
+        <th>פריט</th>
+        <th>כמות</th>
+        <th>מחיר</th>
+        <th>סה״כ</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="docItemsBody"></tbody>
+  </table>
+</div>
+
+<div class="btnRow" style="margin-top:8px">
+  <button type="button" class="outline small" id="addDocItem">+ הוסף פריט</button>
+</div>
       <div class="actions">
         <button id="saveDocBtn">שמור</button>
         <button class="outline" id="cancelDocBtn">ביטול</button>
