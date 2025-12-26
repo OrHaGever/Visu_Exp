@@ -76,27 +76,34 @@ function ensureModel(state) {
   });
   state.items = state.items.filter(i => i.name);
 
-  state.documents.forEach(d => {
-    if (!d.id) d.id = uid();
-    if (!d.date) d.date = new Date().toISOString().slice(0, 10);
-    if (!d.docType) d.docType = "חשבונית";
-    if (!d.desc) d.desc = "";
-    if (!d.number) d.number = "";
-    if (d.amount === undefined || d.amount === null) d.amount = 0;
-    if (d.vatApplied === undefined) d.vatApplied = true;
-    if (d.paid === undefined) d.paid = true;
+  
 
-    // if supplier exists -> align categories
-    const s = state.suppliers.find(x => x.id === d.supplierId);
-    if (s) {
-      d.main = s.main;
-      d.sub = s.sub;
-    } else {
-      if (!d.sub) d.sub = "לא משויך";
-      const sc = state.subCategories.find(x => x.name === d.sub);
-      d.main = sc ? sc.primary : (d.main || "אחר");
-    }
-  });
+  state.documents.forEach(d => {
+  if (!d.id) d.id = uid();
+  if (!d.date) d.date = new Date().toISOString().slice(0, 10);
+  if (!d.docType) d.docType = "חשבונית";
+  if (!d.desc) d.desc = "";
+  if (!d.number) d.number = "";
+
+  if (!Array.isArray(d.items)) d.items = [];
+
+  // חישוב סכום מפריטים אם קיימים
+  const itemsSum = d.items.reduce((s, it) => s + Number(it.total || 0), 0);
+  d.amount = itemsSum || Number(d.amount || 0);
+
+  if (d.vatApplied === undefined) d.vatApplied = true;
+  if (d.paid === undefined) d.paid = true;
+
+  const s = state.suppliers.find(x => x.id === d.supplierId);
+  if (s) {
+    d.main = s.main;
+    d.sub = s.sub;
+  } else {
+    if (!d.sub) d.sub = "לא משויך";
+    const sc = state.subCategories.find(x => x.name === d.sub);
+    d.main = sc ? sc.primary : (d.main || "אחר");
+  }
+});
 
   // seed defaults only if empty
   if (state.suppliers.length === 0) {
