@@ -1025,7 +1025,9 @@ function renderAll() {
 
 /* ---------- Bind buttons ---------- */
 function bindActions() {
+  
   // top actions
+document.getElementById('addDocItem').addEventListener('click', addItemToDoc);
   $('#addDoc').addEventListener('click', openDocForAdd);
   $('#addDoc2').addEventListener('click', openDocForAdd);
 
