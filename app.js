@@ -6,6 +6,85 @@ import { calcDocTotal, calcKPIs } from './calculations.js';
 
 const DOC_TYPES = ["חשבונית", "תעודת משלוח", "קבלה", "זיכוי"];
 
+function calcDocItemsSum(items) {
+  return (Array.isArray(items) ? items : []).reduce((s, it) => s + Number(it?.total || 0), 0);
+}
+
+function renderDocItems(items) {
+  const body = document.getElementById('docItemsBody');
+  const amountInput = document.getElementById('docAmount');
+  if (!body || !amountInput) return;
+
+  const safeItems = Array.isArray(items) ? items : [];
+
+  body.innerHTML = safeItems.length
+    ? safeItems.map((it, idx) => `
+      <tr>
+        <td>${escapeHtml(it.name || '')}</td>
+        <td><input type="number" min="0" step="0.01" data-qty="${idx}" value="${Number(it.qty || 0)}"></td>
+        <td><input type="number" min="0" step="0.01" data-price="${idx}" value="${Number(it.price || 0)}"></td>
+        <td>${money(Number(it.total || 0))}</td>
+        <td><button type="button" class="danger small" data-del-doc-item="${idx}">✕</button></td>
+      </tr>
+    `).join('')
+    : `<tr><td colspan="5" class="note">אין פריטים</td></tr>`;
+
+  // qty/price changes
+  body.querySelectorAll('[data-qty],[data-price]').forEach(inp => {
+    inp.addEventListener('input', () => {
+      const i = Number(inp.dataset.qty ?? inp.dataset.price);
+      if (!Number.isFinite(i) || !safeItems[i]) return;
+
+      const qtyEl = body.querySelector(`[data-qty="${i}"]`);
+      const priceEl = body.querySelector(`[data-price="${i}"]`);
+
+      const qty = Number(qtyEl?.value || 0);
+      const price = Number(priceEl?.value || 0);
+
+      safeItems[i].qty = qty;
+      safeItems[i].price = price;
+      safeItems[i].total = qty * price;
+
+      amountInput.value = calcDocItemsSum(safeItems);
+      renderDocItems(safeItems);
+    });
+  });
+
+  // delete row
+  body.querySelectorAll('[data-del-doc-item]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const i = Number(btn.dataset.delDocItem);
+      if (!Number.isFinite(i)) return;
+      safeItems.splice(i, 1);
+      amountInput.value = calcDocItemsSum(safeItems);
+      renderDocItems(safeItems);
+    });
+  });
+}
+
+function addItemToDoc() {
+  const modal = document.getElementById('docModal');
+  const amountInput = document.getElementById('docAmount');
+  if (!modal || !amountInput) return;
+
+  const items = modal._items;
+  if (!Array.isArray(items)) return;
+
+  const item = store.state.items.find(i => i.active !== false);
+  if (!item) return toast('אין פריטים זמינים');
+
+  items.push({
+    itemId: item.id,
+    name: item.name,
+    qty: 1,
+    price: Number(item.price || 0),
+    total: Number(item.price || 0)
+  });
+
+  amountInput.value = calcDocItemsSum(items);
+  renderDocItems(items);
+}
+
 function setTheme(theme) {
   document.documentElement.dataset.theme = theme === 'light' ? 'light' : '';
 }
