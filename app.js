@@ -63,27 +63,29 @@ function renderDocItems(items) {
 }
 
 function addItemToDoc() {
-  modal = document.getElementById('docModal');
+  const modal = document.getElementById('docModal');
   const amountInput = document.getElementById('docAmount');
   if (!modal || !amountInput) return;
 
   const items = modal._items;
   if (!Array.isArray(items)) return;
 
-  const item = store.state.items.find(i => i.active !== false);
-  if (!item) return toast('אין פריטים זמינים');
+  const activeItems = store.state.items.filter(i => i.active !== false);
+  if (!activeItems.length) return toast('אין פריטים זמינים');
 
+  // add an "empty" row so user must choose, instead of auto-picking "first active"
   items.push({
-    itemId: item.id,
-    name: item.name,
+    itemId: '',
+    name: '',
     qty: 1,
-    price: Number(item.price || 0),
-    total: Number(item.price || 0)
+    price: 0,
+    total: 0
   });
 
   amountInput.value = calcDocItemsSum(items);
   renderDocItems(items);
 }
+
 
 function setTheme(theme) {
   document.documentElement.dataset.theme = theme === 'light' ? 'light' : '';
