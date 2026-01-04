@@ -180,3 +180,36 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 select optgroup{color:var(--muted);font-weight:700;}
 select option{color:var(--text);}
+
+/* --- Fix: search inputs readability (incl. autofill) --- */
+#supplierSearch, #catSearch, #itemSearch {
+  color: var(--text) !important;
+  background: var(--card2) !important;
+}
+
+:root[data-theme="light"] #supplierSearch,
+:root[data-theme="light"] #catSearch,
+:root[data-theme="light"] #itemSearch {
+  background: #fff !important;
+  color: var(--text) !important; /* in light this is dark */
+}
+
+input::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
+/* Chrome/Safari autofill */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text) !important;
+  transition: background-color 999999s ease-in-out 0s;
+  box-shadow: 0 0 0px 1000px var(--card2) inset !important;
+}
+
+:root[data-theme="light"] input:-webkit-autofill,
+:root[data-theme="light"] input:-webkit-autofill:hover,
+:root[data-theme="light"] input:-webkit-autofill:focus {
+  box-shadow: 0 0 0px 1000px #fff inset !important;
+}
