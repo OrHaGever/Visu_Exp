@@ -30,23 +30,33 @@ function renderDocItems(items) {
     : `<tr><td colspan="5" class="note">אין פריטים</td></tr>`;
 
   // qty/price changes
-  body.querySelectorAll('[data-qty],[data-price]').forEach(inp => {
-    inp.addEventListener('input', () => {
-      const i = Number(inp.dataset.qty ?? inp.dataset.price);
+    // item select changes
+  body.querySelectorAll('[data-doc-item-select]').forEach(sel => {
+    sel.addEventListener('change', () => {
+      const i = Number(sel.dataset.docItemSelect);
       if (!Number.isFinite(i) || !safeItems[i]) return;
 
-      qtyEl = body.querySelector(`[data-qty="${i}"]`);
-      priceEl = body.querySelector(`[data-price="${i}"]`);
+      const pickedId = sel.value || '';
+      const picked = store.state.items.find(it => it.id === pickedId && it.active !== false);
 
-      qty = Number(qtyEl?.value || 0);
-      price = Number(priceEl?.value || 0);
-
-      safeItems[i].qty = qty;
-      safeItems[i].price = price;
-      safeItems[i].total = qty * price;
+      if (!picked) {
+        // reset row
+        safeItems[i].itemId = '';
+        safeItems[i].name = '';
+        safeItems[i].price = 0;
+        safeItems[i].total = Number(safeItems[i].qty || 0) * 0;
+      } else {
+        safeItems[i].itemId = picked.id;
+        safeItems[i].name = picked.name;
+        safeItems[i].price = Number(picked.price || 0);
+        safeItems[i].total = Number(safeItems[i].qty || 0) * safeItems[i].price;
+      }
 
       amountInput.value = calcDocItemsSum(safeItems);
       renderDocItems(safeItems);
+    });
+  });
+
     });
   });
 
