@@ -261,6 +261,7 @@ function renderDocuments() {
   $$('[data-del-doc]').forEach(btn => btn.onclick = () => deleteDoc(btn.dataset.delDoc));
 }
 
+
 function renderSuppliers() {
   const body = $('#suppliersBody');
   const empty = $('#suppliersEmpty');
