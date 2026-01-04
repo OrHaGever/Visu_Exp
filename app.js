@@ -35,11 +35,11 @@ function renderDocItems(items) {
       const i = Number(inp.dataset.qty ?? inp.dataset.price);
       if (!Number.isFinite(i) || !safeItems[i]) return;
 
-      const qtyEl = body.querySelector(`[data-qty="${i}"]`);
-      const priceEl = body.querySelector(`[data-price="${i}"]`);
+      qtyEl = body.querySelector(`[data-qty="${i}"]`);
+      priceEl = body.querySelector(`[data-price="${i}"]`);
 
-      const qty = Number(qtyEl?.value || 0);
-      const price = Number(priceEl?.value || 0);
+      qty = Number(qtyEl?.value || 0);
+      price = Number(priceEl?.value || 0);
 
       safeItems[i].qty = qty;
       safeItems[i].price = price;
@@ -53,7 +53,7 @@ function renderDocItems(items) {
   // delete row
   body.querySelectorAll('[data-del-doc-item]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const i = Number(btn.dataset.delDocItem);
+      i = Number(btn.dataset.delDocItem);
       if (!Number.isFinite(i)) return;
       safeItems.splice(i, 1);
       amountInput.value = calcDocItemsSum(safeItems);
@@ -63,7 +63,7 @@ function renderDocItems(items) {
 }
 
 function addItemToDoc() {
-  const modal = document.getElementById('docModal');
+  modal = document.getElementById('docModal');
   const amountInput = document.getElementById('docAmount');
   if (!modal || !amountInput) return;
 
@@ -1048,6 +1048,21 @@ document.getElementById('addDocItem').addEventListener('click', addItemToDoc);
   $('#addPrimaryCategory').addEventListener('click', openPrimaryForAdd);
   $('#addSubCategory').addEventListener('click', openSubForAdd);
   $('#addSubCategoryQuick').addEventListener('click', () => { switchScreen('categories'); openSubForAdd(); });
+    // sub-category: open from inside document modal
+  const addSubFromDocBtn = document.getElementById('addSubCategoryFromDoc');
+  if (addSubFromDocBtn) {
+    addSubFromDocBtn.addEventListener('click', () => {
+      // remember current doc main so we can return nicely
+      window.__docMainBeforeSubAdd = $('#docMain')?.value || '';
+
+      openSubForAdd();
+
+      // preselect the primary in subCat modal to match docMain
+      if (window.__docMainBeforeSubAdd) {
+        $('#subCatPrimary').value = window.__docMainBeforeSubAdd;
+      }
+    });
+  }
 
   // modal close
   $('#cancelDocBtn').addEventListener('click', () => closeModal('docModal'));
