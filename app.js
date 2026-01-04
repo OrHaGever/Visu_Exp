@@ -484,6 +484,22 @@ function saveSubCategory() {
   closeModal('subCatModal');
   toast(oldName ? 'תת קטגוריה עודכנה' : 'תת קטגוריה נוספה');
   renderAll();
+    // if we opened subcategory from doc modal – refresh doc selects
+  if (window.__returnToDocAfterSubAdd) {
+    window.__returnToDocAfterSubAdd = false;
+
+    // refresh doc main/sub selects
+    fillMainSelect($('#docMain'), false);
+    const mainNow = window.__pendingDocMain || $('#docMain').value;
+    $('#docMain').value = mainNow;
+    fillSubSelect($('#docSub'), mainNow, false);
+
+    // try to select the newly created subcategory (assumes you have the new name in a variable `name`)
+    // If your saveSubCategory uses different variable names, set `newSubName` accordingly.
+    const newSubName = (typeof name === 'string') ? name : '';
+    if (newSubName) $('#docSub').value = newSubName;
+  }
+
 }
 
 function requestDeletePrimary(primary) {
