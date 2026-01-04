@@ -10,6 +10,15 @@ function calcDocItemsSum(items) {
   return (Array.isArray(items) ? items : []).reduce((s, it) => s + Number(it?.total || 0), 0);
 }
 
+/**
+ * Render items table inside doc modal.
+ * Each row has:
+ * - select item
+ * - qty
+ * - price
+ * - total
+ * - delete
+ */
 function renderDocItems(items) {
   const body = document.getElementById('docItemsBody');
   const amountInput = document.getElementById('docAmount');
@@ -17,56 +26,97 @@ function renderDocItems(items) {
 
   const safeItems = Array.isArray(items) ? items : [];
 
+  // Build options once (active items only)
+  const activeItems = store.state.items
+    .filter(i => i.active !== false)
+    .slice()
+    .sort((a, b) => (a.name || '').localeCompare((b.name || ''), 'he'));
+
+  const optionsHtml = (selectedId) => {
+    const base = `<option value="">— בחר פריט —</option>`;
+    const opts = activeItems.map(i => {
+      const sel = (String(i.id) === String(selectedId)) ? 'selected' : '';
+      return `<option value="${escapeHtml(i.id)}" ${sel}>${escapeHtml(i.name)}</option>`;
+    }).join('');
+    return base + opts;
+  };
+
   body.innerHTML = safeItems.length
     ? safeItems.map((it, idx) => `
       <tr>
-        <td>${escapeHtml(it.name || '')}</td>
-        <td><input type="number" min="0" step="0.01" data-qty="${idx}" value="${Number(it.qty || 0)}"></td>
-        <td><input type="number" min="0" step="0.01" data-price="${idx}" value="${Number(it.price || 0)}"></td>
+        <td>
+          <select data-doc-item-select="${idx}">
+            ${optionsHtml(it.itemId || '')}
+          </select>
+        </td>
+        <td><input type="number" min="0" step="0.01" data-qty="${idx}" value="${Number(it.qty ?? 1)}"></td>
+        <td><input type="number" min="0" step="0.01" data-price="${idx}" value="${Number(it.price ?? 0)}"></td>
         <td>${money(Number(it.total || 0))}</td>
         <td><button type="button" class="danger small" data-del-doc-item="${idx}">✕</button></td>
       </tr>
     `).join('')
     : `<tr><td colspan="5" class="note">אין פריטים</td></tr>`;
 
-  // qty/price changes
-    // item select changes
+  // Helper: recalc a row by index from current inputs
+  const recalcRow = (i) => {
+    const qtyEl = body.querySelector(`[data-qty="${i}"]`);
+    const priceEl = body.querySelector(`[data-price="${i}"]`);
+    const qty = Number(qtyEl?.value || 0);
+    const price = Number(priceEl?.value || 0);
+
+    if (!safeItems[i]) return;
+    safeItems[i].qty = qty;
+    safeItems[i].price = price;
+    safeItems[i].total = qty * price;
+
+    amountInput.value = String(calcDocItemsSum(safeItems));
+    // re-render to update totals formatting
+    renderDocItems(safeItems);
+  };
+
+  // item select changes
   body.querySelectorAll('[data-doc-item-select]').forEach(sel => {
     sel.addEventListener('change', () => {
       const i = Number(sel.dataset.docItemSelect);
       if (!Number.isFinite(i) || !safeItems[i]) return;
 
       const pickedId = sel.value || '';
-      const picked = store.state.items.find(it => it.id === pickedId && it.active !== false);
+      const picked = store.state.items.find(x => String(x.id) === String(pickedId) && x.active !== false);
 
       if (!picked) {
-        // reset row
         safeItems[i].itemId = '';
         safeItems[i].name = '';
         safeItems[i].price = 0;
-        safeItems[i].total = Number(safeItems[i].qty || 0) * 0;
       } else {
         safeItems[i].itemId = picked.id;
         safeItems[i].name = picked.name;
         safeItems[i].price = Number(picked.price || 0);
-        safeItems[i].total = Number(safeItems[i].qty || 0) * safeItems[i].price;
       }
 
-      amountInput.value = calcDocItemsSum(safeItems);
+      safeItems[i].qty = Number(safeItems[i].qty ?? 1);
+      safeItems[i].total = Number(safeItems[i].qty || 0) * Number(safeItems[i].price || 0);
+
+      amountInput.value = String(calcDocItemsSum(safeItems));
       renderDocItems(safeItems);
     });
   });
 
+  // qty/price changes
+  body.querySelectorAll('[data-qty],[data-price]').forEach(inp => {
+    inp.addEventListener('input', () => {
+      const i = Number(inp.dataset.qty ?? inp.dataset.price);
+      if (!Number.isFinite(i)) return;
+      recalcRow(i);
     });
   });
 
   // delete row
   body.querySelectorAll('[data-del-doc-item]').forEach(btn => {
     btn.addEventListener('click', () => {
-      i = Number(btn.dataset.delDocItem);
+      const i = Number(btn.dataset.delDocItem);
       if (!Number.isFinite(i)) return;
       safeItems.splice(i, 1);
-      amountInput.value = calcDocItemsSum(safeItems);
+      amountInput.value = String(calcDocItemsSum(safeItems));
       renderDocItems(safeItems);
     });
   });
@@ -83,7 +133,7 @@ function addItemToDoc() {
   const activeItems = store.state.items.filter(i => i.active !== false);
   if (!activeItems.length) return toast('אין פריטים זמינים');
 
-  // add an "empty" row so user must choose, instead of auto-picking "first active"
+  // Add empty row - user must choose
   items.push({
     itemId: '',
     name: '',
@@ -92,10 +142,9 @@ function addItemToDoc() {
     total: 0
   });
 
-  amountInput.value = calcDocItemsSum(items);
+  amountInput.value = String(calcDocItemsSum(items));
   renderDocItems(items);
 }
-
 
 function setTheme(theme) {
   document.documentElement.dataset.theme = theme === 'light' ? 'light' : '';
@@ -159,7 +208,6 @@ function renderKPIs() {
   $('#kpiDocs').textContent = String(docsCount);
   $('#kpiUnpaid').textContent = String(unpaid);
 
-  // month badge = current month of latest doc, else current month
   const month = docs.length ? getMonthKey(docs[docs.length - 1].date) : new Date().toISOString().slice(0, 7);
   $('#kpiMonth').textContent = month || '—';
 }
@@ -168,7 +216,6 @@ function renderDashboardSupplierCards() {
   const host = $('#supplierCards');
   const suppliers = store.state.suppliers.filter(s => s.active !== false);
 
-  // compute totals per supplier
   const map = new Map();
   suppliers.forEach(s => map.set(s.id, { name: s.name, sum: 0, count: 0, unpaid: 0 }));
 
@@ -260,7 +307,6 @@ function renderDocuments() {
   $$('[data-edit-doc]').forEach(btn => btn.onclick = () => openDocForEdit(btn.dataset.editDoc));
   $$('[data-del-doc]').forEach(btn => btn.onclick = () => deleteDoc(btn.dataset.delDoc));
 }
-
 
 function renderSuppliers() {
   const body = $('#suppliersBody');
@@ -431,7 +477,6 @@ function savePrimaryCategory() {
 
   store.commit(state => {
     if (oldName) {
-      // rename
       state.primaryCategories = state.primaryCategories.filter(p => p !== oldName);
       state.primaryCategories.push(name);
       state.subCategories.forEach(sc => { if (sc.primary === oldName) sc.primary = name; });
@@ -477,7 +522,6 @@ function saveSubCategory() {
 
   store.commit(state => {
     if (oldName) {
-      // rename
       state.subCategories.forEach(sc => {
         if (sc.name === oldName) {
           sc.name = name;
@@ -489,7 +533,8 @@ function saveSubCategory() {
       state.items.forEach(i => { if (i.sub === oldName) { i.sub = name; i.main = primary; } });
       state.documents.forEach(d => { if (d.sub === oldName) { d.sub = name; d.main = primary; } });
     } else {
-      if (state.subCategories.some(x => x.name === name)) throw new Error('exists');
+      // allow same sub name ONLY if primary is different? choose your policy:
+      if (state.subCategories.some(x => x.name === name && x.primary === primary)) throw new Error('exists');
       state.subCategories.push({ primary, name });
     }
   });
@@ -497,22 +542,18 @@ function saveSubCategory() {
   closeModal('subCatModal');
   toast(oldName ? 'תת קטגוריה עודכנה' : 'תת קטגוריה נוספה');
   renderAll();
-    // if we opened subcategory from doc modal – refresh doc selects
+
+  // If opened from doc modal: refresh doc selects and select new sub
   if (window.__returnToDocAfterSubAdd) {
     window.__returnToDocAfterSubAdd = false;
 
-    // refresh doc main/sub selects
-    fillMainSelect($('#docMain'), false);
-    const mainNow = window.__pendingDocMain || $('#docMain').value;
+    const mainNow = window.__pendingDocMain || $('#docMain').value || 'אחר';
     $('#docMain').value = mainNow;
     fillSubSelect($('#docSub'), mainNow, false);
+    $('#docSub').value = name;
 
-    // try to select the newly created subcategory (assumes you have the new name in a variable `name`)
-    // If your saveSubCategory uses different variable names, set `newSubName` accordingly.
-    const newSubName = (typeof name === 'string') ? name : '';
-    if (newSubName) $('#docSub').value = newSubName;
+    window.__pendingDocMain = '';
   }
-
 }
 
 function requestDeletePrimary(primary) {
@@ -602,7 +643,7 @@ function openDocForAdd() {
   const firstSupplierId = $('#docSupplier').value || (store.state.suppliers[0]?.id || '');
   $('#docSupplier').value = firstSupplierId;
 
-  // align categories from supplier
+  // default categories aligned from supplier
   const s = store.state.suppliers.find(x => x.id === firstSupplierId);
   const main = s?.main || 'אחר';
   const sub = s?.sub || 'לא משויך';
@@ -614,30 +655,27 @@ function openDocForAdd() {
   $('#docType').value = 'חשבונית';
   $('#docNumber').value = '';
   $('#docDesc').value = '';
-  $('#docAmount').value = '';
+  $('#docAmount').value = '0';
   $('#docVat').checked = true;
   $('#docPaid').checked = true;
   $('#docNotes').value = '';
 
   openModal('docModal');
-  const modal = document.getElementById('docModal');
-modal._items = [];
-renderDocItems(modal._items);
 
-// אם אתה רוצה שסכום ייגזר רק מפריטים:
-document.getElementById('docAmount').value = 0;
+  const modal = document.getElementById('docModal');
+  modal._items = [];
+  renderDocItems(modal._items);
+  document.getElementById('docAmount').value = '0';
 }
 
 function openDocForEdit(id) {
   const d = store.state.documents.find(x => x.id === id);
   if (!d) return;
 
-const modal = document.getElementById('docModal');
-modal._items = structuredClone(d.items || []);
-renderDocItems(modal._items);
-
-// עדכון סכום לפי פריטים (מומלץ כדי לא להסתנכרן לא נכון)
-document.getElementById('docAmount').value = calcDocItemsSum(modal._items);
+  const modal = document.getElementById('docModal');
+  modal._items = structuredClone(d.items || []);
+  renderDocItems(modal._items);
+  document.getElementById('docAmount').value = String(calcDocItemsSum(modal._items));
 
   $('#docModalTitle').textContent = 'עריכת מסמך';
   $('#docEditId').value = d.id;
@@ -655,7 +693,6 @@ document.getElementById('docAmount').value = calcDocItemsSum(modal._items);
   $('#docType').value = d.docType || 'חשבונית';
   $('#docNumber').value = d.number || '';
   $('#docDesc').value = d.desc || '';
-  $('#docAmount').value = Number(d.amount || 0);
   $('#docVat').checked = !!d.vatApplied;
   $('#docPaid').checked = d.paid !== false;
   $('#docNotes').value = d.notes || '';
@@ -672,37 +709,36 @@ function saveDoc() {
   const docType = $('#docType').value || 'חשבונית';
   const number = ($('#docNumber').value || '').trim();
   const desc = ($('#docDesc').value || '').trim();
-  const amount = Number($('#docAmount').value || 0);
   const vatApplied = $('#docVat').checked;
   const paid = $('#docPaid').checked;
   const notes = ($('#docNotes').value || '').trim();
-const modal = document.getElementById('docModal');
-const items = Array.isArray(modal._items) ? modal._items : [];
 
-const doc = {
-  // ...
-  items,
-  amount: calcDocItemsSum(items),
-  // ...
-};
+  const modal = document.getElementById('docModal');
+  const items = Array.isArray(modal._items) ? modal._items : [];
+
+  // Validation: qty>0 but no item chosen
+  const invalidRow = items.some(r => Number(r.qty || 0) > 0 && !r.itemId);
+  if (invalidRow) return toast('יש שורת פריט בלי בחירה. בחר פריט או מחק את השורה.');
+
   if (!supplierId) return toast('חובה לבחור ספק');
   if (!sub) return toast('חובה לבחור תת־קטגוריה');
 
-  store.commit(state => {
-    const s = state.suppliers.find(x => x.id === supplierId);
-    const fixedMain = s ? s.main : main;
-    const fixedSub = s ? s.sub : sub;
+  // Calculate amount from items
+  const amount = calcDocItemsSum(items);
 
+  store.commit(state => {
     const doc = {
       id: editId || crypto.randomUUID(),
       date,
       supplierId,
-      main: fixedMain,
-      sub: fixedSub,
+      // IMPORTANT: keep user's selection; do NOT override from supplier
+      main,
+      sub,
       docType,
       number,
       desc,
-      amount: amount,
+      items: structuredClone(items),
+      amount,
       vatApplied,
       paid: !!paid,
       notes
@@ -786,11 +822,9 @@ function saveSupplier() {
   if (!name) return toast('חובה שם ספק');
 
   store.commit(state => {
-    // ensure sub exists (if user created elsewhere)
-    const sc = state.subCategories.find(x => x.name === sub);
+    const sc = state.subCategories.find(x => x.name === sub && x.primary === main);
     if (!sc) state.subCategories.push({ primary: main, name: sub });
 
-    // uniqueness by name
     const dup = state.suppliers.find(s => s.name === name && s.id !== editId);
     if (dup) throw new Error('dup');
 
@@ -804,14 +838,6 @@ function saveSupplier() {
       s.email = email;
       s.notes = notes;
       s.active = active;
-
-      // update docs referencing supplier => keep supplier categories
-      state.documents.forEach(d => {
-        if (d.supplierId === editId) {
-          d.main = main;
-          d.sub = sub;
-        }
-      });
     } else {
       state.suppliers.push({
         id: crypto.randomUUID(),
@@ -892,7 +918,7 @@ function saveItem() {
   if (!name) return toast('חובה שם פריט');
 
   store.commit(state => {
-    const sc = state.subCategories.find(x => x.name === sub);
+    const sc = state.subCategories.find(x => x.name === sub && x.primary === main);
     if (!sc) state.subCategories.push({ primary: main, name: sub });
 
     const dup = state.items.find(i => i.name === name && i.id !== editId);
@@ -1021,8 +1047,8 @@ function bindSelectDependencies() {
 /* ---------- Filters binding ---------- */
 function bindFilters() {
   ['filterSupplier', 'filterSub', 'filterType', 'filterFrom', 'filterTo'].forEach(id => {
-    $( `#${id}` ).addEventListener('change', renderDocuments);
-    $( `#${id}` ).addEventListener('input', renderDocuments);
+    $(`#${id}`).addEventListener('change', renderDocuments);
+    $(`#${id}`).addEventListener('input', renderDocuments);
   });
 
   $('#clearFilters').addEventListener('click', () => {
@@ -1062,9 +1088,9 @@ function renderAll() {
 
 /* ---------- Bind buttons ---------- */
 function bindActions() {
-  
   // top actions
-document.getElementById('addDocItem').addEventListener('click', addItemToDoc);
+  document.getElementById('addDocItem')?.addEventListener('click', addItemToDoc);
+
   $('#addDoc').addEventListener('click', openDocForAdd);
   $('#addDoc2').addEventListener('click', openDocForAdd);
 
@@ -1077,18 +1103,18 @@ document.getElementById('addDocItem').addEventListener('click', addItemToDoc);
   $('#addPrimaryCategory').addEventListener('click', openPrimaryForAdd);
   $('#addSubCategory').addEventListener('click', openSubForAdd);
   $('#addSubCategoryQuick').addEventListener('click', () => { switchScreen('categories'); openSubForAdd(); });
-    // sub-category: open from inside document modal
+
+  // sub-category: open from inside document modal
   const addSubFromDocBtn = document.getElementById('addSubCategoryFromDoc');
   if (addSubFromDocBtn) {
     addSubFromDocBtn.addEventListener('click', () => {
-      // remember current doc main so we can return nicely
-      window.__docMainBeforeSubAdd = $('#docMain')?.value || '';
+      window.__pendingDocMain = $('#docMain')?.value || '';
+      window.__returnToDocAfterSubAdd = true;
 
       openSubForAdd();
 
-      // preselect the primary in subCat modal to match docMain
-      if (window.__docMainBeforeSubAdd) {
-        $('#subCatPrimary').value = window.__docMainBeforeSubAdd;
+      if (window.__pendingDocMain) {
+        $('#subCatPrimary').value = window.__pendingDocMain;
       }
     });
   }
